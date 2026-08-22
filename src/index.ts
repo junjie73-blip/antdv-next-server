@@ -8,8 +8,6 @@ import { fileURLToPath } from "url";
 import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
-import swaggerUi from "swagger-ui-express";
-import { RegisterRoutes } from "./generated/routes.js";
 import { errorHandler } from "@common/middleware/error-handler.js";
 import * as bodyParser from "body-parser";
 const __filename = fileURLToPath(import.meta.url);
@@ -22,12 +20,6 @@ app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10mb" }));
 
-// Swagger 文档
-app.use("/api-docs", swaggerUi.serve, async (_req: Request, res: Response) => {
-  return res.send(
-    swaggerUi.generateHTML(await import("./generated/swagger.json")),
-  );
-});
 // 启动时验证连接
 async function healthCheck() {
   try {
@@ -58,6 +50,4 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
 });
-// tsoa 自动生成的路由
-RegisterRoutes(app);
 export default app;
