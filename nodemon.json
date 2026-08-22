@@ -1,0 +1,8 @@
+{
+  "watch": ["src", "build"],
+  "ext": "ts,js,json",
+  "ignore": ["src/modules/**/*Controller.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
+  "exec": "tsx src/index.ts",
+  "delay": 500,
+  "legacyWatch": true
+}

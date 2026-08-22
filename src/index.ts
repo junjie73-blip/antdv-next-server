@@ -1,52 +1,63 @@
-import express from 'express'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import "reflect-metadata";
+import "dotenv/config";
+import express, { Request, Response } from "express";
+import path from "path";
+import { prisma } from "@config/database.js";
+import { redis } from "@config/redis.js";
+import { fileURLToPath } from "url";
+import helmet from "helmet";
+import cors from "cors";
+import compression from "compression";
+import swaggerUi from "swagger-ui-express";
+import { RegisterRoutes } from "./generated/routes.js";
+import { errorHandler } from "@common/middleware/error-handler.js";
+import * as bodyParser from "body-parser";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const app = express();
+app.use(helmet());
+app.use(cors());
+app.use(compression());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "10mb" }));
 
-const app = express()
+// Swagger 文档
+app.use("/api-docs", swaggerUi.serve, async (_req: Request, res: Response) => {
+  return res.send(
+    swaggerUi.generateHTML(await import("./generated/swagger.json")),
+  );
+});
+// 启动时验证连接
+async function healthCheck() {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    console.log("✅ Neon PostgreSQL connected");
+  } catch (e) {
+    console.error("❌ Neon PostgreSQL failed", e);
+  }
 
-// Home route - HTML
-app.get('/', (req, res) => {
-  res.type('html').send(`
-    <!doctype html>
-    <html>
-      <head>
-        <meta charset="utf-8"/>
-        <title>Express on Vercel</title>
-        <link rel="stylesheet" href="/style.css" />
-      </head>
-      <body>
-        <nav>
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/api-data">API Data</a>
-          <a href="/healthz">Health</a>
-        </nav>
-        <h1>Welcome to Express on Vercel 🚀</h1>
-        <p>This is a minimal example without a database or forms.</p>
-        <img src="/logo.png" alt="Logo" width="120" />
-      </body>
-    </html>
-  `)
-})
+  try {
+    await redis.ping();
+    console.log("✅ Upstash Redis connected");
+  } catch (e) {
+    console.error("❌ Upstash Redis failed", e);
+  }
+}
 
-app.get('/about', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'components', 'about.htm'))
-})
+healthCheck();
+// 健康检查
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
-// Example API endpoint - JSON
-app.get('/api-data', (req, res) => {
-  res.json({
-    message: 'Here is some sample API data',
-    items: ['apple', 'banana', 'cherry'],
-  })
-})
-
-// Health check
-app.get('/healthz', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() })
-})
-
-export default app
+// 全局错误处理
+app.use(errorHandler);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
+});
+// tsoa 自动生成的路由
+RegisterRoutes(app);
+export default app;
