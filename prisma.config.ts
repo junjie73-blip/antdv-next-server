@@ -1,14 +1,26 @@
+import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-// Vercel 构建时 prisma CLI 不会自动加载 .env，但环境变量已注入进程
-const isMigration = process.argv.some((arg) => arg.includes("migrate"));
+// Vercel 用 POSTGRES_URL_*, 本地用 DATABASE_URL_*
+// migrate deploy 必须用 NON_POOLING（直连，不支持 pgbouncer）
+const url =
+  process.env.POSTGRES_URL_NON_POOLING ||
+  process.env.DATABASE_URL_UNPOOLED ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL;
+
+if (!url) {
+  throw new Error(
+    "Database URL is required. Set POSTGRES_URL_NON_POOLING or DATABASE_URL.",
+  );
+}
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
-  migrations: { path: "prisma/migrations" },
+  migrations: {
+    path: "prisma/migrations",
+  },
   datasource: {
-    url: isMigration
-      ? process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL
-      : process.env.DATABASE_URL,
+    url,
   },
 });
