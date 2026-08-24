@@ -4,7 +4,8 @@ import type {
   NextFunction,
 } from "express";
 import { logger } from "@config/logger.js";
-import { ValidateError } from "@tsoa/runtime";
+import { ZodError } from "zod";
+import { error } from "../utils/response.js";
 export function errorHandler(
   err: unknown,
   req: ExRequest,
@@ -12,17 +13,20 @@ export function errorHandler(
   next: NextFunction,
 ): ExResponse | void {
   logger.error(err);
-  if (err instanceof ValidateError) {
-    console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
-    return res.status(422).json({
-      message: "Validation Failed",
-      details: err?.fields,
-    });
+  if (err instanceof ZodError) {
+    console.warn(`Caught Zod Validation Error for ${req.path}:`, err);
+    return res.status(422).json(
+      error(
+        {
+          details: err.issues.map((issue) => issue.message).join(","),
+        },
+        "Validation Failed",
+        422,
+      ),
+    );
   }
   if (err instanceof Error) {
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
+    return res.status(500).json(error(null, "Internal Server Error", 500));
   }
 
   next();

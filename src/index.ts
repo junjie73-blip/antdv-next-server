@@ -10,6 +10,9 @@ import cors from "cors";
 import compression from "compression";
 import { errorHandler } from "@common/middleware/error-handler.js";
 import * as bodyParser from "body-parser";
+import { createRegistry, mountSwagger } from "./common/core/swagger.js";
+import { registerController } from "./common/core/scanner.js";
+import { controllers } from "./modules/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -19,6 +22,14 @@ app.use(cors());
 app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10mb" }));
+// 同步注册所有 Controller
+const registry = createRegistry();
+for (const ControllerClass of controllers) {
+  registerController(app, ControllerClass, registry);
+}
+
+// 挂载 Swagger UI
+mountSwagger(app, registry);
 
 // 启动时验证连接
 async function healthCheck() {

@@ -21,6 +21,7 @@
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
+    "es-toolkit": "^1.51.0",
     "express": "^4.18.2",
     "express-rate-limit": "^8.6.2",
     "helmet": "^8.3.0",
@@ -31,7 +32,7 @@
     "prisma": "^7.9.1",
     "reflect-metadata": "^0.2.2",
     "serverless-http": "^4.0.0",
-    "swagger-express-ts": "^1.1.0",
+    "swagger-ui-dist": "^5.32.14",
     "swagger-ui-express": "^5.0.1",
     "ws": "^8.21.3",
     "zod": "^4.4.3"
@@ -52,6 +53,8 @@
     "typescript": "^7.0.2"
   },
   "scripts": {
+    "generate:modules": "tsx scripts/generate-modules.ts",
+    "watch:modules": "chokidar \"src/modules/*/controller.ts\" -c \"pnpm generate:modules\" --initial",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
