@@ -2,8 +2,8 @@ import "reflect-metadata";
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import path from "path";
-import { prisma } from "@config/database.js";
-import { redis } from "@config/redis.js";
+import { prisma } from "@/config/database.js";
+import { redis } from "@/config/redis.js";
 import { fileURLToPath } from "url";
 import helmet from "helmet";
 import cors from "cors";
@@ -13,15 +13,52 @@ import * as bodyParser from "body-parser";
 import { createRegistry, mountSwagger } from "./common/core/swagger.js";
 import { registerController } from "./common/core/scanner.js";
 import { controllers } from "./modules/index.js";
+import { ddosProtection } from "./common/middleware/ddos.js";
+import { globalRateLimit } from "./common/middleware/rate-limit.js";
+import { logger } from "./common/logger/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(helmet());
-app.use(cors());
+// 1. Helmet 配置
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+      },
+    },
+    hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  }),
+);
+
+app.use(cors({ origin: process.env.FRONTEND_URL || "*", credentials: true }));
 app.use(compression());
-app.use(bodyParser.urlencoded({ extended: true }));
+// 2. DDoS 防护（最外层）
+app.use(ddosProtection);
+
+// 3. 频率限制
+app.use(globalRateLimit);
+app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(bodyParser.json({ limit: "10mb" }));
+
+// 5. 日志记录（访问日志）
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    logger.info({
+      type: "access",
+      method: req.method,
+      path: req.path,
+      status: res.statusCode,
+      duration: Date.now() - start,
+      ip: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  });
+  next();
+});
 // 同步注册所有 Controller
 const registry = createRegistry();
 for (const ControllerClass of controllers) {
@@ -57,8 +94,14 @@ app.get("/health", (_req, res) => {
 // 全局错误处理
 app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
+});
+
+// 优雅关闭
+process.on("SIGTERM", () => {
+  logger.info("SIGTERM received, shutting down gracefully");
+  server.close(() => process.exit(0));
 });
 export default app;

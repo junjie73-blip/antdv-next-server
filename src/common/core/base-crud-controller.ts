@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { BaseController } from "./base-controller.js";
+import { BaseController, RouteDef } from "./base-controller.js";
 import { BaseRepository, type PaginatedResult } from "./base-repository.js";
 export interface CrudSchemaConfig {
   tag: string;
@@ -16,10 +16,37 @@ export abstract class BaseCrudController<T = any> extends BaseController {
   protected abstract repository: BaseRepository<T>;
   protected abstract schemas: CrudSchemaConfig;
 
+  protected defaultPermissions?: {
+    list?: string[];
+    get?: string[];
+    create?: string[];
+    update?: string[];
+    delete?: string[];
+  };
+  protected defaultRoles?: {
+    list?: string[];
+    get?: string[];
+    create?: string[];
+    update?: string[];
+    delete?: string[];
+  };
   protected toResponse(item: T): any {
     return item;
   }
-
+  protected addRoute(route) {
+    // 如果路由配置了权限/角色，自动前置认证中间件
+    if (route.permissions?.length || route.roles?.length) {
+      const authCheck = (req: any, res: any, next: any) => {
+        if (!req.user) {
+          return res.status(401).json({ success: false, message: "未认证" });
+        }
+        next();
+      };
+      route.middlewares = route.middlewares || [];
+      route.middlewares.unshift(authCheck);
+    }
+    super.addRoute(route);
+  }
   init() {
     this.registerList();
     this.registerGetById();
@@ -34,6 +61,8 @@ export abstract class BaseCrudController<T = any> extends BaseController {
       method: "get",
       path: "/",
       validate: listQuery ? { query: listQuery } : undefined,
+      permissions: this.defaultPermissions?.list,
+      roles: this.defaultRoles?.list,
       docs: {
         tags: [tag],
         summary: `获取${summaryPrefix}列表`,
@@ -79,6 +108,8 @@ export abstract class BaseCrudController<T = any> extends BaseController {
       method: "get",
       path: "/:id",
       validate: { params },
+      permissions: this.defaultPermissions?.get,
+      roles: this.defaultRoles?.get,
       docs: {
         tags: [tag],
         summary: `获取单个${summaryPrefix}`,
@@ -123,6 +154,8 @@ export abstract class BaseCrudController<T = any> extends BaseController {
       method: "post",
       path: "/",
       validate: { body: createBody },
+      permissions: this.defaultPermissions?.create,
+      roles: this.defaultRoles?.create,
       docs: {
         tags: [tag],
         summary: `创建${summaryPrefix}`,
@@ -163,6 +196,8 @@ export abstract class BaseCrudController<T = any> extends BaseController {
       method: "put",
       path: "/:id",
       validate: { params, body: updateBody },
+      permissions: this.defaultPermissions?.update,
+      roles: this.defaultRoles?.update,
       docs: {
         tags: [tag],
         summary: `更新${summaryPrefix}`,
@@ -207,6 +242,8 @@ export abstract class BaseCrudController<T = any> extends BaseController {
       method: "delete",
       path: "/:id",
       validate: { params, query: z.object({ tenantId: z.string() }) },
+      permissions: this.defaultPermissions?.delete,
+      roles: this.defaultRoles?.delete,
       docs: {
         tags: [tag],
         summary: `删除${summaryPrefix}`,

@@ -3,9 +3,9 @@ import type {
   Request as ExRequest,
   NextFunction,
 } from "express";
-import { logger } from "@config/logger.js";
+import { logger } from "@/config/logger.js";
 import { ZodError } from "zod";
-import { error } from "../utils/response.js";
+import { error } from "@common/utils/response.js";
 export function errorHandler(
   err: unknown,
   req: ExRequest,

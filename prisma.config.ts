@@ -8,7 +8,6 @@ const url =
   process.env.DATABASE_URL_UNPOOLED ||
   process.env.POSTGRES_URL ||
   process.env.DATABASE_URL;
-
 if (!url) {
   throw new Error(
     "Database URL is required. Set POSTGRES_URL_NON_POOLING or DATABASE_URL.",

@@ -1,9 +1,11 @@
+import "reflect-metadata";
 import { Router, Request, Response, NextFunction } from "express";
 import {
   OpenAPIRegistry,
   type RouteConfig,
 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
+import { CONTROLLER_KEY } from "./decorators.js";
 
 export interface RouteDef {
   method: "get" | "post" | "put" | "delete" | "patch";
@@ -19,11 +21,25 @@ export interface RouteDef {
     query?: z.ZodTypeAny;
     params?: z.ZodTypeAny;
   };
+  permissions?: string[];
+  roles?: string[];
 }
 
 export abstract class BaseController {
   public readonly router = Router();
-  public abstract basePath: string;
+
+  // 支持直接定义，或从 @Controller 装饰器读取
+  get basePath(): string {
+    // 优先实例属性，其次装饰器元数据
+    const direct = (this as any)._basePath;
+    if (direct) return direct;
+    const meta = Reflect.getMetadata(CONTROLLER_KEY, this.constructor);
+    return meta?.basePath || "/";
+  }
+
+  set basePath(val: string) {
+    (this as any)._basePath = val;
+  }
 
   protected _registry?: OpenAPIRegistry;
 
@@ -38,7 +54,6 @@ export abstract class BaseController {
       middlewares.push(this.makeValidator(route.validate.query, "query"));
     if (route.validate?.params)
       middlewares.push(this.makeValidator(route.validate.params, "params"));
-
     this.router[route.method](
       route.path,
       ...middlewares,
@@ -73,7 +88,7 @@ export abstract class BaseController {
           errors: result.error.issues
             .map((issue) => ({
               message: issue.message,
-              path: issue.path.join("."),
+              path: issue.path,
             }))
             .join("\n"),
         });
@@ -83,12 +98,15 @@ export abstract class BaseController {
     };
   }
 
-  /** 子类覆盖：用 addRoute 注册路由，或用装饰器 */
   abstract init(): void;
 
   register(app: any, registry: OpenAPIRegistry) {
     this._registry = registry;
     this.init();
+    // 新增调试：确认 router 里到底有没有路由
+    console.log(
+      `[Debug] ${this.constructor.name} basePath=${this.basePath}, routes=${this.router.stack.length}`,
+    );
     app.use(this.basePath, this.router);
   }
 }

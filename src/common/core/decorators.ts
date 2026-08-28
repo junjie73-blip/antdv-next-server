@@ -112,6 +112,35 @@ export function Response(
   return pushMeta(RESPONSES_KEY, { status, schema, description });
 }
 
+const PERMISSIONS_KEY = Symbol("permissions");
+const ROLES_KEY = Symbol("roles");
+
+export function RequirePermission(...permissions: string[]): MethodDecorator {
+  return (target, propertyKey) => {
+    const existing: string[] =
+      Reflect.getMetadata(PERMISSIONS_KEY, target, propertyKey!) || [];
+    Reflect.defineMetadata(
+      PERMISSIONS_KEY,
+      [...existing, ...permissions],
+      target,
+      propertyKey!,
+    );
+  };
+}
+
+export function RequireRole(...roles: string[]): MethodDecorator {
+  return (target, propertyKey) => {
+    const existing: string[] =
+      Reflect.getMetadata(ROLES_KEY, target, propertyKey!) || [];
+    Reflect.defineMetadata(
+      ROLES_KEY,
+      [...existing, ...roles],
+      target,
+      propertyKey!,
+    );
+  };
+}
+
 export {
   TAGS_KEY,
   SUMMARY_KEY,
@@ -121,4 +150,6 @@ export {
   PARAMS_KEY,
   RESPONSES_KEY,
   MIDDLEWARES_KEY,
+  PERMISSIONS_KEY,
+  ROLES_KEY,
 };

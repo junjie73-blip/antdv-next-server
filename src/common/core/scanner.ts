@@ -14,9 +14,11 @@ import {
   MIDDLEWARES_KEY,
   type RouteInfo,
   type ResponseDef,
+  PERMISSIONS_KEY,
+  ROLES_KEY,
 } from "./decorators.js";
 import { BaseController } from "./base-controller.js";
-
+import { createRbacMiddleware } from "@common/middleware/rbac.js";
 function createValidator(
   schema: z.ZodTypeAny,
   source: "body" | "query" | "params",
@@ -98,6 +100,10 @@ function collectMeta(target: any, propertyKey: string) {
     Reflect.getMetadata(BODY_KEY, target, propertyKey) || [];
   const paramsSchemas: z.ZodTypeAny[] =
     Reflect.getMetadata(PARAMS_KEY, target, propertyKey) || [];
+  const permissions: string[] =
+    Reflect.getMetadata(PERMISSIONS_KEY, target, propertyKey) || [];
+  const roles: string[] =
+    Reflect.getMetadata(ROLES_KEY, target, propertyKey) || [];
 
   return {
     tags,
@@ -120,6 +126,8 @@ function collectMeta(target: any, propertyKey: string) {
       (Reflect.getMetadata(MIDDLEWARES_KEY, target, propertyKey) as Array<
         (req: Request, res: Response, next: NextFunction) => any
       >) || [],
+    permissions,
+    roles,
   };
 }
 
@@ -129,15 +137,15 @@ export function registerController(
   registry: OpenAPIRegistry,
 ) {
   const meta = Reflect.getMetadata(CONTROLLER_KEY, ControllerClass);
-
   if (!meta) {
     console.error(
-      `[Scanner] ❌ ${ControllerClass.name} 缺少 @Controller 装饰器，跳过注册`,
+      `[Scanner] ❌ ${ControllerClass.name} 缺少 @Controller 装饰器，跳过`,
     );
     return;
   }
 
   const instance = new ControllerClass();
+  const beforeCount = app._router?.stack?.length || 0;
 
   // 如果继承自 BaseController，调用其 register 方法（内部用 addRoute 注册）
   if (instance instanceof BaseController) {
@@ -145,100 +153,116 @@ export function registerController(
     console.log(
       `[Scanner] ✅ 已注册: ${ControllerClass.name} → ${meta.basePath} (BaseController 模式)`,
     );
-    return;
-  }
+  } else {
+    const { basePath } = meta;
+    const router = Router();
 
-  const { basePath } = meta;
-  const router = Router();
-
-  // 收集原型链上的路由
-  const routes: RouteInfo[] = [];
-  let proto = ControllerClass.prototype;
-  while (proto && proto !== Object.prototype) {
-    const meta = Reflect.getMetadata(ROUTES_KEY, proto) as
-      | RouteInfo[]
-      | undefined;
-    if (meta) routes.push(...meta);
-    proto = Object.getPrototypeOf(proto);
-  }
-
-  for (const route of routes) {
-    const m = collectMeta(ControllerClass.prototype, route.propertyKey);
-    const middlewares = [...m.middlewares];
-
-    // 自动挂载 Zod 校验（用原始 schemas 数组分别校验，更精确）
-    const rawQuerySchemas: z.ZodTypeAny[] =
-      Reflect.getMetadata(
-        QUERY_KEY,
-        ControllerClass.prototype,
-        route.propertyKey,
-      ) || [];
-    const rawBodySchemas: z.ZodTypeAny[] =
-      Reflect.getMetadata(
-        BODY_KEY,
-        ControllerClass.prototype,
-        route.propertyKey,
-      ) || [];
-    const rawParamsSchemas: z.ZodTypeAny[] =
-      Reflect.getMetadata(
-        PARAMS_KEY,
-        ControllerClass.prototype,
-        route.propertyKey,
-      ) || [];
-
-    // 校验中间件：合并后的 schema
-    const mergedQuery = mergeObjectSchemas(rawQuerySchemas);
-    const mergedBody = mergeObjectSchemas(rawBodySchemas);
-    const mergedParams = mergeObjectSchemas(rawParamsSchemas);
-
-    if (mergedQuery) middlewares.push(createValidator(mergedQuery, "query"));
-    if (mergedBody) middlewares.push(createValidator(mergedBody, "body"));
-    if (mergedParams) middlewares.push(createValidator(mergedParams, "params"));
-
-    // Express 路由
-    const handler = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        await instance[route.propertyKey](req, res, next);
-      } catch (err) {
-        next(err);
-      }
-    };
-
-    router[route.method](route.path, ...middlewares, handler);
-
-    // 构建 OpenAPI request
-    const request: any = {};
-    if (m.query) request.query = m.query;
-    if (m.body)
-      request.body = {
-        content: { "application/json": { schema: m.body } },
-        description: "请求体",
-      };
-    if (m.params) request.params = m.params;
-
-    // 构建 OpenAPI responses
-    const responses: any = {};
-    for (const r of m.responses) {
-      responses[r.status] = {
-        description: r.description || "",
-        ...(r.schema
-          ? { content: { "application/json": { schema: r.schema } } }
-          : {}),
-      };
+    // 收集原型链上的路由
+    const routes: RouteInfo[] = [];
+    let proto = ControllerClass.prototype;
+    while (proto && proto !== Object.prototype) {
+      const meta = Reflect.getMetadata(ROUTES_KEY, proto) as
+        | RouteInfo[]
+        | undefined;
+      if (meta) routes.push(...meta);
+      proto = Object.getPrototypeOf(proto);
     }
 
-    // 注册 OpenAPI 路径
-    registry.registerPath({
-      method: route.method,
-      path: `${basePath}${route.path}`,
-      tags: m.tags.length > 0 ? m.tags : undefined,
-      summary: m.summary,
-      description: m.description,
-      ...(Object.keys(request).length > 0 ? { request } : {}),
-      responses,
-    } as any);
-  }
+    for (const route of routes) {
+      const m = collectMeta(ControllerClass.prototype, route.propertyKey);
+      const middlewares = [...m.middlewares];
 
-  app.use(basePath, router);
-  console.log(`[Scanner] ✅ 已注册: ${ControllerClass.name} → ${basePath}`);
+      // 自动挂载 Zod 校验（用原始 schemas 数组分别校验，更精确）
+      const rawQuerySchemas: z.ZodTypeAny[] =
+        Reflect.getMetadata(
+          QUERY_KEY,
+          ControllerClass.prototype,
+          route.propertyKey,
+        ) || [];
+      const rawBodySchemas: z.ZodTypeAny[] =
+        Reflect.getMetadata(
+          BODY_KEY,
+          ControllerClass.prototype,
+          route.propertyKey,
+        ) || [];
+      const rawParamsSchemas: z.ZodTypeAny[] =
+        Reflect.getMetadata(
+          PARAMS_KEY,
+          ControllerClass.prototype,
+          route.propertyKey,
+        ) || [];
+
+      // 校验中间件：合并后的 schema
+      const mergedQuery = mergeObjectSchemas(rawQuerySchemas);
+      const mergedBody = mergeObjectSchemas(rawBodySchemas);
+      const mergedParams = mergeObjectSchemas(rawParamsSchemas);
+
+      if (mergedQuery) middlewares.push(createValidator(mergedQuery, "query"));
+      if (mergedBody) middlewares.push(createValidator(mergedBody, "body"));
+      if (mergedParams)
+        middlewares.push(createValidator(mergedParams, "params"));
+
+      // Express 路由
+      const handler = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        try {
+          await instance[route.propertyKey](req, res, next);
+        } catch (err) {
+          next(err);
+        }
+      };
+      const rbacMiddleware = createRbacMiddleware(m.permissions, m.roles);
+      middlewares.push(rbacMiddleware as any);
+      router[route.method](route.path, ...middlewares, handler);
+
+      // 构建 OpenAPI request
+      const request: any = {};
+      if (m.query) request.query = m.query;
+      if (m.body)
+        request.body = {
+          content: { "application/json": { schema: m.body } },
+          description: "请求体",
+        };
+      if (m.params) request.params = m.params;
+
+      // 构建 OpenAPI responses
+      const responses: any = {};
+      for (const r of m.responses) {
+        responses[r.status] = {
+          description: r.description || "",
+          ...(r.schema
+            ? { content: { "application/json": { schema: r.schema } } }
+            : {}),
+        };
+      }
+      console.log(
+        `[Debug] ${ControllerClass.name} instanceof BaseController:`,
+        instance instanceof BaseController,
+        "meta:",
+        meta,
+      );
+      // 注册 OpenAPI 路径
+      registry.registerPath({
+        method: route.method,
+        path: `${basePath}${route.path}`,
+        tags: m.tags.length > 0 ? m.tags : undefined,
+        summary: m.summary,
+        description: m.description,
+        ...(Object.keys(request).length > 0 ? { request } : {}),
+        responses,
+      } as any);
+    }
+
+    app.use(basePath, router);
+    console.log(`[Scanner] ✅ 已注册: ${ControllerClass.name} → ${basePath}`);
+  }
+  const afterCount = app._router?.stack?.length || 0;
+  console.log(
+    `[Scanner] ✅ 已注册: ${ControllerClass.name} → ${meta.basePath}` +
+      (instance instanceof BaseController ? " (BaseController 模式)" : "") +
+      ` (stack +${afterCount - beforeCount})`,
+  );
 }
