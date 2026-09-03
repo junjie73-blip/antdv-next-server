@@ -2,14 +2,11 @@ import { config } from "dotenv";
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { z } from "zod";
-
 // ========== 智能查找 .env 文件 ==========
 function findEnvFile(): string | null {
   const candidates = [
     resolve(process.cwd(), ".env.development"),
     resolve(process.cwd(), ".env"),
-    resolve(__dirname, "../../.env.development"),
-    resolve(__dirname, "../../.env"),
   ];
   for (const path of candidates) {
     if (existsSync(path)) return path;

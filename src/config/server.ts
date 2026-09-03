@@ -1,5 +1,5 @@
 import { env } from "./env.js";
-import { logger } from "../common/logger/index.js";
+import { logger } from "@common/logger/index.js";
 
 export const serverConfig = {
   port: parseInt(env.PORT, 10),

@@ -14,30 +14,29 @@ export async function initTenantRbac(tenantId: string) {
 
   for (const code of allPermissions) {
     const [resource, action] = code.split(":");
-    const perm = await prisma.permission.upsert({
-      where: { tenantId_code: { tenantId, code } },
+    const perm = await prisma.sys_permission.upsert({
+      where: { tenant_id_perm_code: { tenant_id: tenantId, perm_code: code } },
       update: {},
       create: {
-        tenantId,
-        code,
-        name: `${resource} ${action}`,
-        resource,
+        tenant_id: tenantId,
+        perm_code: code,
+        perm_name: `${resource} ${action}`,
+        resource_type: resource,
         action,
       },
     });
-    permissionMap.set(code, perm.id);
+    permissionMap.set(code, perm.perm_id);
   }
 
   // 2. 创建系统角色并绑定权限
   for (const [roleCode, perms] of Object.entries(DEFAULT_ROLE_PERMISSIONS)) {
-    const role = await prisma.role.upsert({
-      where: { tenantId_code: { tenantId, code: roleCode } },
+    const role = await prisma.sys_role.upsert({
+      where: { tenant_id_role_code: { tenant_id: tenantId, role_code: roleCode } },
       update: {},
       create: {
-        tenantId,
-        name: roleCode,
-        code: roleCode,
-        isSystem: true,
+        tenant_id: tenantId,
+        role_name: roleCode,
+        role_code: roleCode,
       },
     });
 
@@ -45,15 +44,15 @@ export async function initTenantRbac(tenantId: string) {
     for (const permCode of perms) {
       const permId = permissionMap.get(permCode);
       if (!permId) continue;
-      await prisma.rolePermission.upsert({
+      await prisma.sys_role_permission.upsert({
         where: {
-          roleId_permissionId: {
-            roleId: role.id,
-            permissionId: permId,
+          role_id_perm_id: {
+            role_id: role.role_id,
+            perm_id: permId,
           },
         },
         update: {},
-        create: { roleId: role.id, permissionId: permId },
+        create: { role_id: role.role_id, perm_id: permId, tenant_id: tenantId },
       });
     }
   }

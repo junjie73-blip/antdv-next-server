@@ -1,5 +1,5 @@
 import { readdirSync, statSync, writeFileSync } from "fs";
-import { join, relative } from "path";
+import { join, basename } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -12,14 +12,17 @@ function scanControllers(dir: string): string[] {
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const controllerPath = join(dir, entry.name, "controller.ts");
-    try {
-      statSync(controllerPath);
-      // 使用相对路径，确保生成的 import 路径正确
-      const importPath = `./${entry.name}/controller.js`;
-      controllers.push(importPath);
-    } catch {
-      // 该目录下没有 controller.ts，跳过
+    const moduleDir = join(dir, entry.name);
+
+    // 扫描模块目录下所有 *.controller.ts 文件
+    const files = readdirSync(moduleDir, { withFileTypes: true });
+    for (const file of files) {
+      if (!file.isFile()) continue;
+      // 匹配 controller.ts 或 *.controller.ts
+      if (file.name === "controller.ts" || file.name.endsWith(".controller.ts")) {
+        const importPath = `./${entry.name}/${basename(file.name, ".ts")}.js`;
+        controllers.push(importPath);
+      }
     }
   }
 

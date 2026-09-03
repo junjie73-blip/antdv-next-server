@@ -1,96 +1,81 @@
-# 项目开发规范
+# SaaS Admin Server - 代码规范
 
-## 1. 目录与文件命名
+## 1. 命名规范
 
-- **模块目录**: kebab-case (如 `user-role`, `notifications`)
-- **文件命名**: 小写，controller/repository/schema 固定后缀
-- **类命名**: PascalCase，Controller 结尾
+### 1.1 数据库层面
+- **表名**: 小写下划线，前缀 `sys_`，如 `sys_user`、`sys_role`
+- **字段名**: 小写下划线，如 `user_id`、`created_at`、`is_deleted`
+- **主键**: UUID 类型，字段名 `xxx_id`，如 `user_id`、`role_id`
+- **关联表**: `sys_主表_从表`，如 `sys_user_role`
 
-## 2. 代码风格
+### 1.2 代码层面
+- **变量/函数**: 小驼峰，如 `userId`、`getUserList()`
+- **类名**: 大驼峰，如 `UserService`、`BaseRepository`
+- **常量**: 大写下划线，如 `SOFT_DELETE_FLAG`、`SESSION_PREFIX`
+- **接口名**: 大驼峰前缀 I，如 `IBaseRepository`、`IControllerHooks`
+- **类型别名**: 大驼峰，如 `TokenPayload`、`PageResult`
 
-- 使用 TypeScript 严格模式（已配置 `strictPropertyInitialization: false`）
-- 优先使用 `async/await`，避免回调地狱
-- 所有异步路由处理器必须 try-catch，由 BaseController.addRoute 自动包裹
-- 任何 Promise 必须 await 或 return，禁止裸 Promise
+### 1.3 API 层面
+- **请求参数**: 小驼峰，如 `pageNum`、`dictCode`
+- **响应字段**: 小驼峰，如 `userId`、`createdAt`
+- **路由路径**: 小写中划线，如 `/api/v1/dict-type`、`/user-roles`
 
-## 3. 模块开发规范
+## 2. 架构规范
 
-每个业务模块必须包含：
+### 2.1 分层结构
 ```plain
-modules/{module-name}/
-├── controller.ts   # 继承 BaseCrudController 或手动装饰器路由
-├── repository.ts   # 继承 BaseRepository 或自定义 Prisma 查询
-└── schema.ts       # Zod Schema（用于校验 + OpenAPI 文档）
+Controller (控制器层)
+↓ 调用
+Service / Repository (业务/数据层)
+↓ 调用
+Prisma Client (ORM 层)
+↓ 调用
+PostgreSQL (数据库层)
 ```
 
-### Controller 规范
-- 必须加 `@Controller("/path")` 装饰器
-- 继承 `BaseCrudController` 可获得标准 CRUD，额外接口用装饰器手动声明
-- 权限使用 `defaultPermissions` 或方法装饰器 `@RequirePermission`
-- 响应格式统一: `{ success: boolean, data?: T, message?: string, code?: number }`
+### 2.2 继承规范
+- 新模块优先继承 `BaseController` 和 `BaseRepository`
+- 必须实现抽象方法和属性
+- 通过重写钩子方法实现业务扩展
+- 自定义方法应遵循单一职责原则
 
-### Repository 规范
-- 优先继承 `BaseRepository<T>`，获得 findById/findMany/create/update/delete/restore
-- 复杂查询（多表关联、聚合）可在子类中自定义方法
-- 所有查询必须携带 `tenantId` 和 `deletedAt: null`
-- 禁止在 Repository 中直接返回密码哈希等敏感字段
+### 2.3 文件组织
+```plain
+modules/模块名/
+├── controller.ts      # 控制器（继承 BaseController）
+├── service.ts         # 业务服务（可选）
+├── repository.ts      # 数据仓库（继承 BaseRepository）
+├── types.ts           # 模块类型定义
+```
 
-### Schema 规范
-- 所有请求参数使用 Zod 定义
-- 导出 Schema 使用 `.openapi("Name")` 以便生成文档
-- 枚举值与 Prisma Schema 严格一致
+## 3. 编码规范
+
+### 3.1 函数规范
+- 单一职责，函数长度不超过 50 行
+- 使用 async/await，禁止回调地狱
+- 错误处理使用 AppError 抛出，由全局中间件捕获
+
+### 3.2 类型安全
+- 禁止使用 any，使用 unknown 替代
+- 接口定义优先于类型别名
+- 泛型参数必须提供约束
+
+### 3.3 注释规范
+- 公共 API 必须添加 JSDoc
+- 复杂逻辑添加行内注释
+- 钩子方法重写必须说明原因
 
 ## 4. 安全规范
 
-- **认证**: 所有业务接口（除登录/注册/健康检查）必须通过 `authMiddleware`
-- **鉴权**: 敏感操作使用 `@RequirePermission` 或 `defaultPermissions`
-- **租户隔离**: 所有数据库操作必须过滤 `tenantId`
-- **密码**: 使用 bcryptjs 哈希，cost=12
-- **SQL 注入**: 禁止字符串拼接 SQL，必须使用 Prisma ORM
-- **XSS**: 输出到前端的 HTML 内容需转义（通知 content 字段）
+- 所有接口默认需要认证（auth: false 显式关闭）
+- 敏感操作必须校验权限
+- 密码使用 bcrypt 哈希，敏感字段使用 AES 加密
+- 所有删除操作必须是软删除
+- 审计日志自动记录所有写操作
 
-## 5. API 设计规范
+## 5. 数据库规范
 
-- RESTful 风格，资源名使用复数名词
-- 成功响应: `200/201` + `{ success: true, data }`
-- 参数错误: `400/422` + `{ success: false, message, errors }`
-- 未认证: `401`
-- 无权限: `403`
-- 不存在: `404`
-- 服务端错误: `500`
-
-## 6. 数据库规范
-
-- 所有表必须包含: `id (cuid)`, `createdAt`, `updatedAt`, `deletedAt (软删除)`, `tenantId`
-- 所有表必须包含 `status` 字段 (ACTIVE/INACTIVE/PENDING/EXPIRED/LOCKED)
-- 索引规范: 所有外键、tenantId、status、deletedAt 组合加索引
-- 唯一约束必须包含 `tenantId` 和 `deletedAt`（支持软删除后重新创建）
-
-## 7. 日志与审计
-
-- 业务操作必须记录审计日志: `auditLog(action, tenantId, userId, details)`
-- 访问日志由中间件自动记录
-- 错误日志使用 `logger.error()`，包含上下文信息
-
-## 8. Git 提交规范
-```plain
-type(scope): subject
-type:
-feat: 新功能
-fix: 修复
-docs: 文档
-style: 格式
-refactor: 重构
-perf: 性能
-test: 测试
-chore: 构建/工具
-example:
-feat(user): add password change api
-fix(auth): resolve tenantId missing in login query
-```
-## 9. 环境配置规范
-
-- 开发环境使用 `.env.development`
-- 生产环境使用 `.env`
-- 敏感密钥（JWT_SECRET, 数据库密码）禁止提交到 Git
-- Vercel 部署使用 `vercel-build` 脚本（migrate + build）
+- 禁止使用外键约束，使用关联表
+- 所有表必须包含: created_at, updated_at, created_by, updated_by, is_deleted
+- 所有查询必须过滤 is_deleted = 0
+- 租户隔离通过 tenant_id 实现

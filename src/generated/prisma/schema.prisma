@@ -31,23 +31,23 @@ model sys_tenant {
 
 // ==================== 用户表 ====================
 model sys_user {
-  user_id       String    @id @default(uuid()) @db.Uuid
-  tenant_id     String    @db.Uuid
-  username      String    @db.VarChar(64)
-  password      String    @db.VarChar(256)
-  real_name     String?   @db.VarChar(64)
-  phone         String?   @db.VarChar(32)
-  email         String?   @db.VarChar(128)
-  avatar        String?   @db.VarChar(512)
-  gender        Int?      @db.SmallInt
-  status        Int       @default(1) @db.SmallInt
-  last_login_ip String?   @db.VarChar(64)
+  user_id         String    @id @default(uuid()) @db.Uuid
+  tenant_id       String    @db.Uuid
+  username        String    @db.VarChar(64)
+  password        String    @db.VarChar(256)
+  real_name       String?   @db.VarChar(64)
+  phone           String?   @db.VarChar(32)
+  email           String?   @db.VarChar(128)
+  avatar          String?   @db.VarChar(512)
+  gender          Int?      @db.SmallInt
+  status          Int       @default(1) @db.SmallInt
+  last_login_ip   String?   @db.VarChar(64)
   last_login_time DateTime? @db.Timestamptz(6)
-  created_at    DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime  @updatedAt @db.Timestamptz(6)
-  created_by    String?   @db.Uuid
-  updated_by    String?   @db.Uuid
-  is_deleted    Int       @default(0) @db.SmallInt
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(6)
+  created_by      String?   @db.Uuid
+  updated_by      String?   @db.Uuid
+  is_deleted      Int       @default(0) @db.SmallInt
 
   @@unique([tenant_id, username])
   @@index([tenant_id])
