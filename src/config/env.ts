@@ -88,6 +88,8 @@ const envSchema = z.object({
   OAUTH_GOOGLE_CLIENT_SECRET: z.string().optional(),
   OAUTH_GITHUB_CLIENT_ID: z.string().optional(),
   OAUTH_GITHUB_CLIENT_SECRET: z.string().optional(),
+  ENCRYPTION_KEY: z.string().min(32, "ENCRYPTION_KEY 至少32位"),
+  BCRYPT_SALT_ROUNDS: z.string().default("12"),
 });
 
 export const env = envSchema.parse(process.env);

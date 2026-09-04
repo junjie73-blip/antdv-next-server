@@ -1,94 +1,115 @@
-import { prisma } from "@/config/database.js";
-import { rbacCache } from "./cache.js";
-import { SYSTEM_ROLE } from "./constants.js";
+import { prisma } from "@config/database.js";
+import { getCache, setCache, deleteCache } from "@config/redis.js";
+import { logger } from "@core/logger/index.js";
 
-export class RbacService {
-  async getUserPermissions(
-    tenantId: string,
-    userId: string,
-  ): Promise<string[]> {
-    const cached = await rbacCache.getPermissions(tenantId, userId);
-    if (cached) return cached;
+const PERM_CACHE_TTL = 300;
 
-    const userRoles = await prisma.sys_user_role.findMany({
-      where: { user_id: userId, tenant_id: tenantId },
-    });
-    const roleIds = userRoles.map((ur) => ur.role_id);
-
-    const rolePermissions = await prisma.sys_role_permission.findMany({
-      where: { role_id: { in: roleIds } },
-    });
-    const permIds = rolePermissions.map((rp) => rp.perm_id);
-
-    const permissions = await prisma.sys_permission.findMany({
-      where: { perm_id: { in: permIds } },
-    });
-
-    const permSet = new Set(permissions.map((p) => p.perm_code));
-    const result = Array.from(permSet);
-    await rbacCache.setPermissions(tenantId, userId, result);
-    return result;
-  }
-
-  async getUserRoles(tenantId: string, userId: string): Promise<string[]> {
-    const cached = await rbacCache.getRoles(tenantId, userId);
-    if (cached) return cached;
-
-    const userRoles = await prisma.sys_user_role.findMany({
-      where: { user_id: userId, tenant_id: tenantId },
-    });
-    const roleIds = userRoles.map((ur) => ur.role_id);
-
-    const roles = await prisma.sys_role.findMany({
-      where: { role_id: { in: roleIds } },
-    });
-
-    const result = roles.map((r) => r.role_code);
-    await rbacCache.setRoles(tenantId, userId, result);
-    return result;
-  }
-
-  /** 检查是否拥有任意一个权限 */
-  async hasAnyPermission(
-    tenantId: string,
-    userId: string,
-    permissions: string[],
-  ): Promise<boolean> {
-    if (permissions.length === 0) return true;
-    const userPerms = await this.getUserPermissions(tenantId, userId);
-    // OWNER 拥有所有权限
-    if (userPerms.includes("*") || (await this.isOwner(tenantId, userId)))
-      return true;
-    return permissions.some((p) => userPerms.includes(p));
-  }
-
-  /** 检查是否拥有所有指定权限 */
-  async hasAllPermissions(
-    tenantId: string,
-    userId: string,
-    permissions: string[],
-  ): Promise<boolean> {
-    if (permissions.length === 0) return true;
-    const userPerms = await this.getUserPermissions(tenantId, userId);
-    if (await this.isOwner(tenantId, userId)) return true;
-    return permissions.every((p) => userPerms.includes(p));
-  }
-
-  /** 检查是否拥有任意一个角色 */
-  async hasAnyRole(
-    tenantId: string,
-    userId: string,
-    roles: string[],
-  ): Promise<boolean> {
-    if (roles.length === 0) return true;
-    const userRoles = await this.getUserRoles(tenantId, userId);
-    return roles.some((r) => userRoles.includes(r));
-  }
-
-  private async isOwner(tenantId: string, userId: string): Promise<boolean> {
-    const roles = await this.getUserRoles(tenantId, userId);
-    return roles.includes(SYSTEM_ROLE.OWNER);
-  }
+export async function getUserRoles(
+  userId: string,
+  tenantId: string,
+): Promise<string[]> {
+  const userRoles = await prisma.sys_user_role.findMany({
+    where: { user_id: userId, tenant_id: tenantId },
+    // @ts-ignore
+    include: { sys_role: { select: { role_code: true } } },
+  });
+  // @ts-ignore
+  return userRoles.map((ur) => ur.sys_role.role_code);
 }
 
-export const rbacService = new RbacService();
+export async function getUserPermissions(
+  userId: string,
+  tenantId: string,
+): Promise<string[]> {
+  const cacheKey = `rbac:perms:${tenantId}:${userId}`;
+  const cached = await getCache<string[]>(cacheKey);
+  if (cached) return cached;
+
+  const userRoles = await prisma.sys_user_role.findMany({
+    where: { user_id: userId, tenant_id: tenantId },
+    select: { role_id: true },
+  });
+
+  const roleIds = userRoles.map((ur) => ur.role_id);
+  if (roleIds.length === 0) {
+    await setCache(cacheKey, [], PERM_CACHE_TTL);
+    return [];
+  }
+
+  const rolePerms = await prisma.sys_role_permission.findMany({
+    where: { role_id: { in: roleIds }, tenant_id: tenantId },
+    select: { perm_id: true },
+  });
+
+  const permIds = [...new Set(rolePerms.map((rp) => rp.perm_id))];
+
+  const permissions = await prisma.sys_permission.findMany({
+    where: { perm_id: { in: permIds }, status: 1, is_deleted: 0 },
+    select: { perm_code: true },
+  });
+
+  const permCodes = permissions.map((p) => p.perm_code);
+  await setCache(cacheKey, permCodes, PERM_CACHE_TTL);
+  return permCodes;
+}
+
+export async function checkPermission(
+  userId: string,
+  tenantId: string,
+  requiredPerm: string,
+): Promise<boolean> {
+  const perms = await getUserPermissions(userId, tenantId);
+  return perms.includes(requiredPerm) || perms.includes("*");
+}
+
+export async function checkAllPermissions(
+  userId: string,
+  tenantId: string,
+  requiredPerms: string[],
+): Promise<boolean> {
+  const perms = await getUserPermissions(userId, tenantId);
+  if (perms.includes("*")) return true;
+  return requiredPerms.every((p) => perms.includes(p));
+}
+
+export async function checkAnyPermission(
+  userId: string,
+  tenantId: string,
+  requiredPerms: string[],
+): Promise<boolean> {
+  const perms = await getUserPermissions(userId, tenantId);
+  if (perms.includes("*")) return true;
+  return requiredPerms.some((p) => perms.includes(p));
+}
+
+export async function invalidateUserCache(
+  userId: string,
+  tenantId: string,
+): Promise<void> {
+  await deleteCache(`rbac:perms:${tenantId}:${userId}`);
+  logger.debug({ userId, tenantId }, "RBAC cache invalidated");
+}
+
+export async function assignRoleToUser(
+  userId: string,
+  roleId: string,
+  tenantId: string,
+): Promise<void> {
+  await prisma.sys_user_role.upsert({
+    where: { user_id_role_id: { user_id: userId, role_id: roleId } },
+    update: {},
+    create: { user_id: userId, role_id: roleId, tenant_id: tenantId },
+  });
+  await invalidateUserCache(userId, tenantId);
+}
+
+export async function removeRoleFromUser(
+  userId: string,
+  roleId: string,
+  tenantId: string,
+): Promise<void> {
+  await prisma.sys_user_role.deleteMany({
+    where: { user_id: userId, role_id: roleId, tenant_id: tenantId },
+  });
+  await invalidateUserCache(userId, tenantId);
+}

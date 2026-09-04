@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import serverless from "serverless-http";
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import path from "path";
@@ -8,14 +9,15 @@ import { fileURLToPath } from "url";
 import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
-import { errorHandler } from "@middleware/error-handler.js";
+import { errorHandler, notFoundHandler } from "@middleware/error-handler.js";
 import * as bodyParser from "body-parser";
-import { createRegistry, mountSwagger } from "@core/swagger.js";
-import { registerController } from "@core/scanner.js";
-import { controllers } from "./modules/index.js";
 import { ddosProtection } from "@middleware/ddos.js";
 import { globalRateLimit } from "@middleware/rate-limit.js";
-import { logger } from "./common/logger/index.js";
+import { swaggerRouter } from "./core/swagger/index.js";
+import { ControllerScanner, DecoratorRouter } from "@core/decorator/index.js";
+import { controllers } from "./modules/index.js";
+import { neon } from "@neondatabase/serverless";
+import e from "express";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -43,38 +45,26 @@ app.use(globalRateLimit);
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(bodyParser.json({ limit: "10mb" }));
 
-// 5. 日志记录（访问日志）
-app.use((req, res, next) => {
-  const start = Date.now();
-  res.on("finish", () => {
-    logger.info({
-      type: "access",
-      method: req.method,
-      path: req.path,
-      status: res.statusCode,
-      duration: Date.now() - start,
-      ip: req.ip,
-      userAgent: req.headers["user-agent"],
-    });
-  });
-  next();
-});
-// 同步注册所有 Controller
-const registry = createRegistry();
-for (const ControllerClass of controllers) {
-  registerController(app, ControllerClass, registry);
-}
+// Swagger UI
+app.use("/api", swaggerRouter);
 
-// 挂载 Swagger UI
-mountSwagger(app, registry);
+// Decorator-based routes
+const scanner = new ControllerScanner();
+scanner.register(...controllers);
 
+const decoratorRouter = new DecoratorRouter(scanner);
+app.use("/api/v1", decoratorRouter.build());
 // 启动时验证连接
 async function healthCheck() {
+  console.log("DATABASE_URL:", process.env.DATABASE_URL);
   try {
     await prisma.$queryRaw`SELECT 1`;
     console.log("✅ Neon PostgreSQL connected");
   } catch (e) {
-    console.error("❌ Neon PostgreSQL failed", e);
+    console.error("❌ Neon PostgreSQL failed");
+    console.error("Error stack:", e?.stack);
+    if (e?.cause) console.error("Cause:", e.cause);
+    if (e?.errors) console.error("Aggregate errors:", e.errors);
   }
 
   try {
@@ -92,16 +82,28 @@ app.get("/health", (_req, res) => {
 });
 
 // 全局错误处理
+
+// 404 handler
+app.use(notFoundHandler);
+
+// Error handler
 app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
+  console.log(`📚 API Docs: http://localhost:${PORT}/docs`);
 });
 
 // 优雅关闭
 process.on("SIGTERM", () => {
-  logger.info("SIGTERM received, shutting down gracefully");
   server.close(() => process.exit(0));
 });
-export default app;
+console.log("NODE_ENV:", process.env.NODE_ENV);
+const handler =
+  process.env.NODE_ENV !== "production"
+    ? app
+    : serverless(app, {
+        requestId: "x-request-id",
+      });
+
+export default handler;

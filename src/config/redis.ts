@@ -1,29 +1,49 @@
 import { Redis } from "@upstash/redis";
 
-const redisUrl = process.env.REDIS_URL || process.env.KV_REST_API_URL || "";
+const redisUrl =
+  process.env.antdv_REDIS_URL || process.env.antdv_KV_REST_API_URL || "";
 const redisToken =
-  process.env.REDIS_TOKEN || process.env.KV_REST_API_TOKEN || "";
+  process.env.antdv_REDIS_TOKEN || process.env.antdv_KV_REST_API_TOKEN || "";
 
-let redis: Redis;
+export const redis = new Redis({
+  url: redisUrl,
+  token: redisToken,
+});
+export const SESSION_PREFIX = "session:";
+export const CACHE_PREFIX = "cache:";
+export const MFA_PREFIX = "mfa:";
+export const RATE_LIMIT_PREFIX = "rate:";
 
-if (redisUrl.startsWith("http")) {
-  // Upstash REST API
-  redis = new Redis({ url: redisUrl, token: redisToken });
-} else {
-  console.warn("[Redis] No valid Redis URL, using in-memory fallback");
-  const memoryStore = new Map<string, string>();
-  redis = {
-    get: async (k: string) => memoryStore.get(k) || null,
-    set: async (k: string, v: string) => {
-      memoryStore.set(k, v);
-      return "OK";
-    },
-    del: async (k: string) => {
-      memoryStore.delete(k);
-      return 1;
-    },
-    ping: async () => "PONG",
-  } as any;
+export async function setSession(
+  sessionId: string,
+  data: any,
+  ttl = 3600,
+): Promise<void> {
+  await redis.setex(`${SESSION_PREFIX}${sessionId}`, ttl, JSON.stringify(data));
 }
 
-export { redis };
+export async function getSession<T>(sessionId: string): Promise<T | null> {
+  const data = await redis.get(`${SESSION_PREFIX}${sessionId}`);
+  return data ? (JSON.parse(data as string) as T) : null;
+}
+
+export async function deleteSession(sessionId: string): Promise<void> {
+  await redis.del(`${SESSION_PREFIX}${sessionId}`);
+}
+
+export async function setCache<T>(
+  key: string,
+  data: T,
+  ttl = 3000,
+): Promise<void> {
+  await redis.setex(`${CACHE_PREFIX}${key}`, ttl, JSON.stringify(data));
+}
+
+export async function getCache<T>(key: string): Promise<T | null> {
+  const data = await redis.get(`${CACHE_PREFIX}${key}`);
+  return data ? (JSON.parse(data as string) as T) : null;
+}
+
+export async function deleteCache(key: string): Promise<void> {
+  await redis.del(`${CACHE_PREFIX}${key}`);
+}

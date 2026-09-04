@@ -1,33 +1,59 @@
-import type {
-  Response as ExResponse,
-  Request as ExRequest,
-  NextFunction,
-} from "express";
-import { logger } from "@common/logger/index.js";
-import { ZodError } from "zod";
-import { error } from "@common/utils/response.js";
+import { Request, Response, NextFunction } from "express";
+import { logger } from "@core/logger/index.js";
+
 export function errorHandler(
-  err: unknown,
-  req: ExRequest,
-  res: ExResponse,
-  next: NextFunction,
-): ExResponse | void {
-  logger.error(err);
-  if (err instanceof ZodError) {
-    console.warn(`Caught Zod Validation Error for ${req.path}:`, err);
-    return res.status(422).json(
-      error(
-        {
-          details: err.issues.map((issue) => issue.message).join(","),
-        },
-        "Validation Failed",
-        422,
-      ),
-    );
-  }
-  if (err instanceof Error) {
-    return res.status(500).json(error(null, "Internal Server Error", 500));
+  err: Error,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+): void {
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      code: err.code,
+      message: err.message,
+      timestamp: new Date().getTime(),
+    });
+    return;
   }
 
-  next();
+  if (
+    err.message?.includes("validation failed") ||
+    err.message?.includes("Validation")
+  ) {
+    res.status(400).json({
+      code: 400001,
+      message: err.message,
+      timestamp: new Date().getTime(),
+    });
+    return;
+  }
+
+  logger.error({ err }, "Unhandled error");
+  res.status(500).json({
+    code: 500000,
+    message:
+      process.env.NODE_ENV === "production"
+        ? "Internal server error"
+        : err.message,
+    timestamp: new Date().getTime(),
+  });
+}
+
+export function notFoundHandler(req: Request, res: Response): void {
+  res.status(404).json({
+    code: 404001,
+    message: `path ${req.method} ${req.path} not found`,
+    timestamp: new Date().getTime(),
+  });
+}
+
+export class AppError extends Error {
+  constructor(
+    public code: number,
+    message: string,
+    public statusCode: number = 500,
+  ) {
+    super(message);
+    this.name = "AppError";
+  }
 }

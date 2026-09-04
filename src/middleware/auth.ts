@@ -1,51 +1,87 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyAccessToken } from "@common/security/jwt.js";
-import { prisma } from "@/config/database.js";
+import { jwtVerify, SignJWT } from "jose";
+import { env as config } from "@config/env.js";
+import { redis, getSession } from "@config/redis.js";
+import { logger } from "@core/logger/index.js";
+import { AuthenticationError } from "@/core/errors.js";
 
-export interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    role: string;
-    tenantId: string;
-  };
+const secret = new TextEncoder().encode(config.JWT_SECRET);
+
+export interface TokenPayload {
+  userId: string;
+  tenantId: string;
+  username: string;
+  roles: string[];
+}
+
+export async function generateTokens(
+  payload: TokenPayload,
+): Promise<{ accessToken: string; refreshToken: string }> {
+  const accessToken = await new SignJWT({ ...payload, type: "access" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(config.JWT_EXPIRES_IN)
+    .sign(secret);
+
+  const refreshToken = await new SignJWT({
+    userId: payload.userId,
+    type: "refresh",
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(config.JWT_REFRESH_EXPIRES_IN)
+    .sign(new TextEncoder().encode(config.JWT_REFRESH_SECRET));
+
+  await redis.setex(`refresh:${payload.userId}`, 7 * 24 * 3600, refreshToken);
+  return { accessToken, refreshToken };
 }
 
 export async function authMiddleware(
-  req: AuthRequest,
-  res: Response,
+  req: Request,
+  _res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
-    const auth = req.headers.authorization;
-    if (!auth?.startsWith("Bearer ")) {
-      return res
-        .status(401)
-        .json({ success: false, message: "未提供认证令牌" });
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw new AuthenticationError("Missing or invalid authorization header");
     }
 
-    const token = auth.slice(7);
-    const payload = await verifyAccessToken(token);
+    const token = authHeader.slice(7);
+    const { payload } = await jwtVerify(token, secret, { clockTolerance: 60 });
 
-    const user = await prisma.sys_user.findUnique({
-      where: { user_id: payload.sub as string },
-    });
-
-    if (!user || user.status !== 1) {
-      return res
-        .status(401)
-        .json({ success: false, message: "用户无效或已禁用" });
+    if (payload.type !== "access") {
+      throw new AuthenticationError("Invalid token type");
     }
 
-    req.user = {
-      id: user.user_id,
-      email: user.email ?? "",
-      role: "",
-      tenantId: user.tenant_id,
+    // Check session in Redis
+    const session = await getSession(`access:${payload.userId}`);
+    if (!session) {
+      throw new AuthenticationError("Session expired");
+    }
+
+    (req as any).user = {
+      userId: payload.userId as string,
+      tenantId: payload.tenantId as string,
+      username: payload.username as string,
+      roles: payload.roles as string[],
     };
 
     next();
   } catch (err) {
-    res.status(401).json({ success: false, message: "令牌无效或已过期" });
+    next(err);
   }
+}
+
+export function optionalAuth(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): void {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    next();
+    return;
+  }
+  authMiddleware(req, _res, next).catch(() => next());
 }

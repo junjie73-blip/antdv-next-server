@@ -1,146 +1,319 @@
 import { prisma } from "@/config/database.js";
+import {
+  IBaseRepository,
+  BaseQuery,
+  PageResult,
+  QueryOptions,
+  SOFT_DELETE_FLAG,
+} from "@/types/base-repository.js";
+import { AppError } from "@/middleware/error-handler.js";
+import { Prisma } from "@/generated/prisma/index.js";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-}
+/**
+ * 通用基础仓库类
+ * 封装所有数据访问层的通用功能
+ *
+ * @template T - 实体类型
+ * @template CreateInput - 创建输入类型
+ * @template UpdateInput - 更新输入类型
+ * @template WhereInput - 查询条件类型
+ */
+export abstract class BaseRepository<
+  T,
+  CreateInput,
+  UpdateInput,
+  WhereInput,
+> implements IBaseRepository<T, CreateInput, UpdateInput, WhereInput> {
+  /** Prisma 模型代理 */
+  protected abstract readonly model: any;
 
-/** 字段映射配置，用于适配不同 Prisma 模型的字段命名 */
-export interface FieldMapping {
-  pk: string;
-  tenantId: string;
-  softDelete?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+  /** 租户字段名 */
+  protected readonly tenantField: string = "tenant_id";
 
-export const DEFAULT_FIELD_MAPPING: FieldMapping = {
-  pk: "id",
-  tenantId: "tenantId",
-  softDelete: "deletedAt",
-  createdAt: "createdAt",
-  updatedAt: "updatedAt",
-};
+  /** 主键字段名 */
+  protected readonly primaryKey: string = "id";
 
-export class BaseRepository<T = any> {
-  protected fieldMapping: FieldMapping;
+  /** 软删除字段名 */
+  protected readonly softDeleteField: string = "is_deleted";
 
-  constructor(
-    protected model: any,
-    protected defaultOrderBy: Record<string, "asc" | "desc"> = {
-      createdAt: "desc",
-    },
-    fieldMapping?: Partial<FieldMapping>,
-  ) {
-    this.fieldMapping = { ...DEFAULT_FIELD_MAPPING, ...fieldMapping };
-  }
+  /** 创建时间字段名 */
+  protected readonly createdAtField: string = "created_at";
 
-  private get softDeleteWhere(): Record<string, null> {
-    const { softDelete } = this.fieldMapping;
-    return softDelete ? { [softDelete]: null } : {};
-  }
+  /** 更新时间字段名 */
+  protected readonly updatedAtField: string = "updated_at";
 
-  private pkWhere(id: string, tenantId: string): Record<string, any> {
-    const { pk, tenantId: tid } = this.fieldMapping;
-    return { [pk]: id, [tid]: tenantId, ...this.softDeleteWhere };
-  }
+  /** 创建人字段名 */
+  protected readonly createdByField: string = "created_by";
 
+  /** 更新人字段名 */
+  protected readonly updatedByField: string = "updated_by";
+
+  /**
+   * 根据 ID 查询（自动附加租户和软删除过滤）
+   */
   async findById(id: string, tenantId: string): Promise<T | null> {
-    return this.model.findUnique({ where: this.pkWhere(id, tenantId) });
-  }
+    const where = this.buildWhereWithTenant(
+      { [this.primaryKey]: id } as WhereInput,
+      tenantId,
+    );
 
-  async findMany(
-    tenantId: string,
-    page = 1,
-    limit = 20,
-    where?: Record<string, any>,
-  ): Promise<PaginatedResult<T>> {
-    const { tenantId: tid } = this.fieldMapping;
-    const baseWhere = {
-      ...where,
-      [tid]: tenantId,
-      ...this.softDeleteWhere,
-    };
-    const [data, total] = await Promise.all([
-      this.model.findMany({
-        where: baseWhere,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: this.defaultOrderBy,
-      }),
-      this.model.count({ where: baseWhere }),
-    ]);
-    return { data, total, page, limit };
-  }
-
-  async findAll(tenantId: string, where?: Record<string, any>): Promise<T[]> {
-    const { tenantId: tid } = this.fieldMapping;
-    return this.model.findMany({
-      where: { ...where, [tid]: tenantId, ...this.softDeleteWhere },
-      orderBy: this.defaultOrderBy,
+    return this.model.findFirst({
+      where: {
+        ...where,
+        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+      },
     });
   }
 
-  async create(data: Record<string, any>): Promise<T> {
-    return this.model.create({ data });
+  /**
+   * 根据条件查询单条
+   */
+  async findOne(where: WhereInput, tenantId: string): Promise<T | null> {
+    const finalWhere = this.buildWhereWithTenant(where, tenantId);
+
+    return this.model.findFirst({
+      where: {
+        ...finalWhere,
+        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+      },
+    });
   }
 
-  async update(id: string, tenantId: string, data: Partial<T>): Promise<T> {
-    const { updatedAt } = this.fieldMapping;
-    const updateData: Record<string, any> = { ...data };
-    if (updatedAt) updateData[updatedAt] = new Date();
+  /**
+   * 根据条件查询多条
+   */
+  async findMany(where: WhereInput, options: QueryOptions = {}): Promise<T[]> {
+    const { skip, take, orderBy, include } = options;
+    const finalWhere = {
+      ...where,
+      [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+    };
+
+    return this.model.findMany({
+      where: finalWhere,
+      skip,
+      take,
+      orderBy,
+      include,
+    });
+  }
+
+  /**
+   * 分页查询
+   */
+  async findPage(query: BaseQuery, where: WhereInput): Promise<PageResult<T>> {
+    const pageNum = Math.max(1, query.pageNum || 1);
+    const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
+    const skip = (pageNum - 1) * pageSize;
+
+    const finalWhere = this.buildWhereWithTenant(where, query.tenantId);
+
+    const [list, total] = await Promise.all([
+      this.model.findMany({
+        where: finalWhere,
+        skip,
+        take: pageSize,
+        orderBy: this.buildOrderBy(query.sort),
+      }),
+      this.model.count({ where: finalWhere }),
+    ]);
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+      list,
+      total,
+      pageNum,
+      pageSize,
+      totalPages,
+    };
+  }
+
+  /**
+   * 创建记录
+   */
+  async create(
+    data: CreateInput,
+    tenantId: string,
+    userId?: string,
+  ): Promise<T> {
+    const createData = {
+      ...data,
+      [this.tenantField]: tenantId,
+      [this.createdByField]: userId || null,
+      [this.updatedByField]: userId || null,
+      [this.createdAtField]: new Date(),
+      [this.updatedAtField]: new Date(),
+      [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+    };
+
+    return this.model.create({ data: createData });
+  }
+
+  /**
+   * 更新记录
+   */
+  async update(
+    id: string,
+    data: UpdateInput,
+    tenantId: string,
+    userId?: string,
+  ): Promise<T> {
+    const exists = await this.findById(id, tenantId);
+    if (!exists) {
+      throw new AppError(404, "记录不存在", 404);
+    }
+
+    const updateData = {
+      ...data,
+      [this.updatedByField]: userId || null,
+      [this.updatedAtField]: new Date(),
+    };
+
     return this.model.update({
-      where: this.pkWhere(id, tenantId),
+      where: { [this.primaryKey]: id },
       data: updateData,
     });
   }
 
-  /** 软删除 */
-  async delete(id: string, tenantId: string, deletedBy?: string): Promise<T> {
-    const { softDelete, updatedAt } = this.fieldMapping;
-    if (!softDelete) throw new Error("此模型不支持软删除");
-    const data: Record<string, any> = {
-      [softDelete]: new Date(),
-      status: "INACTIVE",
-    };
-    if (deletedBy && updatedAt) data[updatedAt] = deletedBy;
+  /**
+   * 软删除
+   */
+  async softDelete(id: string, tenantId: string, userId?: string): Promise<T> {
+    const exists = await this.findById(id, tenantId);
+    if (!exists) {
+      throw new AppError(404, "记录不存在", 404);
+    }
+
     return this.model.update({
-      where: this.pkWhere(id, tenantId),
-      data,
+      where: { [this.primaryKey]: id },
+      data: {
+        [this.softDeleteField]: SOFT_DELETE_FLAG.DELETED,
+        [this.updatedByField]: userId || null,
+        [this.updatedAtField]: new Date(),
+      },
     });
   }
 
-  /** 物理删除 */
+  /**
+   * 物理删除（谨慎使用）
+   */
   async hardDelete(id: string, tenantId: string): Promise<T> {
-    const { pk, tenantId: tid } = this.fieldMapping;
-    return this.model.delete({ where: { [pk]: id, [tid]: tenantId } });
-  }
+    const exists = await this.findById(id, tenantId);
+    if (!exists) {
+      throw new AppError(404, "记录不存在", 404);
+    }
 
-  /** 恢复已删除记录 */
-  async restore(id: string, tenantId: string): Promise<T> {
-    const { softDelete, pk, tenantId: tid } = this.fieldMapping;
-    if (!softDelete) throw new Error("此模型不支持软删除");
-    return this.model.update({
-      where: { [pk]: id, [tid]: tenantId, [softDelete]: { not: null } },
-      data: { [softDelete]: null, status: "ACTIVE" },
+    return this.model.delete({
+      where: { [this.primaryKey]: id },
     });
   }
 
-  async findDeleted(tenantId: string, page = 1, limit = 20) {
-    const { softDelete, tenantId: tid } = this.fieldMapping;
-    if (!softDelete) throw new Error("此模型不支持软删除");
-    const baseWhere = { [tid]: tenantId, [softDelete]: { not: null } };
-    const [data, total] = await Promise.all([
-      this.model.findMany({
-        where: baseWhere,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: { [softDelete]: "desc" },
-      }),
-      this.model.count({ where: baseWhere }),
-    ]);
-    return { data, total, page, limit };
+  /**
+   * 检查记录是否存在
+   */
+  async exists(where: WhereInput, tenantId: string): Promise<boolean> {
+    const finalWhere = this.buildWhereWithTenant(where, tenantId);
+    const count = await this.model.count({
+      where: {
+        ...finalWhere,
+        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+      },
+    });
+    return count > 0;
+  }
+
+  /**
+   * 统计记录数
+   */
+  async count(where: WhereInput, tenantId: string): Promise<number> {
+    const finalWhere = this.buildWhereWithTenant(where, tenantId);
+    return this.model.count({
+      where: {
+        ...finalWhere,
+        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+      },
+    });
+  }
+
+  /**
+   * 事务处理
+   */
+  async transaction<R>(
+    callback: (tx: Prisma.TransactionClient) => Promise<R>,
+  ): Promise<R> {
+    return prisma.$transaction(async (tx) => {
+      return callback(tx);
+    });
+  }
+
+  /**
+   * 批量创建
+   */
+  async createMany(
+    data: CreateInput[],
+    tenantId: string,
+    userId?: string,
+  ): Promise<{ count: number }> {
+    const createData = data.map((item) => ({
+      ...item,
+      [this.tenantField]: tenantId,
+      [this.createdByField]: userId || null,
+      [this.updatedByField]: userId || null,
+      [this.createdAtField]: new Date(),
+      [this.updatedAtField]: new Date(),
+      [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+    }));
+
+    return this.model.createMany({ data: createData });
+  }
+
+  /**
+   * 批量软删除
+   */
+  async softDeleteMany(
+    ids: string[],
+    tenantId: string,
+    userId?: string,
+  ): Promise<{ count: number }> {
+    const result = await this.model.updateMany({
+      where: {
+        [this.primaryKey]: { in: ids },
+        [this.tenantField]: tenantId,
+        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+      },
+      data: {
+        [this.softDeleteField]: SOFT_DELETE_FLAG.DELETED,
+        [this.updatedByField]: userId || null,
+        [this.updatedAtField]: new Date(),
+      },
+    });
+
+    return { count: result.count };
+  }
+
+  /**
+   * 构建带租户的查询条件
+   * @protected
+   */
+  protected buildWhereWithTenant(where: WhereInput, tenantId: string): any {
+    return {
+      ...where,
+      [this.tenantField]: tenantId,
+      [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+    };
+  }
+
+  /**
+   * 构建排序条件
+   * @protected
+   */
+  protected buildOrderBy(
+    sort?: Array<{ field: string; direction: "asc" | "desc" }>,
+  ): any {
+    if (!sort || sort.length === 0) {
+      return { [this.createdAtField]: "desc" };
+    }
+    return sort.map((s) => ({ [s.field]: s.direction }));
   }
 }
