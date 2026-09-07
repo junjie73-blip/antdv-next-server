@@ -15,79 +15,99 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 /**
  * Model sys_tenant
- * 
+ * 租户表，存储多租户信息
  */
 export type sys_tenant = $Result.DefaultSelection<Prisma.$sys_tenantPayload>
 /**
  * Model sys_user
- * 
+ * 用户表，存储系统用户信息
  */
 export type sys_user = $Result.DefaultSelection<Prisma.$sys_userPayload>
 /**
  * Model sys_role
- * 
+ * 角色表，存储租户内角色信息
  */
 export type sys_role = $Result.DefaultSelection<Prisma.$sys_rolePayload>
 /**
  * Model sys_dept
- * 
+ * 部门表，支持树形组织结构
  */
 export type sys_dept = $Result.DefaultSelection<Prisma.$sys_deptPayload>
 /**
  * Model sys_menu
- * 
+ * 菜单表，支持目录、菜单、按钮三级结构
  */
 export type sys_menu = $Result.DefaultSelection<Prisma.$sys_menuPayload>
 /**
  * Model sys_permission
- * 
+ * 权限表，定义系统操作权限点
  */
 export type sys_permission = $Result.DefaultSelection<Prisma.$sys_permissionPayload>
 /**
  * Model sys_dict_type
- * 
+ * 数据字典类型表
  */
 export type sys_dict_type = $Result.DefaultSelection<Prisma.$sys_dict_typePayload>
 /**
  * Model sys_dict_data
- * 
+ * 数据字典数据表
  */
 export type sys_dict_data = $Result.DefaultSelection<Prisma.$sys_dict_dataPayload>
 /**
  * Model sys_notice
- * 
+ * 通知公告表
  */
 export type sys_notice = $Result.DefaultSelection<Prisma.$sys_noticePayload>
 /**
+ * Model sys_notice_user
+ * 通知与用户关联表，记录通知的接收用户及已读状态
+ */
+export type sys_notice_user = $Result.DefaultSelection<Prisma.$sys_notice_userPayload>
+/**
  * Model sys_audit_log
- * 
+ * 审计日志表，记录系统操作日志
  */
 export type sys_audit_log = $Result.DefaultSelection<Prisma.$sys_audit_logPayload>
 /**
  * Model sys_user_role
- * 
+ * 用户与角色关联表
  */
 export type sys_user_role = $Result.DefaultSelection<Prisma.$sys_user_rolePayload>
 /**
  * Model sys_user_dept
- * 
+ * 用户与部门关联表
  */
 export type sys_user_dept = $Result.DefaultSelection<Prisma.$sys_user_deptPayload>
 /**
  * Model sys_role_menu
- * 
+ * 角色与菜单关联表
  */
 export type sys_role_menu = $Result.DefaultSelection<Prisma.$sys_role_menuPayload>
 /**
  * Model sys_role_permission
- * 
+ * 角色与权限关联表
  */
 export type sys_role_permission = $Result.DefaultSelection<Prisma.$sys_role_permissionPayload>
 /**
  * Model sys_mfa_config
- * 
+ * 用户多因素认证配置表
  */
 export type sys_mfa_config = $Result.DefaultSelection<Prisma.$sys_mfa_configPayload>
+/**
+ * Model sys_file
+ * 文件管理表，记录上传的文件信息
+ */
+export type sys_file = $Result.DefaultSelection<Prisma.$sys_filePayload>
+/**
+ * Model sys_login_log
+ * 登录日志表，记录用户登录历史
+ */
+export type sys_login_log = $Result.DefaultSelection<Prisma.$sys_login_logPayload>
+/**
+ * Model sys_config
+ * 系统配置表，存储租户级配置项
+ */
+export type sys_config = $Result.DefaultSelection<Prisma.$sys_configPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -301,6 +321,16 @@ export class PrismaClient<
   get sys_notice(): Prisma.sys_noticeDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.sys_notice_user`: Exposes CRUD operations for the **sys_notice_user** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_notice_users
+    * const sys_notice_users = await prisma.sys_notice_user.findMany()
+    * ```
+    */
+  get sys_notice_user(): Prisma.sys_notice_userDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.sys_audit_log`: Exposes CRUD operations for the **sys_audit_log** model.
     * Example usage:
     * ```ts
@@ -359,6 +389,36 @@ export class PrismaClient<
     * ```
     */
   get sys_mfa_config(): Prisma.sys_mfa_configDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_file`: Exposes CRUD operations for the **sys_file** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_files
+    * const sys_files = await prisma.sys_file.findMany()
+    * ```
+    */
+  get sys_file(): Prisma.sys_fileDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_login_log`: Exposes CRUD operations for the **sys_login_log** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_login_logs
+    * const sys_login_logs = await prisma.sys_login_log.findMany()
+    * ```
+    */
+  get sys_login_log(): Prisma.sys_login_logDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_config`: Exposes CRUD operations for the **sys_config** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_configs
+    * const sys_configs = await prisma.sys_config.findMany()
+    * ```
+    */
+  get sys_config(): Prisma.sys_configDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -815,12 +875,16 @@ export namespace Prisma {
     sys_dict_type: 'sys_dict_type',
     sys_dict_data: 'sys_dict_data',
     sys_notice: 'sys_notice',
+    sys_notice_user: 'sys_notice_user',
     sys_audit_log: 'sys_audit_log',
     sys_user_role: 'sys_user_role',
     sys_user_dept: 'sys_user_dept',
     sys_role_menu: 'sys_role_menu',
     sys_role_permission: 'sys_role_permission',
-    sys_mfa_config: 'sys_mfa_config'
+    sys_mfa_config: 'sys_mfa_config',
+    sys_file: 'sys_file',
+    sys_login_log: 'sys_login_log',
+    sys_config: 'sys_config'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -836,7 +900,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_mfa_config"
+      modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1506,6 +1570,80 @@ export namespace Prisma {
           }
         }
       }
+      sys_notice_user: {
+        payload: Prisma.$sys_notice_userPayload<ExtArgs>
+        fields: Prisma.sys_notice_userFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_notice_userFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_notice_userFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_notice_userFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_notice_userFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>
+          }
+          findMany: {
+            args: Prisma.sys_notice_userFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>[]
+          }
+          create: {
+            args: Prisma.sys_notice_userCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>
+          }
+          createMany: {
+            args: Prisma.sys_notice_userCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_notice_userCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_notice_userDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>
+          }
+          update: {
+            args: Prisma.sys_notice_userUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_notice_userDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_notice_userUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_notice_userUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_notice_userUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_notice_userPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_notice_userAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_notice_user>
+          }
+          groupBy: {
+            args: Prisma.sys_notice_userGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_notice_userGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_notice_userCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_notice_userCountAggregateOutputType> | number
+          }
+        }
+      }
       sys_audit_log: {
         payload: Prisma.$sys_audit_logPayload<ExtArgs>
         fields: Prisma.sys_audit_logFieldRefs
@@ -1950,6 +2088,228 @@ export namespace Prisma {
           }
         }
       }
+      sys_file: {
+        payload: Prisma.$sys_filePayload<ExtArgs>
+        fields: Prisma.sys_fileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_fileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_fileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>
+          }
+          findFirst: {
+            args: Prisma.sys_fileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_fileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>
+          }
+          findMany: {
+            args: Prisma.sys_fileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>[]
+          }
+          create: {
+            args: Prisma.sys_fileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>
+          }
+          createMany: {
+            args: Prisma.sys_fileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_fileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>[]
+          }
+          delete: {
+            args: Prisma.sys_fileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>
+          }
+          update: {
+            args: Prisma.sys_fileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_fileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_fileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_fileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_fileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_filePayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_fileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_file>
+          }
+          groupBy: {
+            args: Prisma.sys_fileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_fileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_fileCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_fileCountAggregateOutputType> | number
+          }
+        }
+      }
+      sys_login_log: {
+        payload: Prisma.$sys_login_logPayload<ExtArgs>
+        fields: Prisma.sys_login_logFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_login_logFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_login_logFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_login_logFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_login_logFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>
+          }
+          findMany: {
+            args: Prisma.sys_login_logFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>[]
+          }
+          create: {
+            args: Prisma.sys_login_logCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>
+          }
+          createMany: {
+            args: Prisma.sys_login_logCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_login_logCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_login_logDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>
+          }
+          update: {
+            args: Prisma.sys_login_logUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_login_logDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_login_logUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_login_logUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_login_logUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_login_logPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_login_logAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_login_log>
+          }
+          groupBy: {
+            args: Prisma.sys_login_logGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_login_logGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_login_logCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_login_logCountAggregateOutputType> | number
+          }
+        }
+      }
+      sys_config: {
+        payload: Prisma.$sys_configPayload<ExtArgs>
+        fields: Prisma.sys_configFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_configFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_configFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_configFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_configFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>
+          }
+          findMany: {
+            args: Prisma.sys_configFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>[]
+          }
+          create: {
+            args: Prisma.sys_configCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>
+          }
+          createMany: {
+            args: Prisma.sys_configCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_configCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_configDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>
+          }
+          update: {
+            args: Prisma.sys_configUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_configDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_configUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_configUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_configUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_configPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_configAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_config>
+          }
+          groupBy: {
+            args: Prisma.sys_configGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_configGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_configCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_configCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2082,12 +2442,16 @@ export namespace Prisma {
     sys_dict_type?: sys_dict_typeOmit
     sys_dict_data?: sys_dict_dataOmit
     sys_notice?: sys_noticeOmit
+    sys_notice_user?: sys_notice_userOmit
     sys_audit_log?: sys_audit_logOmit
     sys_user_role?: sys_user_roleOmit
     sys_user_dept?: sys_user_deptOmit
     sys_role_menu?: sys_role_menuOmit
     sys_role_permission?: sys_role_permissionOmit
     sys_mfa_config?: sys_mfa_configOmit
+    sys_file?: sys_fileOmit
+    sys_login_log?: sys_login_logOmit
+    sys_config?: sys_configOmit
   }
 
   /* Types for Logging */
@@ -2162,6 +2526,138 @@ export namespace Prisma {
    * Count Types
    */
 
+
+  /**
+   * Count Type Sys_userCountOutputType
+   */
+
+  export type Sys_userCountOutputType = {
+    sys_user_role: number
+    sys_user_dept: number
+  }
+
+  export type Sys_userCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_user_role?: boolean | Sys_userCountOutputTypeCountSys_user_roleArgs
+    sys_user_dept?: boolean | Sys_userCountOutputTypeCountSys_user_deptArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Sys_userCountOutputType without action
+   */
+  export type Sys_userCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sys_userCountOutputType
+     */
+    select?: Sys_userCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Sys_userCountOutputType without action
+   */
+  export type Sys_userCountOutputTypeCountSys_user_roleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_user_roleWhereInput
+  }
+
+  /**
+   * Sys_userCountOutputType without action
+   */
+  export type Sys_userCountOutputTypeCountSys_user_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_user_deptWhereInput
+  }
+
+
+  /**
+   * Count Type Sys_roleCountOutputType
+   */
+
+  export type Sys_roleCountOutputType = {
+    sys_user_role: number
+  }
+
+  export type Sys_roleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_user_role?: boolean | Sys_roleCountOutputTypeCountSys_user_roleArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Sys_roleCountOutputType without action
+   */
+  export type Sys_roleCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sys_roleCountOutputType
+     */
+    select?: Sys_roleCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Sys_roleCountOutputType without action
+   */
+  export type Sys_roleCountOutputTypeCountSys_user_roleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_user_roleWhereInput
+  }
+
+
+  /**
+   * Count Type Sys_deptCountOutputType
+   */
+
+  export type Sys_deptCountOutputType = {
+    sys_user_dept: number
+  }
+
+  export type Sys_deptCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_user_dept?: boolean | Sys_deptCountOutputTypeCountSys_user_deptArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Sys_deptCountOutputType without action
+   */
+  export type Sys_deptCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sys_deptCountOutputType
+     */
+    select?: Sys_deptCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Sys_deptCountOutputType without action
+   */
+  export type Sys_deptCountOutputTypeCountSys_user_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_user_deptWhereInput
+  }
+
+
+  /**
+   * Count Type Sys_noticeCountOutputType
+   */
+
+  export type Sys_noticeCountOutputType = {
+    target_users: number
+  }
+
+  export type Sys_noticeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    target_users?: boolean | Sys_noticeCountOutputTypeCountTarget_usersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Sys_noticeCountOutputType without action
+   */
+  export type Sys_noticeCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sys_noticeCountOutputType
+     */
+    select?: Sys_noticeCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Sys_noticeCountOutputType without action
+   */
+  export type Sys_noticeCountOutputTypeCountTarget_usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_notice_userWhereInput
+  }
 
 
   /**
@@ -2490,18 +2986,57 @@ export namespace Prisma {
     name: "sys_tenant"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 租户ID（主键，UUID）
+       */
       tenant_id: string
+      /**
+       * 租户编码（全局唯一）
+       */
       tenant_code: string
+      /**
+       * 租户名称
+       */
       tenant_name: string
+      /**
+       * 联系人姓名
+       */
       contact_name: string | null
+      /**
+       * 联系电话
+       */
       contact_phone: string | null
+      /**
+       * 联系邮箱
+       */
       contact_email: string | null
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 租户过期时间
+       */
       expire_time: Date | null
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_tenant"]>
     composites: {}
@@ -3612,6 +4147,9 @@ export namespace Prisma {
     created_by?: boolean
     updated_by?: boolean
     is_deleted?: boolean
+    sys_user_role?: boolean | sys_user$sys_user_roleArgs<ExtArgs>
+    sys_user_dept?: boolean | sys_user$sys_user_deptArgs<ExtArgs>
+    _count?: boolean | Sys_userCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_user"]>
 
   export type sys_userSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3675,27 +4213,94 @@ export namespace Prisma {
   }
 
   export type sys_userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "tenant_id" | "username" | "password" | "real_name" | "phone" | "email" | "avatar" | "gender" | "status" | "last_login_ip" | "last_login_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_user"]>
+  export type sys_userInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_user_role?: boolean | sys_user$sys_user_roleArgs<ExtArgs>
+    sys_user_dept?: boolean | sys_user$sys_user_deptArgs<ExtArgs>
+    _count?: boolean | Sys_userCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type sys_userIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type sys_userIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $sys_userPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_user"
-    objects: {}
+    objects: {
+      /**
+       * 用户角色关联列表
+       */
+      sys_user_role: Prisma.$sys_user_rolePayload<ExtArgs>[]
+      /**
+       * 用户部门关联列表
+       */
+      sys_user_dept: Prisma.$sys_user_deptPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 用户ID（主键，UUID）
+       */
       user_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 用户名
+       */
       username: string
+      /**
+       * 密码（哈希存储）
+       */
       password: string
+      /**
+       * 真实姓名
+       */
       real_name: string | null
+      /**
+       * 手机号
+       */
       phone: string | null
+      /**
+       * 邮箱
+       */
       email: string | null
+      /**
+       * 头像URL
+       */
       avatar: string | null
+      /**
+       * 性别：0-未知，1-男，2-女
+       */
       gender: number | null
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 最后登录IP
+       */
       last_login_ip: string | null
+      /**
+       * 最后登录时间
+       */
       last_login_time: Date | null
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_user"]>
     composites: {}
@@ -4091,6 +4696,8 @@ export namespace Prisma {
    */
   export interface Prisma__sys_userClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    sys_user_role<T extends sys_user$sys_user_roleArgs<ExtArgs> = {}>(args?: Subset<T, sys_user$sys_user_roleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_user_rolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sys_user_dept<T extends sys_user$sys_user_deptArgs<ExtArgs> = {}>(args?: Subset<T, sys_user$sys_user_deptArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_user_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4154,6 +4761,10 @@ export namespace Prisma {
      */
     omit?: sys_userOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user to fetch.
      */
     where: sys_userWhereUniqueInput
@@ -4172,6 +4783,10 @@ export namespace Prisma {
      */
     omit?: sys_userOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user to fetch.
      */
     where: sys_userWhereUniqueInput
@@ -4189,6 +4804,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user
      */
     omit?: sys_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
     /**
      * Filter, which sys_user to fetch.
      */
@@ -4238,6 +4857,10 @@ export namespace Prisma {
      */
     omit?: sys_userOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user to fetch.
      */
     where?: sys_userWhereInput
@@ -4285,6 +4908,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user
      */
     omit?: sys_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
     /**
      * Filter, which sys_users to fetch.
      */
@@ -4334,6 +4961,10 @@ export namespace Prisma {
      */
     omit?: sys_userOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_user.
      */
     data: XOR<sys_userCreateInput, sys_userUncheckedCreateInput>
@@ -4381,6 +5012,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user
      */
     omit?: sys_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_user.
      */
@@ -4448,6 +5083,10 @@ export namespace Prisma {
      */
     omit?: sys_userOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
+    /**
      * The filter to search for the sys_user to update in case it exists.
      */
     where: sys_userWhereUniqueInput
@@ -4474,6 +5113,10 @@ export namespace Prisma {
      */
     omit?: sys_userOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
+    /**
      * Filter which sys_user to delete.
      */
     where: sys_userWhereUniqueInput
@@ -4494,6 +5137,54 @@ export namespace Prisma {
   }
 
   /**
+   * sys_user.sys_user_role
+   */
+  export type sys_user$sys_user_roleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_user_role
+     */
+    select?: sys_user_roleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_user_role
+     */
+    omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
+    where?: sys_user_roleWhereInput
+    orderBy?: sys_user_roleOrderByWithRelationInput | sys_user_roleOrderByWithRelationInput[]
+    cursor?: sys_user_roleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_user_roleScalarFieldEnum | Sys_user_roleScalarFieldEnum[]
+  }
+
+  /**
+   * sys_user.sys_user_dept
+   */
+  export type sys_user$sys_user_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_user_dept
+     */
+    select?: sys_user_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_user_dept
+     */
+    omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
+    where?: sys_user_deptWhereInput
+    orderBy?: sys_user_deptOrderByWithRelationInput | sys_user_deptOrderByWithRelationInput[]
+    cursor?: sys_user_deptWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_user_deptScalarFieldEnum | Sys_user_deptScalarFieldEnum[]
+  }
+
+  /**
    * sys_user without action
    */
   export type sys_userDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4505,6 +5196,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user
      */
     omit?: sys_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_userInclude<ExtArgs> | null
   }
 
 
@@ -4770,6 +5465,8 @@ export namespace Prisma {
     created_by?: boolean
     updated_by?: boolean
     is_deleted?: boolean
+    sys_user_role?: boolean | sys_role$sys_user_roleArgs<ExtArgs>
+    _count?: boolean | Sys_roleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role"]>
 
   export type sys_roleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4818,22 +5515,69 @@ export namespace Prisma {
   }
 
   export type sys_roleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"role_id" | "tenant_id" | "role_code" | "role_name" | "description" | "sort_order" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_role"]>
+  export type sys_roleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_user_role?: boolean | sys_role$sys_user_roleArgs<ExtArgs>
+    _count?: boolean | Sys_roleCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type sys_roleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type sys_roleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $sys_rolePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_role"
-    objects: {}
+    objects: {
+      /**
+       * 用户角色关联列表
+       */
+      sys_user_role: Prisma.$sys_user_rolePayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 角色ID（主键，UUID）
+       */
       role_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 角色编码
+       */
       role_code: string
+      /**
+       * 角色名称
+       */
       role_name: string
+      /**
+       * 角色描述
+       */
       description: string | null
+      /**
+       * 排序值
+       */
       sort_order: number
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_role"]>
     composites: {}
@@ -5229,6 +5973,7 @@ export namespace Prisma {
    */
   export interface Prisma__sys_roleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    sys_user_role<T extends sys_role$sys_user_roleArgs<ExtArgs> = {}>(args?: Subset<T, sys_role$sys_user_roleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_user_rolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5287,6 +6032,10 @@ export namespace Prisma {
      */
     omit?: sys_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role to fetch.
      */
     where: sys_roleWhereUniqueInput
@@ -5305,6 +6054,10 @@ export namespace Prisma {
      */
     omit?: sys_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role to fetch.
      */
     where: sys_roleWhereUniqueInput
@@ -5322,6 +6075,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role
      */
     omit?: sys_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
     /**
      * Filter, which sys_role to fetch.
      */
@@ -5371,6 +6128,10 @@ export namespace Prisma {
      */
     omit?: sys_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role to fetch.
      */
     where?: sys_roleWhereInput
@@ -5418,6 +6179,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role
      */
     omit?: sys_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
     /**
      * Filter, which sys_roles to fetch.
      */
@@ -5467,6 +6232,10 @@ export namespace Prisma {
      */
     omit?: sys_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_role.
      */
     data: XOR<sys_roleCreateInput, sys_roleUncheckedCreateInput>
@@ -5514,6 +6283,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role
      */
     omit?: sys_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_role.
      */
@@ -5581,6 +6354,10 @@ export namespace Prisma {
      */
     omit?: sys_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
+    /**
      * The filter to search for the sys_role to update in case it exists.
      */
     where: sys_roleWhereUniqueInput
@@ -5607,6 +6384,10 @@ export namespace Prisma {
      */
     omit?: sys_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
+    /**
      * Filter which sys_role to delete.
      */
     where: sys_roleWhereUniqueInput
@@ -5627,6 +6408,30 @@ export namespace Prisma {
   }
 
   /**
+   * sys_role.sys_user_role
+   */
+  export type sys_role$sys_user_roleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_user_role
+     */
+    select?: sys_user_roleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_user_role
+     */
+    omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
+    where?: sys_user_roleWhereInput
+    orderBy?: sys_user_roleOrderByWithRelationInput | sys_user_roleOrderByWithRelationInput[]
+    cursor?: sys_user_roleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_user_roleScalarFieldEnum | Sys_user_roleScalarFieldEnum[]
+  }
+
+  /**
    * sys_role without action
    */
   export type sys_roleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5638,6 +6443,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role
      */
     omit?: sys_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_roleInclude<ExtArgs> | null
   }
 
 
@@ -5877,7 +6686,7 @@ export namespace Prisma {
   export type Sys_deptGroupByOutputType = {
     dept_id: string
     tenant_id: string
-    parent_id: string
+    parent_id: string | null
     dept_code: string
     dept_name: string
     leader: string | null
@@ -5927,6 +6736,8 @@ export namespace Prisma {
     created_by?: boolean
     updated_by?: boolean
     is_deleted?: boolean
+    sys_user_dept?: boolean | sys_dept$sys_user_deptArgs<ExtArgs>
+    _count?: boolean | Sys_deptCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_dept"]>
 
   export type sys_deptSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5984,25 +6795,81 @@ export namespace Prisma {
   }
 
   export type sys_deptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"dept_id" | "tenant_id" | "parent_id" | "dept_code" | "dept_name" | "leader" | "phone" | "email" | "sort_order" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_dept"]>
+  export type sys_deptInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_user_dept?: boolean | sys_dept$sys_user_deptArgs<ExtArgs>
+    _count?: boolean | Sys_deptCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type sys_deptIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type sys_deptIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $sys_deptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_dept"
-    objects: {}
+    objects: {
+      /**
+       * 用户部门关联列表
+       */
+      sys_user_dept: Prisma.$sys_user_deptPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 部门ID（主键，UUID）
+       */
       dept_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
-      parent_id: string
+      /**
+       * 父部门ID（顶级或子部门）
+       */
+      parent_id: string | null
+      /**
+       * 部门编码
+       */
       dept_code: string
+      /**
+       * 部门名称
+       */
       dept_name: string
+      /**
+       * 负责人
+       */
       leader: string | null
+      /**
+       * 联系电话
+       */
       phone: string | null
+      /**
+       * 邮箱
+       */
       email: string | null
+      /**
+       * 排序值
+       */
       sort_order: number
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_dept"]>
     composites: {}
@@ -6398,6 +7265,7 @@ export namespace Prisma {
    */
   export interface Prisma__sys_deptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    sys_user_dept<T extends sys_dept$sys_user_deptArgs<ExtArgs> = {}>(args?: Subset<T, sys_dept$sys_user_deptArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_user_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6459,6 +7327,10 @@ export namespace Prisma {
      */
     omit?: sys_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
+    /**
      * Filter, which sys_dept to fetch.
      */
     where: sys_deptWhereUniqueInput
@@ -6477,6 +7349,10 @@ export namespace Prisma {
      */
     omit?: sys_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
+    /**
      * Filter, which sys_dept to fetch.
      */
     where: sys_deptWhereUniqueInput
@@ -6494,6 +7370,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_dept
      */
     omit?: sys_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
     /**
      * Filter, which sys_dept to fetch.
      */
@@ -6543,6 +7423,10 @@ export namespace Prisma {
      */
     omit?: sys_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
+    /**
      * Filter, which sys_dept to fetch.
      */
     where?: sys_deptWhereInput
@@ -6590,6 +7474,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_dept
      */
     omit?: sys_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
     /**
      * Filter, which sys_depts to fetch.
      */
@@ -6639,6 +7527,10 @@ export namespace Prisma {
      */
     omit?: sys_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_dept.
      */
     data: XOR<sys_deptCreateInput, sys_deptUncheckedCreateInput>
@@ -6686,6 +7578,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_dept
      */
     omit?: sys_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_dept.
      */
@@ -6753,6 +7649,10 @@ export namespace Prisma {
      */
     omit?: sys_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
+    /**
      * The filter to search for the sys_dept to update in case it exists.
      */
     where: sys_deptWhereUniqueInput
@@ -6779,6 +7679,10 @@ export namespace Prisma {
      */
     omit?: sys_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
+    /**
      * Filter which sys_dept to delete.
      */
     where: sys_deptWhereUniqueInput
@@ -6799,6 +7703,30 @@ export namespace Prisma {
   }
 
   /**
+   * sys_dept.sys_user_dept
+   */
+  export type sys_dept$sys_user_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_user_dept
+     */
+    select?: sys_user_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_user_dept
+     */
+    omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
+    where?: sys_user_deptWhereInput
+    orderBy?: sys_user_deptOrderByWithRelationInput | sys_user_deptOrderByWithRelationInput[]
+    cursor?: sys_user_deptWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_user_deptScalarFieldEnum | Sys_user_deptScalarFieldEnum[]
+  }
+
+  /**
    * sys_dept without action
    */
   export type sys_deptDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6810,6 +7738,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_dept
      */
     omit?: sys_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_deptInclude<ExtArgs> | null
   }
 
 
@@ -7059,7 +7991,7 @@ export namespace Prisma {
   export type Sys_menuGroupByOutputType = {
     menu_id: string
     tenant_id: string
-    parent_id: string
+    parent_id: string | null
     menu_name: string
     menu_type: number
     icon: string | null
@@ -7176,21 +8108,69 @@ export namespace Prisma {
     name: "sys_menu"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 菜单ID（主键，UUID）
+       */
       menu_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
-      parent_id: string
+      /**
+       * 父菜单ID（顶级为全零UUID）
+       */
+      parent_id: string | null
+      /**
+       * 菜单名称
+       */
       menu_name: string
+      /**
+       * 菜单类型：1-目录，2-菜单，3-按钮
+       */
       menu_type: number
+      /**
+       * 图标
+       */
       icon: string | null
+      /**
+       * 路由路径
+       */
       path: string | null
+      /**
+       * 前端组件路径
+       */
       component: string | null
+      /**
+       * 权限标识，如 system:user:list
+       */
       permission: string | null
+      /**
+       * 排序值
+       */
       sort_order: number
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_menu"]>
     composites: {}
@@ -8324,18 +9304,57 @@ export namespace Prisma {
     name: "sys_permission"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 权限ID（主键，UUID）
+       */
       perm_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 权限编码，如 user:create
+       */
       perm_code: string
+      /**
+       * 权限名称
+       */
       perm_name: string
+      /**
+       * 资源类型，如 api、button
+       */
       resource_type: string
+      /**
+       * 动作，如 create、read、update、delete
+       */
       action: string
+      /**
+       * 描述
+       */
       description: string | null
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_permission"]>
     composites: {}
@@ -9444,16 +10463,49 @@ export namespace Prisma {
     name: "sys_dict_type"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 字典类型ID（主键，UUID）
+       */
       dict_type_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 字典编码
+       */
       dict_code: string
+      /**
+       * 字典名称
+       */
       dict_name: string
+      /**
+       * 描述
+       */
       description: string | null
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_dict_type"]>
     composites: {}
@@ -10586,18 +11638,57 @@ export namespace Prisma {
     name: "sys_dict_data"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 字典数据ID（主键，UUID）
+       */
       dict_data_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 所属字典类型ID
+       */
       dict_type_id: string
+      /**
+       * 字典标签
+       */
       dict_label: string
+      /**
+       * 字典值
+       */
       dict_value: string
+      /**
+       * 排序值
+       */
       sort_order: number
+      /**
+       * 状态：0-禁用，1-启用
+       */
       status: number
+      /**
+       * 备注
+       */
       remark: string | null
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_dict_data"]>
     composites: {}
@@ -11668,6 +12759,8 @@ export namespace Prisma {
     created_by?: boolean
     updated_by?: boolean
     is_deleted?: boolean
+    target_users?: boolean | sys_notice$target_usersArgs<ExtArgs>
+    _count?: boolean | Sys_noticeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_notice"]>
 
   export type sys_noticeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11716,22 +12809,69 @@ export namespace Prisma {
   }
 
   export type sys_noticeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_notice"]>
+  export type sys_noticeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    target_users?: boolean | sys_notice$target_usersArgs<ExtArgs>
+    _count?: boolean | Sys_noticeCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type sys_noticeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type sys_noticeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $sys_noticePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_notice"
-    objects: {}
+    objects: {
+      /**
+       * 目标用户关联列表
+       */
+      target_users: Prisma.$sys_notice_userPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 通知ID（主键，UUID）
+       */
       notice_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 通知标题
+       */
       title: string
+      /**
+       * 通知内容（支持富文本）
+       */
       content: string | null
+      /**
+       * 通知类型：1-通知，2-公告，3-提醒
+       */
       notice_type: number
+      /**
+       * 状态：0-草稿，1-发布
+       */
       status: number
+      /**
+       * 定时发布时间
+       */
       publish_time: Date | null
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
+      /**
+       * 创建人ID
+       */
       created_by: string | null
+      /**
+       * 更新人ID
+       */
       updated_by: string | null
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
       is_deleted: number
     }, ExtArgs["result"]["sys_notice"]>
     composites: {}
@@ -12127,6 +13267,7 @@ export namespace Prisma {
    */
   export interface Prisma__sys_noticeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    target_users<T extends sys_notice$target_usersArgs<ExtArgs> = {}>(args?: Subset<T, sys_notice$target_usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12185,6 +13326,10 @@ export namespace Prisma {
      */
     omit?: sys_noticeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
+    /**
      * Filter, which sys_notice to fetch.
      */
     where: sys_noticeWhereUniqueInput
@@ -12203,6 +13348,10 @@ export namespace Prisma {
      */
     omit?: sys_noticeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
+    /**
      * Filter, which sys_notice to fetch.
      */
     where: sys_noticeWhereUniqueInput
@@ -12220,6 +13369,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_notice
      */
     omit?: sys_noticeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
     /**
      * Filter, which sys_notice to fetch.
      */
@@ -12269,6 +13422,10 @@ export namespace Prisma {
      */
     omit?: sys_noticeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
+    /**
      * Filter, which sys_notice to fetch.
      */
     where?: sys_noticeWhereInput
@@ -12316,6 +13473,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_notice
      */
     omit?: sys_noticeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
     /**
      * Filter, which sys_notices to fetch.
      */
@@ -12365,6 +13526,10 @@ export namespace Prisma {
      */
     omit?: sys_noticeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_notice.
      */
     data: XOR<sys_noticeCreateInput, sys_noticeUncheckedCreateInput>
@@ -12412,6 +13577,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_notice
      */
     omit?: sys_noticeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_notice.
      */
@@ -12479,6 +13648,10 @@ export namespace Prisma {
      */
     omit?: sys_noticeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
+    /**
      * The filter to search for the sys_notice to update in case it exists.
      */
     where: sys_noticeWhereUniqueInput
@@ -12505,6 +13678,10 @@ export namespace Prisma {
      */
     omit?: sys_noticeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
+    /**
      * Filter which sys_notice to delete.
      */
     where: sys_noticeWhereUniqueInput
@@ -12525,6 +13702,30 @@ export namespace Prisma {
   }
 
   /**
+   * sys_notice.target_users
+   */
+  export type sys_notice$target_usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    where?: sys_notice_userWhereInput
+    orderBy?: sys_notice_userOrderByWithRelationInput | sys_notice_userOrderByWithRelationInput[]
+    cursor?: sys_notice_userWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_notice_userScalarFieldEnum | Sys_notice_userScalarFieldEnum[]
+  }
+
+  /**
    * sys_notice without action
    */
   export type sys_noticeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12536,6 +13737,1157 @@ export namespace Prisma {
      * Omit specific fields from the sys_notice
      */
     omit?: sys_noticeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_noticeInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_notice_user
+   */
+
+  export type AggregateSys_notice_user = {
+    _count: Sys_notice_userCountAggregateOutputType | null
+    _avg: Sys_notice_userAvgAggregateOutputType | null
+    _sum: Sys_notice_userSumAggregateOutputType | null
+    _min: Sys_notice_userMinAggregateOutputType | null
+    _max: Sys_notice_userMaxAggregateOutputType | null
+  }
+
+  export type Sys_notice_userAvgAggregateOutputType = {
+    is_read: number | null
+  }
+
+  export type Sys_notice_userSumAggregateOutputType = {
+    is_read: number | null
+  }
+
+  export type Sys_notice_userMinAggregateOutputType = {
+    id: string | null
+    notice_id: string | null
+    user_id: string | null
+    tenant_id: string | null
+    is_read: number | null
+    read_time: Date | null
+    created_at: Date | null
+  }
+
+  export type Sys_notice_userMaxAggregateOutputType = {
+    id: string | null
+    notice_id: string | null
+    user_id: string | null
+    tenant_id: string | null
+    is_read: number | null
+    read_time: Date | null
+    created_at: Date | null
+  }
+
+  export type Sys_notice_userCountAggregateOutputType = {
+    id: number
+    notice_id: number
+    user_id: number
+    tenant_id: number
+    is_read: number
+    read_time: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type Sys_notice_userAvgAggregateInputType = {
+    is_read?: true
+  }
+
+  export type Sys_notice_userSumAggregateInputType = {
+    is_read?: true
+  }
+
+  export type Sys_notice_userMinAggregateInputType = {
+    id?: true
+    notice_id?: true
+    user_id?: true
+    tenant_id?: true
+    is_read?: true
+    read_time?: true
+    created_at?: true
+  }
+
+  export type Sys_notice_userMaxAggregateInputType = {
+    id?: true
+    notice_id?: true
+    user_id?: true
+    tenant_id?: true
+    is_read?: true
+    read_time?: true
+    created_at?: true
+  }
+
+  export type Sys_notice_userCountAggregateInputType = {
+    id?: true
+    notice_id?: true
+    user_id?: true
+    tenant_id?: true
+    is_read?: true
+    read_time?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type Sys_notice_userAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_notice_user to aggregate.
+     */
+    where?: sys_notice_userWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_notice_users to fetch.
+     */
+    orderBy?: sys_notice_userOrderByWithRelationInput | sys_notice_userOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_notice_userWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_notice_users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_notice_users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_notice_users
+    **/
+    _count?: true | Sys_notice_userCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sys_notice_userAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sys_notice_userSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_notice_userMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_notice_userMaxAggregateInputType
+  }
+
+  export type GetSys_notice_userAggregateType<T extends Sys_notice_userAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_notice_user]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_notice_user[P]>
+      : GetScalarType<T[P], AggregateSys_notice_user[P]>
+  }
+
+
+
+
+  export type sys_notice_userGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_notice_userWhereInput
+    orderBy?: sys_notice_userOrderByWithAggregationInput | sys_notice_userOrderByWithAggregationInput[]
+    by: Sys_notice_userScalarFieldEnum[] | Sys_notice_userScalarFieldEnum
+    having?: sys_notice_userScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_notice_userCountAggregateInputType | true
+    _avg?: Sys_notice_userAvgAggregateInputType
+    _sum?: Sys_notice_userSumAggregateInputType
+    _min?: Sys_notice_userMinAggregateInputType
+    _max?: Sys_notice_userMaxAggregateInputType
+  }
+
+  export type Sys_notice_userGroupByOutputType = {
+    id: string
+    notice_id: string
+    user_id: string
+    tenant_id: string
+    is_read: number
+    read_time: Date | null
+    created_at: Date
+    _count: Sys_notice_userCountAggregateOutputType | null
+    _avg: Sys_notice_userAvgAggregateOutputType | null
+    _sum: Sys_notice_userSumAggregateOutputType | null
+    _min: Sys_notice_userMinAggregateOutputType | null
+    _max: Sys_notice_userMaxAggregateOutputType | null
+  }
+
+  type GetSys_notice_userGroupByPayload<T extends sys_notice_userGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_notice_userGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_notice_userGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_notice_userGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_notice_userGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_notice_userSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    notice_id?: boolean
+    user_id?: boolean
+    tenant_id?: boolean
+    is_read?: boolean
+    read_time?: boolean
+    created_at?: boolean
+    notice?: boolean | sys_noticeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sys_notice_user"]>
+
+  export type sys_notice_userSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    notice_id?: boolean
+    user_id?: boolean
+    tenant_id?: boolean
+    is_read?: boolean
+    read_time?: boolean
+    created_at?: boolean
+    notice?: boolean | sys_noticeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sys_notice_user"]>
+
+  export type sys_notice_userSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    notice_id?: boolean
+    user_id?: boolean
+    tenant_id?: boolean
+    is_read?: boolean
+    read_time?: boolean
+    created_at?: boolean
+    notice?: boolean | sys_noticeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sys_notice_user"]>
+
+  export type sys_notice_userSelectScalar = {
+    id?: boolean
+    notice_id?: boolean
+    user_id?: boolean
+    tenant_id?: boolean
+    is_read?: boolean
+    read_time?: boolean
+    created_at?: boolean
+  }
+
+  export type sys_notice_userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "notice_id" | "user_id" | "tenant_id" | "is_read" | "read_time" | "created_at", ExtArgs["result"]["sys_notice_user"]>
+  export type sys_notice_userInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    notice?: boolean | sys_noticeDefaultArgs<ExtArgs>
+  }
+  export type sys_notice_userIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    notice?: boolean | sys_noticeDefaultArgs<ExtArgs>
+  }
+  export type sys_notice_userIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    notice?: boolean | sys_noticeDefaultArgs<ExtArgs>
+  }
+
+  export type $sys_notice_userPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_notice_user"
+    objects: {
+      /**
+       * 关联的通知
+       */
+      notice: Prisma.$sys_noticePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 关联ID（主键，UUID）
+       */
+      id: string
+      /**
+       * 通知ID
+       */
+      notice_id: string
+      /**
+       * 用户ID
+       */
+      user_id: string
+      /**
+       * 所属租户ID
+       */
+      tenant_id: string
+      /**
+       * 是否已读：0-未读，1-已读
+       */
+      is_read: number
+      /**
+       * 阅读时间
+       */
+      read_time: Date | null
+      /**
+       * 创建时间
+       */
+      created_at: Date
+    }, ExtArgs["result"]["sys_notice_user"]>
+    composites: {}
+  }
+
+  type sys_notice_userGetPayload<S extends boolean | null | undefined | sys_notice_userDefaultArgs> = $Result.GetResult<Prisma.$sys_notice_userPayload, S>
+
+  type sys_notice_userCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_notice_userFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_notice_userCountAggregateInputType | true
+    }
+
+  export interface sys_notice_userDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_notice_user'], meta: { name: 'sys_notice_user' } }
+    /**
+     * Find zero or one Sys_notice_user that matches the filter.
+     * @param {sys_notice_userFindUniqueArgs} args - Arguments to find a Sys_notice_user
+     * @example
+     * // Get one Sys_notice_user
+     * const sys_notice_user = await prisma.sys_notice_user.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_notice_userFindUniqueArgs>(args: SelectSubset<T, sys_notice_userFindUniqueArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_notice_user that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_notice_userFindUniqueOrThrowArgs} args - Arguments to find a Sys_notice_user
+     * @example
+     * // Get one Sys_notice_user
+     * const sys_notice_user = await prisma.sys_notice_user.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_notice_userFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_notice_userFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_notice_user that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_notice_userFindFirstArgs} args - Arguments to find a Sys_notice_user
+     * @example
+     * // Get one Sys_notice_user
+     * const sys_notice_user = await prisma.sys_notice_user.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_notice_userFindFirstArgs>(args?: SelectSubset<T, sys_notice_userFindFirstArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_notice_user that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_notice_userFindFirstOrThrowArgs} args - Arguments to find a Sys_notice_user
+     * @example
+     * // Get one Sys_notice_user
+     * const sys_notice_user = await prisma.sys_notice_user.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_notice_userFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_notice_userFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_notice_users that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_notice_userFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_notice_users
+     * const sys_notice_users = await prisma.sys_notice_user.findMany()
+     * 
+     * // Get first 10 Sys_notice_users
+     * const sys_notice_users = await prisma.sys_notice_user.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sys_notice_userWithIdOnly = await prisma.sys_notice_user.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends sys_notice_userFindManyArgs>(args?: SelectSubset<T, sys_notice_userFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_notice_user.
+     * @param {sys_notice_userCreateArgs} args - Arguments to create a Sys_notice_user.
+     * @example
+     * // Create one Sys_notice_user
+     * const Sys_notice_user = await prisma.sys_notice_user.create({
+     *   data: {
+     *     // ... data to create a Sys_notice_user
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_notice_userCreateArgs>(args: SelectSubset<T, sys_notice_userCreateArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_notice_users.
+     * @param {sys_notice_userCreateManyArgs} args - Arguments to create many Sys_notice_users.
+     * @example
+     * // Create many Sys_notice_users
+     * const sys_notice_user = await prisma.sys_notice_user.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_notice_userCreateManyArgs>(args?: SelectSubset<T, sys_notice_userCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_notice_users and returns the data saved in the database.
+     * @param {sys_notice_userCreateManyAndReturnArgs} args - Arguments to create many Sys_notice_users.
+     * @example
+     * // Create many Sys_notice_users
+     * const sys_notice_user = await prisma.sys_notice_user.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_notice_users and only return the `id`
+     * const sys_notice_userWithIdOnly = await prisma.sys_notice_user.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_notice_userCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_notice_userCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_notice_user.
+     * @param {sys_notice_userDeleteArgs} args - Arguments to delete one Sys_notice_user.
+     * @example
+     * // Delete one Sys_notice_user
+     * const Sys_notice_user = await prisma.sys_notice_user.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_notice_user
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_notice_userDeleteArgs>(args: SelectSubset<T, sys_notice_userDeleteArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_notice_user.
+     * @param {sys_notice_userUpdateArgs} args - Arguments to update one Sys_notice_user.
+     * @example
+     * // Update one Sys_notice_user
+     * const sys_notice_user = await prisma.sys_notice_user.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_notice_userUpdateArgs>(args: SelectSubset<T, sys_notice_userUpdateArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_notice_users.
+     * @param {sys_notice_userDeleteManyArgs} args - Arguments to filter Sys_notice_users to delete.
+     * @example
+     * // Delete a few Sys_notice_users
+     * const { count } = await prisma.sys_notice_user.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_notice_userDeleteManyArgs>(args?: SelectSubset<T, sys_notice_userDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_notice_users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_notice_userUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_notice_users
+     * const sys_notice_user = await prisma.sys_notice_user.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_notice_userUpdateManyArgs>(args: SelectSubset<T, sys_notice_userUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_notice_users and returns the data updated in the database.
+     * @param {sys_notice_userUpdateManyAndReturnArgs} args - Arguments to update many Sys_notice_users.
+     * @example
+     * // Update many Sys_notice_users
+     * const sys_notice_user = await prisma.sys_notice_user.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_notice_users and only return the `id`
+     * const sys_notice_userWithIdOnly = await prisma.sys_notice_user.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_notice_userUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_notice_userUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_notice_user.
+     * @param {sys_notice_userUpsertArgs} args - Arguments to update or create a Sys_notice_user.
+     * @example
+     * // Update or create a Sys_notice_user
+     * const sys_notice_user = await prisma.sys_notice_user.upsert({
+     *   create: {
+     *     // ... data to create a Sys_notice_user
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_notice_user we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_notice_userUpsertArgs>(args: SelectSubset<T, sys_notice_userUpsertArgs<ExtArgs>>): Prisma__sys_notice_userClient<$Result.GetResult<Prisma.$sys_notice_userPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_notice_users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_notice_userCountArgs} args - Arguments to filter Sys_notice_users to count.
+     * @example
+     * // Count the number of Sys_notice_users
+     * const count = await prisma.sys_notice_user.count({
+     *   where: {
+     *     // ... the filter for the Sys_notice_users we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_notice_userCountArgs>(
+      args?: Subset<T, sys_notice_userCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_notice_userCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_notice_user.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_notice_userAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_notice_userAggregateArgs>(args: Subset<T, Sys_notice_userAggregateArgs>): Prisma.PrismaPromise<GetSys_notice_userAggregateType<T>>
+
+    /**
+     * Group by Sys_notice_user.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_notice_userGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_notice_userGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_notice_userGroupByArgs['orderBy'] }
+        : { orderBy?: sys_notice_userGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_notice_userGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_notice_userGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_notice_user model
+   */
+  readonly fields: sys_notice_userFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_notice_user.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_notice_userClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    notice<T extends sys_noticeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_noticeDefaultArgs<ExtArgs>>): Prisma__sys_noticeClient<$Result.GetResult<Prisma.$sys_noticePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_notice_user model
+   */
+  interface sys_notice_userFieldRefs {
+    readonly id: FieldRef<"sys_notice_user", 'String'>
+    readonly notice_id: FieldRef<"sys_notice_user", 'String'>
+    readonly user_id: FieldRef<"sys_notice_user", 'String'>
+    readonly tenant_id: FieldRef<"sys_notice_user", 'String'>
+    readonly is_read: FieldRef<"sys_notice_user", 'Int'>
+    readonly read_time: FieldRef<"sys_notice_user", 'DateTime'>
+    readonly created_at: FieldRef<"sys_notice_user", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_notice_user findUnique
+   */
+  export type sys_notice_userFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_notice_user to fetch.
+     */
+    where: sys_notice_userWhereUniqueInput
+  }
+
+  /**
+   * sys_notice_user findUniqueOrThrow
+   */
+  export type sys_notice_userFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_notice_user to fetch.
+     */
+    where: sys_notice_userWhereUniqueInput
+  }
+
+  /**
+   * sys_notice_user findFirst
+   */
+  export type sys_notice_userFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_notice_user to fetch.
+     */
+    where?: sys_notice_userWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_notice_users to fetch.
+     */
+    orderBy?: sys_notice_userOrderByWithRelationInput | sys_notice_userOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_notice_users.
+     */
+    cursor?: sys_notice_userWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_notice_users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_notice_users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_notice_users.
+     */
+    distinct?: Sys_notice_userScalarFieldEnum | Sys_notice_userScalarFieldEnum[]
+  }
+
+  /**
+   * sys_notice_user findFirstOrThrow
+   */
+  export type sys_notice_userFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_notice_user to fetch.
+     */
+    where?: sys_notice_userWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_notice_users to fetch.
+     */
+    orderBy?: sys_notice_userOrderByWithRelationInput | sys_notice_userOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_notice_users.
+     */
+    cursor?: sys_notice_userWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_notice_users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_notice_users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_notice_users.
+     */
+    distinct?: Sys_notice_userScalarFieldEnum | Sys_notice_userScalarFieldEnum[]
+  }
+
+  /**
+   * sys_notice_user findMany
+   */
+  export type sys_notice_userFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_notice_users to fetch.
+     */
+    where?: sys_notice_userWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_notice_users to fetch.
+     */
+    orderBy?: sys_notice_userOrderByWithRelationInput | sys_notice_userOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_notice_users.
+     */
+    cursor?: sys_notice_userWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_notice_users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_notice_users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_notice_users.
+     */
+    distinct?: Sys_notice_userScalarFieldEnum | Sys_notice_userScalarFieldEnum[]
+  }
+
+  /**
+   * sys_notice_user create
+   */
+  export type sys_notice_userCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * The data needed to create a sys_notice_user.
+     */
+    data: XOR<sys_notice_userCreateInput, sys_notice_userUncheckedCreateInput>
+  }
+
+  /**
+   * sys_notice_user createMany
+   */
+  export type sys_notice_userCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_notice_users.
+     */
+    data: sys_notice_userCreateManyInput | sys_notice_userCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_notice_user createManyAndReturn
+   */
+  export type sys_notice_userCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_notice_users.
+     */
+    data: sys_notice_userCreateManyInput | sys_notice_userCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * sys_notice_user update
+   */
+  export type sys_notice_userUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * The data needed to update a sys_notice_user.
+     */
+    data: XOR<sys_notice_userUpdateInput, sys_notice_userUncheckedUpdateInput>
+    /**
+     * Choose, which sys_notice_user to update.
+     */
+    where: sys_notice_userWhereUniqueInput
+  }
+
+  /**
+   * sys_notice_user updateMany
+   */
+  export type sys_notice_userUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_notice_users.
+     */
+    data: XOR<sys_notice_userUpdateManyMutationInput, sys_notice_userUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_notice_users to update
+     */
+    where?: sys_notice_userWhereInput
+    /**
+     * Limit how many sys_notice_users to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_notice_user updateManyAndReturn
+   */
+  export type sys_notice_userUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_notice_users.
+     */
+    data: XOR<sys_notice_userUpdateManyMutationInput, sys_notice_userUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_notice_users to update
+     */
+    where?: sys_notice_userWhereInput
+    /**
+     * Limit how many sys_notice_users to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * sys_notice_user upsert
+   */
+  export type sys_notice_userUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * The filter to search for the sys_notice_user to update in case it exists.
+     */
+    where: sys_notice_userWhereUniqueInput
+    /**
+     * In case the sys_notice_user found by the `where` argument doesn't exist, create a new sys_notice_user with this data.
+     */
+    create: XOR<sys_notice_userCreateInput, sys_notice_userUncheckedCreateInput>
+    /**
+     * In case the sys_notice_user was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_notice_userUpdateInput, sys_notice_userUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_notice_user delete
+   */
+  export type sys_notice_userDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
+    /**
+     * Filter which sys_notice_user to delete.
+     */
+    where: sys_notice_userWhereUniqueInput
+  }
+
+  /**
+   * sys_notice_user deleteMany
+   */
+  export type sys_notice_userDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_notice_users to delete
+     */
+    where?: sys_notice_userWhereInput
+    /**
+     * Limit how many sys_notice_users to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_notice_user without action
+   */
+  export type sys_notice_userDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_notice_user
+     */
+    select?: sys_notice_userSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_notice_user
+     */
+    omit?: sys_notice_userOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_notice_userInclude<ExtArgs> | null
   }
 
 
@@ -12883,20 +15235,65 @@ export namespace Prisma {
     name: "sys_audit_log"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 日志ID（主键，UUID）
+       */
       log_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 操作用户ID
+       */
       user_id: string | null
+      /**
+       * 操作用户名
+       */
       username: string | null
+      /**
+       * 操作描述
+       */
       operation: string
+      /**
+       * HTTP方法
+       */
       method: string
+      /**
+       * 请求URL
+       */
       request_url: string
+      /**
+       * 请求参数（JSON字符串）
+       */
       request_params: string | null
+      /**
+       * 响应数据（JSON字符串）
+       */
       response_data: string | null
+      /**
+       * 客户端IP
+       */
       ip_address: string
+      /**
+       * 用户代理
+       */
       user_agent: string | null
+      /**
+       * 执行时间（毫秒）
+       */
       execute_time: number
+      /**
+       * 状态：0-失败，1-成功
+       */
       status: number
+      /**
+       * 错误信息
+       */
       error_msg: string | null
+      /**
+       * 创建时间
+       */
       created_at: Date
     }, ExtArgs["result"]["sys_audit_log"]>
     composites: {}
@@ -13871,6 +16268,8 @@ export namespace Prisma {
     role_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_user_role"]>
 
   export type sys_user_roleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13879,6 +16278,8 @@ export namespace Prisma {
     role_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_user_role"]>
 
   export type sys_user_roleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13887,6 +16288,8 @@ export namespace Prisma {
     role_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_user_role"]>
 
   export type sys_user_roleSelectScalar = {
@@ -13898,15 +16301,51 @@ export namespace Prisma {
   }
 
   export type sys_user_roleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "role_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_user_role"]>
+  export type sys_user_roleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+  }
+  export type sys_user_roleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+  }
+  export type sys_user_roleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+  }
 
   export type $sys_user_rolePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_user_role"
-    objects: {}
+    objects: {
+      /**
+       * 关联的用户
+       */
+      user: Prisma.$sys_userPayload<ExtArgs>
+      /**
+       * 关联的角色
+       */
+      role: Prisma.$sys_rolePayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 关联ID（主键，UUID）
+       */
       id: string
+      /**
+       * 用户ID
+       */
       user_id: string
+      /**
+       * 角色ID
+       */
       role_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 创建时间
+       */
       created_at: Date
     }, ExtArgs["result"]["sys_user_role"]>
     composites: {}
@@ -14302,6 +16741,8 @@ export namespace Prisma {
    */
   export interface Prisma__sys_user_roleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends sys_userDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_userDefaultArgs<ExtArgs>>): Prisma__sys_userClient<$Result.GetResult<Prisma.$sys_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    role<T extends sys_roleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_roleDefaultArgs<ExtArgs>>): Prisma__sys_roleClient<$Result.GetResult<Prisma.$sys_rolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14353,6 +16794,10 @@ export namespace Prisma {
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user_role to fetch.
      */
     where: sys_user_roleWhereUniqueInput
@@ -14371,6 +16816,10 @@ export namespace Prisma {
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user_role to fetch.
      */
     where: sys_user_roleWhereUniqueInput
@@ -14388,6 +16837,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_role
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
     /**
      * Filter, which sys_user_role to fetch.
      */
@@ -14437,6 +16890,10 @@ export namespace Prisma {
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user_role to fetch.
      */
     where?: sys_user_roleWhereInput
@@ -14484,6 +16941,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_role
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
     /**
      * Filter, which sys_user_roles to fetch.
      */
@@ -14533,6 +16994,10 @@ export namespace Prisma {
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_user_role.
      */
     data: XOR<sys_user_roleCreateInput, sys_user_roleUncheckedCreateInput>
@@ -14566,6 +17031,10 @@ export namespace Prisma {
      */
     data: sys_user_roleCreateManyInput | sys_user_roleCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -14580,6 +17049,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_role
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_user_role.
      */
@@ -14632,6 +17105,10 @@ export namespace Prisma {
      * Limit how many sys_user_roles to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -14646,6 +17123,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_role
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
     /**
      * The filter to search for the sys_user_role to update in case it exists.
      */
@@ -14672,6 +17153,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_role
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
     /**
      * Filter which sys_user_role to delete.
      */
@@ -14704,6 +17189,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_role
      */
     omit?: sys_user_roleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_roleInclude<ExtArgs> | null
   }
 
 
@@ -14913,6 +17402,8 @@ export namespace Prisma {
     tenant_id?: boolean
     is_primary?: boolean
     created_at?: boolean
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_user_dept"]>
 
   export type sys_user_deptSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14922,6 +17413,8 @@ export namespace Prisma {
     tenant_id?: boolean
     is_primary?: boolean
     created_at?: boolean
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_user_dept"]>
 
   export type sys_user_deptSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14931,6 +17424,8 @@ export namespace Prisma {
     tenant_id?: boolean
     is_primary?: boolean
     created_at?: boolean
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_user_dept"]>
 
   export type sys_user_deptSelectScalar = {
@@ -14943,16 +17438,55 @@ export namespace Prisma {
   }
 
   export type sys_user_deptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "dept_id" | "tenant_id" | "is_primary" | "created_at", ExtArgs["result"]["sys_user_dept"]>
+  export type sys_user_deptInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }
+  export type sys_user_deptIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }
+  export type sys_user_deptIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | sys_userDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }
 
   export type $sys_user_deptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_user_dept"
-    objects: {}
+    objects: {
+      /**
+       * 关联的用户
+       */
+      user: Prisma.$sys_userPayload<ExtArgs>
+      /**
+       * 关联的部门
+       */
+      dept: Prisma.$sys_deptPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 关联ID（主键，UUID）
+       */
       id: string
+      /**
+       * 用户ID
+       */
       user_id: string
+      /**
+       * 部门ID
+       */
       dept_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 是否主部门：0-否，1-是
+       */
       is_primary: number
+      /**
+       * 创建时间
+       */
       created_at: Date
     }, ExtArgs["result"]["sys_user_dept"]>
     composites: {}
@@ -15348,6 +17882,8 @@ export namespace Prisma {
    */
   export interface Prisma__sys_user_deptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends sys_userDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_userDefaultArgs<ExtArgs>>): Prisma__sys_userClient<$Result.GetResult<Prisma.$sys_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    dept<T extends sys_deptDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_deptDefaultArgs<ExtArgs>>): Prisma__sys_deptClient<$Result.GetResult<Prisma.$sys_deptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15400,6 +17936,10 @@ export namespace Prisma {
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user_dept to fetch.
      */
     where: sys_user_deptWhereUniqueInput
@@ -15418,6 +17958,10 @@ export namespace Prisma {
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user_dept to fetch.
      */
     where: sys_user_deptWhereUniqueInput
@@ -15435,6 +17979,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_dept
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
     /**
      * Filter, which sys_user_dept to fetch.
      */
@@ -15484,6 +18032,10 @@ export namespace Prisma {
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
+    /**
      * Filter, which sys_user_dept to fetch.
      */
     where?: sys_user_deptWhereInput
@@ -15531,6 +18083,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_dept
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
     /**
      * Filter, which sys_user_depts to fetch.
      */
@@ -15580,6 +18136,10 @@ export namespace Prisma {
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_user_dept.
      */
     data: XOR<sys_user_deptCreateInput, sys_user_deptUncheckedCreateInput>
@@ -15613,6 +18173,10 @@ export namespace Prisma {
      */
     data: sys_user_deptCreateManyInput | sys_user_deptCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -15627,6 +18191,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_dept
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_user_dept.
      */
@@ -15679,6 +18247,10 @@ export namespace Prisma {
      * Limit how many sys_user_depts to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -15693,6 +18265,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_dept
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
     /**
      * The filter to search for the sys_user_dept to update in case it exists.
      */
@@ -15719,6 +18295,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_dept
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
     /**
      * Filter which sys_user_dept to delete.
      */
@@ -15751,6 +18331,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_user_dept
      */
     omit?: sys_user_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_user_deptInclude<ExtArgs> | null
   }
 
 
@@ -15950,10 +18534,25 @@ export namespace Prisma {
     name: "sys_role_menu"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 关联ID（主键，UUID）
+       */
       id: string
+      /**
+       * 角色ID
+       */
       role_id: string
+      /**
+       * 菜单ID
+       */
       menu_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 创建时间
+       */
       created_at: Date
     }, ExtArgs["result"]["sys_role_menu"]>
     composites: {}
@@ -16950,10 +19549,25 @@ export namespace Prisma {
     name: "sys_role_permission"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 关联ID（主键，UUID）
+       */
       id: string
+      /**
+       * 角色ID
+       */
       role_id: string
+      /**
+       * 权限ID
+       */
       perm_id: string
+      /**
+       * 所属租户ID
+       */
       tenant_id: string
+      /**
+       * 创建时间
+       */
       created_at: Date
     }, ExtArgs["result"]["sys_role_permission"]>
     composites: {}
@@ -18006,12 +20620,33 @@ export namespace Prisma {
     name: "sys_mfa_config"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
+      /**
+       * MFA配置ID（主键，UUID）
+       */
       mfa_id: string
+      /**
+       * 用户ID（唯一）
+       */
       user_id: string
+      /**
+       * TOTP密钥
+       */
       secret: string
+      /**
+       * 是否启用：0-未启用，1-启用
+       */
       enabled: number
+      /**
+       * 备用验证码（JSON数组字符串）
+       */
       backup_codes: string | null
+      /**
+       * 创建时间
+       */
       created_at: Date
+      /**
+       * 更新时间
+       */
       updated_at: Date
     }, ExtArgs["result"]["sys_mfa_config"]>
     composites: {}
@@ -18815,6 +21450,3350 @@ export namespace Prisma {
 
 
   /**
+   * Model sys_file
+   */
+
+  export type AggregateSys_file = {
+    _count: Sys_fileCountAggregateOutputType | null
+    _avg: Sys_fileAvgAggregateOutputType | null
+    _sum: Sys_fileSumAggregateOutputType | null
+    _min: Sys_fileMinAggregateOutputType | null
+    _max: Sys_fileMaxAggregateOutputType | null
+  }
+
+  export type Sys_fileAvgAggregateOutputType = {
+    size: number | null
+    is_deleted: number | null
+  }
+
+  export type Sys_fileSumAggregateOutputType = {
+    size: number | null
+    is_deleted: number | null
+  }
+
+  export type Sys_fileMinAggregateOutputType = {
+    file_id: string | null
+    tenant_id: string | null
+    filename: string | null
+    url: string | null
+    size: number | null
+    mime_type: string | null
+    uploader: string | null
+    created_at: Date | null
+    is_deleted: number | null
+  }
+
+  export type Sys_fileMaxAggregateOutputType = {
+    file_id: string | null
+    tenant_id: string | null
+    filename: string | null
+    url: string | null
+    size: number | null
+    mime_type: string | null
+    uploader: string | null
+    created_at: Date | null
+    is_deleted: number | null
+  }
+
+  export type Sys_fileCountAggregateOutputType = {
+    file_id: number
+    tenant_id: number
+    filename: number
+    url: number
+    size: number
+    mime_type: number
+    uploader: number
+    created_at: number
+    is_deleted: number
+    _all: number
+  }
+
+
+  export type Sys_fileAvgAggregateInputType = {
+    size?: true
+    is_deleted?: true
+  }
+
+  export type Sys_fileSumAggregateInputType = {
+    size?: true
+    is_deleted?: true
+  }
+
+  export type Sys_fileMinAggregateInputType = {
+    file_id?: true
+    tenant_id?: true
+    filename?: true
+    url?: true
+    size?: true
+    mime_type?: true
+    uploader?: true
+    created_at?: true
+    is_deleted?: true
+  }
+
+  export type Sys_fileMaxAggregateInputType = {
+    file_id?: true
+    tenant_id?: true
+    filename?: true
+    url?: true
+    size?: true
+    mime_type?: true
+    uploader?: true
+    created_at?: true
+    is_deleted?: true
+  }
+
+  export type Sys_fileCountAggregateInputType = {
+    file_id?: true
+    tenant_id?: true
+    filename?: true
+    url?: true
+    size?: true
+    mime_type?: true
+    uploader?: true
+    created_at?: true
+    is_deleted?: true
+    _all?: true
+  }
+
+  export type Sys_fileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_file to aggregate.
+     */
+    where?: sys_fileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_files to fetch.
+     */
+    orderBy?: sys_fileOrderByWithRelationInput | sys_fileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_fileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_files from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_files.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_files
+    **/
+    _count?: true | Sys_fileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sys_fileAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sys_fileSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_fileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_fileMaxAggregateInputType
+  }
+
+  export type GetSys_fileAggregateType<T extends Sys_fileAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_file]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_file[P]>
+      : GetScalarType<T[P], AggregateSys_file[P]>
+  }
+
+
+
+
+  export type sys_fileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_fileWhereInput
+    orderBy?: sys_fileOrderByWithAggregationInput | sys_fileOrderByWithAggregationInput[]
+    by: Sys_fileScalarFieldEnum[] | Sys_fileScalarFieldEnum
+    having?: sys_fileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_fileCountAggregateInputType | true
+    _avg?: Sys_fileAvgAggregateInputType
+    _sum?: Sys_fileSumAggregateInputType
+    _min?: Sys_fileMinAggregateInputType
+    _max?: Sys_fileMaxAggregateInputType
+  }
+
+  export type Sys_fileGroupByOutputType = {
+    file_id: string
+    tenant_id: string
+    filename: string
+    url: string
+    size: number
+    mime_type: string | null
+    uploader: string | null
+    created_at: Date
+    is_deleted: number
+    _count: Sys_fileCountAggregateOutputType | null
+    _avg: Sys_fileAvgAggregateOutputType | null
+    _sum: Sys_fileSumAggregateOutputType | null
+    _min: Sys_fileMinAggregateOutputType | null
+    _max: Sys_fileMaxAggregateOutputType | null
+  }
+
+  type GetSys_fileGroupByPayload<T extends sys_fileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_fileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_fileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_fileGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_fileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_fileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    file_id?: boolean
+    tenant_id?: boolean
+    filename?: boolean
+    url?: boolean
+    size?: boolean
+    mime_type?: boolean
+    uploader?: boolean
+    created_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_file"]>
+
+  export type sys_fileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    file_id?: boolean
+    tenant_id?: boolean
+    filename?: boolean
+    url?: boolean
+    size?: boolean
+    mime_type?: boolean
+    uploader?: boolean
+    created_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_file"]>
+
+  export type sys_fileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    file_id?: boolean
+    tenant_id?: boolean
+    filename?: boolean
+    url?: boolean
+    size?: boolean
+    mime_type?: boolean
+    uploader?: boolean
+    created_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_file"]>
+
+  export type sys_fileSelectScalar = {
+    file_id?: boolean
+    tenant_id?: boolean
+    filename?: boolean
+    url?: boolean
+    size?: boolean
+    mime_type?: boolean
+    uploader?: boolean
+    created_at?: boolean
+    is_deleted?: boolean
+  }
+
+  export type sys_fileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"file_id" | "tenant_id" | "filename" | "url" | "size" | "mime_type" | "uploader" | "created_at" | "is_deleted", ExtArgs["result"]["sys_file"]>
+
+  export type $sys_filePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_file"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 文件ID（主键，UUID）
+       */
+      file_id: string
+      /**
+       * 所属租户ID
+       */
+      tenant_id: string
+      /**
+       * 原始文件名
+       */
+      filename: string
+      /**
+       * 文件访问URL
+       */
+      url: string
+      /**
+       * 文件大小（字节）
+       */
+      size: number
+      /**
+       * MIME类型
+       */
+      mime_type: string | null
+      /**
+       * 上传人ID
+       */
+      uploader: string | null
+      /**
+       * 创建时间
+       */
+      created_at: Date
+      /**
+       * 软删除标记：0-正常，1-已删除
+       */
+      is_deleted: number
+    }, ExtArgs["result"]["sys_file"]>
+    composites: {}
+  }
+
+  type sys_fileGetPayload<S extends boolean | null | undefined | sys_fileDefaultArgs> = $Result.GetResult<Prisma.$sys_filePayload, S>
+
+  type sys_fileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_fileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_fileCountAggregateInputType | true
+    }
+
+  export interface sys_fileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_file'], meta: { name: 'sys_file' } }
+    /**
+     * Find zero or one Sys_file that matches the filter.
+     * @param {sys_fileFindUniqueArgs} args - Arguments to find a Sys_file
+     * @example
+     * // Get one Sys_file
+     * const sys_file = await prisma.sys_file.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_fileFindUniqueArgs>(args: SelectSubset<T, sys_fileFindUniqueArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_file that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_fileFindUniqueOrThrowArgs} args - Arguments to find a Sys_file
+     * @example
+     * // Get one Sys_file
+     * const sys_file = await prisma.sys_file.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_fileFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_fileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_file that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_fileFindFirstArgs} args - Arguments to find a Sys_file
+     * @example
+     * // Get one Sys_file
+     * const sys_file = await prisma.sys_file.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_fileFindFirstArgs>(args?: SelectSubset<T, sys_fileFindFirstArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_file that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_fileFindFirstOrThrowArgs} args - Arguments to find a Sys_file
+     * @example
+     * // Get one Sys_file
+     * const sys_file = await prisma.sys_file.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_fileFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_fileFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_files that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_fileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_files
+     * const sys_files = await prisma.sys_file.findMany()
+     * 
+     * // Get first 10 Sys_files
+     * const sys_files = await prisma.sys_file.findMany({ take: 10 })
+     * 
+     * // Only select the `file_id`
+     * const sys_fileWithFile_idOnly = await prisma.sys_file.findMany({ select: { file_id: true } })
+     * 
+     */
+    findMany<T extends sys_fileFindManyArgs>(args?: SelectSubset<T, sys_fileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_file.
+     * @param {sys_fileCreateArgs} args - Arguments to create a Sys_file.
+     * @example
+     * // Create one Sys_file
+     * const Sys_file = await prisma.sys_file.create({
+     *   data: {
+     *     // ... data to create a Sys_file
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_fileCreateArgs>(args: SelectSubset<T, sys_fileCreateArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_files.
+     * @param {sys_fileCreateManyArgs} args - Arguments to create many Sys_files.
+     * @example
+     * // Create many Sys_files
+     * const sys_file = await prisma.sys_file.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_fileCreateManyArgs>(args?: SelectSubset<T, sys_fileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_files and returns the data saved in the database.
+     * @param {sys_fileCreateManyAndReturnArgs} args - Arguments to create many Sys_files.
+     * @example
+     * // Create many Sys_files
+     * const sys_file = await prisma.sys_file.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_files and only return the `file_id`
+     * const sys_fileWithFile_idOnly = await prisma.sys_file.createManyAndReturn({
+     *   select: { file_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_fileCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_fileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_file.
+     * @param {sys_fileDeleteArgs} args - Arguments to delete one Sys_file.
+     * @example
+     * // Delete one Sys_file
+     * const Sys_file = await prisma.sys_file.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_file
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_fileDeleteArgs>(args: SelectSubset<T, sys_fileDeleteArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_file.
+     * @param {sys_fileUpdateArgs} args - Arguments to update one Sys_file.
+     * @example
+     * // Update one Sys_file
+     * const sys_file = await prisma.sys_file.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_fileUpdateArgs>(args: SelectSubset<T, sys_fileUpdateArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_files.
+     * @param {sys_fileDeleteManyArgs} args - Arguments to filter Sys_files to delete.
+     * @example
+     * // Delete a few Sys_files
+     * const { count } = await prisma.sys_file.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_fileDeleteManyArgs>(args?: SelectSubset<T, sys_fileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_files.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_fileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_files
+     * const sys_file = await prisma.sys_file.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_fileUpdateManyArgs>(args: SelectSubset<T, sys_fileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_files and returns the data updated in the database.
+     * @param {sys_fileUpdateManyAndReturnArgs} args - Arguments to update many Sys_files.
+     * @example
+     * // Update many Sys_files
+     * const sys_file = await prisma.sys_file.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_files and only return the `file_id`
+     * const sys_fileWithFile_idOnly = await prisma.sys_file.updateManyAndReturn({
+     *   select: { file_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_fileUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_fileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_file.
+     * @param {sys_fileUpsertArgs} args - Arguments to update or create a Sys_file.
+     * @example
+     * // Update or create a Sys_file
+     * const sys_file = await prisma.sys_file.upsert({
+     *   create: {
+     *     // ... data to create a Sys_file
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_file we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_fileUpsertArgs>(args: SelectSubset<T, sys_fileUpsertArgs<ExtArgs>>): Prisma__sys_fileClient<$Result.GetResult<Prisma.$sys_filePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_files.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_fileCountArgs} args - Arguments to filter Sys_files to count.
+     * @example
+     * // Count the number of Sys_files
+     * const count = await prisma.sys_file.count({
+     *   where: {
+     *     // ... the filter for the Sys_files we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_fileCountArgs>(
+      args?: Subset<T, sys_fileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_fileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_file.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_fileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_fileAggregateArgs>(args: Subset<T, Sys_fileAggregateArgs>): Prisma.PrismaPromise<GetSys_fileAggregateType<T>>
+
+    /**
+     * Group by Sys_file.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_fileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_fileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_fileGroupByArgs['orderBy'] }
+        : { orderBy?: sys_fileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_fileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_fileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_file model
+   */
+  readonly fields: sys_fileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_file.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_fileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_file model
+   */
+  interface sys_fileFieldRefs {
+    readonly file_id: FieldRef<"sys_file", 'String'>
+    readonly tenant_id: FieldRef<"sys_file", 'String'>
+    readonly filename: FieldRef<"sys_file", 'String'>
+    readonly url: FieldRef<"sys_file", 'String'>
+    readonly size: FieldRef<"sys_file", 'Int'>
+    readonly mime_type: FieldRef<"sys_file", 'String'>
+    readonly uploader: FieldRef<"sys_file", 'String'>
+    readonly created_at: FieldRef<"sys_file", 'DateTime'>
+    readonly is_deleted: FieldRef<"sys_file", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_file findUnique
+   */
+  export type sys_fileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_file to fetch.
+     */
+    where: sys_fileWhereUniqueInput
+  }
+
+  /**
+   * sys_file findUniqueOrThrow
+   */
+  export type sys_fileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_file to fetch.
+     */
+    where: sys_fileWhereUniqueInput
+  }
+
+  /**
+   * sys_file findFirst
+   */
+  export type sys_fileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_file to fetch.
+     */
+    where?: sys_fileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_files to fetch.
+     */
+    orderBy?: sys_fileOrderByWithRelationInput | sys_fileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_files.
+     */
+    cursor?: sys_fileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_files from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_files.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_files.
+     */
+    distinct?: Sys_fileScalarFieldEnum | Sys_fileScalarFieldEnum[]
+  }
+
+  /**
+   * sys_file findFirstOrThrow
+   */
+  export type sys_fileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_file to fetch.
+     */
+    where?: sys_fileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_files to fetch.
+     */
+    orderBy?: sys_fileOrderByWithRelationInput | sys_fileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_files.
+     */
+    cursor?: sys_fileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_files from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_files.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_files.
+     */
+    distinct?: Sys_fileScalarFieldEnum | Sys_fileScalarFieldEnum[]
+  }
+
+  /**
+   * sys_file findMany
+   */
+  export type sys_fileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_files to fetch.
+     */
+    where?: sys_fileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_files to fetch.
+     */
+    orderBy?: sys_fileOrderByWithRelationInput | sys_fileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_files.
+     */
+    cursor?: sys_fileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_files from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_files.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_files.
+     */
+    distinct?: Sys_fileScalarFieldEnum | Sys_fileScalarFieldEnum[]
+  }
+
+  /**
+   * sys_file create
+   */
+  export type sys_fileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_file.
+     */
+    data: XOR<sys_fileCreateInput, sys_fileUncheckedCreateInput>
+  }
+
+  /**
+   * sys_file createMany
+   */
+  export type sys_fileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_files.
+     */
+    data: sys_fileCreateManyInput | sys_fileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_file createManyAndReturn
+   */
+  export type sys_fileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_files.
+     */
+    data: sys_fileCreateManyInput | sys_fileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_file update
+   */
+  export type sys_fileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_file.
+     */
+    data: XOR<sys_fileUpdateInput, sys_fileUncheckedUpdateInput>
+    /**
+     * Choose, which sys_file to update.
+     */
+    where: sys_fileWhereUniqueInput
+  }
+
+  /**
+   * sys_file updateMany
+   */
+  export type sys_fileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_files.
+     */
+    data: XOR<sys_fileUpdateManyMutationInput, sys_fileUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_files to update
+     */
+    where?: sys_fileWhereInput
+    /**
+     * Limit how many sys_files to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_file updateManyAndReturn
+   */
+  export type sys_fileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_files.
+     */
+    data: XOR<sys_fileUpdateManyMutationInput, sys_fileUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_files to update
+     */
+    where?: sys_fileWhereInput
+    /**
+     * Limit how many sys_files to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_file upsert
+   */
+  export type sys_fileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_file to update in case it exists.
+     */
+    where: sys_fileWhereUniqueInput
+    /**
+     * In case the sys_file found by the `where` argument doesn't exist, create a new sys_file with this data.
+     */
+    create: XOR<sys_fileCreateInput, sys_fileUncheckedCreateInput>
+    /**
+     * In case the sys_file was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_fileUpdateInput, sys_fileUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_file delete
+   */
+  export type sys_fileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+    /**
+     * Filter which sys_file to delete.
+     */
+    where: sys_fileWhereUniqueInput
+  }
+
+  /**
+   * sys_file deleteMany
+   */
+  export type sys_fileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_files to delete
+     */
+    where?: sys_fileWhereInput
+    /**
+     * Limit how many sys_files to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_file without action
+   */
+  export type sys_fileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_file
+     */
+    select?: sys_fileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_file
+     */
+    omit?: sys_fileOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_login_log
+   */
+
+  export type AggregateSys_login_log = {
+    _count: Sys_login_logCountAggregateOutputType | null
+    _avg: Sys_login_logAvgAggregateOutputType | null
+    _sum: Sys_login_logSumAggregateOutputType | null
+    _min: Sys_login_logMinAggregateOutputType | null
+    _max: Sys_login_logMaxAggregateOutputType | null
+  }
+
+  export type Sys_login_logAvgAggregateOutputType = {
+    status: number | null
+  }
+
+  export type Sys_login_logSumAggregateOutputType = {
+    status: number | null
+  }
+
+  export type Sys_login_logMinAggregateOutputType = {
+    log_id: string | null
+    tenant_id: string | null
+    user_id: string | null
+    username: string | null
+    ip_address: string | null
+    user_agent: string | null
+    status: number | null
+    message: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_login_logMaxAggregateOutputType = {
+    log_id: string | null
+    tenant_id: string | null
+    user_id: string | null
+    username: string | null
+    ip_address: string | null
+    user_agent: string | null
+    status: number | null
+    message: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_login_logCountAggregateOutputType = {
+    log_id: number
+    tenant_id: number
+    user_id: number
+    username: number
+    ip_address: number
+    user_agent: number
+    status: number
+    message: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type Sys_login_logAvgAggregateInputType = {
+    status?: true
+  }
+
+  export type Sys_login_logSumAggregateInputType = {
+    status?: true
+  }
+
+  export type Sys_login_logMinAggregateInputType = {
+    log_id?: true
+    tenant_id?: true
+    user_id?: true
+    username?: true
+    ip_address?: true
+    user_agent?: true
+    status?: true
+    message?: true
+    created_at?: true
+  }
+
+  export type Sys_login_logMaxAggregateInputType = {
+    log_id?: true
+    tenant_id?: true
+    user_id?: true
+    username?: true
+    ip_address?: true
+    user_agent?: true
+    status?: true
+    message?: true
+    created_at?: true
+  }
+
+  export type Sys_login_logCountAggregateInputType = {
+    log_id?: true
+    tenant_id?: true
+    user_id?: true
+    username?: true
+    ip_address?: true
+    user_agent?: true
+    status?: true
+    message?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type Sys_login_logAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_login_log to aggregate.
+     */
+    where?: sys_login_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_login_logs to fetch.
+     */
+    orderBy?: sys_login_logOrderByWithRelationInput | sys_login_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_login_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_login_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_login_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_login_logs
+    **/
+    _count?: true | Sys_login_logCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sys_login_logAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sys_login_logSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_login_logMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_login_logMaxAggregateInputType
+  }
+
+  export type GetSys_login_logAggregateType<T extends Sys_login_logAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_login_log]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_login_log[P]>
+      : GetScalarType<T[P], AggregateSys_login_log[P]>
+  }
+
+
+
+
+  export type sys_login_logGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_login_logWhereInput
+    orderBy?: sys_login_logOrderByWithAggregationInput | sys_login_logOrderByWithAggregationInput[]
+    by: Sys_login_logScalarFieldEnum[] | Sys_login_logScalarFieldEnum
+    having?: sys_login_logScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_login_logCountAggregateInputType | true
+    _avg?: Sys_login_logAvgAggregateInputType
+    _sum?: Sys_login_logSumAggregateInputType
+    _min?: Sys_login_logMinAggregateInputType
+    _max?: Sys_login_logMaxAggregateInputType
+  }
+
+  export type Sys_login_logGroupByOutputType = {
+    log_id: string
+    tenant_id: string
+    user_id: string | null
+    username: string
+    ip_address: string
+    user_agent: string | null
+    status: number
+    message: string | null
+    created_at: Date
+    _count: Sys_login_logCountAggregateOutputType | null
+    _avg: Sys_login_logAvgAggregateOutputType | null
+    _sum: Sys_login_logSumAggregateOutputType | null
+    _min: Sys_login_logMinAggregateOutputType | null
+    _max: Sys_login_logMaxAggregateOutputType | null
+  }
+
+  type GetSys_login_logGroupByPayload<T extends sys_login_logGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_login_logGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_login_logGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_login_logGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_login_logGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_login_logSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    log_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    username?: boolean
+    ip_address?: boolean
+    user_agent?: boolean
+    status?: boolean
+    message?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_login_log"]>
+
+  export type sys_login_logSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    log_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    username?: boolean
+    ip_address?: boolean
+    user_agent?: boolean
+    status?: boolean
+    message?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_login_log"]>
+
+  export type sys_login_logSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    log_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    username?: boolean
+    ip_address?: boolean
+    user_agent?: boolean
+    status?: boolean
+    message?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_login_log"]>
+
+  export type sys_login_logSelectScalar = {
+    log_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    username?: boolean
+    ip_address?: boolean
+    user_agent?: boolean
+    status?: boolean
+    message?: boolean
+    created_at?: boolean
+  }
+
+  export type sys_login_logOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"log_id" | "tenant_id" | "user_id" | "username" | "ip_address" | "user_agent" | "status" | "message" | "created_at", ExtArgs["result"]["sys_login_log"]>
+
+  export type $sys_login_logPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_login_log"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 日志ID（主键，UUID）
+       */
+      log_id: string
+      /**
+       * 所属租户ID
+       */
+      tenant_id: string
+      /**
+       * 用户ID（可能为空，如登录失败）
+       */
+      user_id: string | null
+      /**
+       * 用户名
+       */
+      username: string
+      /**
+       * 登录IP
+       */
+      ip_address: string
+      /**
+       * 用户代理
+       */
+      user_agent: string | null
+      /**
+       * 登录状态：0-失败，1-成功
+       */
+      status: number
+      /**
+       * 附加信息（如失败原因）
+       */
+      message: string | null
+      /**
+       * 创建时间
+       */
+      created_at: Date
+    }, ExtArgs["result"]["sys_login_log"]>
+    composites: {}
+  }
+
+  type sys_login_logGetPayload<S extends boolean | null | undefined | sys_login_logDefaultArgs> = $Result.GetResult<Prisma.$sys_login_logPayload, S>
+
+  type sys_login_logCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_login_logFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_login_logCountAggregateInputType | true
+    }
+
+  export interface sys_login_logDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_login_log'], meta: { name: 'sys_login_log' } }
+    /**
+     * Find zero or one Sys_login_log that matches the filter.
+     * @param {sys_login_logFindUniqueArgs} args - Arguments to find a Sys_login_log
+     * @example
+     * // Get one Sys_login_log
+     * const sys_login_log = await prisma.sys_login_log.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_login_logFindUniqueArgs>(args: SelectSubset<T, sys_login_logFindUniqueArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_login_log that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_login_logFindUniqueOrThrowArgs} args - Arguments to find a Sys_login_log
+     * @example
+     * // Get one Sys_login_log
+     * const sys_login_log = await prisma.sys_login_log.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_login_logFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_login_logFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_login_log that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_login_logFindFirstArgs} args - Arguments to find a Sys_login_log
+     * @example
+     * // Get one Sys_login_log
+     * const sys_login_log = await prisma.sys_login_log.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_login_logFindFirstArgs>(args?: SelectSubset<T, sys_login_logFindFirstArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_login_log that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_login_logFindFirstOrThrowArgs} args - Arguments to find a Sys_login_log
+     * @example
+     * // Get one Sys_login_log
+     * const sys_login_log = await prisma.sys_login_log.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_login_logFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_login_logFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_login_logs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_login_logFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_login_logs
+     * const sys_login_logs = await prisma.sys_login_log.findMany()
+     * 
+     * // Get first 10 Sys_login_logs
+     * const sys_login_logs = await prisma.sys_login_log.findMany({ take: 10 })
+     * 
+     * // Only select the `log_id`
+     * const sys_login_logWithLog_idOnly = await prisma.sys_login_log.findMany({ select: { log_id: true } })
+     * 
+     */
+    findMany<T extends sys_login_logFindManyArgs>(args?: SelectSubset<T, sys_login_logFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_login_log.
+     * @param {sys_login_logCreateArgs} args - Arguments to create a Sys_login_log.
+     * @example
+     * // Create one Sys_login_log
+     * const Sys_login_log = await prisma.sys_login_log.create({
+     *   data: {
+     *     // ... data to create a Sys_login_log
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_login_logCreateArgs>(args: SelectSubset<T, sys_login_logCreateArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_login_logs.
+     * @param {sys_login_logCreateManyArgs} args - Arguments to create many Sys_login_logs.
+     * @example
+     * // Create many Sys_login_logs
+     * const sys_login_log = await prisma.sys_login_log.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_login_logCreateManyArgs>(args?: SelectSubset<T, sys_login_logCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_login_logs and returns the data saved in the database.
+     * @param {sys_login_logCreateManyAndReturnArgs} args - Arguments to create many Sys_login_logs.
+     * @example
+     * // Create many Sys_login_logs
+     * const sys_login_log = await prisma.sys_login_log.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_login_logs and only return the `log_id`
+     * const sys_login_logWithLog_idOnly = await prisma.sys_login_log.createManyAndReturn({
+     *   select: { log_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_login_logCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_login_logCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_login_log.
+     * @param {sys_login_logDeleteArgs} args - Arguments to delete one Sys_login_log.
+     * @example
+     * // Delete one Sys_login_log
+     * const Sys_login_log = await prisma.sys_login_log.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_login_log
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_login_logDeleteArgs>(args: SelectSubset<T, sys_login_logDeleteArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_login_log.
+     * @param {sys_login_logUpdateArgs} args - Arguments to update one Sys_login_log.
+     * @example
+     * // Update one Sys_login_log
+     * const sys_login_log = await prisma.sys_login_log.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_login_logUpdateArgs>(args: SelectSubset<T, sys_login_logUpdateArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_login_logs.
+     * @param {sys_login_logDeleteManyArgs} args - Arguments to filter Sys_login_logs to delete.
+     * @example
+     * // Delete a few Sys_login_logs
+     * const { count } = await prisma.sys_login_log.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_login_logDeleteManyArgs>(args?: SelectSubset<T, sys_login_logDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_login_logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_login_logUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_login_logs
+     * const sys_login_log = await prisma.sys_login_log.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_login_logUpdateManyArgs>(args: SelectSubset<T, sys_login_logUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_login_logs and returns the data updated in the database.
+     * @param {sys_login_logUpdateManyAndReturnArgs} args - Arguments to update many Sys_login_logs.
+     * @example
+     * // Update many Sys_login_logs
+     * const sys_login_log = await prisma.sys_login_log.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_login_logs and only return the `log_id`
+     * const sys_login_logWithLog_idOnly = await prisma.sys_login_log.updateManyAndReturn({
+     *   select: { log_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_login_logUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_login_logUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_login_log.
+     * @param {sys_login_logUpsertArgs} args - Arguments to update or create a Sys_login_log.
+     * @example
+     * // Update or create a Sys_login_log
+     * const sys_login_log = await prisma.sys_login_log.upsert({
+     *   create: {
+     *     // ... data to create a Sys_login_log
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_login_log we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_login_logUpsertArgs>(args: SelectSubset<T, sys_login_logUpsertArgs<ExtArgs>>): Prisma__sys_login_logClient<$Result.GetResult<Prisma.$sys_login_logPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_login_logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_login_logCountArgs} args - Arguments to filter Sys_login_logs to count.
+     * @example
+     * // Count the number of Sys_login_logs
+     * const count = await prisma.sys_login_log.count({
+     *   where: {
+     *     // ... the filter for the Sys_login_logs we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_login_logCountArgs>(
+      args?: Subset<T, sys_login_logCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_login_logCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_login_log.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_login_logAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_login_logAggregateArgs>(args: Subset<T, Sys_login_logAggregateArgs>): Prisma.PrismaPromise<GetSys_login_logAggregateType<T>>
+
+    /**
+     * Group by Sys_login_log.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_login_logGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_login_logGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_login_logGroupByArgs['orderBy'] }
+        : { orderBy?: sys_login_logGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_login_logGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_login_logGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_login_log model
+   */
+  readonly fields: sys_login_logFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_login_log.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_login_logClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_login_log model
+   */
+  interface sys_login_logFieldRefs {
+    readonly log_id: FieldRef<"sys_login_log", 'String'>
+    readonly tenant_id: FieldRef<"sys_login_log", 'String'>
+    readonly user_id: FieldRef<"sys_login_log", 'String'>
+    readonly username: FieldRef<"sys_login_log", 'String'>
+    readonly ip_address: FieldRef<"sys_login_log", 'String'>
+    readonly user_agent: FieldRef<"sys_login_log", 'String'>
+    readonly status: FieldRef<"sys_login_log", 'Int'>
+    readonly message: FieldRef<"sys_login_log", 'String'>
+    readonly created_at: FieldRef<"sys_login_log", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_login_log findUnique
+   */
+  export type sys_login_logFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_login_log to fetch.
+     */
+    where: sys_login_logWhereUniqueInput
+  }
+
+  /**
+   * sys_login_log findUniqueOrThrow
+   */
+  export type sys_login_logFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_login_log to fetch.
+     */
+    where: sys_login_logWhereUniqueInput
+  }
+
+  /**
+   * sys_login_log findFirst
+   */
+  export type sys_login_logFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_login_log to fetch.
+     */
+    where?: sys_login_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_login_logs to fetch.
+     */
+    orderBy?: sys_login_logOrderByWithRelationInput | sys_login_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_login_logs.
+     */
+    cursor?: sys_login_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_login_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_login_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_login_logs.
+     */
+    distinct?: Sys_login_logScalarFieldEnum | Sys_login_logScalarFieldEnum[]
+  }
+
+  /**
+   * sys_login_log findFirstOrThrow
+   */
+  export type sys_login_logFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_login_log to fetch.
+     */
+    where?: sys_login_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_login_logs to fetch.
+     */
+    orderBy?: sys_login_logOrderByWithRelationInput | sys_login_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_login_logs.
+     */
+    cursor?: sys_login_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_login_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_login_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_login_logs.
+     */
+    distinct?: Sys_login_logScalarFieldEnum | Sys_login_logScalarFieldEnum[]
+  }
+
+  /**
+   * sys_login_log findMany
+   */
+  export type sys_login_logFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_login_logs to fetch.
+     */
+    where?: sys_login_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_login_logs to fetch.
+     */
+    orderBy?: sys_login_logOrderByWithRelationInput | sys_login_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_login_logs.
+     */
+    cursor?: sys_login_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_login_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_login_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_login_logs.
+     */
+    distinct?: Sys_login_logScalarFieldEnum | Sys_login_logScalarFieldEnum[]
+  }
+
+  /**
+   * sys_login_log create
+   */
+  export type sys_login_logCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_login_log.
+     */
+    data: XOR<sys_login_logCreateInput, sys_login_logUncheckedCreateInput>
+  }
+
+  /**
+   * sys_login_log createMany
+   */
+  export type sys_login_logCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_login_logs.
+     */
+    data: sys_login_logCreateManyInput | sys_login_logCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_login_log createManyAndReturn
+   */
+  export type sys_login_logCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_login_logs.
+     */
+    data: sys_login_logCreateManyInput | sys_login_logCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_login_log update
+   */
+  export type sys_login_logUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_login_log.
+     */
+    data: XOR<sys_login_logUpdateInput, sys_login_logUncheckedUpdateInput>
+    /**
+     * Choose, which sys_login_log to update.
+     */
+    where: sys_login_logWhereUniqueInput
+  }
+
+  /**
+   * sys_login_log updateMany
+   */
+  export type sys_login_logUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_login_logs.
+     */
+    data: XOR<sys_login_logUpdateManyMutationInput, sys_login_logUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_login_logs to update
+     */
+    where?: sys_login_logWhereInput
+    /**
+     * Limit how many sys_login_logs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_login_log updateManyAndReturn
+   */
+  export type sys_login_logUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_login_logs.
+     */
+    data: XOR<sys_login_logUpdateManyMutationInput, sys_login_logUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_login_logs to update
+     */
+    where?: sys_login_logWhereInput
+    /**
+     * Limit how many sys_login_logs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_login_log upsert
+   */
+  export type sys_login_logUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_login_log to update in case it exists.
+     */
+    where: sys_login_logWhereUniqueInput
+    /**
+     * In case the sys_login_log found by the `where` argument doesn't exist, create a new sys_login_log with this data.
+     */
+    create: XOR<sys_login_logCreateInput, sys_login_logUncheckedCreateInput>
+    /**
+     * In case the sys_login_log was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_login_logUpdateInput, sys_login_logUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_login_log delete
+   */
+  export type sys_login_logDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+    /**
+     * Filter which sys_login_log to delete.
+     */
+    where: sys_login_logWhereUniqueInput
+  }
+
+  /**
+   * sys_login_log deleteMany
+   */
+  export type sys_login_logDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_login_logs to delete
+     */
+    where?: sys_login_logWhereInput
+    /**
+     * Limit how many sys_login_logs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_login_log without action
+   */
+  export type sys_login_logDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_login_log
+     */
+    select?: sys_login_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_login_log
+     */
+    omit?: sys_login_logOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_config
+   */
+
+  export type AggregateSys_config = {
+    _count: Sys_configCountAggregateOutputType | null
+    _avg: Sys_configAvgAggregateOutputType | null
+    _sum: Sys_configSumAggregateOutputType | null
+    _min: Sys_configMinAggregateOutputType | null
+    _max: Sys_configMaxAggregateOutputType | null
+  }
+
+  export type Sys_configAvgAggregateOutputType = {
+    is_deleted: number | null
+  }
+
+  export type Sys_configSumAggregateOutputType = {
+    is_deleted: number | null
+  }
+
+  export type Sys_configMinAggregateOutputType = {
+    config_id: string | null
+    tenant_id: string | null
+    config_key: string | null
+    config_value: string | null
+    description: string | null
+    created_by: string | null
+    updated_by: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    is_deleted: number | null
+  }
+
+  export type Sys_configMaxAggregateOutputType = {
+    config_id: string | null
+    tenant_id: string | null
+    config_key: string | null
+    config_value: string | null
+    description: string | null
+    created_by: string | null
+    updated_by: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    is_deleted: number | null
+  }
+
+  export type Sys_configCountAggregateOutputType = {
+    config_id: number
+    tenant_id: number
+    config_key: number
+    config_value: number
+    description: number
+    created_by: number
+    updated_by: number
+    created_at: number
+    updated_at: number
+    is_deleted: number
+    _all: number
+  }
+
+
+  export type Sys_configAvgAggregateInputType = {
+    is_deleted?: true
+  }
+
+  export type Sys_configSumAggregateInputType = {
+    is_deleted?: true
+  }
+
+  export type Sys_configMinAggregateInputType = {
+    config_id?: true
+    tenant_id?: true
+    config_key?: true
+    config_value?: true
+    description?: true
+    created_by?: true
+    updated_by?: true
+    created_at?: true
+    updated_at?: true
+    is_deleted?: true
+  }
+
+  export type Sys_configMaxAggregateInputType = {
+    config_id?: true
+    tenant_id?: true
+    config_key?: true
+    config_value?: true
+    description?: true
+    created_by?: true
+    updated_by?: true
+    created_at?: true
+    updated_at?: true
+    is_deleted?: true
+  }
+
+  export type Sys_configCountAggregateInputType = {
+    config_id?: true
+    tenant_id?: true
+    config_key?: true
+    config_value?: true
+    description?: true
+    created_by?: true
+    updated_by?: true
+    created_at?: true
+    updated_at?: true
+    is_deleted?: true
+    _all?: true
+  }
+
+  export type Sys_configAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_config to aggregate.
+     */
+    where?: sys_configWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_configs to fetch.
+     */
+    orderBy?: sys_configOrderByWithRelationInput | sys_configOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_configWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_configs
+    **/
+    _count?: true | Sys_configCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sys_configAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sys_configSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_configMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_configMaxAggregateInputType
+  }
+
+  export type GetSys_configAggregateType<T extends Sys_configAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_config]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_config[P]>
+      : GetScalarType<T[P], AggregateSys_config[P]>
+  }
+
+
+
+
+  export type sys_configGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_configWhereInput
+    orderBy?: sys_configOrderByWithAggregationInput | sys_configOrderByWithAggregationInput[]
+    by: Sys_configScalarFieldEnum[] | Sys_configScalarFieldEnum
+    having?: sys_configScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_configCountAggregateInputType | true
+    _avg?: Sys_configAvgAggregateInputType
+    _sum?: Sys_configSumAggregateInputType
+    _min?: Sys_configMinAggregateInputType
+    _max?: Sys_configMaxAggregateInputType
+  }
+
+  export type Sys_configGroupByOutputType = {
+    config_id: string
+    tenant_id: string
+    config_key: string
+    config_value: string | null
+    description: string | null
+    created_by: string | null
+    updated_by: string | null
+    created_at: Date
+    updated_at: Date
+    is_deleted: number
+    _count: Sys_configCountAggregateOutputType | null
+    _avg: Sys_configAvgAggregateOutputType | null
+    _sum: Sys_configSumAggregateOutputType | null
+    _min: Sys_configMinAggregateOutputType | null
+    _max: Sys_configMaxAggregateOutputType | null
+  }
+
+  type GetSys_configGroupByPayload<T extends sys_configGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_configGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_configGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_configGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_configGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_configSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    config_id?: boolean
+    tenant_id?: boolean
+    config_key?: boolean
+    config_value?: boolean
+    description?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_config"]>
+
+  export type sys_configSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    config_id?: boolean
+    tenant_id?: boolean
+    config_key?: boolean
+    config_value?: boolean
+    description?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_config"]>
+
+  export type sys_configSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    config_id?: boolean
+    tenant_id?: boolean
+    config_key?: boolean
+    config_value?: boolean
+    description?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_config"]>
+
+  export type sys_configSelectScalar = {
+    config_id?: boolean
+    tenant_id?: boolean
+    config_key?: boolean
+    config_value?: boolean
+    description?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }
+
+  export type sys_configOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"config_id" | "tenant_id" | "config_key" | "config_value" | "description" | "created_by" | "updated_by" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["sys_config"]>
+
+  export type $sys_configPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_config"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      /**
+       * 配置ID（主键，UUID）
+       */
+      config_id: string
+      /**
+       * 所属租户ID
+       */
+      tenant_id: string
+      /**
+       * 配置键
+       */
+      config_key: string
+      /**
+       * 配置值
+       */
+      config_value: string | null
+      /**
+       * 配置描述
+       */
+      description: string | null
+      created_by: string | null
+      updated_by: string | null
+      created_at: Date
+      updated_at: Date
+      is_deleted: number
+    }, ExtArgs["result"]["sys_config"]>
+    composites: {}
+  }
+
+  type sys_configGetPayload<S extends boolean | null | undefined | sys_configDefaultArgs> = $Result.GetResult<Prisma.$sys_configPayload, S>
+
+  type sys_configCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_configFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_configCountAggregateInputType | true
+    }
+
+  export interface sys_configDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_config'], meta: { name: 'sys_config' } }
+    /**
+     * Find zero or one Sys_config that matches the filter.
+     * @param {sys_configFindUniqueArgs} args - Arguments to find a Sys_config
+     * @example
+     * // Get one Sys_config
+     * const sys_config = await prisma.sys_config.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_configFindUniqueArgs>(args: SelectSubset<T, sys_configFindUniqueArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_config that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_configFindUniqueOrThrowArgs} args - Arguments to find a Sys_config
+     * @example
+     * // Get one Sys_config
+     * const sys_config = await prisma.sys_config.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_configFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_configFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_config that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_configFindFirstArgs} args - Arguments to find a Sys_config
+     * @example
+     * // Get one Sys_config
+     * const sys_config = await prisma.sys_config.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_configFindFirstArgs>(args?: SelectSubset<T, sys_configFindFirstArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_config that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_configFindFirstOrThrowArgs} args - Arguments to find a Sys_config
+     * @example
+     * // Get one Sys_config
+     * const sys_config = await prisma.sys_config.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_configFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_configFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_configs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_configFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_configs
+     * const sys_configs = await prisma.sys_config.findMany()
+     * 
+     * // Get first 10 Sys_configs
+     * const sys_configs = await prisma.sys_config.findMany({ take: 10 })
+     * 
+     * // Only select the `config_id`
+     * const sys_configWithConfig_idOnly = await prisma.sys_config.findMany({ select: { config_id: true } })
+     * 
+     */
+    findMany<T extends sys_configFindManyArgs>(args?: SelectSubset<T, sys_configFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_config.
+     * @param {sys_configCreateArgs} args - Arguments to create a Sys_config.
+     * @example
+     * // Create one Sys_config
+     * const Sys_config = await prisma.sys_config.create({
+     *   data: {
+     *     // ... data to create a Sys_config
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_configCreateArgs>(args: SelectSubset<T, sys_configCreateArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_configs.
+     * @param {sys_configCreateManyArgs} args - Arguments to create many Sys_configs.
+     * @example
+     * // Create many Sys_configs
+     * const sys_config = await prisma.sys_config.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_configCreateManyArgs>(args?: SelectSubset<T, sys_configCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_configs and returns the data saved in the database.
+     * @param {sys_configCreateManyAndReturnArgs} args - Arguments to create many Sys_configs.
+     * @example
+     * // Create many Sys_configs
+     * const sys_config = await prisma.sys_config.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_configs and only return the `config_id`
+     * const sys_configWithConfig_idOnly = await prisma.sys_config.createManyAndReturn({
+     *   select: { config_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_configCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_configCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_config.
+     * @param {sys_configDeleteArgs} args - Arguments to delete one Sys_config.
+     * @example
+     * // Delete one Sys_config
+     * const Sys_config = await prisma.sys_config.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_config
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_configDeleteArgs>(args: SelectSubset<T, sys_configDeleteArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_config.
+     * @param {sys_configUpdateArgs} args - Arguments to update one Sys_config.
+     * @example
+     * // Update one Sys_config
+     * const sys_config = await prisma.sys_config.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_configUpdateArgs>(args: SelectSubset<T, sys_configUpdateArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_configs.
+     * @param {sys_configDeleteManyArgs} args - Arguments to filter Sys_configs to delete.
+     * @example
+     * // Delete a few Sys_configs
+     * const { count } = await prisma.sys_config.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_configDeleteManyArgs>(args?: SelectSubset<T, sys_configDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_configs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_configUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_configs
+     * const sys_config = await prisma.sys_config.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_configUpdateManyArgs>(args: SelectSubset<T, sys_configUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_configs and returns the data updated in the database.
+     * @param {sys_configUpdateManyAndReturnArgs} args - Arguments to update many Sys_configs.
+     * @example
+     * // Update many Sys_configs
+     * const sys_config = await prisma.sys_config.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_configs and only return the `config_id`
+     * const sys_configWithConfig_idOnly = await prisma.sys_config.updateManyAndReturn({
+     *   select: { config_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_configUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_configUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_config.
+     * @param {sys_configUpsertArgs} args - Arguments to update or create a Sys_config.
+     * @example
+     * // Update or create a Sys_config
+     * const sys_config = await prisma.sys_config.upsert({
+     *   create: {
+     *     // ... data to create a Sys_config
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_config we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_configUpsertArgs>(args: SelectSubset<T, sys_configUpsertArgs<ExtArgs>>): Prisma__sys_configClient<$Result.GetResult<Prisma.$sys_configPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_configs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_configCountArgs} args - Arguments to filter Sys_configs to count.
+     * @example
+     * // Count the number of Sys_configs
+     * const count = await prisma.sys_config.count({
+     *   where: {
+     *     // ... the filter for the Sys_configs we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_configCountArgs>(
+      args?: Subset<T, sys_configCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_configCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_config.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_configAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_configAggregateArgs>(args: Subset<T, Sys_configAggregateArgs>): Prisma.PrismaPromise<GetSys_configAggregateType<T>>
+
+    /**
+     * Group by Sys_config.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_configGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_configGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_configGroupByArgs['orderBy'] }
+        : { orderBy?: sys_configGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_configGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_configGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_config model
+   */
+  readonly fields: sys_configFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_config.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_configClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_config model
+   */
+  interface sys_configFieldRefs {
+    readonly config_id: FieldRef<"sys_config", 'String'>
+    readonly tenant_id: FieldRef<"sys_config", 'String'>
+    readonly config_key: FieldRef<"sys_config", 'String'>
+    readonly config_value: FieldRef<"sys_config", 'String'>
+    readonly description: FieldRef<"sys_config", 'String'>
+    readonly created_by: FieldRef<"sys_config", 'String'>
+    readonly updated_by: FieldRef<"sys_config", 'String'>
+    readonly created_at: FieldRef<"sys_config", 'DateTime'>
+    readonly updated_at: FieldRef<"sys_config", 'DateTime'>
+    readonly is_deleted: FieldRef<"sys_config", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_config findUnique
+   */
+  export type sys_configFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_config to fetch.
+     */
+    where: sys_configWhereUniqueInput
+  }
+
+  /**
+   * sys_config findUniqueOrThrow
+   */
+  export type sys_configFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_config to fetch.
+     */
+    where: sys_configWhereUniqueInput
+  }
+
+  /**
+   * sys_config findFirst
+   */
+  export type sys_configFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_config to fetch.
+     */
+    where?: sys_configWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_configs to fetch.
+     */
+    orderBy?: sys_configOrderByWithRelationInput | sys_configOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_configs.
+     */
+    cursor?: sys_configWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_configs.
+     */
+    distinct?: Sys_configScalarFieldEnum | Sys_configScalarFieldEnum[]
+  }
+
+  /**
+   * sys_config findFirstOrThrow
+   */
+  export type sys_configFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_config to fetch.
+     */
+    where?: sys_configWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_configs to fetch.
+     */
+    orderBy?: sys_configOrderByWithRelationInput | sys_configOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_configs.
+     */
+    cursor?: sys_configWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_configs.
+     */
+    distinct?: Sys_configScalarFieldEnum | Sys_configScalarFieldEnum[]
+  }
+
+  /**
+   * sys_config findMany
+   */
+  export type sys_configFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_configs to fetch.
+     */
+    where?: sys_configWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_configs to fetch.
+     */
+    orderBy?: sys_configOrderByWithRelationInput | sys_configOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_configs.
+     */
+    cursor?: sys_configWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_configs.
+     */
+    distinct?: Sys_configScalarFieldEnum | Sys_configScalarFieldEnum[]
+  }
+
+  /**
+   * sys_config create
+   */
+  export type sys_configCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_config.
+     */
+    data: XOR<sys_configCreateInput, sys_configUncheckedCreateInput>
+  }
+
+  /**
+   * sys_config createMany
+   */
+  export type sys_configCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_configs.
+     */
+    data: sys_configCreateManyInput | sys_configCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_config createManyAndReturn
+   */
+  export type sys_configCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_configs.
+     */
+    data: sys_configCreateManyInput | sys_configCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_config update
+   */
+  export type sys_configUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_config.
+     */
+    data: XOR<sys_configUpdateInput, sys_configUncheckedUpdateInput>
+    /**
+     * Choose, which sys_config to update.
+     */
+    where: sys_configWhereUniqueInput
+  }
+
+  /**
+   * sys_config updateMany
+   */
+  export type sys_configUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_configs.
+     */
+    data: XOR<sys_configUpdateManyMutationInput, sys_configUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_configs to update
+     */
+    where?: sys_configWhereInput
+    /**
+     * Limit how many sys_configs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_config updateManyAndReturn
+   */
+  export type sys_configUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_configs.
+     */
+    data: XOR<sys_configUpdateManyMutationInput, sys_configUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_configs to update
+     */
+    where?: sys_configWhereInput
+    /**
+     * Limit how many sys_configs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_config upsert
+   */
+  export type sys_configUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_config to update in case it exists.
+     */
+    where: sys_configWhereUniqueInput
+    /**
+     * In case the sys_config found by the `where` argument doesn't exist, create a new sys_config with this data.
+     */
+    create: XOR<sys_configCreateInput, sys_configUncheckedCreateInput>
+    /**
+     * In case the sys_config was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_configUpdateInput, sys_configUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_config delete
+   */
+  export type sys_configDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+    /**
+     * Filter which sys_config to delete.
+     */
+    where: sys_configWhereUniqueInput
+  }
+
+  /**
+   * sys_config deleteMany
+   */
+  export type sys_configDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_configs to delete
+     */
+    where?: sys_configWhereInput
+    /**
+     * Limit how many sys_configs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_config without action
+   */
+  export type sys_configDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_config
+     */
+    select?: sys_configSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_config
+     */
+    omit?: sys_configOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -19004,6 +24983,19 @@ export namespace Prisma {
   export type Sys_noticeScalarFieldEnum = (typeof Sys_noticeScalarFieldEnum)[keyof typeof Sys_noticeScalarFieldEnum]
 
 
+  export const Sys_notice_userScalarFieldEnum: {
+    id: 'id',
+    notice_id: 'notice_id',
+    user_id: 'user_id',
+    tenant_id: 'tenant_id',
+    is_read: 'is_read',
+    read_time: 'read_time',
+    created_at: 'created_at'
+  };
+
+  export type Sys_notice_userScalarFieldEnum = (typeof Sys_notice_userScalarFieldEnum)[keyof typeof Sys_notice_userScalarFieldEnum]
+
+
   export const Sys_audit_logScalarFieldEnum: {
     log_id: 'log_id',
     tenant_id: 'tenant_id',
@@ -19081,6 +25073,52 @@ export namespace Prisma {
   };
 
   export type Sys_mfa_configScalarFieldEnum = (typeof Sys_mfa_configScalarFieldEnum)[keyof typeof Sys_mfa_configScalarFieldEnum]
+
+
+  export const Sys_fileScalarFieldEnum: {
+    file_id: 'file_id',
+    tenant_id: 'tenant_id',
+    filename: 'filename',
+    url: 'url',
+    size: 'size',
+    mime_type: 'mime_type',
+    uploader: 'uploader',
+    created_at: 'created_at',
+    is_deleted: 'is_deleted'
+  };
+
+  export type Sys_fileScalarFieldEnum = (typeof Sys_fileScalarFieldEnum)[keyof typeof Sys_fileScalarFieldEnum]
+
+
+  export const Sys_login_logScalarFieldEnum: {
+    log_id: 'log_id',
+    tenant_id: 'tenant_id',
+    user_id: 'user_id',
+    username: 'username',
+    ip_address: 'ip_address',
+    user_agent: 'user_agent',
+    status: 'status',
+    message: 'message',
+    created_at: 'created_at'
+  };
+
+  export type Sys_login_logScalarFieldEnum = (typeof Sys_login_logScalarFieldEnum)[keyof typeof Sys_login_logScalarFieldEnum]
+
+
+  export const Sys_configScalarFieldEnum: {
+    config_id: 'config_id',
+    tenant_id: 'tenant_id',
+    config_key: 'config_key',
+    config_value: 'config_value',
+    description: 'description',
+    created_by: 'created_by',
+    updated_by: 'updated_by',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    is_deleted: 'is_deleted'
+  };
+
+  export type Sys_configScalarFieldEnum = (typeof Sys_configScalarFieldEnum)[keyof typeof Sys_configScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -19286,6 +25324,8 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_user"> | string | null
     updated_by?: UuidNullableFilter<"sys_user"> | string | null
     is_deleted?: IntFilter<"sys_user"> | number
+    sys_user_role?: Sys_user_roleListRelationFilter
+    sys_user_dept?: Sys_user_deptListRelationFilter
   }
 
   export type sys_userOrderByWithRelationInput = {
@@ -19306,6 +25346,8 @@ export namespace Prisma {
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
+    sys_user_role?: sys_user_roleOrderByRelationAggregateInput
+    sys_user_dept?: sys_user_deptOrderByRelationAggregateInput
   }
 
   export type sys_userWhereUniqueInput = Prisma.AtLeast<{
@@ -19330,6 +25372,8 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_user"> | string | null
     updated_by?: UuidNullableFilter<"sys_user"> | string | null
     is_deleted?: IntFilter<"sys_user"> | number
+    sys_user_role?: Sys_user_roleListRelationFilter
+    sys_user_dept?: Sys_user_deptListRelationFilter
   }, "user_id" | "tenant_id_username">
 
   export type sys_userOrderByWithAggregationInput = {
@@ -19396,6 +25440,7 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_role"> | string | null
     updated_by?: UuidNullableFilter<"sys_role"> | string | null
     is_deleted?: IntFilter<"sys_role"> | number
+    sys_user_role?: Sys_user_roleListRelationFilter
   }
 
   export type sys_roleOrderByWithRelationInput = {
@@ -19411,6 +25456,7 @@ export namespace Prisma {
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
+    sys_user_role?: sys_user_roleOrderByRelationAggregateInput
   }
 
   export type sys_roleWhereUniqueInput = Prisma.AtLeast<{
@@ -19430,6 +25476,7 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_role"> | string | null
     updated_by?: UuidNullableFilter<"sys_role"> | string | null
     is_deleted?: IntFilter<"sys_role"> | number
+    sys_user_role?: Sys_user_roleListRelationFilter
   }, "role_id" | "tenant_id_role_code">
 
   export type sys_roleOrderByWithAggregationInput = {
@@ -19476,7 +25523,7 @@ export namespace Prisma {
     NOT?: sys_deptWhereInput | sys_deptWhereInput[]
     dept_id?: UuidFilter<"sys_dept"> | string
     tenant_id?: UuidFilter<"sys_dept"> | string
-    parent_id?: UuidFilter<"sys_dept"> | string
+    parent_id?: UuidNullableFilter<"sys_dept"> | string | null
     dept_code?: StringFilter<"sys_dept"> | string
     dept_name?: StringFilter<"sys_dept"> | string
     leader?: StringNullableFilter<"sys_dept"> | string | null
@@ -19489,12 +25536,13 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_dept"> | string | null
     updated_by?: UuidNullableFilter<"sys_dept"> | string | null
     is_deleted?: IntFilter<"sys_dept"> | number
+    sys_user_dept?: Sys_user_deptListRelationFilter
   }
 
   export type sys_deptOrderByWithRelationInput = {
     dept_id?: SortOrder
     tenant_id?: SortOrder
-    parent_id?: SortOrder
+    parent_id?: SortOrderInput | SortOrder
     dept_code?: SortOrder
     dept_name?: SortOrder
     leader?: SortOrderInput | SortOrder
@@ -19507,6 +25555,7 @@ export namespace Prisma {
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
+    sys_user_dept?: sys_user_deptOrderByRelationAggregateInput
   }
 
   export type sys_deptWhereUniqueInput = Prisma.AtLeast<{
@@ -19516,7 +25565,7 @@ export namespace Prisma {
     OR?: sys_deptWhereInput[]
     NOT?: sys_deptWhereInput | sys_deptWhereInput[]
     tenant_id?: UuidFilter<"sys_dept"> | string
-    parent_id?: UuidFilter<"sys_dept"> | string
+    parent_id?: UuidNullableFilter<"sys_dept"> | string | null
     dept_code?: StringFilter<"sys_dept"> | string
     dept_name?: StringFilter<"sys_dept"> | string
     leader?: StringNullableFilter<"sys_dept"> | string | null
@@ -19529,12 +25578,13 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_dept"> | string | null
     updated_by?: UuidNullableFilter<"sys_dept"> | string | null
     is_deleted?: IntFilter<"sys_dept"> | number
+    sys_user_dept?: Sys_user_deptListRelationFilter
   }, "dept_id" | "tenant_id_dept_code">
 
   export type sys_deptOrderByWithAggregationInput = {
     dept_id?: SortOrder
     tenant_id?: SortOrder
-    parent_id?: SortOrder
+    parent_id?: SortOrderInput | SortOrder
     dept_code?: SortOrder
     dept_name?: SortOrder
     leader?: SortOrderInput | SortOrder
@@ -19560,7 +25610,7 @@ export namespace Prisma {
     NOT?: sys_deptScalarWhereWithAggregatesInput | sys_deptScalarWhereWithAggregatesInput[]
     dept_id?: UuidWithAggregatesFilter<"sys_dept"> | string
     tenant_id?: UuidWithAggregatesFilter<"sys_dept"> | string
-    parent_id?: UuidWithAggregatesFilter<"sys_dept"> | string
+    parent_id?: UuidNullableWithAggregatesFilter<"sys_dept"> | string | null
     dept_code?: StringWithAggregatesFilter<"sys_dept"> | string
     dept_name?: StringWithAggregatesFilter<"sys_dept"> | string
     leader?: StringNullableWithAggregatesFilter<"sys_dept"> | string | null
@@ -19581,7 +25631,7 @@ export namespace Prisma {
     NOT?: sys_menuWhereInput | sys_menuWhereInput[]
     menu_id?: UuidFilter<"sys_menu"> | string
     tenant_id?: UuidFilter<"sys_menu"> | string
-    parent_id?: UuidFilter<"sys_menu"> | string
+    parent_id?: UuidNullableFilter<"sys_menu"> | string | null
     menu_name?: StringFilter<"sys_menu"> | string
     menu_type?: IntFilter<"sys_menu"> | number
     icon?: StringNullableFilter<"sys_menu"> | string | null
@@ -19600,7 +25650,7 @@ export namespace Prisma {
   export type sys_menuOrderByWithRelationInput = {
     menu_id?: SortOrder
     tenant_id?: SortOrder
-    parent_id?: SortOrder
+    parent_id?: SortOrderInput | SortOrder
     menu_name?: SortOrder
     menu_type?: SortOrder
     icon?: SortOrderInput | SortOrder
@@ -19622,7 +25672,7 @@ export namespace Prisma {
     OR?: sys_menuWhereInput[]
     NOT?: sys_menuWhereInput | sys_menuWhereInput[]
     tenant_id?: UuidFilter<"sys_menu"> | string
-    parent_id?: UuidFilter<"sys_menu"> | string
+    parent_id?: UuidNullableFilter<"sys_menu"> | string | null
     menu_name?: StringFilter<"sys_menu"> | string
     menu_type?: IntFilter<"sys_menu"> | number
     icon?: StringNullableFilter<"sys_menu"> | string | null
@@ -19641,7 +25691,7 @@ export namespace Prisma {
   export type sys_menuOrderByWithAggregationInput = {
     menu_id?: SortOrder
     tenant_id?: SortOrder
-    parent_id?: SortOrder
+    parent_id?: SortOrderInput | SortOrder
     menu_name?: SortOrder
     menu_type?: SortOrder
     icon?: SortOrderInput | SortOrder
@@ -19668,7 +25718,7 @@ export namespace Prisma {
     NOT?: sys_menuScalarWhereWithAggregatesInput | sys_menuScalarWhereWithAggregatesInput[]
     menu_id?: UuidWithAggregatesFilter<"sys_menu"> | string
     tenant_id?: UuidWithAggregatesFilter<"sys_menu"> | string
-    parent_id?: UuidWithAggregatesFilter<"sys_menu"> | string
+    parent_id?: UuidNullableWithAggregatesFilter<"sys_menu"> | string | null
     menu_name?: StringWithAggregatesFilter<"sys_menu"> | string
     menu_type?: IntWithAggregatesFilter<"sys_menu"> | number
     icon?: StringNullableWithAggregatesFilter<"sys_menu"> | string | null
@@ -19974,6 +26024,7 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_notice"> | string | null
     updated_by?: UuidNullableFilter<"sys_notice"> | string | null
     is_deleted?: IntFilter<"sys_notice"> | number
+    target_users?: Sys_notice_userListRelationFilter
   }
 
   export type sys_noticeOrderByWithRelationInput = {
@@ -19989,6 +26040,7 @@ export namespace Prisma {
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
+    target_users?: sys_notice_userOrderByRelationAggregateInput
   }
 
   export type sys_noticeWhereUniqueInput = Prisma.AtLeast<{
@@ -20007,6 +26059,7 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_notice"> | string | null
     updated_by?: UuidNullableFilter<"sys_notice"> | string | null
     is_deleted?: IntFilter<"sys_notice"> | number
+    target_users?: Sys_notice_userListRelationFilter
   }, "notice_id">
 
   export type sys_noticeOrderByWithAggregationInput = {
@@ -20045,6 +26098,74 @@ export namespace Prisma {
     created_by?: UuidNullableWithAggregatesFilter<"sys_notice"> | string | null
     updated_by?: UuidNullableWithAggregatesFilter<"sys_notice"> | string | null
     is_deleted?: IntWithAggregatesFilter<"sys_notice"> | number
+  }
+
+  export type sys_notice_userWhereInput = {
+    AND?: sys_notice_userWhereInput | sys_notice_userWhereInput[]
+    OR?: sys_notice_userWhereInput[]
+    NOT?: sys_notice_userWhereInput | sys_notice_userWhereInput[]
+    id?: UuidFilter<"sys_notice_user"> | string
+    notice_id?: UuidFilter<"sys_notice_user"> | string
+    user_id?: UuidFilter<"sys_notice_user"> | string
+    tenant_id?: UuidFilter<"sys_notice_user"> | string
+    is_read?: IntFilter<"sys_notice_user"> | number
+    read_time?: DateTimeNullableFilter<"sys_notice_user"> | Date | string | null
+    created_at?: DateTimeFilter<"sys_notice_user"> | Date | string
+    notice?: XOR<Sys_noticeScalarRelationFilter, sys_noticeWhereInput>
+  }
+
+  export type sys_notice_userOrderByWithRelationInput = {
+    id?: SortOrder
+    notice_id?: SortOrder
+    user_id?: SortOrder
+    tenant_id?: SortOrder
+    is_read?: SortOrder
+    read_time?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    notice?: sys_noticeOrderByWithRelationInput
+  }
+
+  export type sys_notice_userWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    notice_id_user_id?: sys_notice_userNotice_idUser_idCompoundUniqueInput
+    AND?: sys_notice_userWhereInput | sys_notice_userWhereInput[]
+    OR?: sys_notice_userWhereInput[]
+    NOT?: sys_notice_userWhereInput | sys_notice_userWhereInput[]
+    notice_id?: UuidFilter<"sys_notice_user"> | string
+    user_id?: UuidFilter<"sys_notice_user"> | string
+    tenant_id?: UuidFilter<"sys_notice_user"> | string
+    is_read?: IntFilter<"sys_notice_user"> | number
+    read_time?: DateTimeNullableFilter<"sys_notice_user"> | Date | string | null
+    created_at?: DateTimeFilter<"sys_notice_user"> | Date | string
+    notice?: XOR<Sys_noticeScalarRelationFilter, sys_noticeWhereInput>
+  }, "id" | "notice_id_user_id">
+
+  export type sys_notice_userOrderByWithAggregationInput = {
+    id?: SortOrder
+    notice_id?: SortOrder
+    user_id?: SortOrder
+    tenant_id?: SortOrder
+    is_read?: SortOrder
+    read_time?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    _count?: sys_notice_userCountOrderByAggregateInput
+    _avg?: sys_notice_userAvgOrderByAggregateInput
+    _max?: sys_notice_userMaxOrderByAggregateInput
+    _min?: sys_notice_userMinOrderByAggregateInput
+    _sum?: sys_notice_userSumOrderByAggregateInput
+  }
+
+  export type sys_notice_userScalarWhereWithAggregatesInput = {
+    AND?: sys_notice_userScalarWhereWithAggregatesInput | sys_notice_userScalarWhereWithAggregatesInput[]
+    OR?: sys_notice_userScalarWhereWithAggregatesInput[]
+    NOT?: sys_notice_userScalarWhereWithAggregatesInput | sys_notice_userScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"sys_notice_user"> | string
+    notice_id?: UuidWithAggregatesFilter<"sys_notice_user"> | string
+    user_id?: UuidWithAggregatesFilter<"sys_notice_user"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_notice_user"> | string
+    is_read?: IntWithAggregatesFilter<"sys_notice_user"> | number
+    read_time?: DateTimeNullableWithAggregatesFilter<"sys_notice_user"> | Date | string | null
+    created_at?: DateTimeWithAggregatesFilter<"sys_notice_user"> | Date | string
   }
 
   export type sys_audit_logWhereInput = {
@@ -20160,6 +26281,8 @@ export namespace Prisma {
     role_id?: UuidFilter<"sys_user_role"> | string
     tenant_id?: UuidFilter<"sys_user_role"> | string
     created_at?: DateTimeFilter<"sys_user_role"> | Date | string
+    user?: XOR<Sys_userScalarRelationFilter, sys_userWhereInput>
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
   }
 
   export type sys_user_roleOrderByWithRelationInput = {
@@ -20168,6 +26291,8 @@ export namespace Prisma {
     role_id?: SortOrder
     tenant_id?: SortOrder
     created_at?: SortOrder
+    user?: sys_userOrderByWithRelationInput
+    role?: sys_roleOrderByWithRelationInput
   }
 
   export type sys_user_roleWhereUniqueInput = Prisma.AtLeast<{
@@ -20180,6 +26305,8 @@ export namespace Prisma {
     role_id?: UuidFilter<"sys_user_role"> | string
     tenant_id?: UuidFilter<"sys_user_role"> | string
     created_at?: DateTimeFilter<"sys_user_role"> | Date | string
+    user?: XOR<Sys_userScalarRelationFilter, sys_userWhereInput>
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
   }, "id" | "user_id_role_id">
 
   export type sys_user_roleOrderByWithAggregationInput = {
@@ -20214,6 +26341,8 @@ export namespace Prisma {
     tenant_id?: UuidFilter<"sys_user_dept"> | string
     is_primary?: IntFilter<"sys_user_dept"> | number
     created_at?: DateTimeFilter<"sys_user_dept"> | Date | string
+    user?: XOR<Sys_userScalarRelationFilter, sys_userWhereInput>
+    dept?: XOR<Sys_deptScalarRelationFilter, sys_deptWhereInput>
   }
 
   export type sys_user_deptOrderByWithRelationInput = {
@@ -20223,6 +26352,8 @@ export namespace Prisma {
     tenant_id?: SortOrder
     is_primary?: SortOrder
     created_at?: SortOrder
+    user?: sys_userOrderByWithRelationInput
+    dept?: sys_deptOrderByWithRelationInput
   }
 
   export type sys_user_deptWhereUniqueInput = Prisma.AtLeast<{
@@ -20236,6 +26367,8 @@ export namespace Prisma {
     tenant_id?: UuidFilter<"sys_user_dept"> | string
     is_primary?: IntFilter<"sys_user_dept"> | number
     created_at?: DateTimeFilter<"sys_user_dept"> | Date | string
+    user?: XOR<Sys_userScalarRelationFilter, sys_userWhereInput>
+    dept?: XOR<Sys_deptScalarRelationFilter, sys_deptWhereInput>
   }, "id" | "user_id_dept_id">
 
   export type sys_user_deptOrderByWithAggregationInput = {
@@ -20434,6 +26567,234 @@ export namespace Prisma {
     updated_at?: DateTimeWithAggregatesFilter<"sys_mfa_config"> | Date | string
   }
 
+  export type sys_fileWhereInput = {
+    AND?: sys_fileWhereInput | sys_fileWhereInput[]
+    OR?: sys_fileWhereInput[]
+    NOT?: sys_fileWhereInput | sys_fileWhereInput[]
+    file_id?: UuidFilter<"sys_file"> | string
+    tenant_id?: UuidFilter<"sys_file"> | string
+    filename?: StringFilter<"sys_file"> | string
+    url?: StringFilter<"sys_file"> | string
+    size?: IntFilter<"sys_file"> | number
+    mime_type?: StringNullableFilter<"sys_file"> | string | null
+    uploader?: UuidNullableFilter<"sys_file"> | string | null
+    created_at?: DateTimeFilter<"sys_file"> | Date | string
+    is_deleted?: IntFilter<"sys_file"> | number
+  }
+
+  export type sys_fileOrderByWithRelationInput = {
+    file_id?: SortOrder
+    tenant_id?: SortOrder
+    filename?: SortOrder
+    url?: SortOrder
+    size?: SortOrder
+    mime_type?: SortOrderInput | SortOrder
+    uploader?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_fileWhereUniqueInput = Prisma.AtLeast<{
+    file_id?: string
+    AND?: sys_fileWhereInput | sys_fileWhereInput[]
+    OR?: sys_fileWhereInput[]
+    NOT?: sys_fileWhereInput | sys_fileWhereInput[]
+    tenant_id?: UuidFilter<"sys_file"> | string
+    filename?: StringFilter<"sys_file"> | string
+    url?: StringFilter<"sys_file"> | string
+    size?: IntFilter<"sys_file"> | number
+    mime_type?: StringNullableFilter<"sys_file"> | string | null
+    uploader?: UuidNullableFilter<"sys_file"> | string | null
+    created_at?: DateTimeFilter<"sys_file"> | Date | string
+    is_deleted?: IntFilter<"sys_file"> | number
+  }, "file_id">
+
+  export type sys_fileOrderByWithAggregationInput = {
+    file_id?: SortOrder
+    tenant_id?: SortOrder
+    filename?: SortOrder
+    url?: SortOrder
+    size?: SortOrder
+    mime_type?: SortOrderInput | SortOrder
+    uploader?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    is_deleted?: SortOrder
+    _count?: sys_fileCountOrderByAggregateInput
+    _avg?: sys_fileAvgOrderByAggregateInput
+    _max?: sys_fileMaxOrderByAggregateInput
+    _min?: sys_fileMinOrderByAggregateInput
+    _sum?: sys_fileSumOrderByAggregateInput
+  }
+
+  export type sys_fileScalarWhereWithAggregatesInput = {
+    AND?: sys_fileScalarWhereWithAggregatesInput | sys_fileScalarWhereWithAggregatesInput[]
+    OR?: sys_fileScalarWhereWithAggregatesInput[]
+    NOT?: sys_fileScalarWhereWithAggregatesInput | sys_fileScalarWhereWithAggregatesInput[]
+    file_id?: UuidWithAggregatesFilter<"sys_file"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_file"> | string
+    filename?: StringWithAggregatesFilter<"sys_file"> | string
+    url?: StringWithAggregatesFilter<"sys_file"> | string
+    size?: IntWithAggregatesFilter<"sys_file"> | number
+    mime_type?: StringNullableWithAggregatesFilter<"sys_file"> | string | null
+    uploader?: UuidNullableWithAggregatesFilter<"sys_file"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"sys_file"> | Date | string
+    is_deleted?: IntWithAggregatesFilter<"sys_file"> | number
+  }
+
+  export type sys_login_logWhereInput = {
+    AND?: sys_login_logWhereInput | sys_login_logWhereInput[]
+    OR?: sys_login_logWhereInput[]
+    NOT?: sys_login_logWhereInput | sys_login_logWhereInput[]
+    log_id?: UuidFilter<"sys_login_log"> | string
+    tenant_id?: UuidFilter<"sys_login_log"> | string
+    user_id?: UuidNullableFilter<"sys_login_log"> | string | null
+    username?: StringFilter<"sys_login_log"> | string
+    ip_address?: StringFilter<"sys_login_log"> | string
+    user_agent?: StringNullableFilter<"sys_login_log"> | string | null
+    status?: IntFilter<"sys_login_log"> | number
+    message?: StringNullableFilter<"sys_login_log"> | string | null
+    created_at?: DateTimeFilter<"sys_login_log"> | Date | string
+  }
+
+  export type sys_login_logOrderByWithRelationInput = {
+    log_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrderInput | SortOrder
+    username?: SortOrder
+    ip_address?: SortOrder
+    user_agent?: SortOrderInput | SortOrder
+    status?: SortOrder
+    message?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_login_logWhereUniqueInput = Prisma.AtLeast<{
+    log_id?: string
+    AND?: sys_login_logWhereInput | sys_login_logWhereInput[]
+    OR?: sys_login_logWhereInput[]
+    NOT?: sys_login_logWhereInput | sys_login_logWhereInput[]
+    tenant_id?: UuidFilter<"sys_login_log"> | string
+    user_id?: UuidNullableFilter<"sys_login_log"> | string | null
+    username?: StringFilter<"sys_login_log"> | string
+    ip_address?: StringFilter<"sys_login_log"> | string
+    user_agent?: StringNullableFilter<"sys_login_log"> | string | null
+    status?: IntFilter<"sys_login_log"> | number
+    message?: StringNullableFilter<"sys_login_log"> | string | null
+    created_at?: DateTimeFilter<"sys_login_log"> | Date | string
+  }, "log_id">
+
+  export type sys_login_logOrderByWithAggregationInput = {
+    log_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrderInput | SortOrder
+    username?: SortOrder
+    ip_address?: SortOrder
+    user_agent?: SortOrderInput | SortOrder
+    status?: SortOrder
+    message?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    _count?: sys_login_logCountOrderByAggregateInput
+    _avg?: sys_login_logAvgOrderByAggregateInput
+    _max?: sys_login_logMaxOrderByAggregateInput
+    _min?: sys_login_logMinOrderByAggregateInput
+    _sum?: sys_login_logSumOrderByAggregateInput
+  }
+
+  export type sys_login_logScalarWhereWithAggregatesInput = {
+    AND?: sys_login_logScalarWhereWithAggregatesInput | sys_login_logScalarWhereWithAggregatesInput[]
+    OR?: sys_login_logScalarWhereWithAggregatesInput[]
+    NOT?: sys_login_logScalarWhereWithAggregatesInput | sys_login_logScalarWhereWithAggregatesInput[]
+    log_id?: UuidWithAggregatesFilter<"sys_login_log"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_login_log"> | string
+    user_id?: UuidNullableWithAggregatesFilter<"sys_login_log"> | string | null
+    username?: StringWithAggregatesFilter<"sys_login_log"> | string
+    ip_address?: StringWithAggregatesFilter<"sys_login_log"> | string
+    user_agent?: StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+    status?: IntWithAggregatesFilter<"sys_login_log"> | number
+    message?: StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"sys_login_log"> | Date | string
+  }
+
+  export type sys_configWhereInput = {
+    AND?: sys_configWhereInput | sys_configWhereInput[]
+    OR?: sys_configWhereInput[]
+    NOT?: sys_configWhereInput | sys_configWhereInput[]
+    config_id?: UuidFilter<"sys_config"> | string
+    tenant_id?: UuidFilter<"sys_config"> | string
+    config_key?: StringFilter<"sys_config"> | string
+    config_value?: StringNullableFilter<"sys_config"> | string | null
+    description?: StringNullableFilter<"sys_config"> | string | null
+    created_by?: UuidNullableFilter<"sys_config"> | string | null
+    updated_by?: UuidNullableFilter<"sys_config"> | string | null
+    created_at?: DateTimeFilter<"sys_config"> | Date | string
+    updated_at?: DateTimeFilter<"sys_config"> | Date | string
+    is_deleted?: IntFilter<"sys_config"> | number
+  }
+
+  export type sys_configOrderByWithRelationInput = {
+    config_id?: SortOrder
+    tenant_id?: SortOrder
+    config_key?: SortOrder
+    config_value?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    created_by?: SortOrderInput | SortOrder
+    updated_by?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_configWhereUniqueInput = Prisma.AtLeast<{
+    config_id?: string
+    tenant_id_config_key?: sys_configTenant_idConfig_keyCompoundUniqueInput
+    AND?: sys_configWhereInput | sys_configWhereInput[]
+    OR?: sys_configWhereInput[]
+    NOT?: sys_configWhereInput | sys_configWhereInput[]
+    tenant_id?: UuidFilter<"sys_config"> | string
+    config_key?: StringFilter<"sys_config"> | string
+    config_value?: StringNullableFilter<"sys_config"> | string | null
+    description?: StringNullableFilter<"sys_config"> | string | null
+    created_by?: UuidNullableFilter<"sys_config"> | string | null
+    updated_by?: UuidNullableFilter<"sys_config"> | string | null
+    created_at?: DateTimeFilter<"sys_config"> | Date | string
+    updated_at?: DateTimeFilter<"sys_config"> | Date | string
+    is_deleted?: IntFilter<"sys_config"> | number
+  }, "config_id" | "tenant_id_config_key">
+
+  export type sys_configOrderByWithAggregationInput = {
+    config_id?: SortOrder
+    tenant_id?: SortOrder
+    config_key?: SortOrder
+    config_value?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    created_by?: SortOrderInput | SortOrder
+    updated_by?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+    _count?: sys_configCountOrderByAggregateInput
+    _avg?: sys_configAvgOrderByAggregateInput
+    _max?: sys_configMaxOrderByAggregateInput
+    _min?: sys_configMinOrderByAggregateInput
+    _sum?: sys_configSumOrderByAggregateInput
+  }
+
+  export type sys_configScalarWhereWithAggregatesInput = {
+    AND?: sys_configScalarWhereWithAggregatesInput | sys_configScalarWhereWithAggregatesInput[]
+    OR?: sys_configScalarWhereWithAggregatesInput[]
+    NOT?: sys_configScalarWhereWithAggregatesInput | sys_configScalarWhereWithAggregatesInput[]
+    config_id?: UuidWithAggregatesFilter<"sys_config"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_config"> | string
+    config_key?: StringWithAggregatesFilter<"sys_config"> | string
+    config_value?: StringNullableWithAggregatesFilter<"sys_config"> | string | null
+    description?: StringNullableWithAggregatesFilter<"sys_config"> | string | null
+    created_by?: UuidNullableWithAggregatesFilter<"sys_config"> | string | null
+    updated_by?: UuidNullableWithAggregatesFilter<"sys_config"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"sys_config"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"sys_config"> | Date | string
+    is_deleted?: IntWithAggregatesFilter<"sys_config"> | number
+  }
+
   export type sys_tenantCreateInput = {
     tenant_id?: string
     tenant_code: string
@@ -20564,6 +26925,8 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_user_role?: sys_user_roleCreateNestedManyWithoutUserInput
+    sys_user_dept?: sys_user_deptCreateNestedManyWithoutUserInput
   }
 
   export type sys_userUncheckedCreateInput = {
@@ -20584,6 +26947,8 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_user_role?: sys_user_roleUncheckedCreateNestedManyWithoutUserInput
+    sys_user_dept?: sys_user_deptUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type sys_userUpdateInput = {
@@ -20604,6 +26969,8 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUpdateManyWithoutUserNestedInput
+    sys_user_dept?: sys_user_deptUpdateManyWithoutUserNestedInput
   }
 
   export type sys_userUncheckedUpdateInput = {
@@ -20624,6 +26991,8 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUncheckedUpdateManyWithoutUserNestedInput
+    sys_user_dept?: sys_user_deptUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type sys_userCreateManyInput = {
@@ -20699,6 +27068,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_user_role?: sys_user_roleCreateNestedManyWithoutRoleInput
   }
 
   export type sys_roleUncheckedCreateInput = {
@@ -20714,6 +27084,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_user_role?: sys_user_roleUncheckedCreateNestedManyWithoutRoleInput
   }
 
   export type sys_roleUpdateInput = {
@@ -20729,6 +27100,7 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUpdateManyWithoutRoleNestedInput
   }
 
   export type sys_roleUncheckedUpdateInput = {
@@ -20744,6 +27116,7 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUncheckedUpdateManyWithoutRoleNestedInput
   }
 
   export type sys_roleCreateManyInput = {
@@ -20794,7 +27167,7 @@ export namespace Prisma {
   export type sys_deptCreateInput = {
     dept_id?: string
     tenant_id: string
-    parent_id?: string
+    parent_id?: string | null
     dept_code: string
     dept_name: string
     leader?: string | null
@@ -20807,12 +27180,13 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_user_dept?: sys_user_deptCreateNestedManyWithoutDeptInput
   }
 
   export type sys_deptUncheckedCreateInput = {
     dept_id?: string
     tenant_id: string
-    parent_id?: string
+    parent_id?: string | null
     dept_code: string
     dept_name: string
     leader?: string | null
@@ -20825,12 +27199,13 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_user_dept?: sys_user_deptUncheckedCreateNestedManyWithoutDeptInput
   }
 
   export type sys_deptUpdateInput = {
     dept_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     dept_code?: StringFieldUpdateOperationsInput | string
     dept_name?: StringFieldUpdateOperationsInput | string
     leader?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20843,12 +27218,13 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_dept?: sys_user_deptUpdateManyWithoutDeptNestedInput
   }
 
   export type sys_deptUncheckedUpdateInput = {
     dept_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     dept_code?: StringFieldUpdateOperationsInput | string
     dept_name?: StringFieldUpdateOperationsInput | string
     leader?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20861,12 +27237,13 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_dept?: sys_user_deptUncheckedUpdateManyWithoutDeptNestedInput
   }
 
   export type sys_deptCreateManyInput = {
     dept_id?: string
     tenant_id: string
-    parent_id?: string
+    parent_id?: string | null
     dept_code: string
     dept_name: string
     leader?: string | null
@@ -20884,7 +27261,7 @@ export namespace Prisma {
   export type sys_deptUpdateManyMutationInput = {
     dept_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     dept_code?: StringFieldUpdateOperationsInput | string
     dept_name?: StringFieldUpdateOperationsInput | string
     leader?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20902,7 +27279,7 @@ export namespace Prisma {
   export type sys_deptUncheckedUpdateManyInput = {
     dept_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     dept_code?: StringFieldUpdateOperationsInput | string
     dept_name?: StringFieldUpdateOperationsInput | string
     leader?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20920,7 +27297,7 @@ export namespace Prisma {
   export type sys_menuCreateInput = {
     menu_id?: string
     tenant_id: string
-    parent_id?: string
+    parent_id?: string | null
     menu_name: string
     menu_type: number
     icon?: string | null
@@ -20939,7 +27316,7 @@ export namespace Prisma {
   export type sys_menuUncheckedCreateInput = {
     menu_id?: string
     tenant_id: string
-    parent_id?: string
+    parent_id?: string | null
     menu_name: string
     menu_type: number
     icon?: string | null
@@ -20958,7 +27335,7 @@ export namespace Prisma {
   export type sys_menuUpdateInput = {
     menu_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     menu_name?: StringFieldUpdateOperationsInput | string
     menu_type?: IntFieldUpdateOperationsInput | number
     icon?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20977,7 +27354,7 @@ export namespace Prisma {
   export type sys_menuUncheckedUpdateInput = {
     menu_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     menu_name?: StringFieldUpdateOperationsInput | string
     menu_type?: IntFieldUpdateOperationsInput | number
     icon?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20996,7 +27373,7 @@ export namespace Prisma {
   export type sys_menuCreateManyInput = {
     menu_id?: string
     tenant_id: string
-    parent_id?: string
+    parent_id?: string | null
     menu_name: string
     menu_type: number
     icon?: string | null
@@ -21015,7 +27392,7 @@ export namespace Prisma {
   export type sys_menuUpdateManyMutationInput = {
     menu_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     menu_name?: StringFieldUpdateOperationsInput | string
     menu_type?: IntFieldUpdateOperationsInput | number
     icon?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21034,7 +27411,7 @@ export namespace Prisma {
   export type sys_menuUncheckedUpdateManyInput = {
     menu_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
-    parent_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     menu_name?: StringFieldUpdateOperationsInput | string
     menu_type?: IntFieldUpdateOperationsInput | number
     icon?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21385,6 +27762,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    target_users?: sys_notice_userCreateNestedManyWithoutNoticeInput
   }
 
   export type sys_noticeUncheckedCreateInput = {
@@ -21400,6 +27778,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    target_users?: sys_notice_userUncheckedCreateNestedManyWithoutNoticeInput
   }
 
   export type sys_noticeUpdateInput = {
@@ -21415,6 +27794,7 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    target_users?: sys_notice_userUpdateManyWithoutNoticeNestedInput
   }
 
   export type sys_noticeUncheckedUpdateInput = {
@@ -21430,6 +27810,7 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    target_users?: sys_notice_userUncheckedUpdateManyWithoutNoticeNestedInput
   }
 
   export type sys_noticeCreateManyInput = {
@@ -21475,6 +27856,75 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_notice_userCreateInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    is_read?: number
+    read_time?: Date | string | null
+    created_at?: Date | string
+    notice: sys_noticeCreateNestedOneWithoutTarget_usersInput
+  }
+
+  export type sys_notice_userUncheckedCreateInput = {
+    id?: string
+    notice_id: string
+    user_id: string
+    tenant_id: string
+    is_read?: number
+    read_time?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type sys_notice_userUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
+    read_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    notice?: sys_noticeUpdateOneRequiredWithoutTarget_usersNestedInput
+  }
+
+  export type sys_notice_userUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    notice_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
+    read_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_notice_userCreateManyInput = {
+    id?: string
+    notice_id: string
+    user_id: string
+    tenant_id: string
+    is_read?: number
+    read_time?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type sys_notice_userUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
+    read_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_notice_userUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    notice_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
+    read_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type sys_audit_logCreateInput = {
@@ -21605,10 +28055,10 @@ export namespace Prisma {
 
   export type sys_user_roleCreateInput = {
     id?: string
-    user_id: string
-    role_id: string
     tenant_id: string
     created_at?: Date | string
+    user: sys_userCreateNestedOneWithoutSys_user_roleInput
+    role: sys_roleCreateNestedOneWithoutSys_user_roleInput
   }
 
   export type sys_user_roleUncheckedCreateInput = {
@@ -21621,10 +28071,10 @@ export namespace Prisma {
 
   export type sys_user_roleUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: sys_userUpdateOneRequiredWithoutSys_user_roleNestedInput
+    role?: sys_roleUpdateOneRequiredWithoutSys_user_roleNestedInput
   }
 
   export type sys_user_roleUncheckedUpdateInput = {
@@ -21645,8 +28095,6 @@ export namespace Prisma {
 
   export type sys_user_roleUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21661,11 +28109,11 @@ export namespace Prisma {
 
   export type sys_user_deptCreateInput = {
     id?: string
-    user_id: string
-    dept_id: string
     tenant_id: string
     is_primary?: number
     created_at?: Date | string
+    user: sys_userCreateNestedOneWithoutSys_user_deptInput
+    dept: sys_deptCreateNestedOneWithoutSys_user_deptInput
   }
 
   export type sys_user_deptUncheckedCreateInput = {
@@ -21679,11 +28127,11 @@ export namespace Prisma {
 
   export type sys_user_deptUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    dept_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     is_primary?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: sys_userUpdateOneRequiredWithoutSys_user_deptNestedInput
+    dept?: sys_deptUpdateOneRequiredWithoutSys_user_deptNestedInput
   }
 
   export type sys_user_deptUncheckedUpdateInput = {
@@ -21706,8 +28154,6 @@ export namespace Prisma {
 
   export type sys_user_deptUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    dept_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     is_primary?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21902,6 +28348,265 @@ export namespace Prisma {
     backup_codes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_fileCreateInput = {
+    file_id?: string
+    tenant_id: string
+    filename: string
+    url: string
+    size: number
+    mime_type?: string | null
+    uploader?: string | null
+    created_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_fileUncheckedCreateInput = {
+    file_id?: string
+    tenant_id: string
+    filename: string
+    url: string
+    size: number
+    mime_type?: string | null
+    uploader?: string | null
+    created_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_fileUpdateInput = {
+    file_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    mime_type?: NullableStringFieldUpdateOperationsInput | string | null
+    uploader?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_fileUncheckedUpdateInput = {
+    file_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    mime_type?: NullableStringFieldUpdateOperationsInput | string | null
+    uploader?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_fileCreateManyInput = {
+    file_id?: string
+    tenant_id: string
+    filename: string
+    url: string
+    size: number
+    mime_type?: string | null
+    uploader?: string | null
+    created_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_fileUpdateManyMutationInput = {
+    file_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    mime_type?: NullableStringFieldUpdateOperationsInput | string | null
+    uploader?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_fileUncheckedUpdateManyInput = {
+    file_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    mime_type?: NullableStringFieldUpdateOperationsInput | string | null
+    uploader?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_login_logCreateInput = {
+    log_id?: string
+    tenant_id: string
+    user_id?: string | null
+    username: string
+    ip_address: string
+    user_agent?: string | null
+    status?: number
+    message?: string | null
+    created_at?: Date | string
+  }
+
+  export type sys_login_logUncheckedCreateInput = {
+    log_id?: string
+    tenant_id: string
+    user_id?: string | null
+    username: string
+    ip_address: string
+    user_agent?: string | null
+    status?: number
+    message?: string | null
+    created_at?: Date | string
+  }
+
+  export type sys_login_logUpdateInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    ip_address?: StringFieldUpdateOperationsInput | string
+    user_agent?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: IntFieldUpdateOperationsInput | number
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_login_logUncheckedUpdateInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    ip_address?: StringFieldUpdateOperationsInput | string
+    user_agent?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: IntFieldUpdateOperationsInput | number
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_login_logCreateManyInput = {
+    log_id?: string
+    tenant_id: string
+    user_id?: string | null
+    username: string
+    ip_address: string
+    user_agent?: string | null
+    status?: number
+    message?: string | null
+    created_at?: Date | string
+  }
+
+  export type sys_login_logUpdateManyMutationInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    ip_address?: StringFieldUpdateOperationsInput | string
+    user_agent?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: IntFieldUpdateOperationsInput | number
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_login_logUncheckedUpdateManyInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    ip_address?: StringFieldUpdateOperationsInput | string
+    user_agent?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: IntFieldUpdateOperationsInput | number
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_configCreateInput = {
+    config_id?: string
+    tenant_id: string
+    config_key: string
+    config_value?: string | null
+    description?: string | null
+    created_by?: string | null
+    updated_by?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_configUncheckedCreateInput = {
+    config_id?: string
+    tenant_id: string
+    config_key: string
+    config_value?: string | null
+    description?: string | null
+    created_by?: string | null
+    updated_by?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_configUpdateInput = {
+    config_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    config_key?: StringFieldUpdateOperationsInput | string
+    config_value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_configUncheckedUpdateInput = {
+    config_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    config_key?: StringFieldUpdateOperationsInput | string
+    config_value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_configCreateManyInput = {
+    config_id?: string
+    tenant_id: string
+    config_key: string
+    config_value?: string | null
+    description?: string | null
+    created_by?: string | null
+    updated_by?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_configUpdateManyMutationInput = {
+    config_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    config_key?: StringFieldUpdateOperationsInput | string
+    config_value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_configUncheckedUpdateManyInput = {
+    config_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    config_key?: StringFieldUpdateOperationsInput | string
+    config_value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -22173,6 +28878,26 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type Sys_user_roleListRelationFilter = {
+    every?: sys_user_roleWhereInput
+    some?: sys_user_roleWhereInput
+    none?: sys_user_roleWhereInput
+  }
+
+  export type Sys_user_deptListRelationFilter = {
+    every?: sys_user_deptWhereInput
+    some?: sys_user_deptWhereInput
+    none?: sys_user_deptWhereInput
+  }
+
+  export type sys_user_roleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type sys_user_deptOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type sys_userTenant_idUsernameCompoundUniqueInput = {
@@ -22652,6 +29377,16 @@ export namespace Prisma {
     is_deleted?: SortOrder
   }
 
+  export type Sys_notice_userListRelationFilter = {
+    every?: sys_notice_userWhereInput
+    some?: sys_notice_userWhereInput
+    none?: sys_notice_userWhereInput
+  }
+
+  export type sys_notice_userOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type sys_noticeCountOrderByAggregateInput = {
     notice_id?: SortOrder
     tenant_id?: SortOrder
@@ -22707,6 +29442,54 @@ export namespace Prisma {
     notice_type?: SortOrder
     status?: SortOrder
     is_deleted?: SortOrder
+  }
+
+  export type Sys_noticeScalarRelationFilter = {
+    is?: sys_noticeWhereInput
+    isNot?: sys_noticeWhereInput
+  }
+
+  export type sys_notice_userNotice_idUser_idCompoundUniqueInput = {
+    notice_id: string
+    user_id: string
+  }
+
+  export type sys_notice_userCountOrderByAggregateInput = {
+    id?: SortOrder
+    notice_id?: SortOrder
+    user_id?: SortOrder
+    tenant_id?: SortOrder
+    is_read?: SortOrder
+    read_time?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_notice_userAvgOrderByAggregateInput = {
+    is_read?: SortOrder
+  }
+
+  export type sys_notice_userMaxOrderByAggregateInput = {
+    id?: SortOrder
+    notice_id?: SortOrder
+    user_id?: SortOrder
+    tenant_id?: SortOrder
+    is_read?: SortOrder
+    read_time?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_notice_userMinOrderByAggregateInput = {
+    id?: SortOrder
+    notice_id?: SortOrder
+    user_id?: SortOrder
+    tenant_id?: SortOrder
+    is_read?: SortOrder
+    read_time?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_notice_userSumOrderByAggregateInput = {
+    is_read?: SortOrder
   }
 
   export type sys_audit_logCountOrderByAggregateInput = {
@@ -22773,6 +29556,16 @@ export namespace Prisma {
     status?: SortOrder
   }
 
+  export type Sys_userScalarRelationFilter = {
+    is?: sys_userWhereInput
+    isNot?: sys_userWhereInput
+  }
+
+  export type Sys_roleScalarRelationFilter = {
+    is?: sys_roleWhereInput
+    isNot?: sys_roleWhereInput
+  }
+
   export type sys_user_roleUser_idRole_idCompoundUniqueInput = {
     user_id: string
     role_id: string
@@ -22800,6 +29593,11 @@ export namespace Prisma {
     role_id?: SortOrder
     tenant_id?: SortOrder
     created_at?: SortOrder
+  }
+
+  export type Sys_deptScalarRelationFilter = {
+    is?: sys_deptWhereInput
+    isNot?: sys_deptWhereInput
   }
 
   export type sys_user_deptUser_idDept_idCompoundUniqueInput = {
@@ -22938,6 +29736,148 @@ export namespace Prisma {
     enabled?: SortOrder
   }
 
+  export type sys_fileCountOrderByAggregateInput = {
+    file_id?: SortOrder
+    tenant_id?: SortOrder
+    filename?: SortOrder
+    url?: SortOrder
+    size?: SortOrder
+    mime_type?: SortOrder
+    uploader?: SortOrder
+    created_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_fileAvgOrderByAggregateInput = {
+    size?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_fileMaxOrderByAggregateInput = {
+    file_id?: SortOrder
+    tenant_id?: SortOrder
+    filename?: SortOrder
+    url?: SortOrder
+    size?: SortOrder
+    mime_type?: SortOrder
+    uploader?: SortOrder
+    created_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_fileMinOrderByAggregateInput = {
+    file_id?: SortOrder
+    tenant_id?: SortOrder
+    filename?: SortOrder
+    url?: SortOrder
+    size?: SortOrder
+    mime_type?: SortOrder
+    uploader?: SortOrder
+    created_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_fileSumOrderByAggregateInput = {
+    size?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_login_logCountOrderByAggregateInput = {
+    log_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    username?: SortOrder
+    ip_address?: SortOrder
+    user_agent?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_login_logAvgOrderByAggregateInput = {
+    status?: SortOrder
+  }
+
+  export type sys_login_logMaxOrderByAggregateInput = {
+    log_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    username?: SortOrder
+    ip_address?: SortOrder
+    user_agent?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_login_logMinOrderByAggregateInput = {
+    log_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    username?: SortOrder
+    ip_address?: SortOrder
+    user_agent?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_login_logSumOrderByAggregateInput = {
+    status?: SortOrder
+  }
+
+  export type sys_configTenant_idConfig_keyCompoundUniqueInput = {
+    tenant_id: string
+    config_key: string
+  }
+
+  export type sys_configCountOrderByAggregateInput = {
+    config_id?: SortOrder
+    tenant_id?: SortOrder
+    config_key?: SortOrder
+    config_value?: SortOrder
+    description?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_configAvgOrderByAggregateInput = {
+    is_deleted?: SortOrder
+  }
+
+  export type sys_configMaxOrderByAggregateInput = {
+    config_id?: SortOrder
+    tenant_id?: SortOrder
+    config_key?: SortOrder
+    config_value?: SortOrder
+    description?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_configMinOrderByAggregateInput = {
+    config_id?: SortOrder
+    tenant_id?: SortOrder
+    config_key?: SortOrder
+    config_value?: SortOrder
+    description?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_configSumOrderByAggregateInput = {
+    is_deleted?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -22962,12 +29902,292 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type sys_user_roleCreateNestedManyWithoutUserInput = {
+    create?: XOR<sys_user_roleCreateWithoutUserInput, sys_user_roleUncheckedCreateWithoutUserInput> | sys_user_roleCreateWithoutUserInput[] | sys_user_roleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutUserInput | sys_user_roleCreateOrConnectWithoutUserInput[]
+    createMany?: sys_user_roleCreateManyUserInputEnvelope
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+  }
+
+  export type sys_user_deptCreateNestedManyWithoutUserInput = {
+    create?: XOR<sys_user_deptCreateWithoutUserInput, sys_user_deptUncheckedCreateWithoutUserInput> | sys_user_deptCreateWithoutUserInput[] | sys_user_deptUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutUserInput | sys_user_deptCreateOrConnectWithoutUserInput[]
+    createMany?: sys_user_deptCreateManyUserInputEnvelope
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+  }
+
+  export type sys_user_roleUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<sys_user_roleCreateWithoutUserInput, sys_user_roleUncheckedCreateWithoutUserInput> | sys_user_roleCreateWithoutUserInput[] | sys_user_roleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutUserInput | sys_user_roleCreateOrConnectWithoutUserInput[]
+    createMany?: sys_user_roleCreateManyUserInputEnvelope
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+  }
+
+  export type sys_user_deptUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<sys_user_deptCreateWithoutUserInput, sys_user_deptUncheckedCreateWithoutUserInput> | sys_user_deptCreateWithoutUserInput[] | sys_user_deptUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutUserInput | sys_user_deptCreateOrConnectWithoutUserInput[]
+    createMany?: sys_user_deptCreateManyUserInputEnvelope
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+  }
+
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type sys_user_roleUpdateManyWithoutUserNestedInput = {
+    create?: XOR<sys_user_roleCreateWithoutUserInput, sys_user_roleUncheckedCreateWithoutUserInput> | sys_user_roleCreateWithoutUserInput[] | sys_user_roleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutUserInput | sys_user_roleCreateOrConnectWithoutUserInput[]
+    upsert?: sys_user_roleUpsertWithWhereUniqueWithoutUserInput | sys_user_roleUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: sys_user_roleCreateManyUserInputEnvelope
+    set?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    disconnect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    delete?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    update?: sys_user_roleUpdateWithWhereUniqueWithoutUserInput | sys_user_roleUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: sys_user_roleUpdateManyWithWhereWithoutUserInput | sys_user_roleUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
+  }
+
+  export type sys_user_deptUpdateManyWithoutUserNestedInput = {
+    create?: XOR<sys_user_deptCreateWithoutUserInput, sys_user_deptUncheckedCreateWithoutUserInput> | sys_user_deptCreateWithoutUserInput[] | sys_user_deptUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutUserInput | sys_user_deptCreateOrConnectWithoutUserInput[]
+    upsert?: sys_user_deptUpsertWithWhereUniqueWithoutUserInput | sys_user_deptUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: sys_user_deptCreateManyUserInputEnvelope
+    set?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    disconnect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    delete?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    update?: sys_user_deptUpdateWithWhereUniqueWithoutUserInput | sys_user_deptUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: sys_user_deptUpdateManyWithWhereWithoutUserInput | sys_user_deptUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
+  }
+
+  export type sys_user_roleUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<sys_user_roleCreateWithoutUserInput, sys_user_roleUncheckedCreateWithoutUserInput> | sys_user_roleCreateWithoutUserInput[] | sys_user_roleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutUserInput | sys_user_roleCreateOrConnectWithoutUserInput[]
+    upsert?: sys_user_roleUpsertWithWhereUniqueWithoutUserInput | sys_user_roleUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: sys_user_roleCreateManyUserInputEnvelope
+    set?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    disconnect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    delete?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    update?: sys_user_roleUpdateWithWhereUniqueWithoutUserInput | sys_user_roleUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: sys_user_roleUpdateManyWithWhereWithoutUserInput | sys_user_roleUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
+  }
+
+  export type sys_user_deptUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<sys_user_deptCreateWithoutUserInput, sys_user_deptUncheckedCreateWithoutUserInput> | sys_user_deptCreateWithoutUserInput[] | sys_user_deptUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutUserInput | sys_user_deptCreateOrConnectWithoutUserInput[]
+    upsert?: sys_user_deptUpsertWithWhereUniqueWithoutUserInput | sys_user_deptUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: sys_user_deptCreateManyUserInputEnvelope
+    set?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    disconnect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    delete?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    update?: sys_user_deptUpdateWithWhereUniqueWithoutUserInput | sys_user_deptUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: sys_user_deptUpdateManyWithWhereWithoutUserInput | sys_user_deptUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
+  }
+
+  export type sys_user_roleCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput> | sys_user_roleCreateWithoutRoleInput[] | sys_user_roleUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutRoleInput | sys_user_roleCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_user_roleCreateManyRoleInputEnvelope
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+  }
+
+  export type sys_user_roleUncheckedCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput> | sys_user_roleCreateWithoutRoleInput[] | sys_user_roleUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutRoleInput | sys_user_roleCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_user_roleCreateManyRoleInputEnvelope
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+  }
+
+  export type sys_user_roleUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput> | sys_user_roleCreateWithoutRoleInput[] | sys_user_roleUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutRoleInput | sys_user_roleCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_user_roleUpsertWithWhereUniqueWithoutRoleInput | sys_user_roleUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_user_roleCreateManyRoleInputEnvelope
+    set?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    disconnect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    delete?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    update?: sys_user_roleUpdateWithWhereUniqueWithoutRoleInput | sys_user_roleUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_user_roleUpdateManyWithWhereWithoutRoleInput | sys_user_roleUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
+  }
+
+  export type sys_user_roleUncheckedUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput> | sys_user_roleCreateWithoutRoleInput[] | sys_user_roleUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_user_roleCreateOrConnectWithoutRoleInput | sys_user_roleCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_user_roleUpsertWithWhereUniqueWithoutRoleInput | sys_user_roleUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_user_roleCreateManyRoleInputEnvelope
+    set?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    disconnect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    delete?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+    update?: sys_user_roleUpdateWithWhereUniqueWithoutRoleInput | sys_user_roleUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_user_roleUpdateManyWithWhereWithoutRoleInput | sys_user_roleUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
+  }
+
+  export type sys_user_deptCreateNestedManyWithoutDeptInput = {
+    create?: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput> | sys_user_deptCreateWithoutDeptInput[] | sys_user_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutDeptInput | sys_user_deptCreateOrConnectWithoutDeptInput[]
+    createMany?: sys_user_deptCreateManyDeptInputEnvelope
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+  }
+
+  export type sys_user_deptUncheckedCreateNestedManyWithoutDeptInput = {
+    create?: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput> | sys_user_deptCreateWithoutDeptInput[] | sys_user_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutDeptInput | sys_user_deptCreateOrConnectWithoutDeptInput[]
+    createMany?: sys_user_deptCreateManyDeptInputEnvelope
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+  }
+
+  export type sys_user_deptUpdateManyWithoutDeptNestedInput = {
+    create?: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput> | sys_user_deptCreateWithoutDeptInput[] | sys_user_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutDeptInput | sys_user_deptCreateOrConnectWithoutDeptInput[]
+    upsert?: sys_user_deptUpsertWithWhereUniqueWithoutDeptInput | sys_user_deptUpsertWithWhereUniqueWithoutDeptInput[]
+    createMany?: sys_user_deptCreateManyDeptInputEnvelope
+    set?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    disconnect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    delete?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    update?: sys_user_deptUpdateWithWhereUniqueWithoutDeptInput | sys_user_deptUpdateWithWhereUniqueWithoutDeptInput[]
+    updateMany?: sys_user_deptUpdateManyWithWhereWithoutDeptInput | sys_user_deptUpdateManyWithWhereWithoutDeptInput[]
+    deleteMany?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
+  }
+
+  export type sys_user_deptUncheckedUpdateManyWithoutDeptNestedInput = {
+    create?: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput> | sys_user_deptCreateWithoutDeptInput[] | sys_user_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_user_deptCreateOrConnectWithoutDeptInput | sys_user_deptCreateOrConnectWithoutDeptInput[]
+    upsert?: sys_user_deptUpsertWithWhereUniqueWithoutDeptInput | sys_user_deptUpsertWithWhereUniqueWithoutDeptInput[]
+    createMany?: sys_user_deptCreateManyDeptInputEnvelope
+    set?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    disconnect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    delete?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+    update?: sys_user_deptUpdateWithWhereUniqueWithoutDeptInput | sys_user_deptUpdateWithWhereUniqueWithoutDeptInput[]
+    updateMany?: sys_user_deptUpdateManyWithWhereWithoutDeptInput | sys_user_deptUpdateManyWithWhereWithoutDeptInput[]
+    deleteMany?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
+  }
+
+  export type sys_notice_userCreateNestedManyWithoutNoticeInput = {
+    create?: XOR<sys_notice_userCreateWithoutNoticeInput, sys_notice_userUncheckedCreateWithoutNoticeInput> | sys_notice_userCreateWithoutNoticeInput[] | sys_notice_userUncheckedCreateWithoutNoticeInput[]
+    connectOrCreate?: sys_notice_userCreateOrConnectWithoutNoticeInput | sys_notice_userCreateOrConnectWithoutNoticeInput[]
+    createMany?: sys_notice_userCreateManyNoticeInputEnvelope
+    connect?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+  }
+
+  export type sys_notice_userUncheckedCreateNestedManyWithoutNoticeInput = {
+    create?: XOR<sys_notice_userCreateWithoutNoticeInput, sys_notice_userUncheckedCreateWithoutNoticeInput> | sys_notice_userCreateWithoutNoticeInput[] | sys_notice_userUncheckedCreateWithoutNoticeInput[]
+    connectOrCreate?: sys_notice_userCreateOrConnectWithoutNoticeInput | sys_notice_userCreateOrConnectWithoutNoticeInput[]
+    createMany?: sys_notice_userCreateManyNoticeInputEnvelope
+    connect?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+  }
+
+  export type sys_notice_userUpdateManyWithoutNoticeNestedInput = {
+    create?: XOR<sys_notice_userCreateWithoutNoticeInput, sys_notice_userUncheckedCreateWithoutNoticeInput> | sys_notice_userCreateWithoutNoticeInput[] | sys_notice_userUncheckedCreateWithoutNoticeInput[]
+    connectOrCreate?: sys_notice_userCreateOrConnectWithoutNoticeInput | sys_notice_userCreateOrConnectWithoutNoticeInput[]
+    upsert?: sys_notice_userUpsertWithWhereUniqueWithoutNoticeInput | sys_notice_userUpsertWithWhereUniqueWithoutNoticeInput[]
+    createMany?: sys_notice_userCreateManyNoticeInputEnvelope
+    set?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    disconnect?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    delete?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    connect?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    update?: sys_notice_userUpdateWithWhereUniqueWithoutNoticeInput | sys_notice_userUpdateWithWhereUniqueWithoutNoticeInput[]
+    updateMany?: sys_notice_userUpdateManyWithWhereWithoutNoticeInput | sys_notice_userUpdateManyWithWhereWithoutNoticeInput[]
+    deleteMany?: sys_notice_userScalarWhereInput | sys_notice_userScalarWhereInput[]
+  }
+
+  export type sys_notice_userUncheckedUpdateManyWithoutNoticeNestedInput = {
+    create?: XOR<sys_notice_userCreateWithoutNoticeInput, sys_notice_userUncheckedCreateWithoutNoticeInput> | sys_notice_userCreateWithoutNoticeInput[] | sys_notice_userUncheckedCreateWithoutNoticeInput[]
+    connectOrCreate?: sys_notice_userCreateOrConnectWithoutNoticeInput | sys_notice_userCreateOrConnectWithoutNoticeInput[]
+    upsert?: sys_notice_userUpsertWithWhereUniqueWithoutNoticeInput | sys_notice_userUpsertWithWhereUniqueWithoutNoticeInput[]
+    createMany?: sys_notice_userCreateManyNoticeInputEnvelope
+    set?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    disconnect?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    delete?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    connect?: sys_notice_userWhereUniqueInput | sys_notice_userWhereUniqueInput[]
+    update?: sys_notice_userUpdateWithWhereUniqueWithoutNoticeInput | sys_notice_userUpdateWithWhereUniqueWithoutNoticeInput[]
+    updateMany?: sys_notice_userUpdateManyWithWhereWithoutNoticeInput | sys_notice_userUpdateManyWithWhereWithoutNoticeInput[]
+    deleteMany?: sys_notice_userScalarWhereInput | sys_notice_userScalarWhereInput[]
+  }
+
+  export type sys_noticeCreateNestedOneWithoutTarget_usersInput = {
+    create?: XOR<sys_noticeCreateWithoutTarget_usersInput, sys_noticeUncheckedCreateWithoutTarget_usersInput>
+    connectOrCreate?: sys_noticeCreateOrConnectWithoutTarget_usersInput
+    connect?: sys_noticeWhereUniqueInput
+  }
+
+  export type sys_noticeUpdateOneRequiredWithoutTarget_usersNestedInput = {
+    create?: XOR<sys_noticeCreateWithoutTarget_usersInput, sys_noticeUncheckedCreateWithoutTarget_usersInput>
+    connectOrCreate?: sys_noticeCreateOrConnectWithoutTarget_usersInput
+    upsert?: sys_noticeUpsertWithoutTarget_usersInput
+    connect?: sys_noticeWhereUniqueInput
+    update?: XOR<XOR<sys_noticeUpdateToOneWithWhereWithoutTarget_usersInput, sys_noticeUpdateWithoutTarget_usersInput>, sys_noticeUncheckedUpdateWithoutTarget_usersInput>
+  }
+
+  export type sys_userCreateNestedOneWithoutSys_user_roleInput = {
+    create?: XOR<sys_userCreateWithoutSys_user_roleInput, sys_userUncheckedCreateWithoutSys_user_roleInput>
+    connectOrCreate?: sys_userCreateOrConnectWithoutSys_user_roleInput
+    connect?: sys_userWhereUniqueInput
+  }
+
+  export type sys_roleCreateNestedOneWithoutSys_user_roleInput = {
+    create?: XOR<sys_roleCreateWithoutSys_user_roleInput, sys_roleUncheckedCreateWithoutSys_user_roleInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_user_roleInput
+    connect?: sys_roleWhereUniqueInput
+  }
+
+  export type sys_userUpdateOneRequiredWithoutSys_user_roleNestedInput = {
+    create?: XOR<sys_userCreateWithoutSys_user_roleInput, sys_userUncheckedCreateWithoutSys_user_roleInput>
+    connectOrCreate?: sys_userCreateOrConnectWithoutSys_user_roleInput
+    upsert?: sys_userUpsertWithoutSys_user_roleInput
+    connect?: sys_userWhereUniqueInput
+    update?: XOR<XOR<sys_userUpdateToOneWithWhereWithoutSys_user_roleInput, sys_userUpdateWithoutSys_user_roleInput>, sys_userUncheckedUpdateWithoutSys_user_roleInput>
+  }
+
+  export type sys_roleUpdateOneRequiredWithoutSys_user_roleNestedInput = {
+    create?: XOR<sys_roleCreateWithoutSys_user_roleInput, sys_roleUncheckedCreateWithoutSys_user_roleInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_user_roleInput
+    upsert?: sys_roleUpsertWithoutSys_user_roleInput
+    connect?: sys_roleWhereUniqueInput
+    update?: XOR<XOR<sys_roleUpdateToOneWithWhereWithoutSys_user_roleInput, sys_roleUpdateWithoutSys_user_roleInput>, sys_roleUncheckedUpdateWithoutSys_user_roleInput>
+  }
+
+  export type sys_userCreateNestedOneWithoutSys_user_deptInput = {
+    create?: XOR<sys_userCreateWithoutSys_user_deptInput, sys_userUncheckedCreateWithoutSys_user_deptInput>
+    connectOrCreate?: sys_userCreateOrConnectWithoutSys_user_deptInput
+    connect?: sys_userWhereUniqueInput
+  }
+
+  export type sys_deptCreateNestedOneWithoutSys_user_deptInput = {
+    create?: XOR<sys_deptCreateWithoutSys_user_deptInput, sys_deptUncheckedCreateWithoutSys_user_deptInput>
+    connectOrCreate?: sys_deptCreateOrConnectWithoutSys_user_deptInput
+    connect?: sys_deptWhereUniqueInput
+  }
+
+  export type sys_userUpdateOneRequiredWithoutSys_user_deptNestedInput = {
+    create?: XOR<sys_userCreateWithoutSys_user_deptInput, sys_userUncheckedCreateWithoutSys_user_deptInput>
+    connectOrCreate?: sys_userCreateOrConnectWithoutSys_user_deptInput
+    upsert?: sys_userUpsertWithoutSys_user_deptInput
+    connect?: sys_userWhereUniqueInput
+    update?: XOR<XOR<sys_userUpdateToOneWithWhereWithoutSys_user_deptInput, sys_userUpdateWithoutSys_user_deptInput>, sys_userUncheckedUpdateWithoutSys_user_deptInput>
+  }
+
+  export type sys_deptUpdateOneRequiredWithoutSys_user_deptNestedInput = {
+    create?: XOR<sys_deptCreateWithoutSys_user_deptInput, sys_deptUncheckedCreateWithoutSys_user_deptInput>
+    connectOrCreate?: sys_deptCreateOrConnectWithoutSys_user_deptInput
+    upsert?: sys_deptUpsertWithoutSys_user_deptInput
+    connect?: sys_deptWhereUniqueInput
+    update?: XOR<XOR<sys_deptUpdateToOneWithWhereWithoutSys_user_deptInput, sys_deptUpdateWithoutSys_user_deptInput>, sys_deptUncheckedUpdateWithoutSys_user_deptInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -23206,6 +30426,846 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type sys_user_roleCreateWithoutUserInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    role: sys_roleCreateNestedOneWithoutSys_user_roleInput
+  }
+
+  export type sys_user_roleUncheckedCreateWithoutUserInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_user_roleCreateOrConnectWithoutUserInput = {
+    where: sys_user_roleWhereUniqueInput
+    create: XOR<sys_user_roleCreateWithoutUserInput, sys_user_roleUncheckedCreateWithoutUserInput>
+  }
+
+  export type sys_user_roleCreateManyUserInputEnvelope = {
+    data: sys_user_roleCreateManyUserInput | sys_user_roleCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_user_deptCreateWithoutUserInput = {
+    id?: string
+    tenant_id: string
+    is_primary?: number
+    created_at?: Date | string
+    dept: sys_deptCreateNestedOneWithoutSys_user_deptInput
+  }
+
+  export type sys_user_deptUncheckedCreateWithoutUserInput = {
+    id?: string
+    dept_id: string
+    tenant_id: string
+    is_primary?: number
+    created_at?: Date | string
+  }
+
+  export type sys_user_deptCreateOrConnectWithoutUserInput = {
+    where: sys_user_deptWhereUniqueInput
+    create: XOR<sys_user_deptCreateWithoutUserInput, sys_user_deptUncheckedCreateWithoutUserInput>
+  }
+
+  export type sys_user_deptCreateManyUserInputEnvelope = {
+    data: sys_user_deptCreateManyUserInput | sys_user_deptCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_user_roleUpsertWithWhereUniqueWithoutUserInput = {
+    where: sys_user_roleWhereUniqueInput
+    update: XOR<sys_user_roleUpdateWithoutUserInput, sys_user_roleUncheckedUpdateWithoutUserInput>
+    create: XOR<sys_user_roleCreateWithoutUserInput, sys_user_roleUncheckedCreateWithoutUserInput>
+  }
+
+  export type sys_user_roleUpdateWithWhereUniqueWithoutUserInput = {
+    where: sys_user_roleWhereUniqueInput
+    data: XOR<sys_user_roleUpdateWithoutUserInput, sys_user_roleUncheckedUpdateWithoutUserInput>
+  }
+
+  export type sys_user_roleUpdateManyWithWhereWithoutUserInput = {
+    where: sys_user_roleScalarWhereInput
+    data: XOR<sys_user_roleUpdateManyMutationInput, sys_user_roleUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type sys_user_roleScalarWhereInput = {
+    AND?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
+    OR?: sys_user_roleScalarWhereInput[]
+    NOT?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
+    id?: UuidFilter<"sys_user_role"> | string
+    user_id?: UuidFilter<"sys_user_role"> | string
+    role_id?: UuidFilter<"sys_user_role"> | string
+    tenant_id?: UuidFilter<"sys_user_role"> | string
+    created_at?: DateTimeFilter<"sys_user_role"> | Date | string
+  }
+
+  export type sys_user_deptUpsertWithWhereUniqueWithoutUserInput = {
+    where: sys_user_deptWhereUniqueInput
+    update: XOR<sys_user_deptUpdateWithoutUserInput, sys_user_deptUncheckedUpdateWithoutUserInput>
+    create: XOR<sys_user_deptCreateWithoutUserInput, sys_user_deptUncheckedCreateWithoutUserInput>
+  }
+
+  export type sys_user_deptUpdateWithWhereUniqueWithoutUserInput = {
+    where: sys_user_deptWhereUniqueInput
+    data: XOR<sys_user_deptUpdateWithoutUserInput, sys_user_deptUncheckedUpdateWithoutUserInput>
+  }
+
+  export type sys_user_deptUpdateManyWithWhereWithoutUserInput = {
+    where: sys_user_deptScalarWhereInput
+    data: XOR<sys_user_deptUpdateManyMutationInput, sys_user_deptUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type sys_user_deptScalarWhereInput = {
+    AND?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
+    OR?: sys_user_deptScalarWhereInput[]
+    NOT?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
+    id?: UuidFilter<"sys_user_dept"> | string
+    user_id?: UuidFilter<"sys_user_dept"> | string
+    dept_id?: UuidFilter<"sys_user_dept"> | string
+    tenant_id?: UuidFilter<"sys_user_dept"> | string
+    is_primary?: IntFilter<"sys_user_dept"> | number
+    created_at?: DateTimeFilter<"sys_user_dept"> | Date | string
+  }
+
+  export type sys_user_roleCreateWithoutRoleInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    user: sys_userCreateNestedOneWithoutSys_user_roleInput
+  }
+
+  export type sys_user_roleUncheckedCreateWithoutRoleInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_user_roleCreateOrConnectWithoutRoleInput = {
+    where: sys_user_roleWhereUniqueInput
+    create: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_user_roleCreateManyRoleInputEnvelope = {
+    data: sys_user_roleCreateManyRoleInput | sys_user_roleCreateManyRoleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_user_roleUpsertWithWhereUniqueWithoutRoleInput = {
+    where: sys_user_roleWhereUniqueInput
+    update: XOR<sys_user_roleUpdateWithoutRoleInput, sys_user_roleUncheckedUpdateWithoutRoleInput>
+    create: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_user_roleUpdateWithWhereUniqueWithoutRoleInput = {
+    where: sys_user_roleWhereUniqueInput
+    data: XOR<sys_user_roleUpdateWithoutRoleInput, sys_user_roleUncheckedUpdateWithoutRoleInput>
+  }
+
+  export type sys_user_roleUpdateManyWithWhereWithoutRoleInput = {
+    where: sys_user_roleScalarWhereInput
+    data: XOR<sys_user_roleUpdateManyMutationInput, sys_user_roleUncheckedUpdateManyWithoutRoleInput>
+  }
+
+  export type sys_user_deptCreateWithoutDeptInput = {
+    id?: string
+    tenant_id: string
+    is_primary?: number
+    created_at?: Date | string
+    user: sys_userCreateNestedOneWithoutSys_user_deptInput
+  }
+
+  export type sys_user_deptUncheckedCreateWithoutDeptInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    is_primary?: number
+    created_at?: Date | string
+  }
+
+  export type sys_user_deptCreateOrConnectWithoutDeptInput = {
+    where: sys_user_deptWhereUniqueInput
+    create: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput>
+  }
+
+  export type sys_user_deptCreateManyDeptInputEnvelope = {
+    data: sys_user_deptCreateManyDeptInput | sys_user_deptCreateManyDeptInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_user_deptUpsertWithWhereUniqueWithoutDeptInput = {
+    where: sys_user_deptWhereUniqueInput
+    update: XOR<sys_user_deptUpdateWithoutDeptInput, sys_user_deptUncheckedUpdateWithoutDeptInput>
+    create: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput>
+  }
+
+  export type sys_user_deptUpdateWithWhereUniqueWithoutDeptInput = {
+    where: sys_user_deptWhereUniqueInput
+    data: XOR<sys_user_deptUpdateWithoutDeptInput, sys_user_deptUncheckedUpdateWithoutDeptInput>
+  }
+
+  export type sys_user_deptUpdateManyWithWhereWithoutDeptInput = {
+    where: sys_user_deptScalarWhereInput
+    data: XOR<sys_user_deptUpdateManyMutationInput, sys_user_deptUncheckedUpdateManyWithoutDeptInput>
+  }
+
+  export type sys_notice_userCreateWithoutNoticeInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    is_read?: number
+    read_time?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type sys_notice_userUncheckedCreateWithoutNoticeInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    is_read?: number
+    read_time?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type sys_notice_userCreateOrConnectWithoutNoticeInput = {
+    where: sys_notice_userWhereUniqueInput
+    create: XOR<sys_notice_userCreateWithoutNoticeInput, sys_notice_userUncheckedCreateWithoutNoticeInput>
+  }
+
+  export type sys_notice_userCreateManyNoticeInputEnvelope = {
+    data: sys_notice_userCreateManyNoticeInput | sys_notice_userCreateManyNoticeInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_notice_userUpsertWithWhereUniqueWithoutNoticeInput = {
+    where: sys_notice_userWhereUniqueInput
+    update: XOR<sys_notice_userUpdateWithoutNoticeInput, sys_notice_userUncheckedUpdateWithoutNoticeInput>
+    create: XOR<sys_notice_userCreateWithoutNoticeInput, sys_notice_userUncheckedCreateWithoutNoticeInput>
+  }
+
+  export type sys_notice_userUpdateWithWhereUniqueWithoutNoticeInput = {
+    where: sys_notice_userWhereUniqueInput
+    data: XOR<sys_notice_userUpdateWithoutNoticeInput, sys_notice_userUncheckedUpdateWithoutNoticeInput>
+  }
+
+  export type sys_notice_userUpdateManyWithWhereWithoutNoticeInput = {
+    where: sys_notice_userScalarWhereInput
+    data: XOR<sys_notice_userUpdateManyMutationInput, sys_notice_userUncheckedUpdateManyWithoutNoticeInput>
+  }
+
+  export type sys_notice_userScalarWhereInput = {
+    AND?: sys_notice_userScalarWhereInput | sys_notice_userScalarWhereInput[]
+    OR?: sys_notice_userScalarWhereInput[]
+    NOT?: sys_notice_userScalarWhereInput | sys_notice_userScalarWhereInput[]
+    id?: UuidFilter<"sys_notice_user"> | string
+    notice_id?: UuidFilter<"sys_notice_user"> | string
+    user_id?: UuidFilter<"sys_notice_user"> | string
+    tenant_id?: UuidFilter<"sys_notice_user"> | string
+    is_read?: IntFilter<"sys_notice_user"> | number
+    read_time?: DateTimeNullableFilter<"sys_notice_user"> | Date | string | null
+    created_at?: DateTimeFilter<"sys_notice_user"> | Date | string
+  }
+
+  export type sys_noticeCreateWithoutTarget_usersInput = {
+    notice_id?: string
+    tenant_id: string
+    title: string
+    content?: string | null
+    notice_type: number
+    status?: number
+    publish_time?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_noticeUncheckedCreateWithoutTarget_usersInput = {
+    notice_id?: string
+    tenant_id: string
+    title: string
+    content?: string | null
+    notice_type: number
+    status?: number
+    publish_time?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_noticeCreateOrConnectWithoutTarget_usersInput = {
+    where: sys_noticeWhereUniqueInput
+    create: XOR<sys_noticeCreateWithoutTarget_usersInput, sys_noticeUncheckedCreateWithoutTarget_usersInput>
+  }
+
+  export type sys_noticeUpsertWithoutTarget_usersInput = {
+    update: XOR<sys_noticeUpdateWithoutTarget_usersInput, sys_noticeUncheckedUpdateWithoutTarget_usersInput>
+    create: XOR<sys_noticeCreateWithoutTarget_usersInput, sys_noticeUncheckedCreateWithoutTarget_usersInput>
+    where?: sys_noticeWhereInput
+  }
+
+  export type sys_noticeUpdateToOneWithWhereWithoutTarget_usersInput = {
+    where?: sys_noticeWhereInput
+    data: XOR<sys_noticeUpdateWithoutTarget_usersInput, sys_noticeUncheckedUpdateWithoutTarget_usersInput>
+  }
+
+  export type sys_noticeUpdateWithoutTarget_usersInput = {
+    notice_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    notice_type?: IntFieldUpdateOperationsInput | number
+    status?: IntFieldUpdateOperationsInput | number
+    publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_noticeUncheckedUpdateWithoutTarget_usersInput = {
+    notice_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    notice_type?: IntFieldUpdateOperationsInput | number
+    status?: IntFieldUpdateOperationsInput | number
+    publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_userCreateWithoutSys_user_roleInput = {
+    user_id?: string
+    tenant_id: string
+    username: string
+    password: string
+    real_name?: string | null
+    phone?: string | null
+    email?: string | null
+    avatar?: string | null
+    gender?: number | null
+    status?: number
+    last_login_ip?: string | null
+    last_login_time?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_dept?: sys_user_deptCreateNestedManyWithoutUserInput
+  }
+
+  export type sys_userUncheckedCreateWithoutSys_user_roleInput = {
+    user_id?: string
+    tenant_id: string
+    username: string
+    password: string
+    real_name?: string | null
+    phone?: string | null
+    email?: string | null
+    avatar?: string | null
+    gender?: number | null
+    status?: number
+    last_login_ip?: string | null
+    last_login_time?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_dept?: sys_user_deptUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type sys_userCreateOrConnectWithoutSys_user_roleInput = {
+    where: sys_userWhereUniqueInput
+    create: XOR<sys_userCreateWithoutSys_user_roleInput, sys_userUncheckedCreateWithoutSys_user_roleInput>
+  }
+
+  export type sys_roleCreateWithoutSys_user_roleInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_roleUncheckedCreateWithoutSys_user_roleInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_roleCreateOrConnectWithoutSys_user_roleInput = {
+    where: sys_roleWhereUniqueInput
+    create: XOR<sys_roleCreateWithoutSys_user_roleInput, sys_roleUncheckedCreateWithoutSys_user_roleInput>
+  }
+
+  export type sys_userUpsertWithoutSys_user_roleInput = {
+    update: XOR<sys_userUpdateWithoutSys_user_roleInput, sys_userUncheckedUpdateWithoutSys_user_roleInput>
+    create: XOR<sys_userCreateWithoutSys_user_roleInput, sys_userUncheckedCreateWithoutSys_user_roleInput>
+    where?: sys_userWhereInput
+  }
+
+  export type sys_userUpdateToOneWithWhereWithoutSys_user_roleInput = {
+    where?: sys_userWhereInput
+    data: XOR<sys_userUpdateWithoutSys_user_roleInput, sys_userUncheckedUpdateWithoutSys_user_roleInput>
+  }
+
+  export type sys_userUpdateWithoutSys_user_roleInput = {
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    real_name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: IntFieldUpdateOperationsInput | number
+    last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
+    last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_dept?: sys_user_deptUpdateManyWithoutUserNestedInput
+  }
+
+  export type sys_userUncheckedUpdateWithoutSys_user_roleInput = {
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    real_name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: IntFieldUpdateOperationsInput | number
+    last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
+    last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_dept?: sys_user_deptUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type sys_roleUpsertWithoutSys_user_roleInput = {
+    update: XOR<sys_roleUpdateWithoutSys_user_roleInput, sys_roleUncheckedUpdateWithoutSys_user_roleInput>
+    create: XOR<sys_roleCreateWithoutSys_user_roleInput, sys_roleUncheckedCreateWithoutSys_user_roleInput>
+    where?: sys_roleWhereInput
+  }
+
+  export type sys_roleUpdateToOneWithWhereWithoutSys_user_roleInput = {
+    where?: sys_roleWhereInput
+    data: XOR<sys_roleUpdateWithoutSys_user_roleInput, sys_roleUncheckedUpdateWithoutSys_user_roleInput>
+  }
+
+  export type sys_roleUpdateWithoutSys_user_roleInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_roleUncheckedUpdateWithoutSys_user_roleInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_userCreateWithoutSys_user_deptInput = {
+    user_id?: string
+    tenant_id: string
+    username: string
+    password: string
+    real_name?: string | null
+    phone?: string | null
+    email?: string | null
+    avatar?: string | null
+    gender?: number | null
+    status?: number
+    last_login_ip?: string | null
+    last_login_time?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleCreateNestedManyWithoutUserInput
+  }
+
+  export type sys_userUncheckedCreateWithoutSys_user_deptInput = {
+    user_id?: string
+    tenant_id: string
+    username: string
+    password: string
+    real_name?: string | null
+    phone?: string | null
+    email?: string | null
+    avatar?: string | null
+    gender?: number | null
+    status?: number
+    last_login_ip?: string | null
+    last_login_time?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type sys_userCreateOrConnectWithoutSys_user_deptInput = {
+    where: sys_userWhereUniqueInput
+    create: XOR<sys_userCreateWithoutSys_user_deptInput, sys_userUncheckedCreateWithoutSys_user_deptInput>
+  }
+
+  export type sys_deptCreateWithoutSys_user_deptInput = {
+    dept_id?: string
+    tenant_id: string
+    parent_id?: string | null
+    dept_code: string
+    dept_name: string
+    leader?: string | null
+    phone?: string | null
+    email?: string | null
+    sort_order?: number
+    status?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_deptUncheckedCreateWithoutSys_user_deptInput = {
+    dept_id?: string
+    tenant_id: string
+    parent_id?: string | null
+    dept_code: string
+    dept_name: string
+    leader?: string | null
+    phone?: string | null
+    email?: string | null
+    sort_order?: number
+    status?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_deptCreateOrConnectWithoutSys_user_deptInput = {
+    where: sys_deptWhereUniqueInput
+    create: XOR<sys_deptCreateWithoutSys_user_deptInput, sys_deptUncheckedCreateWithoutSys_user_deptInput>
+  }
+
+  export type sys_userUpsertWithoutSys_user_deptInput = {
+    update: XOR<sys_userUpdateWithoutSys_user_deptInput, sys_userUncheckedUpdateWithoutSys_user_deptInput>
+    create: XOR<sys_userCreateWithoutSys_user_deptInput, sys_userUncheckedCreateWithoutSys_user_deptInput>
+    where?: sys_userWhereInput
+  }
+
+  export type sys_userUpdateToOneWithWhereWithoutSys_user_deptInput = {
+    where?: sys_userWhereInput
+    data: XOR<sys_userUpdateWithoutSys_user_deptInput, sys_userUncheckedUpdateWithoutSys_user_deptInput>
+  }
+
+  export type sys_userUpdateWithoutSys_user_deptInput = {
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    real_name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: IntFieldUpdateOperationsInput | number
+    last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
+    last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUpdateManyWithoutUserNestedInput
+  }
+
+  export type sys_userUncheckedUpdateWithoutSys_user_deptInput = {
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    real_name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: IntFieldUpdateOperationsInput | number
+    last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
+    last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type sys_deptUpsertWithoutSys_user_deptInput = {
+    update: XOR<sys_deptUpdateWithoutSys_user_deptInput, sys_deptUncheckedUpdateWithoutSys_user_deptInput>
+    create: XOR<sys_deptCreateWithoutSys_user_deptInput, sys_deptUncheckedCreateWithoutSys_user_deptInput>
+    where?: sys_deptWhereInput
+  }
+
+  export type sys_deptUpdateToOneWithWhereWithoutSys_user_deptInput = {
+    where?: sys_deptWhereInput
+    data: XOR<sys_deptUpdateWithoutSys_user_deptInput, sys_deptUncheckedUpdateWithoutSys_user_deptInput>
+  }
+
+  export type sys_deptUpdateWithoutSys_user_deptInput = {
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    dept_code?: StringFieldUpdateOperationsInput | string
+    dept_name?: StringFieldUpdateOperationsInput | string
+    leader?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_deptUncheckedUpdateWithoutSys_user_deptInput = {
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    dept_code?: StringFieldUpdateOperationsInput | string
+    dept_name?: StringFieldUpdateOperationsInput | string
+    leader?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_user_roleCreateManyUserInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_user_deptCreateManyUserInput = {
+    id?: string
+    dept_id: string
+    tenant_id: string
+    is_primary?: number
+    created_at?: Date | string
+  }
+
+  export type sys_user_roleUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: sys_roleUpdateOneRequiredWithoutSys_user_roleNestedInput
+  }
+
+  export type sys_user_roleUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_user_roleUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_user_deptUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_primary?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    dept?: sys_deptUpdateOneRequiredWithoutSys_user_deptNestedInput
+  }
+
+  export type sys_user_deptUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_primary?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_user_deptUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_primary?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_user_roleCreateManyRoleInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_user_roleUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: sys_userUpdateOneRequiredWithoutSys_user_roleNestedInput
+  }
+
+  export type sys_user_roleUncheckedUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_user_roleUncheckedUpdateManyWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_user_deptCreateManyDeptInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    is_primary?: number
+    created_at?: Date | string
+  }
+
+  export type sys_user_deptUpdateWithoutDeptInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_primary?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: sys_userUpdateOneRequiredWithoutSys_user_deptNestedInput
+  }
+
+  export type sys_user_deptUncheckedUpdateWithoutDeptInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_primary?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_user_deptUncheckedUpdateManyWithoutDeptInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_primary?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_notice_userCreateManyNoticeInput = {
+    id?: string
+    user_id: string
+    tenant_id: string
+    is_read?: number
+    read_time?: Date | string | null
+    created_at?: Date | string
+  }
+
+  export type sys_notice_userUpdateWithoutNoticeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
+    read_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_notice_userUncheckedUpdateWithoutNoticeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
+    read_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_notice_userUncheckedUpdateManyWithoutNoticeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
+    read_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

@@ -18,12 +18,36 @@ function createPrismaClient() {
       throw new Error("DATABASE_URL is required for Neon connection");
     }
     const adapter = new PrismaNeon({ connectionString });
-    return new PrismaClient({ adapter });
+    return new PrismaClient({
+      adapter,
+      transactionOptions: {
+        maxWait: 5000,
+        timeout: 15000,
+      },
+      log: [
+        {
+          emit: "event",
+          level: "query",
+        },
+      ],
+    });
   }
 
   const adapter = new PrismaPg({ connectionString });
   // 本地开发：使用标准 Prisma Client（依赖 pg）
-  return new PrismaClient({ adapter });
+  return new PrismaClient({
+    adapter,
+    transactionOptions: {
+      maxWait: 5000,
+      timeout: 15000,
+    },
+    log: [
+      {
+        emit: "event",
+        level: "query",
+      },
+    ],
+  });
 }
 if (process.env.NODE_ENV !== "production") {
   delete globalForPrisma.prisma;
@@ -34,4 +58,9 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
+prisma.$on("query", (e) => {
+  console.log(
+    `Query: ${e.query} | Params: ${e.params} | Duration: ${e.duration}ms`,
+  );
+});
 export { prisma };

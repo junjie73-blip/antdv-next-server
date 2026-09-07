@@ -66,8 +66,13 @@ export abstract class BaseController<
       .map((item) => keysToCamelCase(item))
       .map((item) => {
         // 判断当前字段是不是时间格式，如果是就转成 YYYY-MM-DD HH:mm:ss 格式
-        if (item instanceof Date) {
-          item = dayjs(item).format("YYYY-MM-DD HH:mm:ss");
+        for (const key in item as any) {
+          if (item[key] instanceof Date) {
+            item[key] = dayjs(item[key]).format("YYYY-MM-DD HH:mm:ss");
+          }
+          if (this.config.hiddenFields?.includes(key)) {
+            delete item[key];
+          }
         }
         return item as T;
       });
@@ -77,8 +82,19 @@ export abstract class BaseController<
     return dto;
   }
 
-  async afterCreate(_data: T, _req: Request): Promise<void> {
+  async afterCreate(_data: T, _req: Request): Promise<T> {
+    const data = keysToCamelCase<T>(_data);
+    for (const key in data) {
+      if (data[key] instanceof Date) {
+        // @ts-ignore
+        data[key] = dayjs(data[key]).format("YYYY-MM-DD HH:mm:ss");
+      }
+      if (this.config.hiddenFields?.includes(key)) {
+        delete data[key];
+      }
+    }
     // 默认空实现
+    return data;
   }
 
   async beforeUpdate(
@@ -89,8 +105,15 @@ export abstract class BaseController<
     return dto;
   }
 
-  async afterUpdate(_data: T, _req: Request): Promise<void> {
-    // 默认空实现
+  async afterUpdate(_data: T, _req: Request): Promise<T> {
+    const data = keysToCamelCase<T>(_data);
+    for (const key in data) {
+      if (data[key] instanceof Date) {
+        // @ts-ignore
+        data[key] = dayjs(data[key]).format("YYYY-MM-DD HH:mm:ss");
+      }
+    }
+    return data;
   }
 
   async beforeDelete(_id: string, _req: Request): Promise<boolean> {
@@ -111,6 +134,9 @@ export abstract class BaseController<
       if (_data[key] instanceof Date) {
         // @ts-ignore
         _data[key] = dayjs(_data[key]).format("YYYY-MM-DD HH:mm:ss");
+      }
+      if (this.config.hiddenFields?.includes(key)) {
+        delete _data[key];
       }
     }
     return _data;
@@ -180,7 +206,8 @@ export abstract class BaseController<
    */
   async create(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
-      const tenantId = req.tenantId!;
+      const tenantId =
+        req.tenantId! || req.body.tenantId! || req.user?.tenantId!;
       const userId = req.user?.userId;
 
       // 转换请求数据
@@ -198,7 +225,7 @@ export abstract class BaseController<
       // 执行创建后钩子
       await this.afterCreate(result, req);
 
-      success(res, keysToCamelCase(result), "创建成功", 201);
+      success(res, null, "创建成功", 201);
     } catch (err) {
       this.handleError(res, err);
     }
@@ -224,11 +251,10 @@ export abstract class BaseController<
 
       // 执行更新
       const result = await this.repository.update(id, dbData, tenantId, userId);
-
       // 执行更新后钩子
       await this.afterUpdate(result, req);
 
-      success(res, keysToCamelCase(result), "更新成功");
+      success(res, null, "更新成功");
     } catch (err) {
       this.handleError(res, err);
     }

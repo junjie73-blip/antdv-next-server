@@ -13,7 +13,6 @@ import {
   ApiBody,
 } from "@core/decorator/index.js";
 import { authMiddleware } from "@middleware/auth.js";
-import { auditMiddleware } from "@middleware/audit.js";
 import * as mfaService from "./service.js";
 import { logger } from "@core/logger/index.js";
 
@@ -36,7 +35,6 @@ export default class MFAController {
     z.object({ qrCode: z.string(), manualEntryKey: z.string() }),
   )
   @ApiResponse(401, "未认证")
-  @UseMiddleware(auditMiddleware("mfa:setup"))
   async setupMFA(@CurrentUser() user: any) {
     return await mfaService.generateSecret(user.userId);
   }
@@ -46,7 +44,6 @@ export default class MFAController {
   @ApiBody(TokenSchema)
   @ApiResponse(200, "成功", z.object({ backupCodes: z.array(z.string()) }))
   @ApiResponse(400, "验证码错误")
-  @UseMiddleware(auditMiddleware("mfa:enable"))
   async enableMFA(
     @CurrentUser() user: any,
     @Body(TokenSchema) body: { token: string },
@@ -85,7 +82,6 @@ export default class MFAController {
   @ApiBody(TokenSchema)
   @ApiResponse(200, "MFA已禁用")
   @ApiResponse(400, "验证码错误")
-  @UseMiddleware(auditMiddleware("mfa:disable"))
   async disableMFA(
     @CurrentUser() user: any,
     @Body(TokenSchema) body: { token: string },
@@ -109,7 +105,6 @@ export default class MFAController {
   @ApiOperation("重新生成备份码", "需要当前有效的TOTP验证")
   @ApiBody(TokenSchema)
   @ApiResponse(200, "成功", z.object({ backupCodes: z.array(z.string()) }))
-  @UseMiddleware(auditMiddleware("mfa:regenerate-backup-codes"))
   async regenerateBackupCodes(
     @CurrentUser() user: any,
     @Body(TokenSchema) body: { token: string },

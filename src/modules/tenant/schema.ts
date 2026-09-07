@@ -1,20 +1,53 @@
-import z from "zod";
+import { z } from "zod";
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 
-export const TenantCreateSchema = z.object({
-  tenant_code: z.string().min(4).max(10),
-  tenant_name: z.string().min(4).max(255),
-  contact_name: z.string().min(4).max(255),
-  contact_email: z.string().email(),
-  contact_phone: z.string().min(10).max(15),
-  status: z.number().optional().default(1),
-});
-export const TenantUpdateSchema = TenantCreateSchema.partial();
+extendZodWithOpenApi(z);
 
-export const TenantListSchema = z.object({
-  tenant_code: z.string().optional(),
-  tenant_name: z.string().optional(),
-  contact_name: z.string().optional(),
-  contact_email: z.string().optional(),
-  contact_phone: z.string().optional(),
-  status: z.number().optional(),
-});
+// 租户创建 Schema
+export const TenantCreateSchema = z
+  .object({
+    tenantCode: z.string().min(2).max(64),
+    tenantName: z.string().min(2).max(128),
+    contactName: z.string().max(64).optional(),
+    contactPhone: z.string().max(32).optional(),
+    contactEmail: z.string().email().max(128).optional(),
+    status: z.number().int().min(0).max(1).default(1),
+    expireTime: z.coerce.date().nullable().optional(), // 自动转换字符串为 Date
+  })
+  .openapi("TenantCreate");
+
+// 租户更新 Schema
+export const TenantUpdateSchema = z
+  .object({
+    tenantCode: z.string().min(2).max(64).optional(),
+    tenantName: z.string().min(2).max(128).optional(),
+    contactName: z.string().max(64).optional(),
+    contactPhone: z.string().max(32).optional(),
+    contactEmail: z.string().email().max(128).optional(),
+    status: z.number().int().min(0).max(1).optional(),
+    expireTime: z.string().datetime().nullable().optional(),
+  })
+  .openapi("TenantUpdate");
+
+// 租户列表查询 Schema
+export const TenantListSchema = z
+  .object({
+    pageNum: z.number().int().positive().default(1),
+    pageSize: z.number().int().positive().max(100).default(10),
+    keyword: z.string().optional(),
+    status: z.string().optional(),
+  })
+  .openapi("TenantList");
+
+// 租户导出 Schema（用于筛选导出条件）
+export const TenantExportSchema = z
+  .object({
+    keyword: z.string().optional(),
+    status: z.string().optional(),
+  })
+  .openapi("TenantExport");
+
+export type TenantCreateDto = z.infer<typeof TenantCreateSchema>;
+export type TenantUpdateDto = z.infer<typeof TenantUpdateSchema>;
+export type TenantListDto = z.infer<typeof TenantListSchema>;
+export type TenantExportDto = z.infer<typeof TenantExportSchema>;

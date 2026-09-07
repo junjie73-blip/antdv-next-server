@@ -1,0 +1,150 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Req,
+  Res,
+  ApiOperation,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+} from "@/core/decorator/index.js";
+import { Request, Response } from "express";
+import { BaseController } from "@/core/base-controller.js";
+import { ConfigRepository } from "./repository.js";
+import {
+  ConfigCreateSchema,
+  ConfigUpdateSchema,
+  ConfigListSchema,
+} from "./schema.js";
+import { RequirePermission } from "@/core/decorator/permission.js";
+import { AppError } from "@/middleware/error-handler.js";
+import z from "zod";
+
+@Controller("/config", { tags: ["系统配置"] })
+export default class ConfigController extends BaseController<
+  any,
+  any,
+  any,
+  any
+> {
+  protected readonly repository = new ConfigRepository();
+  protected readonly config = {
+    routePrefix: "/api/v1/config",
+    tags: ["系统配置"],
+    permissionPrefix: "config",
+    enableAudit: true,
+    defaultPageSize: 10,
+    maxPageSize: 100,
+  };
+  protected readonly createSchema = ConfigCreateSchema;
+  protected readonly updateSchema = ConfigUpdateSchema;
+  protected readonly querySchema = ConfigListSchema;
+
+  protected buildListWhere(query: any): any {
+    const where: any = {};
+    if (query.keyword) {
+      where.OR = [
+        { config_key: { contains: query.keyword } },
+        { description: { contains: query.keyword } },
+      ];
+    }
+    return where;
+  }
+
+  // 钩子：唯一性检查
+  async beforeCreate(dto: any, req: Request): Promise<any> {
+    dto = await super.beforeCreate(dto, req);
+    const repo = this.repository as ConfigRepository;
+    const exist = await repo.findByKey(dto.configKey, req.tenantId!);
+    if (exist) throw new AppError(409, `配置键 '${dto.configKey}' 已存在`, 409);
+    return dto;
+  }
+
+  async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
+    dto = await super.beforeUpdate(id, dto, req);
+    const repo = this.repository as ConfigRepository;
+    if (dto.configKey) {
+      const exist = await repo.findByKey(dto.configKey, req.tenantId!, id);
+      if (exist)
+        throw new AppError(409, `配置键 '${dto.configKey}' 已存在`, 409);
+    }
+    return dto;
+  }
+
+  // 额外接口：根据 key 获取配置值（公开或需权限，这里加权限）
+  @Get("/value/:key")
+  @ApiOperation("根据键获取配置值")
+  @ApiResponse(200, "查询成功")
+  async getValue(@Req() req: Request, @Res() res: Response) {
+    try {
+      const config = await (this.repository as ConfigRepository).findByKey(
+        req.params.key,
+        req.tenantId!,
+      );
+      if (!config)
+        return res.status(404).json({
+          code: 404,
+          message: "配置不存在",
+          data: null,
+          timestamp: Date.now(),
+        });
+      res.json({
+        code: 200,
+        message: "success",
+        data: config.config_value,
+        timestamp: Date.now(),
+      });
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  // CRUD 路由
+  @Get("/list")
+  @ApiOperation("获取配置列表")
+  @ApiQuery(ConfigListSchema)
+  @ApiResponse(200, "查询成功")
+  async pageList(@Req() req: Request, @Res() res: Response) {
+    return this.list(req, res);
+  }
+
+  @Get("/:id")
+  @ApiOperation("获取配置详情")
+  @ApiResponse(200, "查询成功")
+  async getConfigDetail(@Req() req: Request, @Res() res: Response) {
+    return super.detail(req, res);
+  }
+
+  @Post("/")
+  @ApiOperation("创建配置")
+  @ApiBody(ConfigCreateSchema)
+  @ApiResponse(200, "创建成功")
+  async createConfig(@Req() req: Request, @Res() res: Response) {
+    return super.create(req, res);
+  }
+
+  @Put("/:id")
+  @ApiOperation("更新配置")
+  @ApiBody(ConfigUpdateSchema)
+  @ApiResponse(200, "更新成功")
+  async updateConfig(@Req() req: Request, @Res() res: Response) {
+    return super.update(req, res);
+  }
+
+  @Delete("/:id")
+  @ApiOperation("删除配置")
+  @ApiResponse(200, "删除成功")
+  async removeConfig(@Req() req: Request, @Res() res: Response) {
+    return super.remove(req, res);
+  }
+  @Post("/batch-delete")
+  @ApiOperation("批量删除配置")
+  @ApiBody(z.object({ ids: z.array(z.string().uuid()) }))
+  @ApiResponse(200, "批量删除成功")
+  async batchDeleteConfig(@Req() req: Request, @Res() res: Response) {
+    return super.batchRemove(req, res);
+  }
+}

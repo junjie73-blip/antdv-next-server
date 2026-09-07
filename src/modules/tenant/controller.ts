@@ -68,6 +68,35 @@ export default class TenantController extends BaseController<
     return where;
   }
 
+  async beforeCreate(dto: any, _req: Request): Promise<any> {
+    const bool = await this.repository.codeExists(
+      dto.tenantCode,
+      _req.tenantId!,
+    );
+    if (bool) {
+      throw new AppError(409, `租户编码 '${dto.tenantCode}' 已存在`, 409);
+    }
+    if (dto.expireTime !== undefined) {
+      dto.expireTime = dto.expireTime ? new Date(dto.expireTime) : null;
+    }
+    return dto;
+  }
+  async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
+    dto = await super.beforeUpdate(id, dto, req);
+    const repo = this.repository as TenantRepository;
+
+    if (dto.tenantCode) {
+      const exist = await repo.findByTenantCode(
+        dto.tenantCode,
+        req.tenantId!,
+        id,
+      );
+      if (exist) {
+        throw new AppError(409, `租户编码 '${dto.tenantCode}' 已存在`, 409);
+      }
+    }
+    return dto;
+  }
   /**
    * GET /tenant/list - 分页列表
    */
@@ -106,10 +135,10 @@ export default class TenantController extends BaseController<
   /**
    * POST /tenant - 创建租户
    */
-  @Post("/")
+  @Post("/save")
   @ApiOperation("创建租户", "创建新的租户记录")
   @ApiBody(TenantCreateSchema)
-  @ApiResponse(201, "创建成功", { $ref: "#/components/schemas/Tenant" })
+  @ApiResponse(200, "创建成功", { $ref: "#/components/schemas/Tenant" })
   @ApiResponse(400, "参数错误")
   @ApiResponse(409, "租户编码已存在")
   @ApiResponse(500, "服务器内部错误")
@@ -118,9 +147,9 @@ export default class TenantController extends BaseController<
   }
 
   /**
-   * PUT /tenant/:id - 更新租户
+   * POST /tenant/:id - 更新租户
    */
-  @Put("/:id")
+  @Post("/update/:id")
   @ApiOperation("更新租户", "根据租户ID更新租户信息")
   @ApiBody(TenantUpdateSchema)
   @ApiResponse(200, "更新成功", { $ref: "#/components/schemas/Tenant" })
@@ -132,9 +161,9 @@ export default class TenantController extends BaseController<
   }
 
   /**
-   * DELETE /tenant/:id - 删除租户（软删除）
+   * GET /tenant/:id - 删除租户（软删除）
    */
-  @Delete("/:id")
+  @Get("/remove/:id")
   @ApiOperation("删除租户", "软删除指定租户")
   @ApiResponse(200, "删除成功")
   @ApiResponse(404, "租户不存在")

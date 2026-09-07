@@ -9,6 +9,11 @@ export const redis = new Redis({
   url: redisUrl,
   token: redisToken,
 });
+// 用于订阅的独立客户端（避免阻塞其他操作）
+export const subRedis = new Redis({
+  url: redisUrl,
+  token: redisToken,
+});
 export const SESSION_PREFIX = "session:";
 export const CACHE_PREFIX = "cache:";
 export const MFA_PREFIX = "mfa:";
@@ -46,4 +51,23 @@ export async function getCache<T>(key: string): Promise<T | null> {
 
 export async function deleteCache(key: string): Promise<void> {
   await redis.del(`${CACHE_PREFIX}${key}`);
+}
+
+export function parseExpirationToSeconds(expiresIn: string): number {
+  const match = expiresIn.match(/^(\d+)([smhd])$/);
+  if (!match) return 900;
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+  switch (unit) {
+    case "s":
+      return value;
+    case "m":
+      return value * 60;
+    case "h":
+      return value * 3600;
+    case "d":
+      return value * 86400;
+    default:
+      return 900;
+  }
 }

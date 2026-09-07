@@ -269,6 +269,16 @@ exports.Prisma.Sys_noticeScalarFieldEnum = {
   is_deleted: 'is_deleted'
 };
 
+exports.Prisma.Sys_notice_userScalarFieldEnum = {
+  id: 'id',
+  notice_id: 'notice_id',
+  user_id: 'user_id',
+  tenant_id: 'tenant_id',
+  is_read: 'is_read',
+  read_time: 'read_time',
+  created_at: 'created_at'
+};
+
 exports.Prisma.Sys_audit_logScalarFieldEnum = {
   log_id: 'log_id',
   tenant_id: 'tenant_id',
@@ -330,6 +340,43 @@ exports.Prisma.Sys_mfa_configScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.Sys_fileScalarFieldEnum = {
+  file_id: 'file_id',
+  tenant_id: 'tenant_id',
+  filename: 'filename',
+  url: 'url',
+  size: 'size',
+  mime_type: 'mime_type',
+  uploader: 'uploader',
+  created_at: 'created_at',
+  is_deleted: 'is_deleted'
+};
+
+exports.Prisma.Sys_login_logScalarFieldEnum = {
+  log_id: 'log_id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  username: 'username',
+  ip_address: 'ip_address',
+  user_agent: 'user_agent',
+  status: 'status',
+  message: 'message',
+  created_at: 'created_at'
+};
+
+exports.Prisma.Sys_configScalarFieldEnum = {
+  config_id: 'config_id',
+  tenant_id: 'tenant_id',
+  config_key: 'config_key',
+  config_value: 'config_value',
+  description: 'description',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -356,12 +403,16 @@ exports.Prisma.ModelName = {
   sys_dict_type: 'sys_dict_type',
   sys_dict_data: 'sys_dict_data',
   sys_notice: 'sys_notice',
+  sys_notice_user: 'sys_notice_user',
   sys_audit_log: 'sys_audit_log',
   sys_user_role: 'sys_user_role',
   sys_user_dept: 'sys_user_dept',
   sys_role_menu: 'sys_role_menu',
   sys_role_permission: 'sys_role_permission',
-  sys_mfa_config: 'sys_mfa_config'
+  sys_mfa_config: 'sys_mfa_config',
+  sys_file: 'sys_file',
+  sys_login_log: 'sys_login_log',
+  sys_config: 'sys_config'
 };
 
 /**

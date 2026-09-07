@@ -19,7 +19,10 @@ function scanControllers(dir: string): string[] {
     for (const file of files) {
       if (!file.isFile()) continue;
       // 匹配 controller.ts 或 *.controller.ts
-      if (file.name === "controller.ts" || file.name.endsWith(".controller.ts")) {
+      if (
+        file.name === "controller.ts" ||
+        file.name.endsWith(".controller.ts")
+      ) {
         const importPath = `./${entry.name}/${basename(file.name, ".ts")}.js`;
         controllers.push(importPath);
       }

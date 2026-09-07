@@ -57,8 +57,7 @@ export interface ValidateMetadata {
 }
 
 export interface PermissionMetadata {
-  resource: string;
-  action: string;
+  permission: string; // 权限标识，如 "user:list"
 }
 
 export interface ParamMetadata {

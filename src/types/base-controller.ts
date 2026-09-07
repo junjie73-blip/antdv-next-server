@@ -12,8 +12,8 @@ export interface IControllerHooks<T, CreateDto, UpdateDto, QueryDto> {
 
   /** 创建前钩子：可修改/校验创建数据 */
   beforeCreate?(dto: CreateDto, req: Request): Promise<CreateDto> | CreateDto;
-  /** 创建后钩子 */
-  afterCreate?(data: T, req: Request): Promise<void> | void;
+  /** 创建后钩子：可转换创建数据 */
+  afterCreate?(data: T, req: Request): Promise<T> | T;
 
   /** 更新前钩子 */
   beforeUpdate?(
@@ -21,8 +21,8 @@ export interface IControllerHooks<T, CreateDto, UpdateDto, QueryDto> {
     dto: UpdateDto,
     req: Request,
   ): Promise<UpdateDto> | UpdateDto;
-  /** 更新后钩子 */
-  afterUpdate?(data: T, req: Request): Promise<void> | void;
+  /** 更新后钩子：可转换更新数据 */
+  afterUpdate?(data: T, req: Request): Promise<T> | T;
 
   /** 删除前钩子：可阻止删除 */
   beforeDelete?(id: string, req: Request): Promise<boolean> | boolean;
@@ -51,4 +51,6 @@ export interface BaseControllerConfig {
   defaultPageSize: number;
   /** 最大分页大小 */
   maxPageSize: number;
+  /** 隐藏字段 */
+  hiddenFields?: string[];
 }

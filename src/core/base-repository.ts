@@ -276,12 +276,22 @@ export abstract class BaseRepository<
     tenantId: string,
     userId?: string,
   ): Promise<{ count: number }> {
+    console.log(this.primaryKey, "this.primaryKey", ids);
+    // 校验 ids 必须是非空数组
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw new AppError(400, "ids 参数必须是非空数组", 400);
+    }
+
+    const where: any = {
+      [this.primaryKey]: { in: ids },
+      [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+    };
+    if (this.tenantField) {
+      where[this.tenantField] = tenantId;
+    }
+
     const result = await this.model.updateMany({
-      where: {
-        [this.primaryKey]: { in: ids },
-        [this.tenantField]: tenantId,
-        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
-      },
+      where,
       data: {
         [this.softDeleteField]: SOFT_DELETE_FLAG.DELETED,
         [this.updatedByField]: userId || null,

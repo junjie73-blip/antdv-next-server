@@ -15,6 +15,14 @@ export class TenantRepository extends BaseRepository<any, any, any, any> {
     }
     return this.exists(where, tenantId);
   }
+  async findByTenantCode(code: string, tenantId: string, excludeId?: string) {
+    const where: any = {
+      tenant_code: code,
+      is_deleted: 0,
+    };
+    if (excludeId) where.tenant_id = { not: excludeId };
+    return this.model.findFirst({ where });
+  }
 }
 
 export default TenantRepository;

@@ -1,9 +1,15 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { METADATA_KEYS, RouteMetadata, ParamMetadata } from "./metadata.js";
+import {
+  METADATA_KEYS,
+  RouteMetadata,
+  ParamMetadata,
+  PermissionMetadata,
+} from "./metadata.js";
 import { ControllerScanner, ScannedController } from "./scanner.js";
 import { registry } from "@core/swagger/registry.js";
 import { validateRequest } from "./validator.js";
 import { logger } from "@core/logger/index.js";
+import { checkUserPermissions } from "@/common/utils/permission.js";
 
 export class DecoratorRouter {
   private router = Router();
@@ -65,6 +71,27 @@ export class DecoratorRouter {
               propertyKey,
             ) || [];
         }
+        const permissionMetadata: PermissionMetadata[] =
+          Reflect.getMetadata(
+            METADATA_KEYS.PERMISSION,
+            instance.constructor,
+            propertyKey,
+          ) || [];
+        if (permissionMetadata.length > 0) {
+          const requiredPerms = permissionMetadata.map((p) => p.permission); // 注意是 p.permission
+          const hasPermission = await checkUserPermissions(
+            req.user,
+            requiredPerms,
+          );
+          if (!hasPermission) {
+            return res.status(403).json({
+              code: 403,
+              message: "无权限访问",
+              data: null,
+              timestamp: Date.now(),
+            });
+          }
+        }
         const args = paramMetadata
           .sort((a, b) => a.index - b.index)
           .map((param) => {
@@ -91,7 +118,7 @@ export class DecoratorRouter {
             code: 200,
             message: "success",
             data: result,
-            timestamp: new Date().toISOString(),
+            timestamp: new Date().getTime(),
           });
         }
       } catch (err) {

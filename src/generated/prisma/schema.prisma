@@ -8,20 +8,21 @@ datasource db {
 }
 
 // ==================== 租户表 ====================
+/// 租户表，存储多租户信息
 model sys_tenant {
-  tenant_id     String    @id @default(uuid()) @db.Uuid
-  tenant_code   String    @unique @db.VarChar(64)
-  tenant_name   String    @db.VarChar(128)
-  contact_name  String?   @db.VarChar(64)
-  contact_phone String?   @db.VarChar(32)
-  contact_email String?   @db.VarChar(128)
-  status        Int       @default(1) @db.SmallInt
-  expire_time   DateTime? @db.Timestamptz(6)
-  created_at    DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime  @updatedAt @db.Timestamptz(6)
-  created_by    String?   @db.Uuid
-  updated_by    String?   @db.Uuid
-  is_deleted    Int       @default(0) @db.SmallInt
+  tenant_id     String    @id @default(uuid()) @db.Uuid /// 租户ID（主键，UUID）
+  tenant_code   String    @unique @db.VarChar(64) /// 租户编码（全局唯一）
+  tenant_name   String    @db.VarChar(128) /// 租户名称
+  contact_name  String?   @db.VarChar(64) /// 联系人姓名
+  contact_phone String?   @db.VarChar(32) /// 联系电话
+  contact_email String?   @db.VarChar(128) /// 联系邮箱
+  status        Int       @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  expire_time   DateTime? @db.Timestamptz(6) /// 租户过期时间
+  created_at    DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at    DateTime  @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by    String?   @db.Uuid /// 创建人ID
+  updated_by    String?   @db.Uuid /// 更新人ID
+  is_deleted    Int       @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
 
   @@index([tenant_code])
   @@index([is_deleted])
@@ -30,24 +31,28 @@ model sys_tenant {
 }
 
 // ==================== 用户表 ====================
+/// 用户表，存储系统用户信息
 model sys_user {
-  user_id         String    @id @default(uuid()) @db.Uuid
-  tenant_id       String    @db.Uuid
-  username        String    @db.VarChar(64)
-  password        String    @db.VarChar(256)
-  real_name       String?   @db.VarChar(64)
-  phone           String?   @db.VarChar(32)
-  email           String?   @db.VarChar(128)
-  avatar          String?   @db.VarChar(512)
-  gender          Int?      @db.SmallInt
-  status          Int       @default(1) @db.SmallInt
-  last_login_ip   String?   @db.VarChar(64)
-  last_login_time DateTime? @db.Timestamptz(6)
-  created_at      DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime  @updatedAt @db.Timestamptz(6)
-  created_by      String?   @db.Uuid
-  updated_by      String?   @db.Uuid
-  is_deleted      Int       @default(0) @db.SmallInt
+  user_id         String    @id @default(uuid()) @db.Uuid /// 用户ID（主键，UUID）
+  tenant_id       String    @db.Uuid /// 所属租户ID
+  username        String    @db.VarChar(64) /// 用户名
+  password        String    @db.VarChar(256) /// 密码（哈希存储）
+  real_name       String?   @db.VarChar(64) /// 真实姓名
+  phone           String?   @db.VarChar(32) /// 手机号
+  email           String?   @db.VarChar(128) /// 邮箱
+  avatar          String?   @db.VarChar(512) /// 头像URL
+  gender          Int?      @db.SmallInt /// 性别：0-未知，1-男，2-女
+  status          Int       @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  last_login_ip   String?   @db.VarChar(64) /// 最后登录IP
+  last_login_time DateTime? @db.Timestamptz(6) /// 最后登录时间
+  created_at      DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at      DateTime  @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by      String?   @db.Uuid /// 创建人ID
+  updated_by      String?   @db.Uuid /// 更新人ID
+  is_deleted      Int       @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
+
+  sys_user_role sys_user_role[] /// 用户角色关联列表
+  sys_user_dept sys_user_dept[] /// 用户部门关联列表
 
   @@unique([tenant_id, username])
   @@index([tenant_id])
@@ -57,19 +62,22 @@ model sys_user {
 }
 
 // ==================== 角色表 ====================
+/// 角色表，存储租户内角色信息
 model sys_role {
-  role_id     String   @id @default(uuid()) @db.Uuid
-  tenant_id   String   @db.Uuid
-  role_code   String   @db.VarChar(64)
-  role_name   String   @db.VarChar(128)
-  description String?  @db.VarChar(512)
-  sort_order  Int      @default(0)
-  status      Int      @default(1) @db.SmallInt
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime @updatedAt @db.Timestamptz(6)
-  created_by  String?  @db.Uuid
-  updated_by  String?  @db.Uuid
-  is_deleted  Int      @default(0) @db.SmallInt
+  role_id     String   @id @default(uuid()) @db.Uuid /// 角色ID（主键，UUID）
+  tenant_id   String   @db.Uuid /// 所属租户ID
+  role_code   String   @db.VarChar(64) /// 角色编码
+  role_name   String   @db.VarChar(128) /// 角色名称
+  description String?  @db.VarChar(512) /// 角色描述
+  sort_order  Int      @default(0) /// 排序值
+  status      Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  created_at  DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at  DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by  String?  @db.Uuid /// 创建人ID
+  updated_by  String?  @db.Uuid /// 更新人ID
+  is_deleted  Int      @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
+
+  sys_user_role sys_user_role[] /// 用户角色关联列表
 
   @@unique([tenant_id, role_code])
   @@index([tenant_id])
@@ -79,70 +87,75 @@ model sys_role {
 }
 
 // ==================== 部门表 ====================
+/// 部门表，支持树形组织结构
 model sys_dept {
-  dept_id    String   @id @default(uuid()) @db.Uuid
-  tenant_id  String   @db.Uuid
-  parent_id  String   @default("00000000-0000-0000-0000-000000000000") @db.Uuid
-  dept_code  String   @db.VarChar(64)
-  dept_name  String   @db.VarChar(128)
-  leader     String?  @db.VarChar(64)
-  phone      String?  @db.VarChar(32)
-  email      String?  @db.VarChar(128)
-  sort_order Int      @default(0)
-  status     Int      @default(1) @db.SmallInt
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @updatedAt @db.Timestamptz(6)
-  created_by String?  @db.Uuid
-  updated_by String?  @db.Uuid
-  is_deleted Int      @default(0) @db.SmallInt
+  dept_id    String   @id @default(uuid()) @db.Uuid /// 部门ID（主键，UUID）
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  parent_id  String?  @db.Uuid /// 父部门ID（顶级或子部门）
+  dept_code  String   @db.VarChar(64) /// 部门编码
+  dept_name  String   @db.VarChar(128) /// 部门名称
+  leader     String?  @db.VarChar(64) /// 负责人
+  phone      String?  @db.VarChar(32) /// 联系电话
+  email      String?  @db.VarChar(128) /// 邮箱
+  sort_order Int      @default(0) /// 排序值
+  status     Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by String?  @db.Uuid /// 创建人ID
+  updated_by String?  @db.Uuid /// 更新人ID
+  is_deleted Int      @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
+
+  sys_user_dept sys_user_dept[] /// 用户部门关联列表
 
   @@unique([tenant_id, dept_code])
-  @@index([tenant_id, parent_id])
+  @@index([tenant_id])
   @@index([is_deleted])
   @@index([status])
   @@map("sys_dept")
 }
 
 // ==================== 菜单表 ====================
+/// 菜单表，支持目录、菜单、按钮三级结构
 model sys_menu {
-  menu_id    String   @id @default(uuid()) @db.Uuid
-  tenant_id  String   @db.Uuid
-  parent_id  String   @default("00000000-0000-0000-0000-000000000000") @db.Uuid
-  menu_name  String   @db.VarChar(128)
-  menu_type  Int      @db.SmallInt
-  icon       String?  @db.VarChar(128)
-  path       String?  @db.VarChar(256)
-  component  String?  @db.VarChar(256)
-  permission String?  @db.VarChar(128)
-  sort_order Int      @default(0)
-  status     Int      @default(1) @db.SmallInt
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @updatedAt @db.Timestamptz(6)
-  created_by String?  @db.Uuid
-  updated_by String?  @db.Uuid
-  is_deleted Int      @default(0) @db.SmallInt
+  menu_id    String   @id @default(uuid()) @db.Uuid /// 菜单ID（主键，UUID）
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  parent_id  String?  @db.Uuid /// 父菜单ID（顶级为全零UUID）
+  menu_name  String   @db.VarChar(128) /// 菜单名称
+  menu_type  Int      @db.SmallInt /// 菜单类型：1-目录，2-菜单，3-按钮
+  icon       String?  @db.VarChar(128) /// 图标
+  path       String?  @db.VarChar(256) /// 路由路径
+  component  String?  @db.VarChar(256) /// 前端组件路径
+  permission String?  @db.VarChar(128) /// 权限标识，如 system:user:list
+  sort_order Int      @default(0) /// 排序值
+  status     Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by String?  @db.Uuid /// 创建人ID
+  updated_by String?  @db.Uuid /// 更新人ID
+  is_deleted Int      @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
 
-  @@index([tenant_id, parent_id])
+  @@index([tenant_id])
   @@index([is_deleted])
   @@index([status])
   @@map("sys_menu")
 }
 
 // ==================== 权限表 ====================
+/// 权限表，定义系统操作权限点
 model sys_permission {
-  perm_id       String   @id @default(uuid()) @db.Uuid
-  tenant_id     String   @db.Uuid
-  perm_code     String   @db.VarChar(128)
-  perm_name     String   @db.VarChar(128)
-  resource_type String   @db.VarChar(32)
-  action        String   @db.VarChar(32)
-  description   String?  @db.VarChar(512)
-  status        Int      @default(1) @db.SmallInt
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime @updatedAt @db.Timestamptz(6)
-  created_by    String?  @db.Uuid
-  updated_by    String?  @db.Uuid
-  is_deleted    Int      @default(0) @db.SmallInt
+  perm_id       String   @id @default(uuid()) @db.Uuid /// 权限ID（主键，UUID）
+  tenant_id     String   @db.Uuid /// 所属租户ID
+  perm_code     String   @db.VarChar(128) /// 权限编码，如 user:create
+  perm_name     String   @db.VarChar(128) /// 权限名称
+  resource_type String   @db.VarChar(32) /// 资源类型，如 api、button
+  action        String   @db.VarChar(32) /// 动作，如 create、read、update、delete
+  description   String?  @db.VarChar(512) /// 描述
+  status        Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  created_at    DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at    DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by    String?  @db.Uuid /// 创建人ID
+  updated_by    String?  @db.Uuid /// 更新人ID
+  is_deleted    Int      @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
 
   @@unique([tenant_id, perm_code])
   @@index([tenant_id])
@@ -152,18 +165,19 @@ model sys_permission {
 }
 
 // ==================== 数据字典类型 ====================
+/// 数据字典类型表
 model sys_dict_type {
-  dict_type_id String   @id @default(uuid()) @db.Uuid
-  tenant_id    String   @db.Uuid
-  dict_code    String   @db.VarChar(64)
-  dict_name    String   @db.VarChar(128)
-  description  String?  @db.VarChar(512)
-  status       Int      @default(1) @db.SmallInt
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @updatedAt @db.Timestamptz(6)
-  created_by   String?  @db.Uuid
-  updated_by   String?  @db.Uuid
-  is_deleted   Int      @default(0) @db.SmallInt
+  dict_type_id String   @id @default(uuid()) @db.Uuid /// 字典类型ID（主键，UUID）
+  tenant_id    String   @db.Uuid /// 所属租户ID
+  dict_code    String   @db.VarChar(64) /// 字典编码
+  dict_name    String   @db.VarChar(128) /// 字典名称
+  description  String?  @db.VarChar(512) /// 描述
+  status       Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  created_at   DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at   DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by   String?  @db.Uuid /// 创建人ID
+  updated_by   String?  @db.Uuid /// 更新人ID
+  is_deleted   Int      @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
 
   @@unique([tenant_id, dict_code])
   @@index([tenant_id])
@@ -173,20 +187,21 @@ model sys_dict_type {
 }
 
 // ==================== 数据字典数据 ====================
+/// 数据字典数据表
 model sys_dict_data {
-  dict_data_id String   @id @default(uuid()) @db.Uuid
-  tenant_id    String   @db.Uuid
-  dict_type_id String   @db.Uuid
-  dict_label   String   @db.VarChar(128)
-  dict_value   String   @db.VarChar(128)
-  sort_order   Int      @default(0)
-  status       Int      @default(1) @db.SmallInt
-  remark       String?  @db.VarChar(512)
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @updatedAt @db.Timestamptz(6)
-  created_by   String?  @db.Uuid
-  updated_by   String?  @db.Uuid
-  is_deleted   Int      @default(0) @db.SmallInt
+  dict_data_id String   @id @default(uuid()) @db.Uuid /// 字典数据ID（主键，UUID）
+  tenant_id    String   @db.Uuid /// 所属租户ID
+  dict_type_id String   @db.Uuid /// 所属字典类型ID
+  dict_label   String   @db.VarChar(128) /// 字典标签
+  dict_value   String   @db.VarChar(128) /// 字典值
+  sort_order   Int      @default(0) /// 排序值
+  status       Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  remark       String?  @db.VarChar(512) /// 备注
+  created_at   DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at   DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by   String?  @db.Uuid /// 创建人ID
+  updated_by   String?  @db.Uuid /// 更新人ID
+  is_deleted   Int      @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
 
   @@index([tenant_id, dict_type_id])
   @@index([is_deleted])
@@ -195,19 +210,22 @@ model sys_dict_data {
 }
 
 // ==================== 通知公告 ====================
+/// 通知公告表
 model sys_notice {
-  notice_id    String    @id @default(uuid()) @db.Uuid
-  tenant_id    String    @db.Uuid
-  title        String    @db.VarChar(256)
-  content      String?   @db.Text
-  notice_type  Int       @db.SmallInt
-  status       Int       @default(1) @db.SmallInt
-  publish_time DateTime? @db.Timestamptz(6)
-  created_at   DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime  @updatedAt @db.Timestamptz(6)
-  created_by   String?   @db.Uuid
-  updated_by   String?   @db.Uuid
-  is_deleted   Int       @default(0) @db.SmallInt
+  notice_id    String    @id @default(uuid()) @db.Uuid /// 通知ID（主键，UUID）
+  tenant_id    String    @db.Uuid /// 所属租户ID
+  title        String    @db.VarChar(256) /// 通知标题
+  content      String?   @db.Text /// 通知内容（支持富文本）
+  notice_type  Int       @db.SmallInt /// 通知类型：1-通知，2-公告，3-提醒
+  status       Int       @default(1) @db.SmallInt /// 状态：0-草稿，1-发布
+  publish_time DateTime? @db.Timestamptz(6) /// 定时发布时间
+  created_at   DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at   DateTime  @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by   String?   @db.Uuid /// 创建人ID
+  updated_by   String?   @db.Uuid /// 更新人ID
+  is_deleted   Int       @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
+
+  target_users sys_notice_user[] /// 目标用户关联列表
 
   @@index([tenant_id])
   @@index([is_deleted])
@@ -215,23 +233,42 @@ model sys_notice {
   @@map("sys_notice")
 }
 
+// ==================== 通知用户关联表 ====================
+/// 通知与用户关联表，记录通知的接收用户及已读状态
+model sys_notice_user {
+  id         String    @id @default(uuid()) @db.Uuid /// 关联ID（主键，UUID）
+  notice_id  String    @db.Uuid /// 通知ID
+  user_id    String    @db.Uuid /// 用户ID
+  tenant_id  String    @db.Uuid /// 所属租户ID
+  is_read    Int       @default(0) @db.SmallInt /// 是否已读：0-未读，1-已读
+  read_time  DateTime? @db.Timestamptz(6) /// 阅读时间
+  created_at DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
+
+  notice sys_notice @relation(fields: [notice_id], references: [notice_id], onDelete: Cascade) /// 关联的通知
+
+  @@unique([notice_id, user_id])
+  @@index([tenant_id, user_id, is_read])
+  @@map("sys_notice_user")
+}
+
 // ==================== 审计日志 ====================
+/// 审计日志表，记录系统操作日志
 model sys_audit_log {
-  log_id         String   @id @default(uuid()) @db.Uuid
-  tenant_id      String   @db.Uuid
-  user_id        String?  @db.Uuid
-  username       String?  @db.VarChar(64)
-  operation      String   @db.VarChar(128)
-  method         String   @db.VarChar(32)
-  request_url    String   @db.VarChar(512)
-  request_params String?  @db.Text
-  response_data  String?  @db.Text
-  ip_address     String   @db.VarChar(64)
-  user_agent     String?  @db.VarChar(512)
-  execute_time   Int      @default(0)
-  status         Int      @default(1) @db.SmallInt
-  error_msg      String?  @db.Text
-  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  log_id         String   @id @default(uuid()) @db.Uuid /// 日志ID（主键，UUID）
+  tenant_id      String   @db.Uuid /// 所属租户ID
+  user_id        String?  @db.Uuid /// 操作用户ID
+  username       String?  @db.VarChar(64) /// 操作用户名
+  operation      String   @db.VarChar(128) /// 操作描述
+  method         String   @db.VarChar(32) /// HTTP方法
+  request_url    String   @db.VarChar(512) /// 请求URL
+  request_params String?  @db.Text /// 请求参数（JSON字符串）
+  response_data  String?  @db.Text /// 响应数据（JSON字符串）
+  ip_address     String   @db.VarChar(64) /// 客户端IP
+  user_agent     String?  @db.VarChar(512) /// 用户代理
+  execute_time   Int      @default(0) /// 执行时间（毫秒）
+  status         Int      @default(1) @db.SmallInt /// 状态：0-失败，1-成功
+  error_msg      String?  @db.Text /// 错误信息
+  created_at     DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
 
   @@index([tenant_id])
   @@index([user_id])
@@ -240,13 +277,17 @@ model sys_audit_log {
   @@map("sys_audit_log")
 }
 
-// ==================== 关联表（无外键约束） ====================
+// ==================== 用户角色关联表 ====================
+/// 用户与角色关联表
 model sys_user_role {
-  id         String   @id @default(uuid()) @db.Uuid
-  user_id    String   @db.Uuid
-  role_id    String   @db.Uuid
-  tenant_id  String   @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  id         String   @id @default(uuid()) @db.Uuid /// 关联ID（主键，UUID）
+  user_id    String   @db.Uuid /// 用户ID
+  role_id    String   @db.Uuid /// 角色ID
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+
+  user sys_user @relation(fields: [user_id], references: [user_id]) /// 关联的用户
+  role sys_role @relation(fields: [role_id], references: [role_id]) /// 关联的角色
 
   @@unique([user_id, role_id])
   @@index([tenant_id])
@@ -255,13 +296,18 @@ model sys_user_role {
   @@map("sys_user_role")
 }
 
+// ==================== 用户部门关联表 ====================
+/// 用户与部门关联表
 model sys_user_dept {
-  id         String   @id @default(uuid()) @db.Uuid
-  user_id    String   @db.Uuid
-  dept_id    String   @db.Uuid
-  tenant_id  String   @db.Uuid
-  is_primary Int      @default(0) @db.SmallInt
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  id         String   @id @default(uuid()) @db.Uuid /// 关联ID（主键，UUID）
+  user_id    String   @db.Uuid /// 用户ID
+  dept_id    String   @db.Uuid /// 部门ID
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  is_primary Int      @default(0) @db.SmallInt /// 是否主部门：0-否，1-是
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+
+  user sys_user @relation(fields: [user_id], references: [user_id]) /// 关联的用户
+  dept sys_dept @relation(fields: [dept_id], references: [dept_id]) /// 关联的部门
 
   @@unique([user_id, dept_id])
   @@index([tenant_id])
@@ -270,12 +316,14 @@ model sys_user_dept {
   @@map("sys_user_dept")
 }
 
+// ==================== 角色菜单关联表 ====================
+/// 角色与菜单关联表
 model sys_role_menu {
-  id         String   @id @default(uuid()) @db.Uuid
-  role_id    String   @db.Uuid
-  menu_id    String   @db.Uuid
-  tenant_id  String   @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  id         String   @id @default(uuid()) @db.Uuid /// 关联ID（主键，UUID）
+  role_id    String   @db.Uuid /// 角色ID
+  menu_id    String   @db.Uuid /// 菜单ID
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
 
   @@unique([role_id, menu_id])
   @@index([tenant_id])
@@ -284,12 +332,14 @@ model sys_role_menu {
   @@map("sys_role_menu")
 }
 
+// ==================== 角色权限关联表 ====================
+/// 角色与权限关联表
 model sys_role_permission {
-  id         String   @id @default(uuid()) @db.Uuid
-  role_id    String   @db.Uuid
-  perm_id    String   @db.Uuid
-  tenant_id  String   @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  id         String   @id @default(uuid()) @db.Uuid /// 关联ID（主键，UUID）
+  role_id    String   @db.Uuid /// 角色ID
+  perm_id    String   @db.Uuid /// 权限ID
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
 
   @@unique([role_id, perm_id])
   @@index([tenant_id])
@@ -298,16 +348,72 @@ model sys_role_permission {
   @@map("sys_role_permission")
 }
 
-// ==================== MFA 配置 ====================
+// ==================== MFA 配置表 ====================
+/// 用户多因素认证配置表
 model sys_mfa_config {
-  mfa_id       String   @id @default(uuid()) @db.Uuid
-  user_id      String   @unique @db.Uuid
-  secret       String   @db.VarChar(256)
-  enabled      Int      @default(0) @db.SmallInt
-  backup_codes String?  @db.Text
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+  mfa_id       String   @id @default(uuid()) @db.Uuid /// MFA配置ID（主键，UUID）
+  user_id      String   @unique @db.Uuid /// 用户ID（唯一）
+  secret       String   @db.VarChar(256) /// TOTP密钥
+  enabled      Int      @default(0) @db.SmallInt /// 是否启用：0-未启用，1-启用
+  backup_codes String?  @db.Text /// 备用验证码（JSON数组字符串）
+  created_at   DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at   DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
 
   @@index([user_id])
   @@map("sys_mfa_config")
+}
+
+// ==================== 文件表 ====================
+/// 文件管理表，记录上传的文件信息
+model sys_file {
+  file_id    String   @id @default(uuid()) @db.Uuid /// 文件ID（主键，UUID）
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  filename   String   @db.VarChar(256) /// 原始文件名
+  url        String   @db.VarChar(512) /// 文件访问URL
+  size       Int      @db.Integer /// 文件大小（字节）
+  mime_type  String?  @db.VarChar(128) /// MIME类型
+  uploader   String?  @db.Uuid /// 上传人ID
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  is_deleted Int      @default(0) @db.SmallInt /// 软删除标记：0-正常，1-已删除
+
+  @@index([tenant_id])
+  @@map("sys_file")
+}
+
+// ==================== 登录日志表 ====================
+/// 登录日志表，记录用户登录历史
+model sys_login_log {
+  log_id     String   @id @default(uuid()) @db.Uuid /// 日志ID（主键，UUID）
+  tenant_id  String   @db.Uuid /// 所属租户ID
+  user_id    String?  @db.Uuid /// 用户ID（可能为空，如登录失败）
+  username   String   @db.VarChar(64) /// 用户名
+  ip_address String   @db.VarChar(64) /// 登录IP
+  user_agent String?  @db.VarChar(512) /// 用户代理
+  status     Int      @default(1) @db.SmallInt /// 登录状态：0-失败，1-成功
+  message    String?  @db.VarChar(256) /// 附加信息（如失败原因）
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([created_at])
+  @@map("sys_login_log")
+}
+
+// ==================== 系统配置表 ====================
+/// 系统配置表，存储租户级配置项
+model sys_config {
+  config_id    String   @id @default(uuid()) @db.Uuid /// 配置ID（主键，UUID）
+  tenant_id    String   @db.Uuid /// 所属租户ID
+  config_key   String   @db.VarChar(128) /// 配置键
+  config_value String?  @db.Text /// 配置值
+  description  String?  @db.VarChar(512) /// 配置描述
+  created_by   String?  @db.Uuid
+  updated_by   String?  @db.Uuid
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+  is_deleted   Int      @default(0) @db.SmallInt
+
+  @@unique([tenant_id, config_key])
+  @@index([tenant_id])
+  @@map("sys_config")
 }

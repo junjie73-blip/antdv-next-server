@@ -1,0 +1,295 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Req,
+  Res,
+  ApiOperation,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+} from "@/core/decorator/index.js";
+import { Request, Response } from "express";
+import { BaseController } from "@/core/base-controller.js";
+import { RoleRepository } from "./repository.js";
+import {
+  RoleCreateSchema,
+  RoleUpdateSchema,
+  RoleListSchema,
+  RoleAssignMenusSchema,
+  RoleAssignPermissionsSchema,
+  RoleAssignUsersSchema,
+} from "./schema.js";
+import { AppError } from "@/middleware/error-handler.js";
+import { z } from "zod";
+import { prisma } from "@/config/database.js";
+import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { success } from "@/common/utils/response.js";
+import multer from "multer";
+import { simpleStorage } from "../upload/controller.js";
+const upload = multer({
+  storage: simpleStorage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
+@Controller("/role", { tags: ["角色管理"] })
+export default class RoleController extends BaseController<any, any, any, any> {
+  protected readonly repository = new RoleRepository();
+  protected readonly config = {
+    routePrefix: "/api/v1/role",
+    tags: ["角色管理"],
+    permissionPrefix: "role",
+    enableAudit: true,
+    defaultPageSize: 10,
+    maxPageSize: 100,
+  };
+  protected readonly createSchema = RoleCreateSchema;
+  protected readonly updateSchema = RoleUpdateSchema;
+  protected readonly querySchema = RoleListSchema;
+
+  // ============ 钩子：唯一性校验 ============
+  async beforeCreate(dto: any, req: Request): Promise<any> {
+    dto = await super.beforeCreate(dto, req);
+    const repo = this.repository as RoleRepository;
+    const exist = await repo.findByRoleCode(dto.roleCode, req.tenantId!);
+    if (exist)
+      throw new AppError(409, `角色编码 '${dto.roleCode}' 已存在`, 409);
+    return dto;
+  }
+
+  async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
+    dto = await super.beforeUpdate(id, dto, req);
+    const repo = this.repository as RoleRepository;
+    if (dto.roleCode) {
+      const exist = await repo.findByRoleCode(dto.roleCode, req.tenantId!, id);
+      if (exist)
+        throw new AppError(409, `角色编码 '${dto.roleCode}' 已存在`, 409);
+    }
+    return dto;
+  }
+
+  buildListWhere(query: any): any {
+    const where: any = {};
+    if (query.keyword) {
+      where.OR = [
+        { role_code: { contains: query.keyword } },
+        { role_name: { contains: query.keyword } },
+      ];
+    }
+    if (query.status !== undefined) {
+      where.status = Number(query.status);
+    }
+    return where;
+  }
+
+  // ============ 基础 CRUD 路由 ============
+  @Get("/list")
+  @ApiOperation("获取角色分页列表")
+  @ApiQuery(RoleListSchema)
+  @ApiResponse(200, "查询成功")
+  async pageList(@Req() req: Request, @Res() res: Response) {
+    return this.list(req, res);
+  }
+
+  @Get("/:id")
+  @ApiOperation("获取角色详情", "包含关联的菜单ID和权限ID列表")
+  @ApiResponse(200, "查询成功")
+  @ApiResponse(404, "角色不存在")
+  async getDetailRole(@Req() req: Request, @Res() res: Response) {
+    return this.detail(req, res);
+  }
+
+  @Post("/")
+  @ApiOperation("创建角色")
+  @ApiBody(RoleCreateSchema)
+  @ApiResponse(200, "创建成功")
+  @ApiResponse(409, "角色编码已存在")
+  async createRole(@Req() req: Request, @Res() res: Response) {
+    return super.create(req, res);
+  }
+
+  @Put("/:id")
+  @ApiOperation("更新角色")
+  @ApiBody(RoleUpdateSchema)
+  @ApiResponse(200, "更新成功")
+  @ApiResponse(409, "角色编码已存在")
+  async updateRole(@Req() req: Request, @Res() res: Response) {
+    return super.update(req, res);
+  }
+
+  @Delete("/:id")
+  @ApiOperation("删除角色", "已分配用户的角色不可删除")
+  @ApiResponse(200, "删除成功")
+  @ApiResponse(400, "角色已分配用户")
+  async removeRole(@Req() req: Request, @Res() res: Response) {
+    try {
+      // 检查是否有关联用户
+      const userCount = await prisma.sys_user_role.count({
+        where: { role_id: req.params.id, tenant_id: req.tenantId! },
+      });
+      if (userCount > 0) {
+        throw new AppError(400, "该角色已分配给用户，无法删除", 400);
+      }
+      return super.remove(req, res);
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  // ============ 关联管理路由 ============
+
+  // 分配菜单
+  @Put("/:id/menus")
+  @ApiOperation("分配菜单", "更新角色关联的菜单列表")
+  @ApiBody(RoleAssignMenusSchema)
+  @ApiResponse(200, "分配成功")
+  async assignMenus(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { menuIds } = req.body;
+      await (this.repository as RoleRepository).updateRoleMenus(
+        req.params.id,
+        menuIds,
+        req.tenantId!,
+      );
+      success(res, null, "分配成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  // 分配权限
+  @Put("/:id/permissions")
+  @ApiOperation("分配权限", "更新角色关联的权限列表")
+  @ApiBody(RoleAssignPermissionsSchema)
+  @ApiResponse(200, "分配成功")
+  async assignPermissions(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { permIds } = req.body;
+      await (this.repository as RoleRepository).updateRolePermissions(
+        req.params.id,
+        permIds,
+        req.tenantId!,
+      );
+      success(res, null, "分配成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  // 分配用户
+  @Put("/:id/users")
+  @ApiOperation("分配用户", "更新角色关联的用户列表")
+  @ApiBody(RoleAssignUsersSchema)
+  @ApiResponse(200, "分配成功")
+  async assignUsers(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { userIds } = req.body;
+      await (this.repository as RoleRepository).updateRoleUsers(
+        req.params.id,
+        userIds,
+        req.tenantId!,
+      );
+      success(res, null, "分配成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  // 获取角色用户列表
+  @Get("/:id/users")
+  @ApiOperation("获取角色用户", "获取角色关联的用户列表")
+  @ApiResponse(200, "查询成功")
+  async getRoleUsers(@Req() req: Request, @Res() res: Response) {
+    try {
+      const users = await (this.repository as RoleRepository).findRoleUsers(
+        req.params.id,
+        req.tenantId!,
+      );
+      success(res, users, "查询成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+  @Get("/:id/menus/tree")
+  @ApiOperation("获取角色菜单树", "返回菜单树并标记角色已关联的菜单")
+  @ApiResponse(200, "查询成功")
+  async getRoleMenuTree(@Req() req: Request, @Res() res: Response) {
+    try {
+      const roleId = req.params.id;
+      const tenantId = req.tenantId!;
+      const repo = this.repository as RoleRepository;
+      const [allMenus, checkedMenuIds] = await Promise.all([
+        repo.findAllMenus(tenantId),
+        repo.getRoleMenuIds(roleId, tenantId),
+      ]);
+      const checkedSet = new Set(checkedMenuIds);
+      const tree = this.buildTreeWithChecked(allMenus, null, checkedSet);
+      success(res, tree, "查询成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  private buildTreeWithChecked(
+    items: any[],
+    parentId: string | null,
+    checkedSet: Set<string>,
+  ): any[] {
+    const parent = parentId;
+    return items
+      .filter((item) => item.parent_id === parent)
+      .map((item) => ({
+        ...keysToCamelCase(item),
+        checked: checkedSet.has(item.menu_id),
+        children: this.buildTreeWithChecked(items, item.menu_id, checkedSet),
+      }));
+  }
+  @Get("/export")
+  @ApiOperation("导出角色", "根据筛选条件导出角色为Excel")
+  @ApiQuery(RoleListSchema)
+  @ApiResponse(200, "Excel文件")
+  async export(@Req() req: Request, @Res() res: Response) {
+    try {
+      const where = this.buildListWhere(req.query);
+      const buffer = await (this.repository as RoleRepository).exportRoles(
+        where,
+        req.tenantId!,
+      );
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=roles_${Date.now()}.xlsx`,
+      );
+      res.send(buffer);
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+  @Post("/import")
+  @ApiOperation("导入角色", "上传Excel批量导入角色")
+  @ApiResponse(200, "导入结果")
+  async import(@Req() req: Request, @Res() res: Response) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError(400, "文件上传失败", 400));
+      if (!req.file)
+        return this.handleError(res, new AppError(400, "请上传Excel文件", 400));
+      try {
+        const result = await (
+          this.repository as RoleRepository
+        ).importRolesFromExcel(
+          req.file.buffer,
+          req.tenantId!,
+          req.user?.userId,
+        );
+        success(res, result, "导入完成");
+      } catch (err) {
+        this.handleError(res, err);
+      }
+    });
+  }
+}

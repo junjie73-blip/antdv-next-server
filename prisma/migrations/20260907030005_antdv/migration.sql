@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "sys_dept" ALTER COLUMN "parent_id" DROP NOT NULL,
+ALTER COLUMN "parent_id" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "sys_menu" ALTER COLUMN "parent_id" SET DEFAULT '00000000-0000-0000-0000-000000000000';
