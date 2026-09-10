@@ -31,23 +31,19 @@ export const UpdateProfileSchema = z
   .openapi("UpdateProfile");
 export const RegisterSchema = z
   .object({
-    tenantName: z.string().min(2).max(128).openapi({ description: "租户名称" }),
     tenantCode: z
       .string()
       .min(2)
       .max(64)
-      .openapi({ description: "租户编码（唯一）" }),
-    username: z
+      .openapi({ description: "租户编码（必须已存在）" }),
+    tenantName: z
       .string()
-      .min(3)
-      .max(64)
-      .openapi({ description: "管理员用户名" }),
-    password: z
-      .string()
-      .min(6)
-      .max(64)
-      .openapi({ description: "密码（至少6位）" }),
-    email: z.string().email().optional().openapi({ description: "邮箱" }),
-    phone: z.string().max(32).optional().openapi({ description: "手机号" }),
+      .min(2)
+      .max(128)
+      .openapi({ description: "租户名称（必须与编码匹配）" }),
+    username: z.string().min(3).max(64).openapi({ description: "用户名" }),
+    password: z.string().min(6).max(64).openapi({ description: "密码" }),
+    email: z.string().email().optional(),
+    phone: z.string().max(32).optional(),
   })
   .openapi("Register");

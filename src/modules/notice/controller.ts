@@ -115,6 +115,7 @@ export default class NoticeController extends BaseController<
     z.object({
       pageNum: z.number().default(1),
       pageSize: z.number().default(10),
+      isRead: z.number().optional(),
     }),
   )
   @ApiResponse(200, "查询成功")
@@ -124,7 +125,13 @@ export default class NoticeController extends BaseController<
       const pageSize = Number(req.query.pageSize) || 10;
       const data = await (
         this.repository as NoticeRepository
-      ).findNoticesForUser(req.user.userId, req.tenantId!, pageNum, pageSize);
+      ).findNoticesForUser(
+        req.user.userId,
+        req.tenantId!,
+        pageNum,
+        pageSize,
+        req.query.isRead,
+      );
       success(res, data);
     } catch (err) {
       this.handleError(res, err);

@@ -219,7 +219,6 @@ model sys_notice {
   content      String?   @db.Text /// 通知内容（支持富文本）
   notice_type  Int       @db.SmallInt /// 通知类型：1-通知，2-公告，3-提醒
   status       String    @default("1") @db.VarChar(10) /// 状态：'0'-草稿，'1'-发布
-  is_read      Int       @default(0) @db.SmallInt /// 状态：'0'-未读，'1'-已读
   publish_time DateTime? @db.Timestamptz(6) /// 定时发布时间
   created_at   DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at   DateTime  @updatedAt @db.Timestamptz(6) /// 更新时间
@@ -418,4 +417,88 @@ model sys_config {
   @@unique([tenant_id, config_key])
   @@index([tenant_id])
   @@map("sys_config")
+}
+
+// ==================== 定时任务 ====================
+model sys_job {
+  job_id          String   @id @default(uuid()) @db.Uuid
+  tenant_id       String   @db.Uuid
+  job_name        String   @db.VarChar(128)
+  job_group       String   @default("DEFAULT") @db.VarChar(64)
+  invoke_target   String   @db.VarChar(256) /// 执行目标，如 notice:publish
+  cron_expression String   @db.VarChar(64)
+  misfire_policy  Int      @default(3) @db.SmallInt
+  concurrent      Int      @default(1) @db.SmallInt
+  status          String   @default("1") @db.VarChar(10)
+  remark          String?  @db.VarChar(512)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @updatedAt @db.Timestamptz(6)
+  created_by      String?  @db.Uuid
+  updated_by      String?  @db.Uuid
+  is_deleted      Int      @default(0) @db.SmallInt
+
+  @@index([tenant_id])
+  @@map("sys_job")
+}
+
+model sys_job_log {
+  log_id         String   @id @default(uuid()) @db.Uuid
+  job_id         String   @db.Uuid
+  job_name       String   @db.VarChar(128)
+  invoke_target  String   @db.VarChar(256)
+  job_message    String?  @db.VarChar(512)
+  status         String   @default("1") @db.VarChar(10)
+  exception_info String?  @db.Text
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([job_id])
+  @@index([created_at])
+  @@map("sys_job_log")
+}
+
+model sys_role_dept {
+  id         String   @id @default(uuid()) @db.Uuid
+  role_id    String   @db.Uuid
+  dept_id    String   @db.Uuid
+  tenant_id  String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([role_id, dept_id])
+  @@index([tenant_id])
+  @@map("sys_role_dept")
+}
+
+model sys_todo {
+  todo_id    String    @id @default(uuid()) @db.Uuid
+  tenant_id  String    @db.Uuid
+  user_id    String    @db.Uuid
+  title      String    @db.VarChar(256)
+  content    String?   @db.Text
+  priority   Int       @default(0) @db.SmallInt /// 0-普通 1-重要 2-紧急
+  due_time   DateTime? @db.Timestamptz(6)
+  status     String    @default("0") @db.VarChar(10) /// '0'-未完成 '1'-已完成
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @updatedAt @db.Timestamptz(6)
+  is_deleted Int       @default(0) @db.SmallInt
+
+  @@index([tenant_id, user_id])
+  @@index([status])
+  @@map("sys_todo")
+}
+
+model sys_ip_rule {
+  rule_id    String   @id @default(uuid()) @db.Uuid
+  tenant_id  String   @db.Uuid
+  rule_type  String   @db.VarChar(10)
+  ip_pattern String   @db.VarChar(64)
+  remark     String?  @db.VarChar(256)
+  status     String   @default("1") @db.VarChar(10)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+  created_by String?  @db.Uuid // 新增
+  updated_by String?  @db.Uuid // 新增
+  is_deleted Int      @default(0) @db.SmallInt
+
+  @@index([tenant_id, rule_type])
+  @@map("sys_ip_rule")
 }

@@ -12,22 +12,21 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { uploadFile, deleteFile } from "@/config/blob.js"; // 本地存储工具
+import { deleteFile } from "@/config/blob.js"; // 本地存储工具（已移除 Vercel）
+import { FileRepository } from "@/modules/file/repository.js";
 import { success, error } from "@/common/utils/response.js";
 
-// 上传根目录（可通过环境变量配置，生产环境建议持久化目录）
 const UPLOAD_ROOT =
   process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
 const TEMP_DIR = path.join(UPLOAD_ROOT, "temp");
 const FINAL_DIR = path.join(UPLOAD_ROOT, "files");
-const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+const CHUNK_SIZE = 5 * 1024 * 1024;
 
-// 确保目录存在
 for (const dir of [UPLOAD_ROOT, TEMP_DIR, FINAL_DIR]) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-// 分片上传临时存储（磁盘）
+// ============ 分片上传存储 ============
 const chunkStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadId = req.body.uploadId;
@@ -48,12 +47,12 @@ const chunkUpload = multer({
   limits: { fileSize: CHUNK_SIZE * 2 },
 });
 
-// 简单上传存储（直接存入最终目录）
+// ============ 简单上传存储 ============
 export const simpleStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     cb(null, FINAL_DIR);
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname);
     cb(null, `${uuidv4()}${ext}`);
   },
@@ -65,11 +64,14 @@ export const simpleUpload = multer({
 
 @Controller("/upload", { tags: ["文件上传"] })
 export default class UploadController {
+  private fileRepository = new FileRepository();
+
   /**
    * 简单上传（小文件）
+   * 上传成功后写入 sys_file 表
    */
   @Post("/file")
-  @ApiOperation("上传小文件", "单文件上传，返回文件URL")
+  @ApiOperation("上传小文件", "上传后写入文件表，返回文件ID和URL")
   @ApiResponse(200, "上传成功")
   async uploadFile(@Req() req: Request, @Res() res: Response) {
     simpleUpload.single("file")(req, res, async (err) => {
@@ -77,19 +79,41 @@ export default class UploadController {
       if (!req.file) return error(res, "请选择文件", 400, 400);
 
       try {
-        // 文件已存储在 FINAL_DIR，直接构造 URL
-        const url = `/uploads/files/${req.file.filename}`;
-        success(res, { url }, "上传成功");
-      } catch (e) {
-        console.error(e);
-        error(res, "上传失败", 500, 500);
+        const filename = req.file.originalname;
+        const serverFilename = req.file.filename;
+        const url = `/uploads/files/${serverFilename}`;
+        const size = req.file.size;
+        const mimeType = req.file.mimetype;
+        const tenantId = (req as any).tenantId as string;
+        const userId = (req as any).user?.userId as string | undefined;
+
+        // 写入数据库
+        const fileRecord = await this.fileRepository.createFromUpload({
+          filename,
+          url,
+          size,
+          mimeType,
+          uploader: userId,
+          tenantId,
+        });
+
+        success(
+          res,
+          {
+            fileId: fileRecord.file_id,
+            filename: fileRecord.filename,
+            url: fileRecord.url,
+            size: fileRecord.size,
+          },
+          "上传成功",
+        );
+      } catch (e: any) {
+        console.error("上传写库失败:", e);
+        error(res, e?.message || "上传失败", 500, 500);
       }
     });
   }
 
-  /**
-   * 检查已上传分片索引
-   */
   @Get("/check")
   @ApiOperation("检查已上传分片", "根据uploadId返回已上传的分片索引数组")
   @ApiResponse(200, "查询成功")
@@ -98,9 +122,7 @@ export default class UploadController {
       const uploadId = req.query.uploadId as string;
       if (!uploadId) return error(res, "缺少uploadId参数", 400, 400);
       const dir = path.join(TEMP_DIR, uploadId);
-      if (!fs.existsSync(dir)) {
-        return success(res, { uploaded: [] });
-      }
+      if (!fs.existsSync(dir)) return success(res, { uploaded: [] });
       const files = fs.readdirSync(dir);
       const uploaded = files
         .filter((f) => f.startsWith("chunk-"))
@@ -112,14 +134,8 @@ export default class UploadController {
     }
   }
 
-  /**
-   * 上传单个分片
-   */
   @Post("/chunk")
-  @ApiOperation(
-    "上传分片",
-    "接收文件分片，需携带uploadId, chunkIndex, totalChunks",
-  )
+  @ApiOperation("上传分片", "接收文件分片")
   @ApiResponse(200, "分片上传成功")
   async uploadChunk(@Req() req: Request, @Res() res: Response) {
     chunkUpload.single("file")(req, res, (err) => {
@@ -133,10 +149,10 @@ export default class UploadController {
   }
 
   /**
-   * 合并分片，返回最终文件 URL
+   * 合并分片，写入文件表，返回文件信息
    */
   @Post("/merge")
-  @ApiOperation("合并分片", "将所有分片合并为完整文件，返回最终URL")
+  @ApiOperation("合并分片", "合并后写入文件表，返回文件ID和URL")
   @ApiResponse(200, "合并成功")
   async mergeChunks(@Req() req: Request, @Res() res: Response) {
     try {
@@ -149,11 +165,11 @@ export default class UploadController {
         return error(res, "上传临时目录不存在", 404, 404);
       }
 
-      // 合并分片到最终目录
       const ext = path.extname(fileName);
       const mergedFileName = `${uuidv4()}${ext}`;
       const mergedPath = path.join(FINAL_DIR, mergedFileName);
 
+      // 合并分片
       const writeStream = fs.createWriteStream(mergedPath);
       for (let i = 0; i < totalChunks; i++) {
         const chunkPath = path.join(tempDir, `chunk-${i}`);
@@ -166,23 +182,50 @@ export default class UploadController {
       }
       writeStream.end();
 
+      // 等待写入完成
+      await new Promise<void>((resolve) =>
+        writeStream.on("finish", () => resolve()),
+      );
+
       // 清理临时分片目录
       fs.rmSync(tempDir, { recursive: true, force: true });
 
-      // 返回文件 URL（本地路径）
+      const stat = fs.statSync(mergedPath);
       const url = `/uploads/files/${mergedFileName}`;
-      success(res, { url }, "合并成功");
-    } catch (err) {
+      const tenantId = (req as any).tenantId as string;
+      const userId = (req as any).user?.userId as string | undefined;
+
+      // 写入数据库
+      const fileRecord = await this.fileRepository.createFromUpload({
+        filename: fileName,
+        url,
+        size: stat.size,
+        mimeType: undefined,
+        uploader: userId,
+        tenantId,
+      });
+
+      success(
+        res,
+        {
+          fileId: fileRecord.file_id,
+          filename: fileRecord.filename,
+          url: fileRecord.url,
+          size: fileRecord.size,
+        },
+        "合并成功",
+      );
+    } catch (err: any) {
       console.error(err);
-      error(res, "合并失败", 500, 500);
+      error(res, err?.message || "合并失败", 500, 500);
     }
   }
 
   /**
-   * 删除文件（可选接口，根据业务需要）
+   * 根据 URL 删除物理文件（仅删文件，不删数据库记录）
    */
   @Post("/delete")
-  @ApiOperation("删除文件", "根据URL删除本地文件")
+  @ApiOperation("删除物理文件", "根据URL删除本地文件")
   @ApiResponse(200, "删除成功")
   async deleteFile(@Req() req: Request, @Res() res: Response) {
     try {

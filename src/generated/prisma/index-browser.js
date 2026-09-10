@@ -262,7 +262,6 @@ exports.Prisma.Sys_noticeScalarFieldEnum = {
   content: 'content',
   notice_type: 'notice_type',
   status: 'status',
-  is_read: 'is_read',
   publish_time: 'publish_time',
   created_at: 'created_at',
   updated_at: 'updated_at',
@@ -379,6 +378,71 @@ exports.Prisma.Sys_configScalarFieldEnum = {
   is_deleted: 'is_deleted'
 };
 
+exports.Prisma.Sys_jobScalarFieldEnum = {
+  job_id: 'job_id',
+  tenant_id: 'tenant_id',
+  job_name: 'job_name',
+  job_group: 'job_group',
+  invoke_target: 'invoke_target',
+  cron_expression: 'cron_expression',
+  misfire_policy: 'misfire_policy',
+  concurrent: 'concurrent',
+  status: 'status',
+  remark: 'remark',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+};
+
+exports.Prisma.Sys_job_logScalarFieldEnum = {
+  log_id: 'log_id',
+  job_id: 'job_id',
+  job_name: 'job_name',
+  invoke_target: 'invoke_target',
+  job_message: 'job_message',
+  status: 'status',
+  exception_info: 'exception_info',
+  created_at: 'created_at'
+};
+
+exports.Prisma.Sys_role_deptScalarFieldEnum = {
+  id: 'id',
+  role_id: 'role_id',
+  dept_id: 'dept_id',
+  tenant_id: 'tenant_id',
+  created_at: 'created_at'
+};
+
+exports.Prisma.Sys_todoScalarFieldEnum = {
+  todo_id: 'todo_id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  title: 'title',
+  content: 'content',
+  priority: 'priority',
+  due_time: 'due_time',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted'
+};
+
+exports.Prisma.Sys_ip_ruleScalarFieldEnum = {
+  rule_id: 'rule_id',
+  tenant_id: 'tenant_id',
+  rule_type: 'rule_type',
+  ip_pattern: 'ip_pattern',
+  remark: 'remark',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -414,7 +478,12 @@ exports.Prisma.ModelName = {
   sys_mfa_config: 'sys_mfa_config',
   sys_file: 'sys_file',
   sys_login_log: 'sys_login_log',
-  sys_config: 'sys_config'
+  sys_config: 'sys_config',
+  sys_job: 'sys_job',
+  sys_job_log: 'sys_job_log',
+  sys_role_dept: 'sys_role_dept',
+  sys_todo: 'sys_todo',
+  sys_ip_rule: 'sys_ip_rule'
 };
 
 /**

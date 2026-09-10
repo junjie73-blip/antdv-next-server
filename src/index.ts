@@ -24,6 +24,8 @@ import { authMiddleware } from "./middleware/auth.js";
 import { auditMiddleware } from "./middleware/audit.js";
 import { timingMiddleware } from "./middleware/timing.js";
 import { env } from "./config/env.js";
+import { loadJobs } from "./modules/job/scheduler.js";
+import { ipRuleMiddleware } from "./middleware/ip-rule.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -56,6 +58,7 @@ app.use(globalRateLimit);
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(authMiddleware);
+app.use(ipRuleMiddleware);
 app.use(timingMiddleware);
 // Swagger UI
 app.use("/api", swaggerRouter);
@@ -72,6 +75,7 @@ async function healthCheck() {
   console.log("DATABASE_URL:", process.env.DATABASE_URL);
   try {
     await prisma.$queryRaw`SELECT 1`;
+    await loadJobs();
     startNoticeScheduler();
     initWebSocketServer(_server);
     // 启动 Redis 订阅（用于多实例通知广播）

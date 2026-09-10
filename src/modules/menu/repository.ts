@@ -13,7 +13,7 @@ export class MenuRepository extends BaseRepository<any, any, any, any> {
    */
   async findTree(tenantId: string): Promise<any[]> {
     const menus = await this.model.findMany({
-      where: { tenant_id: tenantId, is_deleted: 0 },
+      where: { tenant_id: tenantId, is_deleted: 0, menu_type: { in: [1, 2] } },
       orderBy: { sort_order: "asc" },
     });
     return this.buildTree(menus, null);
@@ -97,6 +97,11 @@ export class MenuRepository extends BaseRepository<any, any, any, any> {
         const node: any = {
           ...keysToCamelCase(item),
         };
+        for (const key in node) {
+          if (node[key] instanceof Date) {
+            node[key] = dayjs(node[key]).format("YYYY-MM-DD HH:mm:ss");
+          }
+        }
         // 仅当 children 非空时才添加该字段
         if (children.length > 0) {
           node.children = children;

@@ -53,16 +53,25 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
     tenantId: string,
     page: number,
     pageSize: number,
+    isRead?: number,
   ) {
     const skip = (page - 1) * pageSize;
-    const [list, total] = await Promise.all([
+
+    const userFilter: any = { user_id: userId };
+    if (isRead !== undefined) {
+      userFilter.is_read = isRead;
+    }
+
+    const where: any = {
+      tenant_id: tenantId,
+      status: "1",
+      is_deleted: 0,
+      target_users: { some: userFilter },
+    };
+
+    const [rawList, total] = await Promise.all([
       prisma.sys_notice.findMany({
-        where: {
-          tenant_id: tenantId,
-          status: "1",
-          is_deleted: 0,
-          target_users: { some: { user_id: userId } },
-        },
+        where,
         skip,
         take: pageSize,
         orderBy: { publish_time: "desc" },
@@ -73,17 +82,21 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
           },
         },
       }),
-      prisma.sys_notice.count({
-        where: {
-          tenant_id: tenantId,
-          status: "1",
-          is_deleted: 0,
-          target_users: { some: { user_id: userId } },
-        },
-      }),
+      prisma.sys_notice.count({ where }),
     ]);
+
+    // ========== 关键：扁平化处理 ==========
+    const list = rawList.map((item: any) => {
+      const { target_users, ...rest } = item;
+      return {
+        ...rest,
+        // 从关联表里取出当前用户的已读状态，提升到外层
+        isRead: target_users?.[0]?.is_read ?? 0,
+      };
+    });
+
     return {
-      list: list.map((item) => keysToCamelCase(item)),
+      list,
       total,
       page,
       pageSize,

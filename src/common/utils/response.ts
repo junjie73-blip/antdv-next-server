@@ -10,12 +10,22 @@ import { keysToCamelCase } from "./case-convert.js";
  * @param message 成功消息
  * @param code 业务状态码
  */
-export function success<T>(
+export function success<T = any>(
   res: Response,
   data: T,
   message = "操作成功",
   code = 200,
 ): void {
+  if (data && data.list) {
+    data.list = data.list.map(keysToCamelCase).map((item: any) => {
+      for (const key in item) {
+        if (item[key] instanceof Date) {
+          item[key] = dayjs(item[key]).format("YYYY-MM-DD HH:mm:ss");
+        }
+      }
+      return item;
+    });
+  }
   const response: ApiResponse<T> = {
     code,
     message,

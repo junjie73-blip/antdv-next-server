@@ -27,6 +27,9 @@ import { decrypt, encrypt } from "@/common/utils/crypto.js";
 import { redis } from "@/config/redis.js";
 import { UserRepository } from "../user/repository.js";
 import { generateTokens } from "@/middleware/auth.js";
+import { getIpRules } from "../ip-rule/cache.js";
+import { checkIpAgainstRules } from "../ip-rule/matcher.js";
+import { getClientIp } from "@/common/utils/ip.js";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "your-secret-key",
@@ -110,12 +113,17 @@ export default class AuthController {
         });
         throw new AppError(403, "租户已禁用", 403);
       }
-
+      const rules = await getIpRules(tenant.tenant_id);
+      const clientIp = getClientIp(req);
+      const check = checkIpAgainstRules(clientIp, rules);
+      if (!check.allowed) {
+        return error(res, `访问被拒绝：${check.reason}`, 403, 403);
+      }
       // 更新最后登录信息
       await prisma.sys_user.update({
         where: { user_id: user.user_id },
         data: {
-          last_login_ip: ip,
+          last_login_ip: clientIp,
           last_login_time: new Date(),
         },
       });
@@ -126,7 +134,7 @@ export default class AuthController {
           tenant_id: user.tenant_id,
           user_id: user.user_id,
           username,
-          ip_address: ip,
+          ip_address: clientIp,
           user_agent: userAgent,
           status: "1",
           message: "登录成功",
@@ -182,28 +190,55 @@ export default class AuthController {
       if (!userId) {
         throw new AppError(401, "未认证或用户信息缺失", 401);
       }
+
       const user = await prisma.sys_user.findUnique({
         where: { user_id: userId },
-        // @ts-ignore
         include: {
-          sys_user_role: { include: { role: true } },
-          sys_user_dept: { include: { dept: true } },
+          sys_user_role: {
+            include: {
+              role: {
+                select: {
+                  role_id: true,
+                  role_name: true, // ← 只取名称
+                  role_code: true, // 如果前端需要 code 也保留
+                },
+              },
+            },
+          },
+          sys_user_dept: {
+            include: {
+              dept: {
+                select: {
+                  dept_id: true,
+                  dept_name: true,
+                },
+              },
+            },
+          },
         },
       });
+
       if (!user) throw new AppError(404, "用户不存在", 404);
+
+      // ========== 关键：roles 只返回名称数组 ==========
+      const roles = user.sys_user_role
+        .map((ur: any) => ur.role?.role_name)
+        .filter(Boolean); // 过滤掉 null/undefined
+
+      const depts = user.sys_user_dept
+        .map((ud: any) => ud.dept?.dept_name)
+        .filter(Boolean);
+
       success(res, {
+        userId: user.user_id,
         username: user.username,
         realName: user.real_name,
         email: user.email,
         phone: user.phone,
         avatar: user.avatar,
         tenantId: user.tenant_id,
-        roles: (user.sys_user_role as any[]).map(
-          (ur: any) => ur.sys_role?.role_code,
-        ),
-        depts: (user.sys_user_dept as any[]).map(
-          (ud: any) => ud.sys_dept?.dept_name,
-        ),
+        roles, // ← 纯名称数组，如 ['超级管理员', '普通用户']
+        depts, // ← 同样处理部门
       });
     } catch (err) {
       this.handleError(res, err);
@@ -384,40 +419,49 @@ export default class AuthController {
     success(res, null, "登出成功");
   }
   @Post("/register")
-  @ApiOperation("用户注册", "在已有租户下注册新用户")
+  @ApiOperation("用户注册", "在已存在的租户下注册新用户")
   @ApiBody(RegisterSchema)
   @ApiResponse(201, "注册成功")
-  @ApiResponse(400, "参数错误")
+  @ApiResponse(400, "租户或参数错误")
   @ApiResponse(409, "用户名已存在")
   async register(@Req() req: Request, @Res() res: Response) {
     try {
       const { tenantCode, tenantName, username, password, email, phone } =
         RegisterSchema.parse(req.body);
 
-      // 1. 检查租户编码是否已存在（全局唯一）
-      const tenantExists =
+      // ========== 1. 校验租户编码是否存在 ==========
+      const tenantByCode =
         await this.userRepository.findTenantByCode(tenantCode);
-      if (tenantExists) {
-        throw new AppError(409, "租户编码已存在", 409);
+      if (!tenantByCode) {
+        throw new AppError(400, `租户编码 '${tenantCode}' 不存在`, 400);
       }
 
-      // 2. 事务创建租户和用户
-      const { tenant, user } = await this.userRepository.registerTenantWithUser(
-        {
-          tenantCode,
-          tenantName,
-          username,
-          password,
-          email,
-          phone,
-        },
-      );
+      // ========== 2. 校验租户名称是否匹配 ==========
+      if (tenantByCode.tenant_name !== tenantName) {
+        throw new AppError(400, `租户名称与编码不匹配，请核对后重试`, 400);
+      }
 
-      // 3. 返回结果
+      // ========== 3. 校验租户状态 ==========
+      if (tenantByCode.status !== "1") {
+        throw new AppError(403, "该租户已被禁用，无法注册", 403);
+      }
+      if (tenantByCode.expire_time && tenantByCode.expire_time < new Date()) {
+        throw new AppError(403, "该租户已过期，无法注册", 403);
+      }
+
+      // ========== 4. 在已存在的租户下创建用户 ==========
+      const user = await this.userRepository.registerUserInTenant({
+        tenantId: tenantByCode.tenant_id,
+        username,
+        password,
+        email,
+        phone,
+      });
+
       success(
         res,
         {
-          tenantId: tenant.tenant_id,
+          tenantId: tenantByCode.tenant_id,
           userId: user.user_id,
           username: user.username,
         },

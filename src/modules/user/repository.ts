@@ -539,6 +539,19 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       where: { tenant_code: tenantCode },
     });
   }
+  /**
+   * 根据租户编码查询租户（同时校验租户名称是否匹配）
+   */
+  async findTenantByCodeAndName(tenantCode: string, tenantName: string) {
+    return prisma.sys_tenant.findFirst({
+      where: {
+        tenant_code: tenantCode,
+        tenant_name: tenantName,
+        is_deleted: 0,
+        status: "1",
+      },
+    });
+  }
 
   // 在租户内查找用户名
   async findUserByUsernameInTenant(
@@ -555,39 +568,42 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     return this.model.findFirst({ where });
   }
 
-  // 注册租户和用户（事务）
-  async registerTenantWithUser(data: {
-    tenantCode: string;
-    tenantName: string;
+  /**
+   * 在已存在的租户下注册用户
+   */
+  async registerUserInTenant(data: {
+    tenantId: string;
     username: string;
     password: string;
     email?: string;
     phone?: string;
+    realName?: string;
   }) {
-    const { tenantCode, tenantName, username, password, email, phone } = data;
+    const { tenantId, username, password, email, phone, realName } = data;
     const hashedPassword = await encrypt(password);
 
     return prisma.$transaction(async (tx) => {
-      // 1. 创建租户
-      const tenant = await tx.sys_tenant.create({
-        data: {
-          tenant_code: tenantCode,
-          tenant_name: tenantName,
-          status: "1",
-          created_at: new Date(),
-          updated_at: new Date(),
+      // 1. 校验用户名在该租户下唯一
+      const existUser = await tx.sys_user.findFirst({
+        where: {
+          tenant_id: tenantId,
+          username,
           is_deleted: 0,
         },
       });
+      if (existUser) {
+        throw new AppError(409, `用户名 '${username}' 在租户下已存在`, 409);
+      }
 
-      // 2. 创建用户并绑定租户
+      // 2. 创建用户
       const user = await tx.sys_user.create({
         data: {
-          tenant_id: tenant.tenant_id,
+          tenant_id: tenantId,
           username,
           password: hashedPassword,
-          email,
-          phone,
+          email: email ?? null,
+          phone: phone ?? null,
+          real_name: realName ?? null,
           status: "1",
           created_at: new Date(),
           updated_at: new Date(),
@@ -595,10 +611,21 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
         },
       });
 
-      // 3. 可选：创建默认角色并关联用户（如超级管理员）
-      // 如果需要，可在此创建超级管理员角色并绑定，参照之前的注册逻辑
+      // 3. 可选：分配默认角色（例如查询租户下的"普通用户"角色并绑定）
+      // const defaultRole = await tx.sys_role.findFirst({
+      //   where: { tenant_id: tenantId, role_code: 'USER', is_deleted: 0 },
+      // });
+      // if (defaultRole) {
+      //   await tx.sys_user_role.create({
+      //     data: {
+      //       user_id: user.user_id,
+      //       role_id: defaultRole.role_id,
+      //       tenant_id: tenantId,
+      //     },
+      //   });
+      // }
 
-      return { tenant, user };
+      return user;
     });
   }
   async getAllChildDeptIds(

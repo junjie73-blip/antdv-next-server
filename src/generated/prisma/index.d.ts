@@ -108,6 +108,31 @@ export type sys_login_log = $Result.DefaultSelection<Prisma.$sys_login_logPayloa
  * 系统配置表，存储租户级配置项
  */
 export type sys_config = $Result.DefaultSelection<Prisma.$sys_configPayload>
+/**
+ * Model sys_job
+ * 
+ */
+export type sys_job = $Result.DefaultSelection<Prisma.$sys_jobPayload>
+/**
+ * Model sys_job_log
+ * 
+ */
+export type sys_job_log = $Result.DefaultSelection<Prisma.$sys_job_logPayload>
+/**
+ * Model sys_role_dept
+ * 
+ */
+export type sys_role_dept = $Result.DefaultSelection<Prisma.$sys_role_deptPayload>
+/**
+ * Model sys_todo
+ * 
+ */
+export type sys_todo = $Result.DefaultSelection<Prisma.$sys_todoPayload>
+/**
+ * Model sys_ip_rule
+ * 
+ */
+export type sys_ip_rule = $Result.DefaultSelection<Prisma.$sys_ip_rulePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -419,6 +444,56 @@ export class PrismaClient<
     * ```
     */
   get sys_config(): Prisma.sys_configDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_job`: Exposes CRUD operations for the **sys_job** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_jobs
+    * const sys_jobs = await prisma.sys_job.findMany()
+    * ```
+    */
+  get sys_job(): Prisma.sys_jobDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_job_log`: Exposes CRUD operations for the **sys_job_log** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_job_logs
+    * const sys_job_logs = await prisma.sys_job_log.findMany()
+    * ```
+    */
+  get sys_job_log(): Prisma.sys_job_logDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_role_dept`: Exposes CRUD operations for the **sys_role_dept** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_role_depts
+    * const sys_role_depts = await prisma.sys_role_dept.findMany()
+    * ```
+    */
+  get sys_role_dept(): Prisma.sys_role_deptDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_todo`: Exposes CRUD operations for the **sys_todo** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_todos
+    * const sys_todos = await prisma.sys_todo.findMany()
+    * ```
+    */
+  get sys_todo(): Prisma.sys_todoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sys_ip_rule`: Exposes CRUD operations for the **sys_ip_rule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_ip_rules
+    * const sys_ip_rules = await prisma.sys_ip_rule.findMany()
+    * ```
+    */
+  get sys_ip_rule(): Prisma.sys_ip_ruleDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -884,7 +959,12 @@ export namespace Prisma {
     sys_mfa_config: 'sys_mfa_config',
     sys_file: 'sys_file',
     sys_login_log: 'sys_login_log',
-    sys_config: 'sys_config'
+    sys_config: 'sys_config',
+    sys_job: 'sys_job',
+    sys_job_log: 'sys_job_log',
+    sys_role_dept: 'sys_role_dept',
+    sys_todo: 'sys_todo',
+    sys_ip_rule: 'sys_ip_rule'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -900,7 +980,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config"
+      modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_role_dept" | "sys_todo" | "sys_ip_rule"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2310,6 +2390,376 @@ export namespace Prisma {
           }
         }
       }
+      sys_job: {
+        payload: Prisma.$sys_jobPayload<ExtArgs>
+        fields: Prisma.sys_jobFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_jobFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_jobFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_jobFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_jobFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>
+          }
+          findMany: {
+            args: Prisma.sys_jobFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>[]
+          }
+          create: {
+            args: Prisma.sys_jobCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>
+          }
+          createMany: {
+            args: Prisma.sys_jobCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_jobCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_jobDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>
+          }
+          update: {
+            args: Prisma.sys_jobUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_jobDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_jobUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_jobUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_jobUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_jobPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_jobAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_job>
+          }
+          groupBy: {
+            args: Prisma.sys_jobGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_jobGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_jobCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_jobCountAggregateOutputType> | number
+          }
+        }
+      }
+      sys_job_log: {
+        payload: Prisma.$sys_job_logPayload<ExtArgs>
+        fields: Prisma.sys_job_logFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_job_logFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_job_logFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_job_logFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_job_logFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>
+          }
+          findMany: {
+            args: Prisma.sys_job_logFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>[]
+          }
+          create: {
+            args: Prisma.sys_job_logCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>
+          }
+          createMany: {
+            args: Prisma.sys_job_logCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_job_logCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_job_logDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>
+          }
+          update: {
+            args: Prisma.sys_job_logUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_job_logDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_job_logUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_job_logUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_job_logUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_job_logPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_job_logAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_job_log>
+          }
+          groupBy: {
+            args: Prisma.sys_job_logGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_job_logGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_job_logCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_job_logCountAggregateOutputType> | number
+          }
+        }
+      }
+      sys_role_dept: {
+        payload: Prisma.$sys_role_deptPayload<ExtArgs>
+        fields: Prisma.sys_role_deptFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_role_deptFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_role_deptFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_role_deptFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_role_deptFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          findMany: {
+            args: Prisma.sys_role_deptFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
+          }
+          create: {
+            args: Prisma.sys_role_deptCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          createMany: {
+            args: Prisma.sys_role_deptCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_role_deptCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_role_deptDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          update: {
+            args: Prisma.sys_role_deptUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_role_deptDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_role_deptUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_role_deptUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_role_deptUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_role_deptAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_role_dept>
+          }
+          groupBy: {
+            args: Prisma.sys_role_deptGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_role_deptGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_role_deptCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_role_deptCountAggregateOutputType> | number
+          }
+        }
+      }
+      sys_todo: {
+        payload: Prisma.$sys_todoPayload<ExtArgs>
+        fields: Prisma.sys_todoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_todoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_todoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_todoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_todoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>
+          }
+          findMany: {
+            args: Prisma.sys_todoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>[]
+          }
+          create: {
+            args: Prisma.sys_todoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>
+          }
+          createMany: {
+            args: Prisma.sys_todoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_todoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_todoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>
+          }
+          update: {
+            args: Prisma.sys_todoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_todoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_todoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_todoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_todoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_todoPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_todoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_todo>
+          }
+          groupBy: {
+            args: Prisma.sys_todoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_todoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_todoCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_todoCountAggregateOutputType> | number
+          }
+        }
+      }
+      sys_ip_rule: {
+        payload: Prisma.$sys_ip_rulePayload<ExtArgs>
+        fields: Prisma.sys_ip_ruleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_ip_ruleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_ip_ruleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>
+          }
+          findFirst: {
+            args: Prisma.sys_ip_ruleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_ip_ruleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>
+          }
+          findMany: {
+            args: Prisma.sys_ip_ruleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>[]
+          }
+          create: {
+            args: Prisma.sys_ip_ruleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>
+          }
+          createMany: {
+            args: Prisma.sys_ip_ruleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_ip_ruleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>[]
+          }
+          delete: {
+            args: Prisma.sys_ip_ruleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>
+          }
+          update: {
+            args: Prisma.sys_ip_ruleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_ip_ruleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_ip_ruleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_ip_ruleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_ip_ruleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_ip_rulePayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_ip_ruleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_ip_rule>
+          }
+          groupBy: {
+            args: Prisma.sys_ip_ruleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_ip_ruleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_ip_ruleCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_ip_ruleCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2452,6 +2902,11 @@ export namespace Prisma {
     sys_file?: sys_fileOmit
     sys_login_log?: sys_login_logOmit
     sys_config?: sys_configOmit
+    sys_job?: sys_jobOmit
+    sys_job_log?: sys_job_logOmit
+    sys_role_dept?: sys_role_deptOmit
+    sys_todo?: sys_todoOmit
+    sys_ip_rule?: sys_ip_ruleOmit
   }
 
   /* Types for Logging */
@@ -12496,13 +12951,11 @@ export namespace Prisma {
 
   export type Sys_noticeAvgAggregateOutputType = {
     notice_type: number | null
-    is_read: number | null
     is_deleted: number | null
   }
 
   export type Sys_noticeSumAggregateOutputType = {
     notice_type: number | null
-    is_read: number | null
     is_deleted: number | null
   }
 
@@ -12513,7 +12966,6 @@ export namespace Prisma {
     content: string | null
     notice_type: number | null
     status: string | null
-    is_read: number | null
     publish_time: Date | null
     created_at: Date | null
     updated_at: Date | null
@@ -12529,7 +12981,6 @@ export namespace Prisma {
     content: string | null
     notice_type: number | null
     status: string | null
-    is_read: number | null
     publish_time: Date | null
     created_at: Date | null
     updated_at: Date | null
@@ -12545,7 +12996,6 @@ export namespace Prisma {
     content: number
     notice_type: number
     status: number
-    is_read: number
     publish_time: number
     created_at: number
     updated_at: number
@@ -12558,13 +13008,11 @@ export namespace Prisma {
 
   export type Sys_noticeAvgAggregateInputType = {
     notice_type?: true
-    is_read?: true
     is_deleted?: true
   }
 
   export type Sys_noticeSumAggregateInputType = {
     notice_type?: true
-    is_read?: true
     is_deleted?: true
   }
 
@@ -12575,7 +13023,6 @@ export namespace Prisma {
     content?: true
     notice_type?: true
     status?: true
-    is_read?: true
     publish_time?: true
     created_at?: true
     updated_at?: true
@@ -12591,7 +13038,6 @@ export namespace Prisma {
     content?: true
     notice_type?: true
     status?: true
-    is_read?: true
     publish_time?: true
     created_at?: true
     updated_at?: true
@@ -12607,7 +13053,6 @@ export namespace Prisma {
     content?: true
     notice_type?: true
     status?: true
-    is_read?: true
     publish_time?: true
     created_at?: true
     updated_at?: true
@@ -12710,7 +13155,6 @@ export namespace Prisma {
     content: string | null
     notice_type: number
     status: string
-    is_read: number
     publish_time: Date | null
     created_at: Date
     updated_at: Date
@@ -12745,7 +13189,6 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
-    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12763,7 +13206,6 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
-    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12779,7 +13221,6 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
-    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12795,7 +13236,6 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
-    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12804,7 +13244,7 @@ export namespace Prisma {
     is_deleted?: boolean
   }
 
-  export type sys_noticeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "is_read" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_notice"]>
+  export type sys_noticeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_notice"]>
   export type sys_noticeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     target_users?: boolean | sys_notice$target_usersArgs<ExtArgs>
     _count?: boolean | Sys_noticeCountOutputTypeDefaultArgs<ExtArgs>
@@ -12845,10 +13285,6 @@ export namespace Prisma {
        * 状态：'0'-草稿，'1'-发布
        */
       status: string
-      /**
-       * 状态：'0'-未读，'1'-已读
-       */
-      is_read: number
       /**
        * 定时发布时间
        */
@@ -13303,7 +13739,6 @@ export namespace Prisma {
     readonly content: FieldRef<"sys_notice", 'String'>
     readonly notice_type: FieldRef<"sys_notice", 'Int'>
     readonly status: FieldRef<"sys_notice", 'String'>
-    readonly is_read: FieldRef<"sys_notice", 'Int'>
     readonly publish_time: FieldRef<"sys_notice", 'DateTime'>
     readonly created_at: FieldRef<"sys_notice", 'DateTime'>
     readonly updated_at: FieldRef<"sys_notice", 'DateTime'>
@@ -24757,6 +25192,5454 @@ export namespace Prisma {
 
 
   /**
+   * Model sys_job
+   */
+
+  export type AggregateSys_job = {
+    _count: Sys_jobCountAggregateOutputType | null
+    _avg: Sys_jobAvgAggregateOutputType | null
+    _sum: Sys_jobSumAggregateOutputType | null
+    _min: Sys_jobMinAggregateOutputType | null
+    _max: Sys_jobMaxAggregateOutputType | null
+  }
+
+  export type Sys_jobAvgAggregateOutputType = {
+    misfire_policy: number | null
+    concurrent: number | null
+    is_deleted: number | null
+  }
+
+  export type Sys_jobSumAggregateOutputType = {
+    misfire_policy: number | null
+    concurrent: number | null
+    is_deleted: number | null
+  }
+
+  export type Sys_jobMinAggregateOutputType = {
+    job_id: string | null
+    tenant_id: string | null
+    job_name: string | null
+    job_group: string | null
+    invoke_target: string | null
+    cron_expression: string | null
+    misfire_policy: number | null
+    concurrent: number | null
+    status: string | null
+    remark: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    created_by: string | null
+    updated_by: string | null
+    is_deleted: number | null
+  }
+
+  export type Sys_jobMaxAggregateOutputType = {
+    job_id: string | null
+    tenant_id: string | null
+    job_name: string | null
+    job_group: string | null
+    invoke_target: string | null
+    cron_expression: string | null
+    misfire_policy: number | null
+    concurrent: number | null
+    status: string | null
+    remark: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    created_by: string | null
+    updated_by: string | null
+    is_deleted: number | null
+  }
+
+  export type Sys_jobCountAggregateOutputType = {
+    job_id: number
+    tenant_id: number
+    job_name: number
+    job_group: number
+    invoke_target: number
+    cron_expression: number
+    misfire_policy: number
+    concurrent: number
+    status: number
+    remark: number
+    created_at: number
+    updated_at: number
+    created_by: number
+    updated_by: number
+    is_deleted: number
+    _all: number
+  }
+
+
+  export type Sys_jobAvgAggregateInputType = {
+    misfire_policy?: true
+    concurrent?: true
+    is_deleted?: true
+  }
+
+  export type Sys_jobSumAggregateInputType = {
+    misfire_policy?: true
+    concurrent?: true
+    is_deleted?: true
+  }
+
+  export type Sys_jobMinAggregateInputType = {
+    job_id?: true
+    tenant_id?: true
+    job_name?: true
+    job_group?: true
+    invoke_target?: true
+    cron_expression?: true
+    misfire_policy?: true
+    concurrent?: true
+    status?: true
+    remark?: true
+    created_at?: true
+    updated_at?: true
+    created_by?: true
+    updated_by?: true
+    is_deleted?: true
+  }
+
+  export type Sys_jobMaxAggregateInputType = {
+    job_id?: true
+    tenant_id?: true
+    job_name?: true
+    job_group?: true
+    invoke_target?: true
+    cron_expression?: true
+    misfire_policy?: true
+    concurrent?: true
+    status?: true
+    remark?: true
+    created_at?: true
+    updated_at?: true
+    created_by?: true
+    updated_by?: true
+    is_deleted?: true
+  }
+
+  export type Sys_jobCountAggregateInputType = {
+    job_id?: true
+    tenant_id?: true
+    job_name?: true
+    job_group?: true
+    invoke_target?: true
+    cron_expression?: true
+    misfire_policy?: true
+    concurrent?: true
+    status?: true
+    remark?: true
+    created_at?: true
+    updated_at?: true
+    created_by?: true
+    updated_by?: true
+    is_deleted?: true
+    _all?: true
+  }
+
+  export type Sys_jobAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_job to aggregate.
+     */
+    where?: sys_jobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_jobs to fetch.
+     */
+    orderBy?: sys_jobOrderByWithRelationInput | sys_jobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_jobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_jobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_jobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_jobs
+    **/
+    _count?: true | Sys_jobCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sys_jobAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sys_jobSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_jobMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_jobMaxAggregateInputType
+  }
+
+  export type GetSys_jobAggregateType<T extends Sys_jobAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_job]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_job[P]>
+      : GetScalarType<T[P], AggregateSys_job[P]>
+  }
+
+
+
+
+  export type sys_jobGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_jobWhereInput
+    orderBy?: sys_jobOrderByWithAggregationInput | sys_jobOrderByWithAggregationInput[]
+    by: Sys_jobScalarFieldEnum[] | Sys_jobScalarFieldEnum
+    having?: sys_jobScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_jobCountAggregateInputType | true
+    _avg?: Sys_jobAvgAggregateInputType
+    _sum?: Sys_jobSumAggregateInputType
+    _min?: Sys_jobMinAggregateInputType
+    _max?: Sys_jobMaxAggregateInputType
+  }
+
+  export type Sys_jobGroupByOutputType = {
+    job_id: string
+    tenant_id: string
+    job_name: string
+    job_group: string
+    invoke_target: string
+    cron_expression: string
+    misfire_policy: number
+    concurrent: number
+    status: string
+    remark: string | null
+    created_at: Date
+    updated_at: Date
+    created_by: string | null
+    updated_by: string | null
+    is_deleted: number
+    _count: Sys_jobCountAggregateOutputType | null
+    _avg: Sys_jobAvgAggregateOutputType | null
+    _sum: Sys_jobSumAggregateOutputType | null
+    _min: Sys_jobMinAggregateOutputType | null
+    _max: Sys_jobMaxAggregateOutputType | null
+  }
+
+  type GetSys_jobGroupByPayload<T extends sys_jobGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_jobGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_jobGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_jobGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_jobGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_jobSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    job_id?: boolean
+    tenant_id?: boolean
+    job_name?: boolean
+    job_group?: boolean
+    invoke_target?: boolean
+    cron_expression?: boolean
+    misfire_policy?: boolean
+    concurrent?: boolean
+    status?: boolean
+    remark?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_job"]>
+
+  export type sys_jobSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    job_id?: boolean
+    tenant_id?: boolean
+    job_name?: boolean
+    job_group?: boolean
+    invoke_target?: boolean
+    cron_expression?: boolean
+    misfire_policy?: boolean
+    concurrent?: boolean
+    status?: boolean
+    remark?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_job"]>
+
+  export type sys_jobSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    job_id?: boolean
+    tenant_id?: boolean
+    job_name?: boolean
+    job_group?: boolean
+    invoke_target?: boolean
+    cron_expression?: boolean
+    misfire_policy?: boolean
+    concurrent?: boolean
+    status?: boolean
+    remark?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_job"]>
+
+  export type sys_jobSelectScalar = {
+    job_id?: boolean
+    tenant_id?: boolean
+    job_name?: boolean
+    job_group?: boolean
+    invoke_target?: boolean
+    cron_expression?: boolean
+    misfire_policy?: boolean
+    concurrent?: boolean
+    status?: boolean
+    remark?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }
+
+  export type sys_jobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"job_id" | "tenant_id" | "job_name" | "job_group" | "invoke_target" | "cron_expression" | "misfire_policy" | "concurrent" | "status" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_job"]>
+
+  export type $sys_jobPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_job"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      job_id: string
+      tenant_id: string
+      job_name: string
+      job_group: string
+      /**
+       * 执行目标，如 notice:publish
+       */
+      invoke_target: string
+      cron_expression: string
+      misfire_policy: number
+      concurrent: number
+      status: string
+      remark: string | null
+      created_at: Date
+      updated_at: Date
+      created_by: string | null
+      updated_by: string | null
+      is_deleted: number
+    }, ExtArgs["result"]["sys_job"]>
+    composites: {}
+  }
+
+  type sys_jobGetPayload<S extends boolean | null | undefined | sys_jobDefaultArgs> = $Result.GetResult<Prisma.$sys_jobPayload, S>
+
+  type sys_jobCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_jobFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_jobCountAggregateInputType | true
+    }
+
+  export interface sys_jobDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_job'], meta: { name: 'sys_job' } }
+    /**
+     * Find zero or one Sys_job that matches the filter.
+     * @param {sys_jobFindUniqueArgs} args - Arguments to find a Sys_job
+     * @example
+     * // Get one Sys_job
+     * const sys_job = await prisma.sys_job.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_jobFindUniqueArgs>(args: SelectSubset<T, sys_jobFindUniqueArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_job that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_jobFindUniqueOrThrowArgs} args - Arguments to find a Sys_job
+     * @example
+     * // Get one Sys_job
+     * const sys_job = await prisma.sys_job.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_jobFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_jobFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_job that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_jobFindFirstArgs} args - Arguments to find a Sys_job
+     * @example
+     * // Get one Sys_job
+     * const sys_job = await prisma.sys_job.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_jobFindFirstArgs>(args?: SelectSubset<T, sys_jobFindFirstArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_job that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_jobFindFirstOrThrowArgs} args - Arguments to find a Sys_job
+     * @example
+     * // Get one Sys_job
+     * const sys_job = await prisma.sys_job.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_jobFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_jobFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_jobs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_jobFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_jobs
+     * const sys_jobs = await prisma.sys_job.findMany()
+     * 
+     * // Get first 10 Sys_jobs
+     * const sys_jobs = await prisma.sys_job.findMany({ take: 10 })
+     * 
+     * // Only select the `job_id`
+     * const sys_jobWithJob_idOnly = await prisma.sys_job.findMany({ select: { job_id: true } })
+     * 
+     */
+    findMany<T extends sys_jobFindManyArgs>(args?: SelectSubset<T, sys_jobFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_job.
+     * @param {sys_jobCreateArgs} args - Arguments to create a Sys_job.
+     * @example
+     * // Create one Sys_job
+     * const Sys_job = await prisma.sys_job.create({
+     *   data: {
+     *     // ... data to create a Sys_job
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_jobCreateArgs>(args: SelectSubset<T, sys_jobCreateArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_jobs.
+     * @param {sys_jobCreateManyArgs} args - Arguments to create many Sys_jobs.
+     * @example
+     * // Create many Sys_jobs
+     * const sys_job = await prisma.sys_job.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_jobCreateManyArgs>(args?: SelectSubset<T, sys_jobCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_jobs and returns the data saved in the database.
+     * @param {sys_jobCreateManyAndReturnArgs} args - Arguments to create many Sys_jobs.
+     * @example
+     * // Create many Sys_jobs
+     * const sys_job = await prisma.sys_job.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_jobs and only return the `job_id`
+     * const sys_jobWithJob_idOnly = await prisma.sys_job.createManyAndReturn({
+     *   select: { job_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_jobCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_jobCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_job.
+     * @param {sys_jobDeleteArgs} args - Arguments to delete one Sys_job.
+     * @example
+     * // Delete one Sys_job
+     * const Sys_job = await prisma.sys_job.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_job
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_jobDeleteArgs>(args: SelectSubset<T, sys_jobDeleteArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_job.
+     * @param {sys_jobUpdateArgs} args - Arguments to update one Sys_job.
+     * @example
+     * // Update one Sys_job
+     * const sys_job = await prisma.sys_job.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_jobUpdateArgs>(args: SelectSubset<T, sys_jobUpdateArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_jobs.
+     * @param {sys_jobDeleteManyArgs} args - Arguments to filter Sys_jobs to delete.
+     * @example
+     * // Delete a few Sys_jobs
+     * const { count } = await prisma.sys_job.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_jobDeleteManyArgs>(args?: SelectSubset<T, sys_jobDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_jobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_jobUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_jobs
+     * const sys_job = await prisma.sys_job.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_jobUpdateManyArgs>(args: SelectSubset<T, sys_jobUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_jobs and returns the data updated in the database.
+     * @param {sys_jobUpdateManyAndReturnArgs} args - Arguments to update many Sys_jobs.
+     * @example
+     * // Update many Sys_jobs
+     * const sys_job = await prisma.sys_job.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_jobs and only return the `job_id`
+     * const sys_jobWithJob_idOnly = await prisma.sys_job.updateManyAndReturn({
+     *   select: { job_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_jobUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_jobUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_job.
+     * @param {sys_jobUpsertArgs} args - Arguments to update or create a Sys_job.
+     * @example
+     * // Update or create a Sys_job
+     * const sys_job = await prisma.sys_job.upsert({
+     *   create: {
+     *     // ... data to create a Sys_job
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_job we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_jobUpsertArgs>(args: SelectSubset<T, sys_jobUpsertArgs<ExtArgs>>): Prisma__sys_jobClient<$Result.GetResult<Prisma.$sys_jobPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_jobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_jobCountArgs} args - Arguments to filter Sys_jobs to count.
+     * @example
+     * // Count the number of Sys_jobs
+     * const count = await prisma.sys_job.count({
+     *   where: {
+     *     // ... the filter for the Sys_jobs we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_jobCountArgs>(
+      args?: Subset<T, sys_jobCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_jobCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_job.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_jobAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_jobAggregateArgs>(args: Subset<T, Sys_jobAggregateArgs>): Prisma.PrismaPromise<GetSys_jobAggregateType<T>>
+
+    /**
+     * Group by Sys_job.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_jobGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_jobGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_jobGroupByArgs['orderBy'] }
+        : { orderBy?: sys_jobGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_jobGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_jobGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_job model
+   */
+  readonly fields: sys_jobFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_job.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_jobClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_job model
+   */
+  interface sys_jobFieldRefs {
+    readonly job_id: FieldRef<"sys_job", 'String'>
+    readonly tenant_id: FieldRef<"sys_job", 'String'>
+    readonly job_name: FieldRef<"sys_job", 'String'>
+    readonly job_group: FieldRef<"sys_job", 'String'>
+    readonly invoke_target: FieldRef<"sys_job", 'String'>
+    readonly cron_expression: FieldRef<"sys_job", 'String'>
+    readonly misfire_policy: FieldRef<"sys_job", 'Int'>
+    readonly concurrent: FieldRef<"sys_job", 'Int'>
+    readonly status: FieldRef<"sys_job", 'String'>
+    readonly remark: FieldRef<"sys_job", 'String'>
+    readonly created_at: FieldRef<"sys_job", 'DateTime'>
+    readonly updated_at: FieldRef<"sys_job", 'DateTime'>
+    readonly created_by: FieldRef<"sys_job", 'String'>
+    readonly updated_by: FieldRef<"sys_job", 'String'>
+    readonly is_deleted: FieldRef<"sys_job", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_job findUnique
+   */
+  export type sys_jobFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job to fetch.
+     */
+    where: sys_jobWhereUniqueInput
+  }
+
+  /**
+   * sys_job findUniqueOrThrow
+   */
+  export type sys_jobFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job to fetch.
+     */
+    where: sys_jobWhereUniqueInput
+  }
+
+  /**
+   * sys_job findFirst
+   */
+  export type sys_jobFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job to fetch.
+     */
+    where?: sys_jobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_jobs to fetch.
+     */
+    orderBy?: sys_jobOrderByWithRelationInput | sys_jobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_jobs.
+     */
+    cursor?: sys_jobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_jobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_jobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_jobs.
+     */
+    distinct?: Sys_jobScalarFieldEnum | Sys_jobScalarFieldEnum[]
+  }
+
+  /**
+   * sys_job findFirstOrThrow
+   */
+  export type sys_jobFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job to fetch.
+     */
+    where?: sys_jobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_jobs to fetch.
+     */
+    orderBy?: sys_jobOrderByWithRelationInput | sys_jobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_jobs.
+     */
+    cursor?: sys_jobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_jobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_jobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_jobs.
+     */
+    distinct?: Sys_jobScalarFieldEnum | Sys_jobScalarFieldEnum[]
+  }
+
+  /**
+   * sys_job findMany
+   */
+  export type sys_jobFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_jobs to fetch.
+     */
+    where?: sys_jobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_jobs to fetch.
+     */
+    orderBy?: sys_jobOrderByWithRelationInput | sys_jobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_jobs.
+     */
+    cursor?: sys_jobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_jobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_jobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_jobs.
+     */
+    distinct?: Sys_jobScalarFieldEnum | Sys_jobScalarFieldEnum[]
+  }
+
+  /**
+   * sys_job create
+   */
+  export type sys_jobCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_job.
+     */
+    data: XOR<sys_jobCreateInput, sys_jobUncheckedCreateInput>
+  }
+
+  /**
+   * sys_job createMany
+   */
+  export type sys_jobCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_jobs.
+     */
+    data: sys_jobCreateManyInput | sys_jobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_job createManyAndReturn
+   */
+  export type sys_jobCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_jobs.
+     */
+    data: sys_jobCreateManyInput | sys_jobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_job update
+   */
+  export type sys_jobUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_job.
+     */
+    data: XOR<sys_jobUpdateInput, sys_jobUncheckedUpdateInput>
+    /**
+     * Choose, which sys_job to update.
+     */
+    where: sys_jobWhereUniqueInput
+  }
+
+  /**
+   * sys_job updateMany
+   */
+  export type sys_jobUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_jobs.
+     */
+    data: XOR<sys_jobUpdateManyMutationInput, sys_jobUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_jobs to update
+     */
+    where?: sys_jobWhereInput
+    /**
+     * Limit how many sys_jobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_job updateManyAndReturn
+   */
+  export type sys_jobUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_jobs.
+     */
+    data: XOR<sys_jobUpdateManyMutationInput, sys_jobUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_jobs to update
+     */
+    where?: sys_jobWhereInput
+    /**
+     * Limit how many sys_jobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_job upsert
+   */
+  export type sys_jobUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_job to update in case it exists.
+     */
+    where: sys_jobWhereUniqueInput
+    /**
+     * In case the sys_job found by the `where` argument doesn't exist, create a new sys_job with this data.
+     */
+    create: XOR<sys_jobCreateInput, sys_jobUncheckedCreateInput>
+    /**
+     * In case the sys_job was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_jobUpdateInput, sys_jobUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_job delete
+   */
+  export type sys_jobDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+    /**
+     * Filter which sys_job to delete.
+     */
+    where: sys_jobWhereUniqueInput
+  }
+
+  /**
+   * sys_job deleteMany
+   */
+  export type sys_jobDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_jobs to delete
+     */
+    where?: sys_jobWhereInput
+    /**
+     * Limit how many sys_jobs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_job without action
+   */
+  export type sys_jobDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job
+     */
+    select?: sys_jobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job
+     */
+    omit?: sys_jobOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_job_log
+   */
+
+  export type AggregateSys_job_log = {
+    _count: Sys_job_logCountAggregateOutputType | null
+    _min: Sys_job_logMinAggregateOutputType | null
+    _max: Sys_job_logMaxAggregateOutputType | null
+  }
+
+  export type Sys_job_logMinAggregateOutputType = {
+    log_id: string | null
+    job_id: string | null
+    job_name: string | null
+    invoke_target: string | null
+    job_message: string | null
+    status: string | null
+    exception_info: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_job_logMaxAggregateOutputType = {
+    log_id: string | null
+    job_id: string | null
+    job_name: string | null
+    invoke_target: string | null
+    job_message: string | null
+    status: string | null
+    exception_info: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_job_logCountAggregateOutputType = {
+    log_id: number
+    job_id: number
+    job_name: number
+    invoke_target: number
+    job_message: number
+    status: number
+    exception_info: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type Sys_job_logMinAggregateInputType = {
+    log_id?: true
+    job_id?: true
+    job_name?: true
+    invoke_target?: true
+    job_message?: true
+    status?: true
+    exception_info?: true
+    created_at?: true
+  }
+
+  export type Sys_job_logMaxAggregateInputType = {
+    log_id?: true
+    job_id?: true
+    job_name?: true
+    invoke_target?: true
+    job_message?: true
+    status?: true
+    exception_info?: true
+    created_at?: true
+  }
+
+  export type Sys_job_logCountAggregateInputType = {
+    log_id?: true
+    job_id?: true
+    job_name?: true
+    invoke_target?: true
+    job_message?: true
+    status?: true
+    exception_info?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type Sys_job_logAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_job_log to aggregate.
+     */
+    where?: sys_job_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_job_logs to fetch.
+     */
+    orderBy?: sys_job_logOrderByWithRelationInput | sys_job_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_job_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_job_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_job_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_job_logs
+    **/
+    _count?: true | Sys_job_logCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_job_logMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_job_logMaxAggregateInputType
+  }
+
+  export type GetSys_job_logAggregateType<T extends Sys_job_logAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_job_log]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_job_log[P]>
+      : GetScalarType<T[P], AggregateSys_job_log[P]>
+  }
+
+
+
+
+  export type sys_job_logGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_job_logWhereInput
+    orderBy?: sys_job_logOrderByWithAggregationInput | sys_job_logOrderByWithAggregationInput[]
+    by: Sys_job_logScalarFieldEnum[] | Sys_job_logScalarFieldEnum
+    having?: sys_job_logScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_job_logCountAggregateInputType | true
+    _min?: Sys_job_logMinAggregateInputType
+    _max?: Sys_job_logMaxAggregateInputType
+  }
+
+  export type Sys_job_logGroupByOutputType = {
+    log_id: string
+    job_id: string
+    job_name: string
+    invoke_target: string
+    job_message: string | null
+    status: string
+    exception_info: string | null
+    created_at: Date
+    _count: Sys_job_logCountAggregateOutputType | null
+    _min: Sys_job_logMinAggregateOutputType | null
+    _max: Sys_job_logMaxAggregateOutputType | null
+  }
+
+  type GetSys_job_logGroupByPayload<T extends sys_job_logGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_job_logGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_job_logGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_job_logGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_job_logGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_job_logSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    log_id?: boolean
+    job_id?: boolean
+    job_name?: boolean
+    invoke_target?: boolean
+    job_message?: boolean
+    status?: boolean
+    exception_info?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_job_log"]>
+
+  export type sys_job_logSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    log_id?: boolean
+    job_id?: boolean
+    job_name?: boolean
+    invoke_target?: boolean
+    job_message?: boolean
+    status?: boolean
+    exception_info?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_job_log"]>
+
+  export type sys_job_logSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    log_id?: boolean
+    job_id?: boolean
+    job_name?: boolean
+    invoke_target?: boolean
+    job_message?: boolean
+    status?: boolean
+    exception_info?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_job_log"]>
+
+  export type sys_job_logSelectScalar = {
+    log_id?: boolean
+    job_id?: boolean
+    job_name?: boolean
+    invoke_target?: boolean
+    job_message?: boolean
+    status?: boolean
+    exception_info?: boolean
+    created_at?: boolean
+  }
+
+  export type sys_job_logOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"log_id" | "job_id" | "job_name" | "invoke_target" | "job_message" | "status" | "exception_info" | "created_at", ExtArgs["result"]["sys_job_log"]>
+
+  export type $sys_job_logPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_job_log"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      log_id: string
+      job_id: string
+      job_name: string
+      invoke_target: string
+      job_message: string | null
+      status: string
+      exception_info: string | null
+      created_at: Date
+    }, ExtArgs["result"]["sys_job_log"]>
+    composites: {}
+  }
+
+  type sys_job_logGetPayload<S extends boolean | null | undefined | sys_job_logDefaultArgs> = $Result.GetResult<Prisma.$sys_job_logPayload, S>
+
+  type sys_job_logCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_job_logFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_job_logCountAggregateInputType | true
+    }
+
+  export interface sys_job_logDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_job_log'], meta: { name: 'sys_job_log' } }
+    /**
+     * Find zero or one Sys_job_log that matches the filter.
+     * @param {sys_job_logFindUniqueArgs} args - Arguments to find a Sys_job_log
+     * @example
+     * // Get one Sys_job_log
+     * const sys_job_log = await prisma.sys_job_log.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_job_logFindUniqueArgs>(args: SelectSubset<T, sys_job_logFindUniqueArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_job_log that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_job_logFindUniqueOrThrowArgs} args - Arguments to find a Sys_job_log
+     * @example
+     * // Get one Sys_job_log
+     * const sys_job_log = await prisma.sys_job_log.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_job_logFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_job_logFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_job_log that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_job_logFindFirstArgs} args - Arguments to find a Sys_job_log
+     * @example
+     * // Get one Sys_job_log
+     * const sys_job_log = await prisma.sys_job_log.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_job_logFindFirstArgs>(args?: SelectSubset<T, sys_job_logFindFirstArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_job_log that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_job_logFindFirstOrThrowArgs} args - Arguments to find a Sys_job_log
+     * @example
+     * // Get one Sys_job_log
+     * const sys_job_log = await prisma.sys_job_log.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_job_logFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_job_logFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_job_logs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_job_logFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_job_logs
+     * const sys_job_logs = await prisma.sys_job_log.findMany()
+     * 
+     * // Get first 10 Sys_job_logs
+     * const sys_job_logs = await prisma.sys_job_log.findMany({ take: 10 })
+     * 
+     * // Only select the `log_id`
+     * const sys_job_logWithLog_idOnly = await prisma.sys_job_log.findMany({ select: { log_id: true } })
+     * 
+     */
+    findMany<T extends sys_job_logFindManyArgs>(args?: SelectSubset<T, sys_job_logFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_job_log.
+     * @param {sys_job_logCreateArgs} args - Arguments to create a Sys_job_log.
+     * @example
+     * // Create one Sys_job_log
+     * const Sys_job_log = await prisma.sys_job_log.create({
+     *   data: {
+     *     // ... data to create a Sys_job_log
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_job_logCreateArgs>(args: SelectSubset<T, sys_job_logCreateArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_job_logs.
+     * @param {sys_job_logCreateManyArgs} args - Arguments to create many Sys_job_logs.
+     * @example
+     * // Create many Sys_job_logs
+     * const sys_job_log = await prisma.sys_job_log.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_job_logCreateManyArgs>(args?: SelectSubset<T, sys_job_logCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_job_logs and returns the data saved in the database.
+     * @param {sys_job_logCreateManyAndReturnArgs} args - Arguments to create many Sys_job_logs.
+     * @example
+     * // Create many Sys_job_logs
+     * const sys_job_log = await prisma.sys_job_log.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_job_logs and only return the `log_id`
+     * const sys_job_logWithLog_idOnly = await prisma.sys_job_log.createManyAndReturn({
+     *   select: { log_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_job_logCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_job_logCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_job_log.
+     * @param {sys_job_logDeleteArgs} args - Arguments to delete one Sys_job_log.
+     * @example
+     * // Delete one Sys_job_log
+     * const Sys_job_log = await prisma.sys_job_log.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_job_log
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_job_logDeleteArgs>(args: SelectSubset<T, sys_job_logDeleteArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_job_log.
+     * @param {sys_job_logUpdateArgs} args - Arguments to update one Sys_job_log.
+     * @example
+     * // Update one Sys_job_log
+     * const sys_job_log = await prisma.sys_job_log.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_job_logUpdateArgs>(args: SelectSubset<T, sys_job_logUpdateArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_job_logs.
+     * @param {sys_job_logDeleteManyArgs} args - Arguments to filter Sys_job_logs to delete.
+     * @example
+     * // Delete a few Sys_job_logs
+     * const { count } = await prisma.sys_job_log.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_job_logDeleteManyArgs>(args?: SelectSubset<T, sys_job_logDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_job_logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_job_logUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_job_logs
+     * const sys_job_log = await prisma.sys_job_log.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_job_logUpdateManyArgs>(args: SelectSubset<T, sys_job_logUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_job_logs and returns the data updated in the database.
+     * @param {sys_job_logUpdateManyAndReturnArgs} args - Arguments to update many Sys_job_logs.
+     * @example
+     * // Update many Sys_job_logs
+     * const sys_job_log = await prisma.sys_job_log.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_job_logs and only return the `log_id`
+     * const sys_job_logWithLog_idOnly = await prisma.sys_job_log.updateManyAndReturn({
+     *   select: { log_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_job_logUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_job_logUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_job_log.
+     * @param {sys_job_logUpsertArgs} args - Arguments to update or create a Sys_job_log.
+     * @example
+     * // Update or create a Sys_job_log
+     * const sys_job_log = await prisma.sys_job_log.upsert({
+     *   create: {
+     *     // ... data to create a Sys_job_log
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_job_log we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_job_logUpsertArgs>(args: SelectSubset<T, sys_job_logUpsertArgs<ExtArgs>>): Prisma__sys_job_logClient<$Result.GetResult<Prisma.$sys_job_logPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_job_logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_job_logCountArgs} args - Arguments to filter Sys_job_logs to count.
+     * @example
+     * // Count the number of Sys_job_logs
+     * const count = await prisma.sys_job_log.count({
+     *   where: {
+     *     // ... the filter for the Sys_job_logs we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_job_logCountArgs>(
+      args?: Subset<T, sys_job_logCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_job_logCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_job_log.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_job_logAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_job_logAggregateArgs>(args: Subset<T, Sys_job_logAggregateArgs>): Prisma.PrismaPromise<GetSys_job_logAggregateType<T>>
+
+    /**
+     * Group by Sys_job_log.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_job_logGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_job_logGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_job_logGroupByArgs['orderBy'] }
+        : { orderBy?: sys_job_logGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_job_logGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_job_logGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_job_log model
+   */
+  readonly fields: sys_job_logFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_job_log.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_job_logClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_job_log model
+   */
+  interface sys_job_logFieldRefs {
+    readonly log_id: FieldRef<"sys_job_log", 'String'>
+    readonly job_id: FieldRef<"sys_job_log", 'String'>
+    readonly job_name: FieldRef<"sys_job_log", 'String'>
+    readonly invoke_target: FieldRef<"sys_job_log", 'String'>
+    readonly job_message: FieldRef<"sys_job_log", 'String'>
+    readonly status: FieldRef<"sys_job_log", 'String'>
+    readonly exception_info: FieldRef<"sys_job_log", 'String'>
+    readonly created_at: FieldRef<"sys_job_log", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_job_log findUnique
+   */
+  export type sys_job_logFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job_log to fetch.
+     */
+    where: sys_job_logWhereUniqueInput
+  }
+
+  /**
+   * sys_job_log findUniqueOrThrow
+   */
+  export type sys_job_logFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job_log to fetch.
+     */
+    where: sys_job_logWhereUniqueInput
+  }
+
+  /**
+   * sys_job_log findFirst
+   */
+  export type sys_job_logFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job_log to fetch.
+     */
+    where?: sys_job_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_job_logs to fetch.
+     */
+    orderBy?: sys_job_logOrderByWithRelationInput | sys_job_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_job_logs.
+     */
+    cursor?: sys_job_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_job_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_job_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_job_logs.
+     */
+    distinct?: Sys_job_logScalarFieldEnum | Sys_job_logScalarFieldEnum[]
+  }
+
+  /**
+   * sys_job_log findFirstOrThrow
+   */
+  export type sys_job_logFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job_log to fetch.
+     */
+    where?: sys_job_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_job_logs to fetch.
+     */
+    orderBy?: sys_job_logOrderByWithRelationInput | sys_job_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_job_logs.
+     */
+    cursor?: sys_job_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_job_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_job_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_job_logs.
+     */
+    distinct?: Sys_job_logScalarFieldEnum | Sys_job_logScalarFieldEnum[]
+  }
+
+  /**
+   * sys_job_log findMany
+   */
+  export type sys_job_logFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_job_logs to fetch.
+     */
+    where?: sys_job_logWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_job_logs to fetch.
+     */
+    orderBy?: sys_job_logOrderByWithRelationInput | sys_job_logOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_job_logs.
+     */
+    cursor?: sys_job_logWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_job_logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_job_logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_job_logs.
+     */
+    distinct?: Sys_job_logScalarFieldEnum | Sys_job_logScalarFieldEnum[]
+  }
+
+  /**
+   * sys_job_log create
+   */
+  export type sys_job_logCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_job_log.
+     */
+    data: XOR<sys_job_logCreateInput, sys_job_logUncheckedCreateInput>
+  }
+
+  /**
+   * sys_job_log createMany
+   */
+  export type sys_job_logCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_job_logs.
+     */
+    data: sys_job_logCreateManyInput | sys_job_logCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_job_log createManyAndReturn
+   */
+  export type sys_job_logCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_job_logs.
+     */
+    data: sys_job_logCreateManyInput | sys_job_logCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_job_log update
+   */
+  export type sys_job_logUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_job_log.
+     */
+    data: XOR<sys_job_logUpdateInput, sys_job_logUncheckedUpdateInput>
+    /**
+     * Choose, which sys_job_log to update.
+     */
+    where: sys_job_logWhereUniqueInput
+  }
+
+  /**
+   * sys_job_log updateMany
+   */
+  export type sys_job_logUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_job_logs.
+     */
+    data: XOR<sys_job_logUpdateManyMutationInput, sys_job_logUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_job_logs to update
+     */
+    where?: sys_job_logWhereInput
+    /**
+     * Limit how many sys_job_logs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_job_log updateManyAndReturn
+   */
+  export type sys_job_logUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_job_logs.
+     */
+    data: XOR<sys_job_logUpdateManyMutationInput, sys_job_logUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_job_logs to update
+     */
+    where?: sys_job_logWhereInput
+    /**
+     * Limit how many sys_job_logs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_job_log upsert
+   */
+  export type sys_job_logUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_job_log to update in case it exists.
+     */
+    where: sys_job_logWhereUniqueInput
+    /**
+     * In case the sys_job_log found by the `where` argument doesn't exist, create a new sys_job_log with this data.
+     */
+    create: XOR<sys_job_logCreateInput, sys_job_logUncheckedCreateInput>
+    /**
+     * In case the sys_job_log was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_job_logUpdateInput, sys_job_logUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_job_log delete
+   */
+  export type sys_job_logDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+    /**
+     * Filter which sys_job_log to delete.
+     */
+    where: sys_job_logWhereUniqueInput
+  }
+
+  /**
+   * sys_job_log deleteMany
+   */
+  export type sys_job_logDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_job_logs to delete
+     */
+    where?: sys_job_logWhereInput
+    /**
+     * Limit how many sys_job_logs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_job_log without action
+   */
+  export type sys_job_logDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_job_log
+     */
+    select?: sys_job_logSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_job_log
+     */
+    omit?: sys_job_logOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_role_dept
+   */
+
+  export type AggregateSys_role_dept = {
+    _count: Sys_role_deptCountAggregateOutputType | null
+    _min: Sys_role_deptMinAggregateOutputType | null
+    _max: Sys_role_deptMaxAggregateOutputType | null
+  }
+
+  export type Sys_role_deptMinAggregateOutputType = {
+    id: string | null
+    role_id: string | null
+    dept_id: string | null
+    tenant_id: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_role_deptMaxAggregateOutputType = {
+    id: string | null
+    role_id: string | null
+    dept_id: string | null
+    tenant_id: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_role_deptCountAggregateOutputType = {
+    id: number
+    role_id: number
+    dept_id: number
+    tenant_id: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type Sys_role_deptMinAggregateInputType = {
+    id?: true
+    role_id?: true
+    dept_id?: true
+    tenant_id?: true
+    created_at?: true
+  }
+
+  export type Sys_role_deptMaxAggregateInputType = {
+    id?: true
+    role_id?: true
+    dept_id?: true
+    tenant_id?: true
+    created_at?: true
+  }
+
+  export type Sys_role_deptCountAggregateInputType = {
+    id?: true
+    role_id?: true
+    dept_id?: true
+    tenant_id?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type Sys_role_deptAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_role_dept to aggregate.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_role_depts
+    **/
+    _count?: true | Sys_role_deptCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_role_deptMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_role_deptMaxAggregateInputType
+  }
+
+  export type GetSys_role_deptAggregateType<T extends Sys_role_deptAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_role_dept]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_role_dept[P]>
+      : GetScalarType<T[P], AggregateSys_role_dept[P]>
+  }
+
+
+
+
+  export type sys_role_deptGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_deptWhereInput
+    orderBy?: sys_role_deptOrderByWithAggregationInput | sys_role_deptOrderByWithAggregationInput[]
+    by: Sys_role_deptScalarFieldEnum[] | Sys_role_deptScalarFieldEnum
+    having?: sys_role_deptScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_role_deptCountAggregateInputType | true
+    _min?: Sys_role_deptMinAggregateInputType
+    _max?: Sys_role_deptMaxAggregateInputType
+  }
+
+  export type Sys_role_deptGroupByOutputType = {
+    id: string
+    role_id: string
+    dept_id: string
+    tenant_id: string
+    created_at: Date
+    _count: Sys_role_deptCountAggregateOutputType | null
+    _min: Sys_role_deptMinAggregateOutputType | null
+    _max: Sys_role_deptMaxAggregateOutputType | null
+  }
+
+  type GetSys_role_deptGroupByPayload<T extends sys_role_deptGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_role_deptGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_role_deptGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_role_deptGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_role_deptGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_role_deptSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_role_dept"]>
+
+  export type sys_role_deptSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_role_dept"]>
+
+  export type sys_role_deptSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["sys_role_dept"]>
+
+  export type sys_role_deptSelectScalar = {
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+  }
+
+  export type sys_role_deptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role_id" | "dept_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_dept"]>
+
+  export type $sys_role_deptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_role_dept"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      role_id: string
+      dept_id: string
+      tenant_id: string
+      created_at: Date
+    }, ExtArgs["result"]["sys_role_dept"]>
+    composites: {}
+  }
+
+  type sys_role_deptGetPayload<S extends boolean | null | undefined | sys_role_deptDefaultArgs> = $Result.GetResult<Prisma.$sys_role_deptPayload, S>
+
+  type sys_role_deptCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_role_deptFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_role_deptCountAggregateInputType | true
+    }
+
+  export interface sys_role_deptDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_role_dept'], meta: { name: 'sys_role_dept' } }
+    /**
+     * Find zero or one Sys_role_dept that matches the filter.
+     * @param {sys_role_deptFindUniqueArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_role_deptFindUniqueArgs>(args: SelectSubset<T, sys_role_deptFindUniqueArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_role_dept that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_role_deptFindUniqueOrThrowArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_role_deptFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_role_deptFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_role_dept that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptFindFirstArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_role_deptFindFirstArgs>(args?: SelectSubset<T, sys_role_deptFindFirstArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_role_dept that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptFindFirstOrThrowArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_role_deptFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_role_deptFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_role_depts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_role_depts
+     * const sys_role_depts = await prisma.sys_role_dept.findMany()
+     * 
+     * // Get first 10 Sys_role_depts
+     * const sys_role_depts = await prisma.sys_role_dept.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends sys_role_deptFindManyArgs>(args?: SelectSubset<T, sys_role_deptFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_role_dept.
+     * @param {sys_role_deptCreateArgs} args - Arguments to create a Sys_role_dept.
+     * @example
+     * // Create one Sys_role_dept
+     * const Sys_role_dept = await prisma.sys_role_dept.create({
+     *   data: {
+     *     // ... data to create a Sys_role_dept
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_role_deptCreateArgs>(args: SelectSubset<T, sys_role_deptCreateArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_role_depts.
+     * @param {sys_role_deptCreateManyArgs} args - Arguments to create many Sys_role_depts.
+     * @example
+     * // Create many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_role_deptCreateManyArgs>(args?: SelectSubset<T, sys_role_deptCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_role_depts and returns the data saved in the database.
+     * @param {sys_role_deptCreateManyAndReturnArgs} args - Arguments to create many Sys_role_depts.
+     * @example
+     * // Create many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_role_depts and only return the `id`
+     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_role_deptCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_role_deptCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_role_dept.
+     * @param {sys_role_deptDeleteArgs} args - Arguments to delete one Sys_role_dept.
+     * @example
+     * // Delete one Sys_role_dept
+     * const Sys_role_dept = await prisma.sys_role_dept.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_role_dept
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_role_deptDeleteArgs>(args: SelectSubset<T, sys_role_deptDeleteArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_role_dept.
+     * @param {sys_role_deptUpdateArgs} args - Arguments to update one Sys_role_dept.
+     * @example
+     * // Update one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_role_deptUpdateArgs>(args: SelectSubset<T, sys_role_deptUpdateArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_role_depts.
+     * @param {sys_role_deptDeleteManyArgs} args - Arguments to filter Sys_role_depts to delete.
+     * @example
+     * // Delete a few Sys_role_depts
+     * const { count } = await prisma.sys_role_dept.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_role_deptDeleteManyArgs>(args?: SelectSubset<T, sys_role_deptDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_role_depts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_role_deptUpdateManyArgs>(args: SelectSubset<T, sys_role_deptUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_role_depts and returns the data updated in the database.
+     * @param {sys_role_deptUpdateManyAndReturnArgs} args - Arguments to update many Sys_role_depts.
+     * @example
+     * // Update many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_role_depts and only return the `id`
+     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_role_deptUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_role_deptUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_role_dept.
+     * @param {sys_role_deptUpsertArgs} args - Arguments to update or create a Sys_role_dept.
+     * @example
+     * // Update or create a Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.upsert({
+     *   create: {
+     *     // ... data to create a Sys_role_dept
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_role_dept we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_role_deptUpsertArgs>(args: SelectSubset<T, sys_role_deptUpsertArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_role_depts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptCountArgs} args - Arguments to filter Sys_role_depts to count.
+     * @example
+     * // Count the number of Sys_role_depts
+     * const count = await prisma.sys_role_dept.count({
+     *   where: {
+     *     // ... the filter for the Sys_role_depts we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_role_deptCountArgs>(
+      args?: Subset<T, sys_role_deptCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_role_deptCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_role_dept.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_role_deptAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_role_deptAggregateArgs>(args: Subset<T, Sys_role_deptAggregateArgs>): Prisma.PrismaPromise<GetSys_role_deptAggregateType<T>>
+
+    /**
+     * Group by Sys_role_dept.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_role_deptGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_role_deptGroupByArgs['orderBy'] }
+        : { orderBy?: sys_role_deptGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_role_deptGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_role_deptGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_role_dept model
+   */
+  readonly fields: sys_role_deptFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_role_dept.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_role_deptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_role_dept model
+   */
+  interface sys_role_deptFieldRefs {
+    readonly id: FieldRef<"sys_role_dept", 'String'>
+    readonly role_id: FieldRef<"sys_role_dept", 'String'>
+    readonly dept_id: FieldRef<"sys_role_dept", 'String'>
+    readonly tenant_id: FieldRef<"sys_role_dept", 'String'>
+    readonly created_at: FieldRef<"sys_role_dept", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_role_dept findUnique
+   */
+  export type sys_role_deptFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept findUniqueOrThrow
+   */
+  export type sys_role_deptFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept findFirst
+   */
+  export type sys_role_deptFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_role_depts.
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_role_depts.
+     */
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role_dept findFirstOrThrow
+   */
+  export type sys_role_deptFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_role_depts.
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_role_depts.
+     */
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role_dept findMany
+   */
+  export type sys_role_deptFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_role_depts to fetch.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_role_depts.
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_role_depts.
+     */
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role_dept create
+   */
+  export type sys_role_deptCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_role_dept.
+     */
+    data: XOR<sys_role_deptCreateInput, sys_role_deptUncheckedCreateInput>
+  }
+
+  /**
+   * sys_role_dept createMany
+   */
+  export type sys_role_deptCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_role_depts.
+     */
+    data: sys_role_deptCreateManyInput | sys_role_deptCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_role_dept createManyAndReturn
+   */
+  export type sys_role_deptCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_role_depts.
+     */
+    data: sys_role_deptCreateManyInput | sys_role_deptCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_role_dept update
+   */
+  export type sys_role_deptUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_role_dept.
+     */
+    data: XOR<sys_role_deptUpdateInput, sys_role_deptUncheckedUpdateInput>
+    /**
+     * Choose, which sys_role_dept to update.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept updateMany
+   */
+  export type sys_role_deptUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_role_depts.
+     */
+    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_role_depts to update
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * Limit how many sys_role_depts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_role_dept updateManyAndReturn
+   */
+  export type sys_role_deptUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_role_depts.
+     */
+    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_role_depts to update
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * Limit how many sys_role_depts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_role_dept upsert
+   */
+  export type sys_role_deptUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_role_dept to update in case it exists.
+     */
+    where: sys_role_deptWhereUniqueInput
+    /**
+     * In case the sys_role_dept found by the `where` argument doesn't exist, create a new sys_role_dept with this data.
+     */
+    create: XOR<sys_role_deptCreateInput, sys_role_deptUncheckedCreateInput>
+    /**
+     * In case the sys_role_dept was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_role_deptUpdateInput, sys_role_deptUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_role_dept delete
+   */
+  export type sys_role_deptDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Filter which sys_role_dept to delete.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept deleteMany
+   */
+  export type sys_role_deptDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_role_depts to delete
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * Limit how many sys_role_depts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_role_dept without action
+   */
+  export type sys_role_deptDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_todo
+   */
+
+  export type AggregateSys_todo = {
+    _count: Sys_todoCountAggregateOutputType | null
+    _avg: Sys_todoAvgAggregateOutputType | null
+    _sum: Sys_todoSumAggregateOutputType | null
+    _min: Sys_todoMinAggregateOutputType | null
+    _max: Sys_todoMaxAggregateOutputType | null
+  }
+
+  export type Sys_todoAvgAggregateOutputType = {
+    priority: number | null
+    is_deleted: number | null
+  }
+
+  export type Sys_todoSumAggregateOutputType = {
+    priority: number | null
+    is_deleted: number | null
+  }
+
+  export type Sys_todoMinAggregateOutputType = {
+    todo_id: string | null
+    tenant_id: string | null
+    user_id: string | null
+    title: string | null
+    content: string | null
+    priority: number | null
+    due_time: Date | null
+    status: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    is_deleted: number | null
+  }
+
+  export type Sys_todoMaxAggregateOutputType = {
+    todo_id: string | null
+    tenant_id: string | null
+    user_id: string | null
+    title: string | null
+    content: string | null
+    priority: number | null
+    due_time: Date | null
+    status: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    is_deleted: number | null
+  }
+
+  export type Sys_todoCountAggregateOutputType = {
+    todo_id: number
+    tenant_id: number
+    user_id: number
+    title: number
+    content: number
+    priority: number
+    due_time: number
+    status: number
+    created_at: number
+    updated_at: number
+    is_deleted: number
+    _all: number
+  }
+
+
+  export type Sys_todoAvgAggregateInputType = {
+    priority?: true
+    is_deleted?: true
+  }
+
+  export type Sys_todoSumAggregateInputType = {
+    priority?: true
+    is_deleted?: true
+  }
+
+  export type Sys_todoMinAggregateInputType = {
+    todo_id?: true
+    tenant_id?: true
+    user_id?: true
+    title?: true
+    content?: true
+    priority?: true
+    due_time?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+    is_deleted?: true
+  }
+
+  export type Sys_todoMaxAggregateInputType = {
+    todo_id?: true
+    tenant_id?: true
+    user_id?: true
+    title?: true
+    content?: true
+    priority?: true
+    due_time?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+    is_deleted?: true
+  }
+
+  export type Sys_todoCountAggregateInputType = {
+    todo_id?: true
+    tenant_id?: true
+    user_id?: true
+    title?: true
+    content?: true
+    priority?: true
+    due_time?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+    is_deleted?: true
+    _all?: true
+  }
+
+  export type Sys_todoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_todo to aggregate.
+     */
+    where?: sys_todoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_todos to fetch.
+     */
+    orderBy?: sys_todoOrderByWithRelationInput | sys_todoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_todoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_todos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_todos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_todos
+    **/
+    _count?: true | Sys_todoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sys_todoAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sys_todoSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_todoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_todoMaxAggregateInputType
+  }
+
+  export type GetSys_todoAggregateType<T extends Sys_todoAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_todo]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_todo[P]>
+      : GetScalarType<T[P], AggregateSys_todo[P]>
+  }
+
+
+
+
+  export type sys_todoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_todoWhereInput
+    orderBy?: sys_todoOrderByWithAggregationInput | sys_todoOrderByWithAggregationInput[]
+    by: Sys_todoScalarFieldEnum[] | Sys_todoScalarFieldEnum
+    having?: sys_todoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_todoCountAggregateInputType | true
+    _avg?: Sys_todoAvgAggregateInputType
+    _sum?: Sys_todoSumAggregateInputType
+    _min?: Sys_todoMinAggregateInputType
+    _max?: Sys_todoMaxAggregateInputType
+  }
+
+  export type Sys_todoGroupByOutputType = {
+    todo_id: string
+    tenant_id: string
+    user_id: string
+    title: string
+    content: string | null
+    priority: number
+    due_time: Date | null
+    status: string
+    created_at: Date
+    updated_at: Date
+    is_deleted: number
+    _count: Sys_todoCountAggregateOutputType | null
+    _avg: Sys_todoAvgAggregateOutputType | null
+    _sum: Sys_todoSumAggregateOutputType | null
+    _min: Sys_todoMinAggregateOutputType | null
+    _max: Sys_todoMaxAggregateOutputType | null
+  }
+
+  type GetSys_todoGroupByPayload<T extends sys_todoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_todoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_todoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_todoGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_todoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_todoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    todo_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    title?: boolean
+    content?: boolean
+    priority?: boolean
+    due_time?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_todo"]>
+
+  export type sys_todoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    todo_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    title?: boolean
+    content?: boolean
+    priority?: boolean
+    due_time?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_todo"]>
+
+  export type sys_todoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    todo_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    title?: boolean
+    content?: boolean
+    priority?: boolean
+    due_time?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_todo"]>
+
+  export type sys_todoSelectScalar = {
+    todo_id?: boolean
+    tenant_id?: boolean
+    user_id?: boolean
+    title?: boolean
+    content?: boolean
+    priority?: boolean
+    due_time?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    is_deleted?: boolean
+  }
+
+  export type sys_todoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"todo_id" | "tenant_id" | "user_id" | "title" | "content" | "priority" | "due_time" | "status" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["sys_todo"]>
+
+  export type $sys_todoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_todo"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      todo_id: string
+      tenant_id: string
+      user_id: string
+      title: string
+      content: string | null
+      /**
+       * 0-普通 1-重要 2-紧急
+       */
+      priority: number
+      due_time: Date | null
+      /**
+       * '0'-未完成 '1'-已完成
+       */
+      status: string
+      created_at: Date
+      updated_at: Date
+      is_deleted: number
+    }, ExtArgs["result"]["sys_todo"]>
+    composites: {}
+  }
+
+  type sys_todoGetPayload<S extends boolean | null | undefined | sys_todoDefaultArgs> = $Result.GetResult<Prisma.$sys_todoPayload, S>
+
+  type sys_todoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_todoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_todoCountAggregateInputType | true
+    }
+
+  export interface sys_todoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_todo'], meta: { name: 'sys_todo' } }
+    /**
+     * Find zero or one Sys_todo that matches the filter.
+     * @param {sys_todoFindUniqueArgs} args - Arguments to find a Sys_todo
+     * @example
+     * // Get one Sys_todo
+     * const sys_todo = await prisma.sys_todo.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_todoFindUniqueArgs>(args: SelectSubset<T, sys_todoFindUniqueArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_todo that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_todoFindUniqueOrThrowArgs} args - Arguments to find a Sys_todo
+     * @example
+     * // Get one Sys_todo
+     * const sys_todo = await prisma.sys_todo.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_todoFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_todoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_todo that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_todoFindFirstArgs} args - Arguments to find a Sys_todo
+     * @example
+     * // Get one Sys_todo
+     * const sys_todo = await prisma.sys_todo.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_todoFindFirstArgs>(args?: SelectSubset<T, sys_todoFindFirstArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_todo that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_todoFindFirstOrThrowArgs} args - Arguments to find a Sys_todo
+     * @example
+     * // Get one Sys_todo
+     * const sys_todo = await prisma.sys_todo.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_todoFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_todoFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_todos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_todoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_todos
+     * const sys_todos = await prisma.sys_todo.findMany()
+     * 
+     * // Get first 10 Sys_todos
+     * const sys_todos = await prisma.sys_todo.findMany({ take: 10 })
+     * 
+     * // Only select the `todo_id`
+     * const sys_todoWithTodo_idOnly = await prisma.sys_todo.findMany({ select: { todo_id: true } })
+     * 
+     */
+    findMany<T extends sys_todoFindManyArgs>(args?: SelectSubset<T, sys_todoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_todo.
+     * @param {sys_todoCreateArgs} args - Arguments to create a Sys_todo.
+     * @example
+     * // Create one Sys_todo
+     * const Sys_todo = await prisma.sys_todo.create({
+     *   data: {
+     *     // ... data to create a Sys_todo
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_todoCreateArgs>(args: SelectSubset<T, sys_todoCreateArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_todos.
+     * @param {sys_todoCreateManyArgs} args - Arguments to create many Sys_todos.
+     * @example
+     * // Create many Sys_todos
+     * const sys_todo = await prisma.sys_todo.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_todoCreateManyArgs>(args?: SelectSubset<T, sys_todoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_todos and returns the data saved in the database.
+     * @param {sys_todoCreateManyAndReturnArgs} args - Arguments to create many Sys_todos.
+     * @example
+     * // Create many Sys_todos
+     * const sys_todo = await prisma.sys_todo.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_todos and only return the `todo_id`
+     * const sys_todoWithTodo_idOnly = await prisma.sys_todo.createManyAndReturn({
+     *   select: { todo_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_todoCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_todoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_todo.
+     * @param {sys_todoDeleteArgs} args - Arguments to delete one Sys_todo.
+     * @example
+     * // Delete one Sys_todo
+     * const Sys_todo = await prisma.sys_todo.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_todo
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_todoDeleteArgs>(args: SelectSubset<T, sys_todoDeleteArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_todo.
+     * @param {sys_todoUpdateArgs} args - Arguments to update one Sys_todo.
+     * @example
+     * // Update one Sys_todo
+     * const sys_todo = await prisma.sys_todo.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_todoUpdateArgs>(args: SelectSubset<T, sys_todoUpdateArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_todos.
+     * @param {sys_todoDeleteManyArgs} args - Arguments to filter Sys_todos to delete.
+     * @example
+     * // Delete a few Sys_todos
+     * const { count } = await prisma.sys_todo.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_todoDeleteManyArgs>(args?: SelectSubset<T, sys_todoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_todos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_todoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_todos
+     * const sys_todo = await prisma.sys_todo.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_todoUpdateManyArgs>(args: SelectSubset<T, sys_todoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_todos and returns the data updated in the database.
+     * @param {sys_todoUpdateManyAndReturnArgs} args - Arguments to update many Sys_todos.
+     * @example
+     * // Update many Sys_todos
+     * const sys_todo = await prisma.sys_todo.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_todos and only return the `todo_id`
+     * const sys_todoWithTodo_idOnly = await prisma.sys_todo.updateManyAndReturn({
+     *   select: { todo_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_todoUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_todoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_todo.
+     * @param {sys_todoUpsertArgs} args - Arguments to update or create a Sys_todo.
+     * @example
+     * // Update or create a Sys_todo
+     * const sys_todo = await prisma.sys_todo.upsert({
+     *   create: {
+     *     // ... data to create a Sys_todo
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_todo we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_todoUpsertArgs>(args: SelectSubset<T, sys_todoUpsertArgs<ExtArgs>>): Prisma__sys_todoClient<$Result.GetResult<Prisma.$sys_todoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_todos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_todoCountArgs} args - Arguments to filter Sys_todos to count.
+     * @example
+     * // Count the number of Sys_todos
+     * const count = await prisma.sys_todo.count({
+     *   where: {
+     *     // ... the filter for the Sys_todos we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_todoCountArgs>(
+      args?: Subset<T, sys_todoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_todoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_todo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_todoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_todoAggregateArgs>(args: Subset<T, Sys_todoAggregateArgs>): Prisma.PrismaPromise<GetSys_todoAggregateType<T>>
+
+    /**
+     * Group by Sys_todo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_todoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_todoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_todoGroupByArgs['orderBy'] }
+        : { orderBy?: sys_todoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_todoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_todoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_todo model
+   */
+  readonly fields: sys_todoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_todo.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_todoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_todo model
+   */
+  interface sys_todoFieldRefs {
+    readonly todo_id: FieldRef<"sys_todo", 'String'>
+    readonly tenant_id: FieldRef<"sys_todo", 'String'>
+    readonly user_id: FieldRef<"sys_todo", 'String'>
+    readonly title: FieldRef<"sys_todo", 'String'>
+    readonly content: FieldRef<"sys_todo", 'String'>
+    readonly priority: FieldRef<"sys_todo", 'Int'>
+    readonly due_time: FieldRef<"sys_todo", 'DateTime'>
+    readonly status: FieldRef<"sys_todo", 'String'>
+    readonly created_at: FieldRef<"sys_todo", 'DateTime'>
+    readonly updated_at: FieldRef<"sys_todo", 'DateTime'>
+    readonly is_deleted: FieldRef<"sys_todo", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_todo findUnique
+   */
+  export type sys_todoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_todo to fetch.
+     */
+    where: sys_todoWhereUniqueInput
+  }
+
+  /**
+   * sys_todo findUniqueOrThrow
+   */
+  export type sys_todoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_todo to fetch.
+     */
+    where: sys_todoWhereUniqueInput
+  }
+
+  /**
+   * sys_todo findFirst
+   */
+  export type sys_todoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_todo to fetch.
+     */
+    where?: sys_todoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_todos to fetch.
+     */
+    orderBy?: sys_todoOrderByWithRelationInput | sys_todoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_todos.
+     */
+    cursor?: sys_todoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_todos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_todos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_todos.
+     */
+    distinct?: Sys_todoScalarFieldEnum | Sys_todoScalarFieldEnum[]
+  }
+
+  /**
+   * sys_todo findFirstOrThrow
+   */
+  export type sys_todoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_todo to fetch.
+     */
+    where?: sys_todoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_todos to fetch.
+     */
+    orderBy?: sys_todoOrderByWithRelationInput | sys_todoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_todos.
+     */
+    cursor?: sys_todoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_todos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_todos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_todos.
+     */
+    distinct?: Sys_todoScalarFieldEnum | Sys_todoScalarFieldEnum[]
+  }
+
+  /**
+   * sys_todo findMany
+   */
+  export type sys_todoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_todos to fetch.
+     */
+    where?: sys_todoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_todos to fetch.
+     */
+    orderBy?: sys_todoOrderByWithRelationInput | sys_todoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_todos.
+     */
+    cursor?: sys_todoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_todos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_todos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_todos.
+     */
+    distinct?: Sys_todoScalarFieldEnum | Sys_todoScalarFieldEnum[]
+  }
+
+  /**
+   * sys_todo create
+   */
+  export type sys_todoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_todo.
+     */
+    data: XOR<sys_todoCreateInput, sys_todoUncheckedCreateInput>
+  }
+
+  /**
+   * sys_todo createMany
+   */
+  export type sys_todoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_todos.
+     */
+    data: sys_todoCreateManyInput | sys_todoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_todo createManyAndReturn
+   */
+  export type sys_todoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_todos.
+     */
+    data: sys_todoCreateManyInput | sys_todoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_todo update
+   */
+  export type sys_todoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_todo.
+     */
+    data: XOR<sys_todoUpdateInput, sys_todoUncheckedUpdateInput>
+    /**
+     * Choose, which sys_todo to update.
+     */
+    where: sys_todoWhereUniqueInput
+  }
+
+  /**
+   * sys_todo updateMany
+   */
+  export type sys_todoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_todos.
+     */
+    data: XOR<sys_todoUpdateManyMutationInput, sys_todoUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_todos to update
+     */
+    where?: sys_todoWhereInput
+    /**
+     * Limit how many sys_todos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_todo updateManyAndReturn
+   */
+  export type sys_todoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_todos.
+     */
+    data: XOR<sys_todoUpdateManyMutationInput, sys_todoUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_todos to update
+     */
+    where?: sys_todoWhereInput
+    /**
+     * Limit how many sys_todos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_todo upsert
+   */
+  export type sys_todoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_todo to update in case it exists.
+     */
+    where: sys_todoWhereUniqueInput
+    /**
+     * In case the sys_todo found by the `where` argument doesn't exist, create a new sys_todo with this data.
+     */
+    create: XOR<sys_todoCreateInput, sys_todoUncheckedCreateInput>
+    /**
+     * In case the sys_todo was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_todoUpdateInput, sys_todoUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_todo delete
+   */
+  export type sys_todoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+    /**
+     * Filter which sys_todo to delete.
+     */
+    where: sys_todoWhereUniqueInput
+  }
+
+  /**
+   * sys_todo deleteMany
+   */
+  export type sys_todoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_todos to delete
+     */
+    where?: sys_todoWhereInput
+    /**
+     * Limit how many sys_todos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_todo without action
+   */
+  export type sys_todoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_todo
+     */
+    select?: sys_todoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_todo
+     */
+    omit?: sys_todoOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_ip_rule
+   */
+
+  export type AggregateSys_ip_rule = {
+    _count: Sys_ip_ruleCountAggregateOutputType | null
+    _avg: Sys_ip_ruleAvgAggregateOutputType | null
+    _sum: Sys_ip_ruleSumAggregateOutputType | null
+    _min: Sys_ip_ruleMinAggregateOutputType | null
+    _max: Sys_ip_ruleMaxAggregateOutputType | null
+  }
+
+  export type Sys_ip_ruleAvgAggregateOutputType = {
+    is_deleted: number | null
+  }
+
+  export type Sys_ip_ruleSumAggregateOutputType = {
+    is_deleted: number | null
+  }
+
+  export type Sys_ip_ruleMinAggregateOutputType = {
+    rule_id: string | null
+    tenant_id: string | null
+    rule_type: string | null
+    ip_pattern: string | null
+    remark: string | null
+    status: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    created_by: string | null
+    updated_by: string | null
+    is_deleted: number | null
+  }
+
+  export type Sys_ip_ruleMaxAggregateOutputType = {
+    rule_id: string | null
+    tenant_id: string | null
+    rule_type: string | null
+    ip_pattern: string | null
+    remark: string | null
+    status: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    created_by: string | null
+    updated_by: string | null
+    is_deleted: number | null
+  }
+
+  export type Sys_ip_ruleCountAggregateOutputType = {
+    rule_id: number
+    tenant_id: number
+    rule_type: number
+    ip_pattern: number
+    remark: number
+    status: number
+    created_at: number
+    updated_at: number
+    created_by: number
+    updated_by: number
+    is_deleted: number
+    _all: number
+  }
+
+
+  export type Sys_ip_ruleAvgAggregateInputType = {
+    is_deleted?: true
+  }
+
+  export type Sys_ip_ruleSumAggregateInputType = {
+    is_deleted?: true
+  }
+
+  export type Sys_ip_ruleMinAggregateInputType = {
+    rule_id?: true
+    tenant_id?: true
+    rule_type?: true
+    ip_pattern?: true
+    remark?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+    created_by?: true
+    updated_by?: true
+    is_deleted?: true
+  }
+
+  export type Sys_ip_ruleMaxAggregateInputType = {
+    rule_id?: true
+    tenant_id?: true
+    rule_type?: true
+    ip_pattern?: true
+    remark?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+    created_by?: true
+    updated_by?: true
+    is_deleted?: true
+  }
+
+  export type Sys_ip_ruleCountAggregateInputType = {
+    rule_id?: true
+    tenant_id?: true
+    rule_type?: true
+    ip_pattern?: true
+    remark?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+    created_by?: true
+    updated_by?: true
+    is_deleted?: true
+    _all?: true
+  }
+
+  export type Sys_ip_ruleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_ip_rule to aggregate.
+     */
+    where?: sys_ip_ruleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_ip_rules to fetch.
+     */
+    orderBy?: sys_ip_ruleOrderByWithRelationInput | sys_ip_ruleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_ip_ruleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_ip_rules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_ip_rules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_ip_rules
+    **/
+    _count?: true | Sys_ip_ruleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sys_ip_ruleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sys_ip_ruleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_ip_ruleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_ip_ruleMaxAggregateInputType
+  }
+
+  export type GetSys_ip_ruleAggregateType<T extends Sys_ip_ruleAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_ip_rule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_ip_rule[P]>
+      : GetScalarType<T[P], AggregateSys_ip_rule[P]>
+  }
+
+
+
+
+  export type sys_ip_ruleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_ip_ruleWhereInput
+    orderBy?: sys_ip_ruleOrderByWithAggregationInput | sys_ip_ruleOrderByWithAggregationInput[]
+    by: Sys_ip_ruleScalarFieldEnum[] | Sys_ip_ruleScalarFieldEnum
+    having?: sys_ip_ruleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_ip_ruleCountAggregateInputType | true
+    _avg?: Sys_ip_ruleAvgAggregateInputType
+    _sum?: Sys_ip_ruleSumAggregateInputType
+    _min?: Sys_ip_ruleMinAggregateInputType
+    _max?: Sys_ip_ruleMaxAggregateInputType
+  }
+
+  export type Sys_ip_ruleGroupByOutputType = {
+    rule_id: string
+    tenant_id: string
+    rule_type: string
+    ip_pattern: string
+    remark: string | null
+    status: string
+    created_at: Date
+    updated_at: Date
+    created_by: string | null
+    updated_by: string | null
+    is_deleted: number
+    _count: Sys_ip_ruleCountAggregateOutputType | null
+    _avg: Sys_ip_ruleAvgAggregateOutputType | null
+    _sum: Sys_ip_ruleSumAggregateOutputType | null
+    _min: Sys_ip_ruleMinAggregateOutputType | null
+    _max: Sys_ip_ruleMaxAggregateOutputType | null
+  }
+
+  type GetSys_ip_ruleGroupByPayload<T extends sys_ip_ruleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_ip_ruleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_ip_ruleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_ip_ruleGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_ip_ruleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_ip_ruleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    rule_id?: boolean
+    tenant_id?: boolean
+    rule_type?: boolean
+    ip_pattern?: boolean
+    remark?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_ip_rule"]>
+
+  export type sys_ip_ruleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    rule_id?: boolean
+    tenant_id?: boolean
+    rule_type?: boolean
+    ip_pattern?: boolean
+    remark?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_ip_rule"]>
+
+  export type sys_ip_ruleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    rule_id?: boolean
+    tenant_id?: boolean
+    rule_type?: boolean
+    ip_pattern?: boolean
+    remark?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }, ExtArgs["result"]["sys_ip_rule"]>
+
+  export type sys_ip_ruleSelectScalar = {
+    rule_id?: boolean
+    tenant_id?: boolean
+    rule_type?: boolean
+    ip_pattern?: boolean
+    remark?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    created_by?: boolean
+    updated_by?: boolean
+    is_deleted?: boolean
+  }
+
+  export type sys_ip_ruleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"rule_id" | "tenant_id" | "rule_type" | "ip_pattern" | "remark" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_ip_rule"]>
+
+  export type $sys_ip_rulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_ip_rule"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      rule_id: string
+      tenant_id: string
+      rule_type: string
+      ip_pattern: string
+      remark: string | null
+      status: string
+      created_at: Date
+      updated_at: Date
+      created_by: string | null
+      updated_by: string | null
+      is_deleted: number
+    }, ExtArgs["result"]["sys_ip_rule"]>
+    composites: {}
+  }
+
+  type sys_ip_ruleGetPayload<S extends boolean | null | undefined | sys_ip_ruleDefaultArgs> = $Result.GetResult<Prisma.$sys_ip_rulePayload, S>
+
+  type sys_ip_ruleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_ip_ruleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_ip_ruleCountAggregateInputType | true
+    }
+
+  export interface sys_ip_ruleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_ip_rule'], meta: { name: 'sys_ip_rule' } }
+    /**
+     * Find zero or one Sys_ip_rule that matches the filter.
+     * @param {sys_ip_ruleFindUniqueArgs} args - Arguments to find a Sys_ip_rule
+     * @example
+     * // Get one Sys_ip_rule
+     * const sys_ip_rule = await prisma.sys_ip_rule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_ip_ruleFindUniqueArgs>(args: SelectSubset<T, sys_ip_ruleFindUniqueArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_ip_rule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_ip_ruleFindUniqueOrThrowArgs} args - Arguments to find a Sys_ip_rule
+     * @example
+     * // Get one Sys_ip_rule
+     * const sys_ip_rule = await prisma.sys_ip_rule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_ip_ruleFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_ip_ruleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_ip_rule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_ip_ruleFindFirstArgs} args - Arguments to find a Sys_ip_rule
+     * @example
+     * // Get one Sys_ip_rule
+     * const sys_ip_rule = await prisma.sys_ip_rule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_ip_ruleFindFirstArgs>(args?: SelectSubset<T, sys_ip_ruleFindFirstArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_ip_rule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_ip_ruleFindFirstOrThrowArgs} args - Arguments to find a Sys_ip_rule
+     * @example
+     * // Get one Sys_ip_rule
+     * const sys_ip_rule = await prisma.sys_ip_rule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_ip_ruleFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_ip_ruleFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_ip_rules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_ip_ruleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_ip_rules
+     * const sys_ip_rules = await prisma.sys_ip_rule.findMany()
+     * 
+     * // Get first 10 Sys_ip_rules
+     * const sys_ip_rules = await prisma.sys_ip_rule.findMany({ take: 10 })
+     * 
+     * // Only select the `rule_id`
+     * const sys_ip_ruleWithRule_idOnly = await prisma.sys_ip_rule.findMany({ select: { rule_id: true } })
+     * 
+     */
+    findMany<T extends sys_ip_ruleFindManyArgs>(args?: SelectSubset<T, sys_ip_ruleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_ip_rule.
+     * @param {sys_ip_ruleCreateArgs} args - Arguments to create a Sys_ip_rule.
+     * @example
+     * // Create one Sys_ip_rule
+     * const Sys_ip_rule = await prisma.sys_ip_rule.create({
+     *   data: {
+     *     // ... data to create a Sys_ip_rule
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_ip_ruleCreateArgs>(args: SelectSubset<T, sys_ip_ruleCreateArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_ip_rules.
+     * @param {sys_ip_ruleCreateManyArgs} args - Arguments to create many Sys_ip_rules.
+     * @example
+     * // Create many Sys_ip_rules
+     * const sys_ip_rule = await prisma.sys_ip_rule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_ip_ruleCreateManyArgs>(args?: SelectSubset<T, sys_ip_ruleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_ip_rules and returns the data saved in the database.
+     * @param {sys_ip_ruleCreateManyAndReturnArgs} args - Arguments to create many Sys_ip_rules.
+     * @example
+     * // Create many Sys_ip_rules
+     * const sys_ip_rule = await prisma.sys_ip_rule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_ip_rules and only return the `rule_id`
+     * const sys_ip_ruleWithRule_idOnly = await prisma.sys_ip_rule.createManyAndReturn({
+     *   select: { rule_id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_ip_ruleCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_ip_ruleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_ip_rule.
+     * @param {sys_ip_ruleDeleteArgs} args - Arguments to delete one Sys_ip_rule.
+     * @example
+     * // Delete one Sys_ip_rule
+     * const Sys_ip_rule = await prisma.sys_ip_rule.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_ip_rule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_ip_ruleDeleteArgs>(args: SelectSubset<T, sys_ip_ruleDeleteArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_ip_rule.
+     * @param {sys_ip_ruleUpdateArgs} args - Arguments to update one Sys_ip_rule.
+     * @example
+     * // Update one Sys_ip_rule
+     * const sys_ip_rule = await prisma.sys_ip_rule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_ip_ruleUpdateArgs>(args: SelectSubset<T, sys_ip_ruleUpdateArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_ip_rules.
+     * @param {sys_ip_ruleDeleteManyArgs} args - Arguments to filter Sys_ip_rules to delete.
+     * @example
+     * // Delete a few Sys_ip_rules
+     * const { count } = await prisma.sys_ip_rule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_ip_ruleDeleteManyArgs>(args?: SelectSubset<T, sys_ip_ruleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_ip_rules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_ip_ruleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_ip_rules
+     * const sys_ip_rule = await prisma.sys_ip_rule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_ip_ruleUpdateManyArgs>(args: SelectSubset<T, sys_ip_ruleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_ip_rules and returns the data updated in the database.
+     * @param {sys_ip_ruleUpdateManyAndReturnArgs} args - Arguments to update many Sys_ip_rules.
+     * @example
+     * // Update many Sys_ip_rules
+     * const sys_ip_rule = await prisma.sys_ip_rule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_ip_rules and only return the `rule_id`
+     * const sys_ip_ruleWithRule_idOnly = await prisma.sys_ip_rule.updateManyAndReturn({
+     *   select: { rule_id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_ip_ruleUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_ip_ruleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_ip_rule.
+     * @param {sys_ip_ruleUpsertArgs} args - Arguments to update or create a Sys_ip_rule.
+     * @example
+     * // Update or create a Sys_ip_rule
+     * const sys_ip_rule = await prisma.sys_ip_rule.upsert({
+     *   create: {
+     *     // ... data to create a Sys_ip_rule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_ip_rule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_ip_ruleUpsertArgs>(args: SelectSubset<T, sys_ip_ruleUpsertArgs<ExtArgs>>): Prisma__sys_ip_ruleClient<$Result.GetResult<Prisma.$sys_ip_rulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_ip_rules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_ip_ruleCountArgs} args - Arguments to filter Sys_ip_rules to count.
+     * @example
+     * // Count the number of Sys_ip_rules
+     * const count = await prisma.sys_ip_rule.count({
+     *   where: {
+     *     // ... the filter for the Sys_ip_rules we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_ip_ruleCountArgs>(
+      args?: Subset<T, sys_ip_ruleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_ip_ruleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_ip_rule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_ip_ruleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_ip_ruleAggregateArgs>(args: Subset<T, Sys_ip_ruleAggregateArgs>): Prisma.PrismaPromise<GetSys_ip_ruleAggregateType<T>>
+
+    /**
+     * Group by Sys_ip_rule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_ip_ruleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_ip_ruleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_ip_ruleGroupByArgs['orderBy'] }
+        : { orderBy?: sys_ip_ruleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_ip_ruleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_ip_ruleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_ip_rule model
+   */
+  readonly fields: sys_ip_ruleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_ip_rule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_ip_ruleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_ip_rule model
+   */
+  interface sys_ip_ruleFieldRefs {
+    readonly rule_id: FieldRef<"sys_ip_rule", 'String'>
+    readonly tenant_id: FieldRef<"sys_ip_rule", 'String'>
+    readonly rule_type: FieldRef<"sys_ip_rule", 'String'>
+    readonly ip_pattern: FieldRef<"sys_ip_rule", 'String'>
+    readonly remark: FieldRef<"sys_ip_rule", 'String'>
+    readonly status: FieldRef<"sys_ip_rule", 'String'>
+    readonly created_at: FieldRef<"sys_ip_rule", 'DateTime'>
+    readonly updated_at: FieldRef<"sys_ip_rule", 'DateTime'>
+    readonly created_by: FieldRef<"sys_ip_rule", 'String'>
+    readonly updated_by: FieldRef<"sys_ip_rule", 'String'>
+    readonly is_deleted: FieldRef<"sys_ip_rule", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_ip_rule findUnique
+   */
+  export type sys_ip_ruleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_ip_rule to fetch.
+     */
+    where: sys_ip_ruleWhereUniqueInput
+  }
+
+  /**
+   * sys_ip_rule findUniqueOrThrow
+   */
+  export type sys_ip_ruleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_ip_rule to fetch.
+     */
+    where: sys_ip_ruleWhereUniqueInput
+  }
+
+  /**
+   * sys_ip_rule findFirst
+   */
+  export type sys_ip_ruleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_ip_rule to fetch.
+     */
+    where?: sys_ip_ruleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_ip_rules to fetch.
+     */
+    orderBy?: sys_ip_ruleOrderByWithRelationInput | sys_ip_ruleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_ip_rules.
+     */
+    cursor?: sys_ip_ruleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_ip_rules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_ip_rules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_ip_rules.
+     */
+    distinct?: Sys_ip_ruleScalarFieldEnum | Sys_ip_ruleScalarFieldEnum[]
+  }
+
+  /**
+   * sys_ip_rule findFirstOrThrow
+   */
+  export type sys_ip_ruleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_ip_rule to fetch.
+     */
+    where?: sys_ip_ruleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_ip_rules to fetch.
+     */
+    orderBy?: sys_ip_ruleOrderByWithRelationInput | sys_ip_ruleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_ip_rules.
+     */
+    cursor?: sys_ip_ruleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_ip_rules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_ip_rules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_ip_rules.
+     */
+    distinct?: Sys_ip_ruleScalarFieldEnum | Sys_ip_ruleScalarFieldEnum[]
+  }
+
+  /**
+   * sys_ip_rule findMany
+   */
+  export type sys_ip_ruleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * Filter, which sys_ip_rules to fetch.
+     */
+    where?: sys_ip_ruleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_ip_rules to fetch.
+     */
+    orderBy?: sys_ip_ruleOrderByWithRelationInput | sys_ip_ruleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_ip_rules.
+     */
+    cursor?: sys_ip_ruleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_ip_rules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_ip_rules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_ip_rules.
+     */
+    distinct?: Sys_ip_ruleScalarFieldEnum | Sys_ip_ruleScalarFieldEnum[]
+  }
+
+  /**
+   * sys_ip_rule create
+   */
+  export type sys_ip_ruleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * The data needed to create a sys_ip_rule.
+     */
+    data: XOR<sys_ip_ruleCreateInput, sys_ip_ruleUncheckedCreateInput>
+  }
+
+  /**
+   * sys_ip_rule createMany
+   */
+  export type sys_ip_ruleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_ip_rules.
+     */
+    data: sys_ip_ruleCreateManyInput | sys_ip_ruleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_ip_rule createManyAndReturn
+   */
+  export type sys_ip_ruleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_ip_rules.
+     */
+    data: sys_ip_ruleCreateManyInput | sys_ip_ruleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_ip_rule update
+   */
+  export type sys_ip_ruleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * The data needed to update a sys_ip_rule.
+     */
+    data: XOR<sys_ip_ruleUpdateInput, sys_ip_ruleUncheckedUpdateInput>
+    /**
+     * Choose, which sys_ip_rule to update.
+     */
+    where: sys_ip_ruleWhereUniqueInput
+  }
+
+  /**
+   * sys_ip_rule updateMany
+   */
+  export type sys_ip_ruleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_ip_rules.
+     */
+    data: XOR<sys_ip_ruleUpdateManyMutationInput, sys_ip_ruleUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_ip_rules to update
+     */
+    where?: sys_ip_ruleWhereInput
+    /**
+     * Limit how many sys_ip_rules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_ip_rule updateManyAndReturn
+   */
+  export type sys_ip_ruleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_ip_rules.
+     */
+    data: XOR<sys_ip_ruleUpdateManyMutationInput, sys_ip_ruleUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_ip_rules to update
+     */
+    where?: sys_ip_ruleWhereInput
+    /**
+     * Limit how many sys_ip_rules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_ip_rule upsert
+   */
+  export type sys_ip_ruleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * The filter to search for the sys_ip_rule to update in case it exists.
+     */
+    where: sys_ip_ruleWhereUniqueInput
+    /**
+     * In case the sys_ip_rule found by the `where` argument doesn't exist, create a new sys_ip_rule with this data.
+     */
+    create: XOR<sys_ip_ruleCreateInput, sys_ip_ruleUncheckedCreateInput>
+    /**
+     * In case the sys_ip_rule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_ip_ruleUpdateInput, sys_ip_ruleUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_ip_rule delete
+   */
+  export type sys_ip_ruleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+    /**
+     * Filter which sys_ip_rule to delete.
+     */
+    where: sys_ip_ruleWhereUniqueInput
+  }
+
+  /**
+   * sys_ip_rule deleteMany
+   */
+  export type sys_ip_ruleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_ip_rules to delete
+     */
+    where?: sys_ip_ruleWhereInput
+    /**
+     * Limit how many sys_ip_rules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_ip_rule without action
+   */
+  export type sys_ip_ruleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_ip_rule
+     */
+    select?: sys_ip_ruleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_ip_rule
+     */
+    omit?: sys_ip_ruleOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -24936,7 +30819,6 @@ export namespace Prisma {
     content: 'content',
     notice_type: 'notice_type',
     status: 'status',
-    is_read: 'is_read',
     publish_time: 'publish_time',
     created_at: 'created_at',
     updated_at: 'updated_at',
@@ -25084,6 +30966,86 @@ export namespace Prisma {
   };
 
   export type Sys_configScalarFieldEnum = (typeof Sys_configScalarFieldEnum)[keyof typeof Sys_configScalarFieldEnum]
+
+
+  export const Sys_jobScalarFieldEnum: {
+    job_id: 'job_id',
+    tenant_id: 'tenant_id',
+    job_name: 'job_name',
+    job_group: 'job_group',
+    invoke_target: 'invoke_target',
+    cron_expression: 'cron_expression',
+    misfire_policy: 'misfire_policy',
+    concurrent: 'concurrent',
+    status: 'status',
+    remark: 'remark',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    created_by: 'created_by',
+    updated_by: 'updated_by',
+    is_deleted: 'is_deleted'
+  };
+
+  export type Sys_jobScalarFieldEnum = (typeof Sys_jobScalarFieldEnum)[keyof typeof Sys_jobScalarFieldEnum]
+
+
+  export const Sys_job_logScalarFieldEnum: {
+    log_id: 'log_id',
+    job_id: 'job_id',
+    job_name: 'job_name',
+    invoke_target: 'invoke_target',
+    job_message: 'job_message',
+    status: 'status',
+    exception_info: 'exception_info',
+    created_at: 'created_at'
+  };
+
+  export type Sys_job_logScalarFieldEnum = (typeof Sys_job_logScalarFieldEnum)[keyof typeof Sys_job_logScalarFieldEnum]
+
+
+  export const Sys_role_deptScalarFieldEnum: {
+    id: 'id',
+    role_id: 'role_id',
+    dept_id: 'dept_id',
+    tenant_id: 'tenant_id',
+    created_at: 'created_at'
+  };
+
+  export type Sys_role_deptScalarFieldEnum = (typeof Sys_role_deptScalarFieldEnum)[keyof typeof Sys_role_deptScalarFieldEnum]
+
+
+  export const Sys_todoScalarFieldEnum: {
+    todo_id: 'todo_id',
+    tenant_id: 'tenant_id',
+    user_id: 'user_id',
+    title: 'title',
+    content: 'content',
+    priority: 'priority',
+    due_time: 'due_time',
+    status: 'status',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    is_deleted: 'is_deleted'
+  };
+
+  export type Sys_todoScalarFieldEnum = (typeof Sys_todoScalarFieldEnum)[keyof typeof Sys_todoScalarFieldEnum]
+
+
+  export const Sys_ip_ruleScalarFieldEnum: {
+    rule_id: 'rule_id',
+    tenant_id: 'tenant_id',
+    rule_type: 'rule_type',
+    ip_pattern: 'ip_pattern',
+    remark: 'remark',
+    status: 'status',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    created_by: 'created_by',
+    updated_by: 'updated_by',
+    is_deleted: 'is_deleted'
+  };
+
+  export type Sys_ip_ruleScalarFieldEnum = (typeof Sys_ip_ruleScalarFieldEnum)[keyof typeof Sys_ip_ruleScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -25988,7 +31950,6 @@ export namespace Prisma {
     content?: StringNullableFilter<"sys_notice"> | string | null
     notice_type?: IntFilter<"sys_notice"> | number
     status?: StringFilter<"sys_notice"> | string
-    is_read?: IntFilter<"sys_notice"> | number
     publish_time?: DateTimeNullableFilter<"sys_notice"> | Date | string | null
     created_at?: DateTimeFilter<"sys_notice"> | Date | string
     updated_at?: DateTimeFilter<"sys_notice"> | Date | string
@@ -26005,7 +31966,6 @@ export namespace Prisma {
     content?: SortOrderInput | SortOrder
     notice_type?: SortOrder
     status?: SortOrder
-    is_read?: SortOrder
     publish_time?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -26025,7 +31985,6 @@ export namespace Prisma {
     content?: StringNullableFilter<"sys_notice"> | string | null
     notice_type?: IntFilter<"sys_notice"> | number
     status?: StringFilter<"sys_notice"> | string
-    is_read?: IntFilter<"sys_notice"> | number
     publish_time?: DateTimeNullableFilter<"sys_notice"> | Date | string | null
     created_at?: DateTimeFilter<"sys_notice"> | Date | string
     updated_at?: DateTimeFilter<"sys_notice"> | Date | string
@@ -26042,7 +32001,6 @@ export namespace Prisma {
     content?: SortOrderInput | SortOrder
     notice_type?: SortOrder
     status?: SortOrder
-    is_read?: SortOrder
     publish_time?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -26066,7 +32024,6 @@ export namespace Prisma {
     content?: StringNullableWithAggregatesFilter<"sys_notice"> | string | null
     notice_type?: IntWithAggregatesFilter<"sys_notice"> | number
     status?: StringWithAggregatesFilter<"sys_notice"> | string
-    is_read?: IntWithAggregatesFilter<"sys_notice"> | number
     publish_time?: DateTimeNullableWithAggregatesFilter<"sys_notice"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"sys_notice"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_notice"> | Date | string
@@ -26766,6 +32723,398 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"sys_config"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_config"> | Date | string
     is_deleted?: IntWithAggregatesFilter<"sys_config"> | number
+  }
+
+  export type sys_jobWhereInput = {
+    AND?: sys_jobWhereInput | sys_jobWhereInput[]
+    OR?: sys_jobWhereInput[]
+    NOT?: sys_jobWhereInput | sys_jobWhereInput[]
+    job_id?: UuidFilter<"sys_job"> | string
+    tenant_id?: UuidFilter<"sys_job"> | string
+    job_name?: StringFilter<"sys_job"> | string
+    job_group?: StringFilter<"sys_job"> | string
+    invoke_target?: StringFilter<"sys_job"> | string
+    cron_expression?: StringFilter<"sys_job"> | string
+    misfire_policy?: IntFilter<"sys_job"> | number
+    concurrent?: IntFilter<"sys_job"> | number
+    status?: StringFilter<"sys_job"> | string
+    remark?: StringNullableFilter<"sys_job"> | string | null
+    created_at?: DateTimeFilter<"sys_job"> | Date | string
+    updated_at?: DateTimeFilter<"sys_job"> | Date | string
+    created_by?: UuidNullableFilter<"sys_job"> | string | null
+    updated_by?: UuidNullableFilter<"sys_job"> | string | null
+    is_deleted?: IntFilter<"sys_job"> | number
+  }
+
+  export type sys_jobOrderByWithRelationInput = {
+    job_id?: SortOrder
+    tenant_id?: SortOrder
+    job_name?: SortOrder
+    job_group?: SortOrder
+    invoke_target?: SortOrder
+    cron_expression?: SortOrder
+    misfire_policy?: SortOrder
+    concurrent?: SortOrder
+    status?: SortOrder
+    remark?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrderInput | SortOrder
+    updated_by?: SortOrderInput | SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_jobWhereUniqueInput = Prisma.AtLeast<{
+    job_id?: string
+    AND?: sys_jobWhereInput | sys_jobWhereInput[]
+    OR?: sys_jobWhereInput[]
+    NOT?: sys_jobWhereInput | sys_jobWhereInput[]
+    tenant_id?: UuidFilter<"sys_job"> | string
+    job_name?: StringFilter<"sys_job"> | string
+    job_group?: StringFilter<"sys_job"> | string
+    invoke_target?: StringFilter<"sys_job"> | string
+    cron_expression?: StringFilter<"sys_job"> | string
+    misfire_policy?: IntFilter<"sys_job"> | number
+    concurrent?: IntFilter<"sys_job"> | number
+    status?: StringFilter<"sys_job"> | string
+    remark?: StringNullableFilter<"sys_job"> | string | null
+    created_at?: DateTimeFilter<"sys_job"> | Date | string
+    updated_at?: DateTimeFilter<"sys_job"> | Date | string
+    created_by?: UuidNullableFilter<"sys_job"> | string | null
+    updated_by?: UuidNullableFilter<"sys_job"> | string | null
+    is_deleted?: IntFilter<"sys_job"> | number
+  }, "job_id">
+
+  export type sys_jobOrderByWithAggregationInput = {
+    job_id?: SortOrder
+    tenant_id?: SortOrder
+    job_name?: SortOrder
+    job_group?: SortOrder
+    invoke_target?: SortOrder
+    cron_expression?: SortOrder
+    misfire_policy?: SortOrder
+    concurrent?: SortOrder
+    status?: SortOrder
+    remark?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrderInput | SortOrder
+    updated_by?: SortOrderInput | SortOrder
+    is_deleted?: SortOrder
+    _count?: sys_jobCountOrderByAggregateInput
+    _avg?: sys_jobAvgOrderByAggregateInput
+    _max?: sys_jobMaxOrderByAggregateInput
+    _min?: sys_jobMinOrderByAggregateInput
+    _sum?: sys_jobSumOrderByAggregateInput
+  }
+
+  export type sys_jobScalarWhereWithAggregatesInput = {
+    AND?: sys_jobScalarWhereWithAggregatesInput | sys_jobScalarWhereWithAggregatesInput[]
+    OR?: sys_jobScalarWhereWithAggregatesInput[]
+    NOT?: sys_jobScalarWhereWithAggregatesInput | sys_jobScalarWhereWithAggregatesInput[]
+    job_id?: UuidWithAggregatesFilter<"sys_job"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_job"> | string
+    job_name?: StringWithAggregatesFilter<"sys_job"> | string
+    job_group?: StringWithAggregatesFilter<"sys_job"> | string
+    invoke_target?: StringWithAggregatesFilter<"sys_job"> | string
+    cron_expression?: StringWithAggregatesFilter<"sys_job"> | string
+    misfire_policy?: IntWithAggregatesFilter<"sys_job"> | number
+    concurrent?: IntWithAggregatesFilter<"sys_job"> | number
+    status?: StringWithAggregatesFilter<"sys_job"> | string
+    remark?: StringNullableWithAggregatesFilter<"sys_job"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"sys_job"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"sys_job"> | Date | string
+    created_by?: UuidNullableWithAggregatesFilter<"sys_job"> | string | null
+    updated_by?: UuidNullableWithAggregatesFilter<"sys_job"> | string | null
+    is_deleted?: IntWithAggregatesFilter<"sys_job"> | number
+  }
+
+  export type sys_job_logWhereInput = {
+    AND?: sys_job_logWhereInput | sys_job_logWhereInput[]
+    OR?: sys_job_logWhereInput[]
+    NOT?: sys_job_logWhereInput | sys_job_logWhereInput[]
+    log_id?: UuidFilter<"sys_job_log"> | string
+    job_id?: UuidFilter<"sys_job_log"> | string
+    job_name?: StringFilter<"sys_job_log"> | string
+    invoke_target?: StringFilter<"sys_job_log"> | string
+    job_message?: StringNullableFilter<"sys_job_log"> | string | null
+    status?: StringFilter<"sys_job_log"> | string
+    exception_info?: StringNullableFilter<"sys_job_log"> | string | null
+    created_at?: DateTimeFilter<"sys_job_log"> | Date | string
+  }
+
+  export type sys_job_logOrderByWithRelationInput = {
+    log_id?: SortOrder
+    job_id?: SortOrder
+    job_name?: SortOrder
+    invoke_target?: SortOrder
+    job_message?: SortOrderInput | SortOrder
+    status?: SortOrder
+    exception_info?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_job_logWhereUniqueInput = Prisma.AtLeast<{
+    log_id?: string
+    AND?: sys_job_logWhereInput | sys_job_logWhereInput[]
+    OR?: sys_job_logWhereInput[]
+    NOT?: sys_job_logWhereInput | sys_job_logWhereInput[]
+    job_id?: UuidFilter<"sys_job_log"> | string
+    job_name?: StringFilter<"sys_job_log"> | string
+    invoke_target?: StringFilter<"sys_job_log"> | string
+    job_message?: StringNullableFilter<"sys_job_log"> | string | null
+    status?: StringFilter<"sys_job_log"> | string
+    exception_info?: StringNullableFilter<"sys_job_log"> | string | null
+    created_at?: DateTimeFilter<"sys_job_log"> | Date | string
+  }, "log_id">
+
+  export type sys_job_logOrderByWithAggregationInput = {
+    log_id?: SortOrder
+    job_id?: SortOrder
+    job_name?: SortOrder
+    invoke_target?: SortOrder
+    job_message?: SortOrderInput | SortOrder
+    status?: SortOrder
+    exception_info?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    _count?: sys_job_logCountOrderByAggregateInput
+    _max?: sys_job_logMaxOrderByAggregateInput
+    _min?: sys_job_logMinOrderByAggregateInput
+  }
+
+  export type sys_job_logScalarWhereWithAggregatesInput = {
+    AND?: sys_job_logScalarWhereWithAggregatesInput | sys_job_logScalarWhereWithAggregatesInput[]
+    OR?: sys_job_logScalarWhereWithAggregatesInput[]
+    NOT?: sys_job_logScalarWhereWithAggregatesInput | sys_job_logScalarWhereWithAggregatesInput[]
+    log_id?: UuidWithAggregatesFilter<"sys_job_log"> | string
+    job_id?: UuidWithAggregatesFilter<"sys_job_log"> | string
+    job_name?: StringWithAggregatesFilter<"sys_job_log"> | string
+    invoke_target?: StringWithAggregatesFilter<"sys_job_log"> | string
+    job_message?: StringNullableWithAggregatesFilter<"sys_job_log"> | string | null
+    status?: StringWithAggregatesFilter<"sys_job_log"> | string
+    exception_info?: StringNullableWithAggregatesFilter<"sys_job_log"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"sys_job_log"> | Date | string
+  }
+
+  export type sys_role_deptWhereInput = {
+    AND?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    OR?: sys_role_deptWhereInput[]
+    NOT?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    id?: UuidFilter<"sys_role_dept"> | string
+    role_id?: UuidFilter<"sys_role_dept"> | string
+    dept_id?: UuidFilter<"sys_role_dept"> | string
+    tenant_id?: UuidFilter<"sys_role_dept"> | string
+    created_at?: DateTimeFilter<"sys_role_dept"> | Date | string
+  }
+
+  export type sys_role_deptOrderByWithRelationInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_role_deptWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    role_id_dept_id?: sys_role_deptRole_idDept_idCompoundUniqueInput
+    AND?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    OR?: sys_role_deptWhereInput[]
+    NOT?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    role_id?: UuidFilter<"sys_role_dept"> | string
+    dept_id?: UuidFilter<"sys_role_dept"> | string
+    tenant_id?: UuidFilter<"sys_role_dept"> | string
+    created_at?: DateTimeFilter<"sys_role_dept"> | Date | string
+  }, "id" | "role_id_dept_id">
+
+  export type sys_role_deptOrderByWithAggregationInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+    _count?: sys_role_deptCountOrderByAggregateInput
+    _max?: sys_role_deptMaxOrderByAggregateInput
+    _min?: sys_role_deptMinOrderByAggregateInput
+  }
+
+  export type sys_role_deptScalarWhereWithAggregatesInput = {
+    AND?: sys_role_deptScalarWhereWithAggregatesInput | sys_role_deptScalarWhereWithAggregatesInput[]
+    OR?: sys_role_deptScalarWhereWithAggregatesInput[]
+    NOT?: sys_role_deptScalarWhereWithAggregatesInput | sys_role_deptScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    role_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    dept_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    created_at?: DateTimeWithAggregatesFilter<"sys_role_dept"> | Date | string
+  }
+
+  export type sys_todoWhereInput = {
+    AND?: sys_todoWhereInput | sys_todoWhereInput[]
+    OR?: sys_todoWhereInput[]
+    NOT?: sys_todoWhereInput | sys_todoWhereInput[]
+    todo_id?: UuidFilter<"sys_todo"> | string
+    tenant_id?: UuidFilter<"sys_todo"> | string
+    user_id?: UuidFilter<"sys_todo"> | string
+    title?: StringFilter<"sys_todo"> | string
+    content?: StringNullableFilter<"sys_todo"> | string | null
+    priority?: IntFilter<"sys_todo"> | number
+    due_time?: DateTimeNullableFilter<"sys_todo"> | Date | string | null
+    status?: StringFilter<"sys_todo"> | string
+    created_at?: DateTimeFilter<"sys_todo"> | Date | string
+    updated_at?: DateTimeFilter<"sys_todo"> | Date | string
+    is_deleted?: IntFilter<"sys_todo"> | number
+  }
+
+  export type sys_todoOrderByWithRelationInput = {
+    todo_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    title?: SortOrder
+    content?: SortOrderInput | SortOrder
+    priority?: SortOrder
+    due_time?: SortOrderInput | SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_todoWhereUniqueInput = Prisma.AtLeast<{
+    todo_id?: string
+    AND?: sys_todoWhereInput | sys_todoWhereInput[]
+    OR?: sys_todoWhereInput[]
+    NOT?: sys_todoWhereInput | sys_todoWhereInput[]
+    tenant_id?: UuidFilter<"sys_todo"> | string
+    user_id?: UuidFilter<"sys_todo"> | string
+    title?: StringFilter<"sys_todo"> | string
+    content?: StringNullableFilter<"sys_todo"> | string | null
+    priority?: IntFilter<"sys_todo"> | number
+    due_time?: DateTimeNullableFilter<"sys_todo"> | Date | string | null
+    status?: StringFilter<"sys_todo"> | string
+    created_at?: DateTimeFilter<"sys_todo"> | Date | string
+    updated_at?: DateTimeFilter<"sys_todo"> | Date | string
+    is_deleted?: IntFilter<"sys_todo"> | number
+  }, "todo_id">
+
+  export type sys_todoOrderByWithAggregationInput = {
+    todo_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    title?: SortOrder
+    content?: SortOrderInput | SortOrder
+    priority?: SortOrder
+    due_time?: SortOrderInput | SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+    _count?: sys_todoCountOrderByAggregateInput
+    _avg?: sys_todoAvgOrderByAggregateInput
+    _max?: sys_todoMaxOrderByAggregateInput
+    _min?: sys_todoMinOrderByAggregateInput
+    _sum?: sys_todoSumOrderByAggregateInput
+  }
+
+  export type sys_todoScalarWhereWithAggregatesInput = {
+    AND?: sys_todoScalarWhereWithAggregatesInput | sys_todoScalarWhereWithAggregatesInput[]
+    OR?: sys_todoScalarWhereWithAggregatesInput[]
+    NOT?: sys_todoScalarWhereWithAggregatesInput | sys_todoScalarWhereWithAggregatesInput[]
+    todo_id?: UuidWithAggregatesFilter<"sys_todo"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_todo"> | string
+    user_id?: UuidWithAggregatesFilter<"sys_todo"> | string
+    title?: StringWithAggregatesFilter<"sys_todo"> | string
+    content?: StringNullableWithAggregatesFilter<"sys_todo"> | string | null
+    priority?: IntWithAggregatesFilter<"sys_todo"> | number
+    due_time?: DateTimeNullableWithAggregatesFilter<"sys_todo"> | Date | string | null
+    status?: StringWithAggregatesFilter<"sys_todo"> | string
+    created_at?: DateTimeWithAggregatesFilter<"sys_todo"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"sys_todo"> | Date | string
+    is_deleted?: IntWithAggregatesFilter<"sys_todo"> | number
+  }
+
+  export type sys_ip_ruleWhereInput = {
+    AND?: sys_ip_ruleWhereInput | sys_ip_ruleWhereInput[]
+    OR?: sys_ip_ruleWhereInput[]
+    NOT?: sys_ip_ruleWhereInput | sys_ip_ruleWhereInput[]
+    rule_id?: UuidFilter<"sys_ip_rule"> | string
+    tenant_id?: UuidFilter<"sys_ip_rule"> | string
+    rule_type?: StringFilter<"sys_ip_rule"> | string
+    ip_pattern?: StringFilter<"sys_ip_rule"> | string
+    remark?: StringNullableFilter<"sys_ip_rule"> | string | null
+    status?: StringFilter<"sys_ip_rule"> | string
+    created_at?: DateTimeFilter<"sys_ip_rule"> | Date | string
+    updated_at?: DateTimeFilter<"sys_ip_rule"> | Date | string
+    created_by?: UuidNullableFilter<"sys_ip_rule"> | string | null
+    updated_by?: UuidNullableFilter<"sys_ip_rule"> | string | null
+    is_deleted?: IntFilter<"sys_ip_rule"> | number
+  }
+
+  export type sys_ip_ruleOrderByWithRelationInput = {
+    rule_id?: SortOrder
+    tenant_id?: SortOrder
+    rule_type?: SortOrder
+    ip_pattern?: SortOrder
+    remark?: SortOrderInput | SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrderInput | SortOrder
+    updated_by?: SortOrderInput | SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_ip_ruleWhereUniqueInput = Prisma.AtLeast<{
+    rule_id?: string
+    AND?: sys_ip_ruleWhereInput | sys_ip_ruleWhereInput[]
+    OR?: sys_ip_ruleWhereInput[]
+    NOT?: sys_ip_ruleWhereInput | sys_ip_ruleWhereInput[]
+    tenant_id?: UuidFilter<"sys_ip_rule"> | string
+    rule_type?: StringFilter<"sys_ip_rule"> | string
+    ip_pattern?: StringFilter<"sys_ip_rule"> | string
+    remark?: StringNullableFilter<"sys_ip_rule"> | string | null
+    status?: StringFilter<"sys_ip_rule"> | string
+    created_at?: DateTimeFilter<"sys_ip_rule"> | Date | string
+    updated_at?: DateTimeFilter<"sys_ip_rule"> | Date | string
+    created_by?: UuidNullableFilter<"sys_ip_rule"> | string | null
+    updated_by?: UuidNullableFilter<"sys_ip_rule"> | string | null
+    is_deleted?: IntFilter<"sys_ip_rule"> | number
+  }, "rule_id">
+
+  export type sys_ip_ruleOrderByWithAggregationInput = {
+    rule_id?: SortOrder
+    tenant_id?: SortOrder
+    rule_type?: SortOrder
+    ip_pattern?: SortOrder
+    remark?: SortOrderInput | SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrderInput | SortOrder
+    updated_by?: SortOrderInput | SortOrder
+    is_deleted?: SortOrder
+    _count?: sys_ip_ruleCountOrderByAggregateInput
+    _avg?: sys_ip_ruleAvgOrderByAggregateInput
+    _max?: sys_ip_ruleMaxOrderByAggregateInput
+    _min?: sys_ip_ruleMinOrderByAggregateInput
+    _sum?: sys_ip_ruleSumOrderByAggregateInput
+  }
+
+  export type sys_ip_ruleScalarWhereWithAggregatesInput = {
+    AND?: sys_ip_ruleScalarWhereWithAggregatesInput | sys_ip_ruleScalarWhereWithAggregatesInput[]
+    OR?: sys_ip_ruleScalarWhereWithAggregatesInput[]
+    NOT?: sys_ip_ruleScalarWhereWithAggregatesInput | sys_ip_ruleScalarWhereWithAggregatesInput[]
+    rule_id?: UuidWithAggregatesFilter<"sys_ip_rule"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_ip_rule"> | string
+    rule_type?: StringWithAggregatesFilter<"sys_ip_rule"> | string
+    ip_pattern?: StringWithAggregatesFilter<"sys_ip_rule"> | string
+    remark?: StringNullableWithAggregatesFilter<"sys_ip_rule"> | string | null
+    status?: StringWithAggregatesFilter<"sys_ip_rule"> | string
+    created_at?: DateTimeWithAggregatesFilter<"sys_ip_rule"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"sys_ip_rule"> | Date | string
+    created_by?: UuidNullableWithAggregatesFilter<"sys_ip_rule"> | string | null
+    updated_by?: UuidNullableWithAggregatesFilter<"sys_ip_rule"> | string | null
+    is_deleted?: IntWithAggregatesFilter<"sys_ip_rule"> | number
   }
 
   export type sys_tenantCreateInput = {
@@ -27736,7 +34085,6 @@ export namespace Prisma {
     content?: string | null
     notice_type: number
     status?: string
-    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27753,7 +34101,6 @@ export namespace Prisma {
     content?: string | null
     notice_type: number
     status?: string
-    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27770,7 +34117,6 @@ export namespace Prisma {
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
-    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27787,7 +34133,6 @@ export namespace Prisma {
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
-    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27804,7 +34149,6 @@ export namespace Prisma {
     content?: string | null
     notice_type: number
     status?: string
-    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27820,7 +34164,6 @@ export namespace Prisma {
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
-    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27836,7 +34179,6 @@ export namespace Prisma {
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
-    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28593,6 +34935,461 @@ export namespace Prisma {
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_jobCreateInput = {
+    job_id?: string
+    tenant_id: string
+    job_name: string
+    job_group?: string
+    invoke_target: string
+    cron_expression: string
+    misfire_policy?: number
+    concurrent?: number
+    status?: string
+    remark?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_jobUncheckedCreateInput = {
+    job_id?: string
+    tenant_id: string
+    job_name: string
+    job_group?: string
+    invoke_target: string
+    cron_expression: string
+    misfire_policy?: number
+    concurrent?: number
+    status?: string
+    remark?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_jobUpdateInput = {
+    job_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    job_group?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    cron_expression?: StringFieldUpdateOperationsInput | string
+    misfire_policy?: IntFieldUpdateOperationsInput | number
+    concurrent?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_jobUncheckedUpdateInput = {
+    job_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    job_group?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    cron_expression?: StringFieldUpdateOperationsInput | string
+    misfire_policy?: IntFieldUpdateOperationsInput | number
+    concurrent?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_jobCreateManyInput = {
+    job_id?: string
+    tenant_id: string
+    job_name: string
+    job_group?: string
+    invoke_target: string
+    cron_expression: string
+    misfire_policy?: number
+    concurrent?: number
+    status?: string
+    remark?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_jobUpdateManyMutationInput = {
+    job_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    job_group?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    cron_expression?: StringFieldUpdateOperationsInput | string
+    misfire_policy?: IntFieldUpdateOperationsInput | number
+    concurrent?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_jobUncheckedUpdateManyInput = {
+    job_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    job_group?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    cron_expression?: StringFieldUpdateOperationsInput | string
+    misfire_policy?: IntFieldUpdateOperationsInput | number
+    concurrent?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_job_logCreateInput = {
+    log_id?: string
+    job_id: string
+    job_name: string
+    invoke_target: string
+    job_message?: string | null
+    status?: string
+    exception_info?: string | null
+    created_at?: Date | string
+  }
+
+  export type sys_job_logUncheckedCreateInput = {
+    log_id?: string
+    job_id: string
+    job_name: string
+    invoke_target: string
+    job_message?: string | null
+    status?: string
+    exception_info?: string | null
+    created_at?: Date | string
+  }
+
+  export type sys_job_logUpdateInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    job_message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    exception_info?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_job_logUncheckedUpdateInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    job_message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    exception_info?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_job_logCreateManyInput = {
+    log_id?: string
+    job_id: string
+    job_name: string
+    invoke_target: string
+    job_message?: string | null
+    status?: string
+    exception_info?: string | null
+    created_at?: Date | string
+  }
+
+  export type sys_job_logUpdateManyMutationInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    job_message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    exception_info?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_job_logUncheckedUpdateManyInput = {
+    log_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    job_name?: StringFieldUpdateOperationsInput | string
+    invoke_target?: StringFieldUpdateOperationsInput | string
+    job_message?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    exception_info?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptCreateInput = {
+    id?: string
+    role_id: string
+    dept_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptUncheckedCreateInput = {
+    id?: string
+    role_id: string
+    dept_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptCreateManyInput = {
+    id?: string
+    role_id: string
+    dept_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_todoCreateInput = {
+    todo_id?: string
+    tenant_id: string
+    user_id: string
+    title: string
+    content?: string | null
+    priority?: number
+    due_time?: Date | string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_todoUncheckedCreateInput = {
+    todo_id?: string
+    tenant_id: string
+    user_id: string
+    title: string
+    content?: string | null
+    priority?: number
+    due_time?: Date | string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_todoUpdateInput = {
+    todo_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: IntFieldUpdateOperationsInput | number
+    due_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_todoUncheckedUpdateInput = {
+    todo_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: IntFieldUpdateOperationsInput | number
+    due_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_todoCreateManyInput = {
+    todo_id?: string
+    tenant_id: string
+    user_id: string
+    title: string
+    content?: string | null
+    priority?: number
+    due_time?: Date | string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: number
+  }
+
+  export type sys_todoUpdateManyMutationInput = {
+    todo_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: IntFieldUpdateOperationsInput | number
+    due_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_todoUncheckedUpdateManyInput = {
+    todo_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: IntFieldUpdateOperationsInput | number
+    due_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_ip_ruleCreateInput = {
+    rule_id?: string
+    tenant_id: string
+    rule_type: string
+    ip_pattern: string
+    remark?: string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_ip_ruleUncheckedCreateInput = {
+    rule_id?: string
+    tenant_id: string
+    rule_type: string
+    ip_pattern: string
+    remark?: string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_ip_ruleUpdateInput = {
+    rule_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    rule_type?: StringFieldUpdateOperationsInput | string
+    ip_pattern?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_ip_ruleUncheckedUpdateInput = {
+    rule_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    rule_type?: StringFieldUpdateOperationsInput | string
+    ip_pattern?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_ip_ruleCreateManyInput = {
+    rule_id?: string
+    tenant_id: string
+    rule_type: string
+    ip_pattern: string
+    remark?: string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_ip_ruleUpdateManyMutationInput = {
+    rule_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    rule_type?: StringFieldUpdateOperationsInput | string
+    ip_pattern?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_ip_ruleUncheckedUpdateManyInput = {
+    rule_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    rule_type?: StringFieldUpdateOperationsInput | string
+    ip_pattern?: StringFieldUpdateOperationsInput | string
+    remark?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
   }
 
@@ -29370,7 +36167,6 @@ export namespace Prisma {
     content?: SortOrder
     notice_type?: SortOrder
     status?: SortOrder
-    is_read?: SortOrder
     publish_time?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -29381,7 +36177,6 @@ export namespace Prisma {
 
   export type sys_noticeAvgOrderByAggregateInput = {
     notice_type?: SortOrder
-    is_read?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29392,7 +36187,6 @@ export namespace Prisma {
     content?: SortOrder
     notice_type?: SortOrder
     status?: SortOrder
-    is_read?: SortOrder
     publish_time?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -29408,7 +36202,6 @@ export namespace Prisma {
     content?: SortOrder
     notice_type?: SortOrder
     status?: SortOrder
-    is_read?: SortOrder
     publish_time?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -29419,7 +36212,6 @@ export namespace Prisma {
 
   export type sys_noticeSumOrderByAggregateInput = {
     notice_type?: SortOrder
-    is_read?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29844,6 +36636,236 @@ export namespace Prisma {
   }
 
   export type sys_configSumOrderByAggregateInput = {
+    is_deleted?: SortOrder
+  }
+
+  export type sys_jobCountOrderByAggregateInput = {
+    job_id?: SortOrder
+    tenant_id?: SortOrder
+    job_name?: SortOrder
+    job_group?: SortOrder
+    invoke_target?: SortOrder
+    cron_expression?: SortOrder
+    misfire_policy?: SortOrder
+    concurrent?: SortOrder
+    status?: SortOrder
+    remark?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_jobAvgOrderByAggregateInput = {
+    misfire_policy?: SortOrder
+    concurrent?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_jobMaxOrderByAggregateInput = {
+    job_id?: SortOrder
+    tenant_id?: SortOrder
+    job_name?: SortOrder
+    job_group?: SortOrder
+    invoke_target?: SortOrder
+    cron_expression?: SortOrder
+    misfire_policy?: SortOrder
+    concurrent?: SortOrder
+    status?: SortOrder
+    remark?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_jobMinOrderByAggregateInput = {
+    job_id?: SortOrder
+    tenant_id?: SortOrder
+    job_name?: SortOrder
+    job_group?: SortOrder
+    invoke_target?: SortOrder
+    cron_expression?: SortOrder
+    misfire_policy?: SortOrder
+    concurrent?: SortOrder
+    status?: SortOrder
+    remark?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_jobSumOrderByAggregateInput = {
+    misfire_policy?: SortOrder
+    concurrent?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_job_logCountOrderByAggregateInput = {
+    log_id?: SortOrder
+    job_id?: SortOrder
+    job_name?: SortOrder
+    invoke_target?: SortOrder
+    job_message?: SortOrder
+    status?: SortOrder
+    exception_info?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_job_logMaxOrderByAggregateInput = {
+    log_id?: SortOrder
+    job_id?: SortOrder
+    job_name?: SortOrder
+    invoke_target?: SortOrder
+    job_message?: SortOrder
+    status?: SortOrder
+    exception_info?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_job_logMinOrderByAggregateInput = {
+    log_id?: SortOrder
+    job_id?: SortOrder
+    job_name?: SortOrder
+    invoke_target?: SortOrder
+    job_message?: SortOrder
+    status?: SortOrder
+    exception_info?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_role_deptRole_idDept_idCompoundUniqueInput = {
+    role_id: string
+    dept_id: string
+  }
+
+  export type sys_role_deptCountOrderByAggregateInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_role_deptMaxOrderByAggregateInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_role_deptMinOrderByAggregateInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_todoCountOrderByAggregateInput = {
+    todo_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    priority?: SortOrder
+    due_time?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_todoAvgOrderByAggregateInput = {
+    priority?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_todoMaxOrderByAggregateInput = {
+    todo_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    priority?: SortOrder
+    due_time?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_todoMinOrderByAggregateInput = {
+    todo_id?: SortOrder
+    tenant_id?: SortOrder
+    user_id?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    priority?: SortOrder
+    due_time?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_todoSumOrderByAggregateInput = {
+    priority?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_ip_ruleCountOrderByAggregateInput = {
+    rule_id?: SortOrder
+    tenant_id?: SortOrder
+    rule_type?: SortOrder
+    ip_pattern?: SortOrder
+    remark?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_ip_ruleAvgOrderByAggregateInput = {
+    is_deleted?: SortOrder
+  }
+
+  export type sys_ip_ruleMaxOrderByAggregateInput = {
+    rule_id?: SortOrder
+    tenant_id?: SortOrder
+    rule_type?: SortOrder
+    ip_pattern?: SortOrder
+    remark?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_ip_ruleMinOrderByAggregateInput = {
+    rule_id?: SortOrder
+    tenant_id?: SortOrder
+    rule_type?: SortOrder
+    ip_pattern?: SortOrder
+    remark?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    created_by?: SortOrder
+    updated_by?: SortOrder
+    is_deleted?: SortOrder
+  }
+
+  export type sys_ip_ruleSumOrderByAggregateInput = {
     is_deleted?: SortOrder
   }
 
@@ -30648,7 +37670,6 @@ export namespace Prisma {
     content?: string | null
     notice_type: number
     status?: string
-    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -30664,7 +37685,6 @@ export namespace Prisma {
     content?: string | null
     notice_type: number
     status?: string
-    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -30696,7 +37716,6 @@ export namespace Prisma {
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
-    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30712,7 +37731,6 @@ export namespace Prisma {
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
-    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
