@@ -1,0 +1,43 @@
+-- AlterTable
+ALTER TABLE "sys_audit_log" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_dept" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_dict_data" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_dict_type" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_login_log" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_menu" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_notice" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_permission" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_role" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_tenant" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);
+
+-- AlterTable
+ALTER TABLE "sys_user" ALTER COLUMN "status" SET DEFAULT '1',
+ALTER COLUMN "status" SET DATA TYPE VARCHAR(10);

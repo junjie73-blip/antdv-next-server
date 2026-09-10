@@ -12,23 +12,22 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { uploadFile } from "@/config/blob.js"; // 引入封装
+import { uploadFile, deleteFile } from "@/config/blob.js"; // 本地存储工具
 import { success, error } from "@/common/utils/response.js";
 
-const UPLOAD_DIR =
-  process.env.NODE_ENV === "production"
-    ? "/tmp/uploads"
-    : path.join(process.cwd(), "uploads");
-const TEMP_DIR = path.join(UPLOAD_DIR, "temp");
-const FINAL_DIR = path.join(UPLOAD_DIR, "files");
+// 上传根目录（可通过环境变量配置，生产环境建议持久化目录）
+const UPLOAD_ROOT =
+  process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
+const TEMP_DIR = path.join(UPLOAD_ROOT, "temp");
+const FINAL_DIR = path.join(UPLOAD_ROOT, "files");
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
 
-// 确保目录存在（开发环境始终创建，生产环境 /tmp 也创建）
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
-if (!fs.existsSync(FINAL_DIR)) fs.mkdirSync(FINAL_DIR, { recursive: true });
+// 确保目录存在
+for (const dir of [UPLOAD_ROOT, TEMP_DIR, FINAL_DIR]) {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+}
 
-// 分片上传临时存储（开发和生产都先存到磁盘临时目录）
+// 分片上传临时存储（磁盘）
 const chunkStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadId = req.body.uploadId;
@@ -49,14 +48,10 @@ const chunkUpload = multer({
   limits: { fileSize: CHUNK_SIZE * 2 },
 });
 
-// 简单上传临时存储（开发：直接存到最终目录；生产：先存到临时目录再上传 Blob）
+// 简单上传存储（直接存入最终目录）
 export const simpleStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (process.env.NODE_ENV === "production") {
-      cb(null, TEMP_DIR); // 生产暂存到临时目录
-    } else {
-      cb(null, FINAL_DIR); // 开发直接存到最终目录
-    }
+    cb(null, FINAL_DIR);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
@@ -82,17 +77,8 @@ export default class UploadController {
       if (!req.file) return error(res, "请选择文件", 400, 400);
 
       try {
-        let url: string;
-        if (process.env.NODE_ENV === "production") {
-          // 读取临时文件并上传到 Blob
-          const fileContent = fs.readFileSync(req.file.path);
-          url = await uploadFile(req.file.filename, fileContent);
-          // 删除临时文件
-          fs.unlinkSync(req.file.path);
-        } else {
-          // 开发环境返回本地 URL
-          url = `/uploads/files/${req.file.filename}`;
-        }
+        // 文件已存储在 FINAL_DIR，直接构造 URL
+        const url = `/uploads/files/${req.file.filename}`;
         success(res, { url }, "上传成功");
       } catch (e) {
         console.error(e);
@@ -163,7 +149,7 @@ export default class UploadController {
         return error(res, "上传临时目录不存在", 404, 404);
       }
 
-      // 合并分片到临时文件
+      // 合并分片到最终目录
       const ext = path.extname(fileName);
       const mergedFileName = `${uuidv4()}${ext}`;
       const mergedPath = path.join(FINAL_DIR, mergedFileName);
@@ -183,21 +169,30 @@ export default class UploadController {
       // 清理临时分片目录
       fs.rmSync(tempDir, { recursive: true, force: true });
 
-      let url: string;
-      if (process.env.NODE_ENV === "production") {
-        // 读取合并后的文件并上传到 Blob
-        const fileContent = fs.readFileSync(mergedPath);
-        url = await uploadFile(fileName, fileContent);
-        // 删除本地合并文件
-        fs.unlinkSync(mergedPath);
-      } else {
-        url = `/uploads/files/${mergedFileName}`;
-      }
-
+      // 返回文件 URL（本地路径）
+      const url = `/uploads/files/${mergedFileName}`;
       success(res, { url }, "合并成功");
     } catch (err) {
       console.error(err);
       error(res, "合并失败", 500, 500);
+    }
+  }
+
+  /**
+   * 删除文件（可选接口，根据业务需要）
+   */
+  @Post("/delete")
+  @ApiOperation("删除文件", "根据URL删除本地文件")
+  @ApiResponse(200, "删除成功")
+  async deleteFile(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { url } = req.body;
+      if (!url) return error(res, "缺少url参数", 400, 400);
+      await deleteFile(url);
+      success(res, null, "删除成功");
+    } catch (err) {
+      console.error(err);
+      error(res, "删除失败", 500, 500);
     }
   }
 }

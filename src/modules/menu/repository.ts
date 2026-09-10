@@ -3,6 +3,7 @@ import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToCamelCase } from "@/common/utils/case-convert.js";
 import { AppError } from "@/middleware/error-handler.js";
+import dayjs from "dayjs";
 
 export class MenuRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_menu;
@@ -36,7 +37,7 @@ export class MenuRepository extends BaseRepository<any, any, any, any> {
       finalWhere.menu_name = { contains: query.menuName };
     }
     if (query.status !== undefined) {
-      finalWhere.status = Number(query.status);
+      finalWhere.status = query.status;
     }
 
     const [list, total] = await Promise.all([
@@ -80,13 +81,28 @@ export class MenuRepository extends BaseRepository<any, any, any, any> {
    */
   private buildTree(items: any[], parentId: string | null): any[] {
     return items
-      .filter((item) =>
-        parentId === null ? item.parent_id : item.parent_id === parentId,
-      )
-      .map((item) => ({
-        ...keysToCamelCase(item),
-        children: this.buildTree(items, item.menu_id),
-      }));
+      .filter((item) => {
+        if (parentId === null) {
+          return (
+            item.parent_id === null ||
+            item.parent_id === undefined ||
+            item.parent_id === "" ||
+            item.parent_id === "00000000-0000-0000-0000-000000000000"
+          );
+        }
+        return item.parent_id === parentId;
+      })
+      .map((item) => {
+        const children = this.buildTree(items, item.menu_id);
+        const node: any = {
+          ...keysToCamelCase(item),
+        };
+        // 仅当 children 非空时才添加该字段
+        if (children.length > 0) {
+          node.children = children;
+        }
+        return node;
+      });
   }
 
   /**
@@ -127,5 +143,27 @@ export class MenuRepository extends BaseRepository<any, any, any, any> {
       where.menu_id = { not: excludeId };
     }
     return this.model.findFirst({ where });
+  }
+
+  /**
+   * 获取指定菜单下的所有按钮（menu_type = 3）
+   * @param parentId 父菜单ID（UUID）
+   * @param tenantId 租户ID
+   */
+  async findButtonsByParent(
+    parentId: string,
+    tenantId: string,
+  ): Promise<any[]> {
+    const buttons = await this.model.findMany({
+      where: {
+        parent_id: parentId,
+        menu_type: 3, // 按钮类型
+        tenant_id: tenantId,
+        is_deleted: 0,
+      },
+      orderBy: { sort_order: "asc" },
+    });
+    // 转换为驼峰并返回
+    return buttons.map((btn: any) => keysToCamelCase(btn));
   }
 }

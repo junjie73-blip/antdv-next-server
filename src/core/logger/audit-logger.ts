@@ -13,7 +13,7 @@ export interface AuditLogEntry {
   ipAddress: string;
   userAgent?: string;
   executeTime: number;
-  status: number;
+  status: string;
   errorMsg?: string;
 }
 

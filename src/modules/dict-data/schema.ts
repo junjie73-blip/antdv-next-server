@@ -46,3 +46,13 @@ export const DictDataListSchema = z
     status: z.string().optional().openapi({ description: "状态过滤" }),
   })
   .openapi("DictDataList");
+export const DictTreeQuerySchema = z
+  .object({
+    dictTypeId: z
+      .string()
+      .uuid()
+      .optional()
+      .openapi({ description: "按字典类型ID过滤" }),
+    dictCode: z.string().optional().openapi({ description: "按字典编码过滤" }),
+  })
+  .openapi("DictTreeQuery");

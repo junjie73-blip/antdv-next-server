@@ -48,9 +48,11 @@ export const UserCreateSchema = z
       .optional()
       .openapi({ description: "关联角色ID列表" }),
     deptIds: z
-      .array(z.string().uuid())
+      .string()
+      .uuid()
       .optional()
       .openapi({ description: "关联部门ID列表" }),
+    sortOrder: z.string().optional().openapi({ description: "排序顺序" }),
     tenantId: z.string().uuid().openapi({ description: "租户ID" }),
   })
   .openapi("UserCreate");

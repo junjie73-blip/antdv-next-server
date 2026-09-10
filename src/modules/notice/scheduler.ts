@@ -14,7 +14,7 @@ export function startNoticeScheduler() {
       const now = new Date();
       const dueNotices = await prisma.sys_notice.findMany({
         where: {
-          status: 0, // 草稿
+          status: "0", // 草稿
           is_deleted: 0,
           publish_time: { lte: now },
         },
@@ -27,12 +27,12 @@ export function startNoticeScheduler() {
       const ids = dueNotices.map((n) => n.notice_id);
       await prisma.sys_notice.updateMany({
         where: { notice_id: { in: ids } },
-        data: { status: 1 },
+        data: { status: "1" },
       });
       // 在更新状态为已发布后，对每个通知推送
       await prisma.sys_notice.updateMany({
         where: { notice_id: { in: ids } },
-        data: { status: 1 },
+        data: { status: "1" },
       });
 
       // 推送 WebSocket 通知

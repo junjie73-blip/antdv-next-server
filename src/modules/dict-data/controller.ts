@@ -18,9 +18,11 @@ import {
   DictDataCreateSchema,
   DictDataUpdateSchema,
   DictDataListSchema,
+  DictTreeQuerySchema,
 } from "./schema.js";
 import { AppError } from "@/middleware/error-handler.js";
 import z from "zod";
+import { success } from "@/common/utils/response.js";
 
 @Controller("/dict-data", { tags: ["字典数据"] })
 export default class DictDataController extends BaseController<
@@ -71,8 +73,8 @@ export default class DictDataController extends BaseController<
         { dict_value: { contains: query.keyword } },
       ];
     }
-    if (query.status !== undefined && query.status !== "") {
-      where.status = Number(query.status);
+    if (query.status !== undefined) {
+      where.status = query.status;
     }
     return where;
   }
@@ -140,7 +142,7 @@ export default class DictDataController extends BaseController<
       const data = await (
         this.repository as DictDataRepository
       ).findByDictCodeAndType(req.params.code, req.tenantId!, dictTypeId);
-      res.json({ code: 200, message: "success", data, timestamp: Date.now() });
+      success(res, data);
     } catch (err) {
       this.handleError(res, err);
     }
@@ -152,5 +154,24 @@ export default class DictDataController extends BaseController<
   @ApiResponse(200, "删除成功")
   async batchRemoveDictData(@Req() req: Request, @Res() res: Response) {
     return this.batchRemove(req, res);
+  }
+  /**
+   * 字典树接口
+   */
+  @Get("/code/tree")
+  @ApiOperation("获取字典树", "返回所有启用的字典类型及其字典数据（树形结构）")
+  @ApiQuery(DictTreeQuerySchema)
+  @ApiResponse(200, "查询成功")
+  async dictTree(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { dictTypeId, dictCode } = req.query;
+      const tree = await this.repository.findTree(req.tenantId!, {
+        dictTypeId: dictTypeId as string | undefined,
+        dictCode: dictCode as string | undefined,
+      });
+      success(res, tree);
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 }

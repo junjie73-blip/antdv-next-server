@@ -38,7 +38,8 @@ export interface BaseQuery {
   pageSize?: number;
   keyword?: string;
   status?: number;
-  sort?: SortQuery[];
+  sort?: Array<{ field: string; direction: "asc" | "desc" }>;
+  fields?: string | string[];
   [key: string]: unknown;
 }
 

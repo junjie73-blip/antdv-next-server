@@ -10,6 +10,7 @@ import * as XLSX from "xlsx";
 import { AppError } from "@/middleware/error-handler.js";
 import { UserCreateDto, UserImportRowSchema } from "./schema.js";
 import { Prisma } from "@/generated/prisma/index.js";
+import { encrypt } from "@/common/utils/crypto.js";
 
 export class UserRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "user_id";
@@ -18,10 +19,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
   /**
    * 分页查询用户（带角色、部门过滤），重写基类方法
    */
-  async findPage(
-    query: BaseQuery & { roleId?: string; deptId?: string },
-    where: any,
-  ): Promise<PageResult<any>> {
+  async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
     const pageNum = Math.max(1, query.pageNum || 1);
     const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
     const skip = (pageNum - 1) * pageSize;
@@ -32,34 +30,56 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       is_deleted: 0,
     };
 
-    if (query.roleId) {
-      finalWhere.sys_user_role = { some: { role_id: query.roleId } };
-    }
+    // 处理 deptId 过滤（包含子部门）
     if (query.deptId) {
-      finalWhere.sys_user_dept = { some: { dept_id: query.deptId } };
+      const deptIds = await this.getAllChildDeptIds(
+        query.deptId as string,
+        query.tenantId,
+      );
+      finalWhere.sys_user_dept = {
+        some: {
+          dept_id: { in: deptIds },
+        },
+      };
     }
 
-    const [list, total] = await Promise.all([
+    // 如果还有 roleId 过滤，类似处理
+    if (query.roleId) {
+      finalWhere.sys_user_role = {
+        some: {
+          role_id: query.roleId,
+        },
+      };
+    }
+
+    const [rawList, total] = await Promise.all([
       this.model.findMany({
         where: finalWhere,
         skip,
         take: pageSize,
         orderBy: { created_at: "desc" },
         include: {
-          sys_user_role: {
-            include: {
-              role: { select: { role_id: true, role_name: true } },
-            },
-          },
-          sys_user_dept: {
-            include: {
-              dept: { select: { dept_id: true, dept_name: true } },
-            },
-          },
+          sys_user_dept: { include: { dept: true } },
+          sys_user_role: { include: { role: true } },
         },
       }),
       this.model.count({ where: finalWhere }),
     ]);
+
+    // 转换数据结构（扁平化 role 和 dept）
+    const list = rawList.map((user: any) => {
+      const { sys_user_role, sys_user_dept, ...rest } = user;
+      return {
+        ...rest,
+        roles:
+          sys_user_role?.map((ur: any) => ({
+            roleName: ur.role?.role_name,
+            roleId: ur.role?.role_id,
+          })) || [],
+        deptId: sys_user_dept?.[0]?.dept?.dept_id || null,
+        deptName: sys_user_dept?.[0]?.dept?.dept_name || "",
+      };
+    });
 
     return {
       list,
@@ -69,7 +89,6 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       totalPages: Math.ceil(total / pageSize),
     };
   }
-
   /**
    * 根据用户名查找用户（用于唯一性检查）
    */
@@ -137,49 +156,75 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       }
     }
 
-    const { roleIds, deptIds, ...rest } = data;
-    if (Object.keys(rest).length > 0) {
-      await this.model.updateMany({
-        where: { user_id: id, tenant_id: tenantId, is_deleted: 0 },
-        data: {
-          ...((keysToSnakeCase(rest) as any) || {}),
-          updated_by: userId,
-          updated_at: new Date(),
+    const { role_ids: roleIds, dept_ids: deptIds, password, ...rest } = data;
+    //  密码字段若存在，需要哈希（通常更新密码会走专门接口，此处可忽略或处理）
+    let hashedPassword: string | undefined;
+    if (password) {
+      hashedPassword = encrypt(password);
+    }
+
+    return prisma.$transaction(async (tx) => {
+      // 1. 更新用户主体（排除关联字段）
+      if (Object.keys(rest).length > 0 || hashedPassword) {
+        await tx.sys_user.update({
+          where: { user_id: id },
+          data: {
+            ...rest,
+            ...(hashedPassword && { password: hashedPassword }),
+            updated_by: userId,
+            updated_at: new Date(),
+          },
+        });
+      }
+
+      // 2. 处理部门关联（若传入了 dept_ids）
+      if (deptIds !== undefined) {
+        // 删除旧关联
+        await tx.sys_user_dept.deleteMany({
+          where: { user_id: id, tenant_id: tenantId },
+        });
+
+        // 若 dept_ids 非空，则创建新关联（支持单个字符串或数组）
+        if (deptIds) {
+          const deptArray = Array.isArray(deptIds) ? deptIds : [deptIds];
+          await tx.sys_user_dept.createMany({
+            data: deptArray.map((deptId: string) => ({
+              user_id: id,
+              dept_id: deptId,
+              tenant_id: tenantId,
+              is_primary: 1,
+            })),
+          });
+        }
+      }
+
+      // 3. 处理角色关联（若传入了 role_ids）
+      if (roleIds !== undefined) {
+        await tx.sys_user_role.deleteMany({
+          where: { user_id: id, tenant_id: tenantId },
+        });
+
+        if (roleIds && roleIds.length > 0) {
+          const roleArray = Array.isArray(roleIds) ? roleIds : [roleIds];
+          await tx.sys_user_role.createMany({
+            data: roleArray.map((roleId: string) => ({
+              user_id: id,
+              role_id: roleId,
+              tenant_id: tenantId,
+            })),
+          });
+        }
+      }
+
+      // 返回更新后的用户（包含关联信息，可选）
+      return tx.sys_user.findUnique({
+        where: { user_id: id },
+        include: {
+          sys_user_dept: { include: { dept: true } },
+          sys_user_role: { include: { role: true } },
         },
       });
-    }
-
-    if (roleIds !== undefined) {
-      await prisma.$transaction([
-        prisma.sys_user_role.deleteMany({
-          where: { user_id: id, tenant_id: tenantId },
-        }),
-        prisma.sys_user_role.createMany({
-          data: roleIds.map((roleId: string) => ({
-            user_id: id,
-            role_id: roleId,
-            tenant_id: tenantId,
-          })),
-        }),
-      ]);
-    }
-
-    if (deptIds !== undefined) {
-      await prisma.$transaction([
-        prisma.sys_user_dept.deleteMany({
-          where: { user_id: id, tenant_id: tenantId },
-        }),
-        prisma.sys_user_dept.createMany({
-          data: deptIds.map((deptId: string) => ({
-            user_id: id,
-            dept_id: deptId,
-            tenant_id: tenantId,
-          })),
-        }),
-      ]);
-    }
-
-    return this.findUserDetail(id, tenantId);
+    });
   }
 
   /**
@@ -242,8 +287,8 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       where: finalWhere,
       // @ts-ignore
       include: {
-        sys_user_role: { include: { sys_role: true } },
-        sys_user_dept: { include: { sys_dept: true } },
+        sys_user_role: { include: { role: true } },
+        sys_user_dept: { include: { dept: true } },
       },
       orderBy: { created_at: "asc" },
     });
@@ -254,7 +299,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       手机号: u.phone || "",
       邮箱: u.email || "",
       性别: u.gender === 1 ? "男" : u.gender === 2 ? "女" : "未知",
-      状态: u.status === 1 ? "启用" : "禁用",
+      状态: u.status === "1" ? "启用" : "禁用",
       角色: (u.sys_user_role as any[])
         .map((ur) => ur.sys_role?.role_name)
         .join(","),
@@ -305,7 +350,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           phone: String(row["手机号"] || "").trim() || undefined,
           email: String(row["邮箱"] || "").trim() || undefined,
           gender: row["性别"] === "男" ? 1 : row["性别"] === "女" ? 2 : 0,
-          status: row["状态"] === "禁用" ? 0 : 1,
+          status: row["状态"] === "禁用" ? "0" : "1",
           roleCodes: String(row["角色编码"] || "").trim(),
           deptCodes: String(row["部门编码"] || "").trim(),
         };
@@ -401,10 +446,9 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
   async findUserRoles(userId: string, tenantId: string) {
     const roles = await prisma.sys_user_role.findMany({
       where: { user_id: userId, tenant_id: tenantId },
-      // @ts-ignore
-      include: { sys_role: true },
+      include: { role: true },
     });
-    return roles.map((r) => r.sys_role);
+    return roles.map((r) => r.role);
   }
   async updateUserDepts(userId: string, deptIds: string[], tenantId: string) {
     await prisma.$transaction([
@@ -425,63 +469,166 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
   async findUserDepts(userId: string, tenantId: string) {
     const depts = await prisma.sys_user_dept.findMany({
       where: { user_id: userId, tenant_id: tenantId },
-      include: { sys_dept: true },
+      include: { dept: true },
     });
-    return depts.map((d) => d.sys_dept);
+    return depts.map((d) => d.dept);
   }
   /**
    * 创建用户并关联角色/部门
    */
   async createWithRelations(data: any, tenantId: string, userId?: string) {
-    const { roleIds, deptIds, password, ...rest } = data;
-
-    // 1. 事务外检查用户名唯一性（可选，但推荐）
-    const exist = await this.findUserByUsername(rest.username, tenantId);
-    if (exist) throw new AppError(409, "用户名已存在", 409);
-
-    // 2. 密码哈希提前计算
+    // 从 data 中解构出 deptIds 和 roleIds，剩余部分才是用户表字段
+    const {
+      dept_ids: deptIds,
+      role_ids: roleIds,
+      password,
+      ...userData
+    } = data;
+    // 密码哈希提前进行
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3. 执行事务，只包含必要的数据库写操作
-    return prisma.$transaction(
-      async (tx) => {
-        const user = await tx.sys_user.create({
-          data: {
-            ...keysToSnakeCase(rest),
-            password: hashedPassword,
+    return prisma.$transaction(async (tx) => {
+      // 1. 创建用户主体
+      const user = await tx.sys_user.create({
+        data: {
+          // @ts-ignore
+          ...keysToSnakeCase(userData),
+          password: hashedPassword,
+          tenant_id: tenantId,
+          created_by: userId,
+          updated_by: userId,
+          created_at: new Date(),
+          updated_at: new Date(),
+          is_deleted: 0,
+        },
+      });
+
+      // 2. 处理部门关联
+      if (deptIds && deptIds.length > 0) {
+        // 兼容 deptIds 可能是单个字符串或数组
+        const deptArray = Array.isArray(deptIds) ? deptIds : [deptIds];
+        await tx.sys_user_dept.createMany({
+          data: deptArray.map((deptId: string) => ({
+            user_id: user.user_id,
+            dept_id: deptId,
             tenant_id: tenantId,
-            created_by: userId,
-            updated_by: userId,
-            created_at: new Date(),
-            updated_at: new Date(),
-            is_deleted: 0,
-          },
+            is_primary: 0,
+          })),
         });
+      }
 
-        if (roleIds?.length) {
-          await tx.sys_user_role.createMany({
-            data: roleIds.map((roleId: string) => ({
-              user_id: user.user_id,
-              role_id: roleId,
-              tenant_id: tenantId,
-            })),
-          });
-        }
+      // 3. 处理角色关联
+      if (roleIds && roleIds.length > 0) {
+        const roleArray = Array.isArray(roleIds) ? roleIds : [roleIds];
+        await tx.sys_user_role.createMany({
+          data: roleArray.map((roleId: string) => ({
+            user_id: user.user_id,
+            role_id: roleId,
+            tenant_id: tenantId,
+          })),
+        });
+      }
 
-        if (deptIds?.length) {
-          await tx.sys_user_dept.createMany({
-            data: deptIds.map((deptId: string) => ({
-              user_id: user.user_id,
-              dept_id: deptId,
-              tenant_id: tenantId,
-              is_primary: 0,
-            })),
-          });
-        }
+      return user;
+    });
+  }
 
-        return user;
-      },
-      { timeout: 15000 }, // 可选
-    );
+  // 查找租户
+  async findTenantByCode(tenantCode: string) {
+    return prisma.sys_tenant.findUnique({
+      where: { tenant_code: tenantCode },
+    });
+  }
+
+  // 在租户内查找用户名
+  async findUserByUsernameInTenant(
+    username: string,
+    tenantId: string,
+    excludeId?: string,
+  ) {
+    const where: any = {
+      tenant_id: tenantId,
+      username,
+      is_deleted: 0,
+    };
+    if (excludeId) where.user_id = { not: excludeId };
+    return this.model.findFirst({ where });
+  }
+
+  // 注册租户和用户（事务）
+  async registerTenantWithUser(data: {
+    tenantCode: string;
+    tenantName: string;
+    username: string;
+    password: string;
+    email?: string;
+    phone?: string;
+  }) {
+    const { tenantCode, tenantName, username, password, email, phone } = data;
+    const hashedPassword = await encrypt(password);
+
+    return prisma.$transaction(async (tx) => {
+      // 1. 创建租户
+      const tenant = await tx.sys_tenant.create({
+        data: {
+          tenant_code: tenantCode,
+          tenant_name: tenantName,
+          status: "1",
+          created_at: new Date(),
+          updated_at: new Date(),
+          is_deleted: 0,
+        },
+      });
+
+      // 2. 创建用户并绑定租户
+      const user = await tx.sys_user.create({
+        data: {
+          tenant_id: tenant.tenant_id,
+          username,
+          password: hashedPassword,
+          email,
+          phone,
+          status: "1",
+          created_at: new Date(),
+          updated_at: new Date(),
+          is_deleted: 0,
+        },
+      });
+
+      // 3. 可选：创建默认角色并关联用户（如超级管理员）
+      // 如果需要，可在此创建超级管理员角色并绑定，参照之前的注册逻辑
+
+      return { tenant, user };
+    });
+  }
+  async getAllChildDeptIds(
+    parentDeptId: string,
+    tenantId: string,
+  ): Promise<string[]> {
+    // 查询所有部门（未删除），用于构建树
+    const allDepts = await prisma.sys_dept.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      select: { dept_id: true, parent_id: true },
+    });
+
+    // 构建 parent -> children 映射
+    const childrenMap: Record<string, string[]> = {};
+    for (const dept of allDepts) {
+      const parentId = dept.parent_id || "root";
+      if (!childrenMap[parentId]) childrenMap[parentId] = [];
+      childrenMap[parentId].push(dept.dept_id);
+    }
+
+    // 收集所有后代 ID
+    const result: string[] = [];
+    function dfs(deptId: string) {
+      result.push(deptId);
+      const children = childrenMap[deptId] || [];
+      for (const child of children) {
+        dfs(child);
+      }
+    }
+    dfs(parentDeptId);
+    return result;
   }
 }

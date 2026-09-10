@@ -9,18 +9,19 @@ import { publishNoticePush } from "@/core/redis/pubsub.js";
  */
 export async function pushNotice(noticeId: string) {
   try {
-    // 查询通知详情及目标用户
     const notice = await prisma.sys_notice.findUnique({
       where: { notice_id: noticeId },
       include: {
-        target_users: { select: { user_id: true } },
+        target_users: {
+          select: { user_id: true },
+        },
       },
     });
 
-    if (!notice || notice.status !== 1) return; // 只推送已发布的通知
+    if (!notice || notice.status !== "1") return;
 
     const targetUserIds = notice.target_users.map((tu) => tu.user_id);
-    if (targetUserIds.length === 0) return;
+    if (targetUserIds.length === 0) return; // 如果没有指定用户，则不发（或按业务规则处理）
 
     const message = {
       type: "notice",
@@ -31,16 +32,11 @@ export async function pushNotice(noticeId: string) {
         noticeType: notice.notice_type,
         publishTime: notice.publish_time,
       },
-      timestamp: Date.now(),
     };
-    await publishNoticePush(noticeId);
 
-    wsManager.sendToUsers(notice.tenant_id, targetUserIds, message);
-    logger.info(
-      { noticeId, targetUserCount: targetUserIds.length },
-      "Notice pushed via WebSocket",
-    );
+    // 精确推送
+    wsManager.sendToUsers(targetUserIds, message);
   } catch (error) {
-    logger.error({ error, noticeId }, "Failed to push notice");
+    console.error("Failed to push notice:", error);
   }
 }

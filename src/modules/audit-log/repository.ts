@@ -1,6 +1,7 @@
 import { BaseRepository } from "@/core/base-repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
+import { keysToCamelCase } from "@/common/utils/case-convert.js";
 
 export class AuditLogRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_audit_log;
@@ -28,7 +29,7 @@ export class AuditLogRepository extends BaseRepository<any, any, any, any> {
     if (query.username) finalWhere.username = { contains: query.username };
     if (query.operation) finalWhere.operation = { contains: query.operation };
     if (query.method) finalWhere.method = query.method.toUpperCase();
-    if (query.status !== undefined) finalWhere.status = Number(query.status);
+    if (query.status !== undefined) finalWhere.status = query.status;
     if (query.startTime)
       finalWhere.created_at = {
         ...(finalWhere.created_at || {}),
@@ -51,7 +52,7 @@ export class AuditLogRepository extends BaseRepository<any, any, any, any> {
     ]);
 
     return {
-      list,
+      list: list.map(keysToCamelCase),
       total,
       pageNum,
       pageSize,

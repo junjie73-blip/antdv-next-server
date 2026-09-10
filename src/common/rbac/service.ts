@@ -44,7 +44,7 @@ export async function getUserPermissions(
   const permIds = [...new Set(rolePerms.map((rp) => rp.perm_id))];
 
   const permissions = await prisma.sys_permission.findMany({
-    where: { perm_id: { in: permIds }, status: 1, is_deleted: 0 },
+    where: { perm_id: { in: permIds }, status: "1", is_deleted: 0 },
     select: { perm_code: true },
   });
 

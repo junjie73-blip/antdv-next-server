@@ -10,35 +10,30 @@ export async function auditMiddleware(
   const start = Date.now();
   res.on("finish", async () => {
     try {
-      const duration = Date.now() - start;
       const user = (req as any).user;
       const tenantId = (req as any).tenantId || user?.tenantId || null;
-      const operation = `${req.method} ${req.route?.path || req.path}`;
-      const requestParams = JSON.stringify({
-        query: req.query,
-        params: req.params,
-        body: req.body,
-      });
-      const responseData = res.locals.responseData || null; // 需要在响应前设置
+
+      // 如果 tenantId 为 null 或未认证，可跳过写入
+      if (!tenantId || !user?.userId) {
+        // 或者记录一条匿名日志，但需确保字段可空
+        // 这里选择直接返回，避免 Prisma 校验错误
+        return;
+      }
 
       await prisma.sys_audit_log.create({
         data: {
           tenant_id: tenantId,
-          user_id: user?.userId || null,
-          username: user?.username || null,
-          operation,
+          user_id: user.userId,
+          username: user.username || "",
+          operation: `${req.method} ${req.route?.path || req.path}`,
           method: req.method,
           request_url: req.originalUrl,
-          request_params: requestParams,
-          response_data: responseData,
-          ip_address: req.ip || req.socket.remoteAddress || "",
+          request_params: JSON.stringify({ query: req.query, body: req.body }),
+          ip_address: req.ip || "",
           user_agent: req.headers["user-agent"] || "",
-          execute_time: duration,
-          status: res.statusCode >= 400 ? 0 : 1,
-          error_msg:
-            res.statusCode >= 400
-              ? res.locals.errorMessage || "Request failed"
-              : null,
+          execute_time: Date.now() - start,
+          status: res.statusCode >= 400 ? "0" : "1",
+          error_msg: res.statusCode >= 400 ? "Request failed" : null,
         },
       });
     } catch (error) {

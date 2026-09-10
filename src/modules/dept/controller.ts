@@ -41,8 +41,10 @@ export default class DeptController extends BaseController<any, any, any, any> {
   protected buildListWhere(query: any) {
     const where: any = {};
     if (query.deptName) where.dept_name = { contains: query.deptName };
-    if (query.status !== undefined && query.status !== "")
-      where.status = Number(query.status);
+    if (query.status !== undefined) where.status = query.status;
+    if (query.parentId) {
+      where.parent_id = query.parentId;
+    }
     return where;
   }
 

@@ -73,8 +73,8 @@ export default class DictTypeController extends BaseController<
         { dict_name: { contains: query.keyword } },
       ];
     }
-    if (query.status !== undefined && query.status !== "") {
-      where.status = Number(query.status);
+    if (query.status !== undefined) {
+      where.status = query.status;
     }
     return where;
   }

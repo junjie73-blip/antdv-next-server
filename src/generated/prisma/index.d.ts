@@ -2677,12 +2677,10 @@ export namespace Prisma {
   }
 
   export type Sys_tenantAvgAggregateOutputType = {
-    status: number | null
     is_deleted: number | null
   }
 
   export type Sys_tenantSumAggregateOutputType = {
-    status: number | null
     is_deleted: number | null
   }
 
@@ -2693,7 +2691,7 @@ export namespace Prisma {
     contact_name: string | null
     contact_phone: string | null
     contact_email: string | null
-    status: number | null
+    status: string | null
     expire_time: Date | null
     created_at: Date | null
     updated_at: Date | null
@@ -2709,7 +2707,7 @@ export namespace Prisma {
     contact_name: string | null
     contact_phone: string | null
     contact_email: string | null
-    status: number | null
+    status: string | null
     expire_time: Date | null
     created_at: Date | null
     updated_at: Date | null
@@ -2737,12 +2735,10 @@ export namespace Prisma {
 
 
   export type Sys_tenantAvgAggregateInputType = {
-    status?: true
     is_deleted?: true
   }
 
   export type Sys_tenantSumAggregateInputType = {
-    status?: true
     is_deleted?: true
   }
 
@@ -2888,7 +2884,7 @@ export namespace Prisma {
     contact_name: string | null
     contact_phone: string | null
     contact_email: string | null
-    status: number
+    status: string
     expire_time: Date | null
     created_at: Date
     updated_at: Date
@@ -3011,9 +3007,9 @@ export namespace Prisma {
        */
       contact_email: string | null
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
       /**
        * 租户过期时间
        */
@@ -3467,7 +3463,7 @@ export namespace Prisma {
     readonly contact_name: FieldRef<"sys_tenant", 'String'>
     readonly contact_phone: FieldRef<"sys_tenant", 'String'>
     readonly contact_email: FieldRef<"sys_tenant", 'String'>
-    readonly status: FieldRef<"sys_tenant", 'Int'>
+    readonly status: FieldRef<"sys_tenant", 'String'>
     readonly expire_time: FieldRef<"sys_tenant", 'DateTime'>
     readonly created_at: FieldRef<"sys_tenant", 'DateTime'>
     readonly updated_at: FieldRef<"sys_tenant", 'DateTime'>
@@ -3859,13 +3855,13 @@ export namespace Prisma {
 
   export type Sys_userAvgAggregateOutputType = {
     gender: number | null
-    status: number | null
+    sort_order: number | null
     is_deleted: number | null
   }
 
   export type Sys_userSumAggregateOutputType = {
     gender: number | null
-    status: number | null
+    sort_order: number | null
     is_deleted: number | null
   }
 
@@ -3879,7 +3875,8 @@ export namespace Prisma {
     email: string | null
     avatar: string | null
     gender: number | null
-    status: number | null
+    status: string | null
+    sort_order: number | null
     last_login_ip: string | null
     last_login_time: Date | null
     created_at: Date | null
@@ -3899,7 +3896,8 @@ export namespace Prisma {
     email: string | null
     avatar: string | null
     gender: number | null
-    status: number | null
+    status: string | null
+    sort_order: number | null
     last_login_ip: string | null
     last_login_time: Date | null
     created_at: Date | null
@@ -3920,6 +3918,7 @@ export namespace Prisma {
     avatar: number
     gender: number
     status: number
+    sort_order: number
     last_login_ip: number
     last_login_time: number
     created_at: number
@@ -3933,13 +3932,13 @@ export namespace Prisma {
 
   export type Sys_userAvgAggregateInputType = {
     gender?: true
-    status?: true
+    sort_order?: true
     is_deleted?: true
   }
 
   export type Sys_userSumAggregateInputType = {
     gender?: true
-    status?: true
+    sort_order?: true
     is_deleted?: true
   }
 
@@ -3954,6 +3953,7 @@ export namespace Prisma {
     avatar?: true
     gender?: true
     status?: true
+    sort_order?: true
     last_login_ip?: true
     last_login_time?: true
     created_at?: true
@@ -3974,6 +3974,7 @@ export namespace Prisma {
     avatar?: true
     gender?: true
     status?: true
+    sort_order?: true
     last_login_ip?: true
     last_login_time?: true
     created_at?: true
@@ -3994,6 +3995,7 @@ export namespace Prisma {
     avatar?: true
     gender?: true
     status?: true
+    sort_order?: true
     last_login_ip?: true
     last_login_time?: true
     created_at?: true
@@ -4100,7 +4102,8 @@ export namespace Prisma {
     email: string | null
     avatar: string | null
     gender: number | null
-    status: number
+    status: string
+    sort_order: number
     last_login_ip: string | null
     last_login_time: Date | null
     created_at: Date
@@ -4140,6 +4143,7 @@ export namespace Prisma {
     avatar?: boolean
     gender?: boolean
     status?: boolean
+    sort_order?: boolean
     last_login_ip?: boolean
     last_login_time?: boolean
     created_at?: boolean
@@ -4163,6 +4167,7 @@ export namespace Prisma {
     avatar?: boolean
     gender?: boolean
     status?: boolean
+    sort_order?: boolean
     last_login_ip?: boolean
     last_login_time?: boolean
     created_at?: boolean
@@ -4183,6 +4188,7 @@ export namespace Prisma {
     avatar?: boolean
     gender?: boolean
     status?: boolean
+    sort_order?: boolean
     last_login_ip?: boolean
     last_login_time?: boolean
     created_at?: boolean
@@ -4203,6 +4209,7 @@ export namespace Prisma {
     avatar?: boolean
     gender?: boolean
     status?: boolean
+    sort_order?: boolean
     last_login_ip?: boolean
     last_login_time?: boolean
     created_at?: boolean
@@ -4212,7 +4219,7 @@ export namespace Prisma {
     is_deleted?: boolean
   }
 
-  export type sys_userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "tenant_id" | "username" | "password" | "real_name" | "phone" | "email" | "avatar" | "gender" | "status" | "last_login_ip" | "last_login_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_user"]>
+  export type sys_userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "tenant_id" | "username" | "password" | "real_name" | "phone" | "email" | "avatar" | "gender" | "status" | "sort_order" | "last_login_ip" | "last_login_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_user"]>
   export type sys_userInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sys_user_role?: boolean | sys_user$sys_user_roleArgs<ExtArgs>
     sys_user_dept?: boolean | sys_user$sys_user_deptArgs<ExtArgs>
@@ -4271,9 +4278,10 @@ export namespace Prisma {
        */
       gender: number | null
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
+      sort_order: number
       /**
        * 最后登录IP
        */
@@ -4736,7 +4744,8 @@ export namespace Prisma {
     readonly email: FieldRef<"sys_user", 'String'>
     readonly avatar: FieldRef<"sys_user", 'String'>
     readonly gender: FieldRef<"sys_user", 'Int'>
-    readonly status: FieldRef<"sys_user", 'Int'>
+    readonly status: FieldRef<"sys_user", 'String'>
+    readonly sort_order: FieldRef<"sys_user", 'Int'>
     readonly last_login_ip: FieldRef<"sys_user", 'String'>
     readonly last_login_time: FieldRef<"sys_user", 'DateTime'>
     readonly created_at: FieldRef<"sys_user", 'DateTime'>
@@ -5217,13 +5226,11 @@ export namespace Prisma {
 
   export type Sys_roleAvgAggregateOutputType = {
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
   export type Sys_roleSumAggregateOutputType = {
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
@@ -5234,7 +5241,7 @@ export namespace Prisma {
     role_name: string | null
     description: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -5249,7 +5256,7 @@ export namespace Prisma {
     role_name: string | null
     description: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -5276,13 +5283,11 @@ export namespace Prisma {
 
   export type Sys_roleAvgAggregateInputType = {
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
   export type Sys_roleSumAggregateInputType = {
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
@@ -5425,7 +5430,7 @@ export namespace Prisma {
     role_name: string
     description: string | null
     sort_order: number
-    status: number
+    status: string
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -5556,9 +5561,9 @@ export namespace Prisma {
        */
       sort_order: number
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
       /**
        * 创建时间
        */
@@ -6009,7 +6014,7 @@ export namespace Prisma {
     readonly role_name: FieldRef<"sys_role", 'String'>
     readonly description: FieldRef<"sys_role", 'String'>
     readonly sort_order: FieldRef<"sys_role", 'Int'>
-    readonly status: FieldRef<"sys_role", 'Int'>
+    readonly status: FieldRef<"sys_role", 'String'>
     readonly created_at: FieldRef<"sys_role", 'DateTime'>
     readonly updated_at: FieldRef<"sys_role", 'DateTime'>
     readonly created_by: FieldRef<"sys_role", 'String'>
@@ -6464,13 +6469,11 @@ export namespace Prisma {
 
   export type Sys_deptAvgAggregateOutputType = {
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
   export type Sys_deptSumAggregateOutputType = {
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
@@ -6484,7 +6487,7 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -6502,7 +6505,7 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -6532,13 +6535,11 @@ export namespace Prisma {
 
   export type Sys_deptAvgAggregateInputType = {
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
   export type Sys_deptSumAggregateInputType = {
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
@@ -6693,7 +6694,7 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     sort_order: number
-    status: number
+    status: string
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -6848,9 +6849,9 @@ export namespace Prisma {
        */
       sort_order: number
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
       /**
        * 创建时间
        */
@@ -7304,7 +7305,7 @@ export namespace Prisma {
     readonly phone: FieldRef<"sys_dept", 'String'>
     readonly email: FieldRef<"sys_dept", 'String'>
     readonly sort_order: FieldRef<"sys_dept", 'Int'>
-    readonly status: FieldRef<"sys_dept", 'Int'>
+    readonly status: FieldRef<"sys_dept", 'String'>
     readonly created_at: FieldRef<"sys_dept", 'DateTime'>
     readonly updated_at: FieldRef<"sys_dept", 'DateTime'>
     readonly created_by: FieldRef<"sys_dept", 'String'>
@@ -7760,14 +7761,12 @@ export namespace Prisma {
   export type Sys_menuAvgAggregateOutputType = {
     menu_type: number | null
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
   export type Sys_menuSumAggregateOutputType = {
     menu_type: number | null
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
@@ -7782,7 +7781,7 @@ export namespace Prisma {
     component: string | null
     permission: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -7801,7 +7800,7 @@ export namespace Prisma {
     component: string | null
     permission: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -7833,14 +7832,12 @@ export namespace Prisma {
   export type Sys_menuAvgAggregateInputType = {
     menu_type?: true
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
   export type Sys_menuSumAggregateInputType = {
     menu_type?: true
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
@@ -7999,7 +7996,7 @@ export namespace Prisma {
     component: string | null
     permission: string | null
     sort_order: number
-    status: number
+    status: string
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -8149,9 +8146,9 @@ export namespace Prisma {
        */
       sort_order: number
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
       /**
        * 创建时间
        */
@@ -8605,7 +8602,7 @@ export namespace Prisma {
     readonly component: FieldRef<"sys_menu", 'String'>
     readonly permission: FieldRef<"sys_menu", 'String'>
     readonly sort_order: FieldRef<"sys_menu", 'Int'>
-    readonly status: FieldRef<"sys_menu", 'Int'>
+    readonly status: FieldRef<"sys_menu", 'String'>
     readonly created_at: FieldRef<"sys_menu", 'DateTime'>
     readonly updated_at: FieldRef<"sys_menu", 'DateTime'>
     readonly created_by: FieldRef<"sys_menu", 'String'>
@@ -8995,12 +8992,10 @@ export namespace Prisma {
   }
 
   export type Sys_permissionAvgAggregateOutputType = {
-    status: number | null
     is_deleted: number | null
   }
 
   export type Sys_permissionSumAggregateOutputType = {
-    status: number | null
     is_deleted: number | null
   }
 
@@ -9012,7 +9007,7 @@ export namespace Prisma {
     resource_type: string | null
     action: string | null
     description: string | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -9028,7 +9023,7 @@ export namespace Prisma {
     resource_type: string | null
     action: string | null
     description: string | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -9055,12 +9050,10 @@ export namespace Prisma {
 
 
   export type Sys_permissionAvgAggregateInputType = {
-    status?: true
     is_deleted?: true
   }
 
   export type Sys_permissionSumAggregateInputType = {
-    status?: true
     is_deleted?: true
   }
 
@@ -9207,7 +9200,7 @@ export namespace Prisma {
     resource_type: string
     action: string
     description: string | null
-    status: number
+    status: string
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -9333,9 +9326,9 @@ export namespace Prisma {
        */
       description: string | null
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
       /**
        * 创建时间
        */
@@ -9786,7 +9779,7 @@ export namespace Prisma {
     readonly resource_type: FieldRef<"sys_permission", 'String'>
     readonly action: FieldRef<"sys_permission", 'String'>
     readonly description: FieldRef<"sys_permission", 'String'>
-    readonly status: FieldRef<"sys_permission", 'Int'>
+    readonly status: FieldRef<"sys_permission", 'String'>
     readonly created_at: FieldRef<"sys_permission", 'DateTime'>
     readonly updated_at: FieldRef<"sys_permission", 'DateTime'>
     readonly created_by: FieldRef<"sys_permission", 'String'>
@@ -10176,12 +10169,10 @@ export namespace Prisma {
   }
 
   export type Sys_dict_typeAvgAggregateOutputType = {
-    status: number | null
     is_deleted: number | null
   }
 
   export type Sys_dict_typeSumAggregateOutputType = {
-    status: number | null
     is_deleted: number | null
   }
 
@@ -10191,7 +10182,7 @@ export namespace Prisma {
     dict_code: string | null
     dict_name: string | null
     description: string | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -10205,7 +10196,7 @@ export namespace Prisma {
     dict_code: string | null
     dict_name: string | null
     description: string | null
-    status: number | null
+    status: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -10230,12 +10221,10 @@ export namespace Prisma {
 
 
   export type Sys_dict_typeAvgAggregateInputType = {
-    status?: true
     is_deleted?: true
   }
 
   export type Sys_dict_typeSumAggregateInputType = {
-    status?: true
     is_deleted?: true
   }
 
@@ -10374,7 +10363,7 @@ export namespace Prisma {
     dict_code: string
     dict_name: string
     description: string | null
-    status: number
+    status: string
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -10484,9 +10473,9 @@ export namespace Prisma {
        */
       description: string | null
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
       /**
        * 创建时间
        */
@@ -10935,7 +10924,7 @@ export namespace Prisma {
     readonly dict_code: FieldRef<"sys_dict_type", 'String'>
     readonly dict_name: FieldRef<"sys_dict_type", 'String'>
     readonly description: FieldRef<"sys_dict_type", 'String'>
-    readonly status: FieldRef<"sys_dict_type", 'Int'>
+    readonly status: FieldRef<"sys_dict_type", 'String'>
     readonly created_at: FieldRef<"sys_dict_type", 'DateTime'>
     readonly updated_at: FieldRef<"sys_dict_type", 'DateTime'>
     readonly created_by: FieldRef<"sys_dict_type", 'String'>
@@ -11326,13 +11315,11 @@ export namespace Prisma {
 
   export type Sys_dict_dataAvgAggregateOutputType = {
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
   export type Sys_dict_dataSumAggregateOutputType = {
     sort_order: number | null
-    status: number | null
     is_deleted: number | null
   }
 
@@ -11343,7 +11330,7 @@ export namespace Prisma {
     dict_label: string | null
     dict_value: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     remark: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -11359,7 +11346,7 @@ export namespace Prisma {
     dict_label: string | null
     dict_value: string | null
     sort_order: number | null
-    status: number | null
+    status: string | null
     remark: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -11388,13 +11375,11 @@ export namespace Prisma {
 
   export type Sys_dict_dataAvgAggregateInputType = {
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
   export type Sys_dict_dataSumAggregateInputType = {
     sort_order?: true
-    status?: true
     is_deleted?: true
   }
 
@@ -11540,7 +11525,7 @@ export namespace Prisma {
     dict_label: string
     dict_value: string
     sort_order: number
-    status: number
+    status: string
     remark: string | null
     created_at: Date
     updated_at: Date
@@ -11663,9 +11648,9 @@ export namespace Prisma {
        */
       sort_order: number
       /**
-       * 状态：0-禁用，1-启用
+       * 状态：'0'-禁用，'1'-启用
        */
-      status: number
+      status: string
       /**
        * 备注
        */
@@ -12119,7 +12104,7 @@ export namespace Prisma {
     readonly dict_label: FieldRef<"sys_dict_data", 'String'>
     readonly dict_value: FieldRef<"sys_dict_data", 'String'>
     readonly sort_order: FieldRef<"sys_dict_data", 'Int'>
-    readonly status: FieldRef<"sys_dict_data", 'Int'>
+    readonly status: FieldRef<"sys_dict_data", 'String'>
     readonly remark: FieldRef<"sys_dict_data", 'String'>
     readonly created_at: FieldRef<"sys_dict_data", 'DateTime'>
     readonly updated_at: FieldRef<"sys_dict_data", 'DateTime'>
@@ -12511,13 +12496,13 @@ export namespace Prisma {
 
   export type Sys_noticeAvgAggregateOutputType = {
     notice_type: number | null
-    status: number | null
+    is_read: number | null
     is_deleted: number | null
   }
 
   export type Sys_noticeSumAggregateOutputType = {
     notice_type: number | null
-    status: number | null
+    is_read: number | null
     is_deleted: number | null
   }
 
@@ -12527,7 +12512,8 @@ export namespace Prisma {
     title: string | null
     content: string | null
     notice_type: number | null
-    status: number | null
+    status: string | null
+    is_read: number | null
     publish_time: Date | null
     created_at: Date | null
     updated_at: Date | null
@@ -12542,7 +12528,8 @@ export namespace Prisma {
     title: string | null
     content: string | null
     notice_type: number | null
-    status: number | null
+    status: string | null
+    is_read: number | null
     publish_time: Date | null
     created_at: Date | null
     updated_at: Date | null
@@ -12558,6 +12545,7 @@ export namespace Prisma {
     content: number
     notice_type: number
     status: number
+    is_read: number
     publish_time: number
     created_at: number
     updated_at: number
@@ -12570,13 +12558,13 @@ export namespace Prisma {
 
   export type Sys_noticeAvgAggregateInputType = {
     notice_type?: true
-    status?: true
+    is_read?: true
     is_deleted?: true
   }
 
   export type Sys_noticeSumAggregateInputType = {
     notice_type?: true
-    status?: true
+    is_read?: true
     is_deleted?: true
   }
 
@@ -12587,6 +12575,7 @@ export namespace Prisma {
     content?: true
     notice_type?: true
     status?: true
+    is_read?: true
     publish_time?: true
     created_at?: true
     updated_at?: true
@@ -12602,6 +12591,7 @@ export namespace Prisma {
     content?: true
     notice_type?: true
     status?: true
+    is_read?: true
     publish_time?: true
     created_at?: true
     updated_at?: true
@@ -12617,6 +12607,7 @@ export namespace Prisma {
     content?: true
     notice_type?: true
     status?: true
+    is_read?: true
     publish_time?: true
     created_at?: true
     updated_at?: true
@@ -12718,7 +12709,8 @@ export namespace Prisma {
     title: string
     content: string | null
     notice_type: number
-    status: number
+    status: string
+    is_read: number
     publish_time: Date | null
     created_at: Date
     updated_at: Date
@@ -12753,6 +12745,7 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
+    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12770,6 +12763,7 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
+    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12785,6 +12779,7 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
+    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12800,6 +12795,7 @@ export namespace Prisma {
     content?: boolean
     notice_type?: boolean
     status?: boolean
+    is_read?: boolean
     publish_time?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -12808,7 +12804,7 @@ export namespace Prisma {
     is_deleted?: boolean
   }
 
-  export type sys_noticeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_notice"]>
+  export type sys_noticeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "is_read" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_notice"]>
   export type sys_noticeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     target_users?: boolean | sys_notice$target_usersArgs<ExtArgs>
     _count?: boolean | Sys_noticeCountOutputTypeDefaultArgs<ExtArgs>
@@ -12846,9 +12842,13 @@ export namespace Prisma {
        */
       notice_type: number
       /**
-       * 状态：0-草稿，1-发布
+       * 状态：'0'-草稿，'1'-发布
        */
-      status: number
+      status: string
+      /**
+       * 状态：'0'-未读，'1'-已读
+       */
+      is_read: number
       /**
        * 定时发布时间
        */
@@ -13302,7 +13302,8 @@ export namespace Prisma {
     readonly title: FieldRef<"sys_notice", 'String'>
     readonly content: FieldRef<"sys_notice", 'String'>
     readonly notice_type: FieldRef<"sys_notice", 'Int'>
-    readonly status: FieldRef<"sys_notice", 'Int'>
+    readonly status: FieldRef<"sys_notice", 'String'>
+    readonly is_read: FieldRef<"sys_notice", 'Int'>
     readonly publish_time: FieldRef<"sys_notice", 'DateTime'>
     readonly created_at: FieldRef<"sys_notice", 'DateTime'>
     readonly updated_at: FieldRef<"sys_notice", 'DateTime'>
@@ -14905,12 +14906,10 @@ export namespace Prisma {
 
   export type Sys_audit_logAvgAggregateOutputType = {
     execute_time: number | null
-    status: number | null
   }
 
   export type Sys_audit_logSumAggregateOutputType = {
     execute_time: number | null
-    status: number | null
   }
 
   export type Sys_audit_logMinAggregateOutputType = {
@@ -14926,7 +14925,7 @@ export namespace Prisma {
     ip_address: string | null
     user_agent: string | null
     execute_time: number | null
-    status: number | null
+    status: string | null
     error_msg: string | null
     created_at: Date | null
   }
@@ -14944,7 +14943,7 @@ export namespace Prisma {
     ip_address: string | null
     user_agent: string | null
     execute_time: number | null
-    status: number | null
+    status: string | null
     error_msg: string | null
     created_at: Date | null
   }
@@ -14971,12 +14970,10 @@ export namespace Prisma {
 
   export type Sys_audit_logAvgAggregateInputType = {
     execute_time?: true
-    status?: true
   }
 
   export type Sys_audit_logSumAggregateInputType = {
     execute_time?: true
-    status?: true
   }
 
   export type Sys_audit_logMinAggregateInputType = {
@@ -15133,7 +15130,7 @@ export namespace Prisma {
     ip_address: string
     user_agent: string | null
     execute_time: number
-    status: number
+    status: string
     error_msg: string | null
     created_at: Date
     _count: Sys_audit_logCountAggregateOutputType | null
@@ -15284,9 +15281,9 @@ export namespace Prisma {
        */
       execute_time: number
       /**
-       * 状态：0-失败，1-成功
+       * 状态：'0'-失败，'1'-成功
        */
-      status: number
+      status: string
       /**
        * 错误信息
        */
@@ -15730,7 +15727,7 @@ export namespace Prisma {
     readonly ip_address: FieldRef<"sys_audit_log", 'String'>
     readonly user_agent: FieldRef<"sys_audit_log", 'String'>
     readonly execute_time: FieldRef<"sys_audit_log", 'Int'>
-    readonly status: FieldRef<"sys_audit_log", 'Int'>
+    readonly status: FieldRef<"sys_audit_log", 'String'>
     readonly error_msg: FieldRef<"sys_audit_log", 'String'>
     readonly created_at: FieldRef<"sys_audit_log", 'DateTime'>
   }
@@ -22572,18 +22569,8 @@ export namespace Prisma {
 
   export type AggregateSys_login_log = {
     _count: Sys_login_logCountAggregateOutputType | null
-    _avg: Sys_login_logAvgAggregateOutputType | null
-    _sum: Sys_login_logSumAggregateOutputType | null
     _min: Sys_login_logMinAggregateOutputType | null
     _max: Sys_login_logMaxAggregateOutputType | null
-  }
-
-  export type Sys_login_logAvgAggregateOutputType = {
-    status: number | null
-  }
-
-  export type Sys_login_logSumAggregateOutputType = {
-    status: number | null
   }
 
   export type Sys_login_logMinAggregateOutputType = {
@@ -22593,7 +22580,7 @@ export namespace Prisma {
     username: string | null
     ip_address: string | null
     user_agent: string | null
-    status: number | null
+    status: string | null
     message: string | null
     created_at: Date | null
   }
@@ -22605,7 +22592,7 @@ export namespace Prisma {
     username: string | null
     ip_address: string | null
     user_agent: string | null
-    status: number | null
+    status: string | null
     message: string | null
     created_at: Date | null
   }
@@ -22623,14 +22610,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type Sys_login_logAvgAggregateInputType = {
-    status?: true
-  }
-
-  export type Sys_login_logSumAggregateInputType = {
-    status?: true
-  }
 
   export type Sys_login_logMinAggregateInputType = {
     log_id?: true
@@ -22707,18 +22686,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: Sys_login_logAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: Sys_login_logSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: Sys_login_logMinAggregateInputType
@@ -22749,8 +22716,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: Sys_login_logCountAggregateInputType | true
-    _avg?: Sys_login_logAvgAggregateInputType
-    _sum?: Sys_login_logSumAggregateInputType
     _min?: Sys_login_logMinAggregateInputType
     _max?: Sys_login_logMaxAggregateInputType
   }
@@ -22762,12 +22727,10 @@ export namespace Prisma {
     username: string
     ip_address: string
     user_agent: string | null
-    status: number
+    status: string
     message: string | null
     created_at: Date
     _count: Sys_login_logCountAggregateOutputType | null
-    _avg: Sys_login_logAvgAggregateOutputType | null
-    _sum: Sys_login_logSumAggregateOutputType | null
     _min: Sys_login_logMinAggregateOutputType | null
     _max: Sys_login_logMaxAggregateOutputType | null
   }
@@ -22865,9 +22828,9 @@ export namespace Prisma {
        */
       user_agent: string | null
       /**
-       * 登录状态：0-失败，1-成功
+       * 登录状态：'0'-失败，'1'-成功
        */
-      status: number
+      status: string
       /**
        * 附加信息（如失败原因）
        */
@@ -23305,7 +23268,7 @@ export namespace Prisma {
     readonly username: FieldRef<"sys_login_log", 'String'>
     readonly ip_address: FieldRef<"sys_login_log", 'String'>
     readonly user_agent: FieldRef<"sys_login_log", 'String'>
-    readonly status: FieldRef<"sys_login_log", 'Int'>
+    readonly status: FieldRef<"sys_login_log", 'String'>
     readonly message: FieldRef<"sys_login_log", 'String'>
     readonly created_at: FieldRef<"sys_login_log", 'DateTime'>
   }
@@ -24837,6 +24800,7 @@ export namespace Prisma {
     avatar: 'avatar',
     gender: 'gender',
     status: 'status',
+    sort_order: 'sort_order',
     last_login_ip: 'last_login_ip',
     last_login_time: 'last_login_time',
     created_at: 'created_at',
@@ -24972,6 +24936,7 @@ export namespace Prisma {
     content: 'content',
     notice_type: 'notice_type',
     status: 'status',
+    is_read: 'is_read',
     publish_time: 'publish_time',
     created_at: 'created_at',
     updated_at: 'updated_at',
@@ -25165,20 +25130,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -25189,6 +25140,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -25219,7 +25184,7 @@ export namespace Prisma {
     contact_name?: StringNullableFilter<"sys_tenant"> | string | null
     contact_phone?: StringNullableFilter<"sys_tenant"> | string | null
     contact_email?: StringNullableFilter<"sys_tenant"> | string | null
-    status?: IntFilter<"sys_tenant"> | number
+    status?: StringFilter<"sys_tenant"> | string
     expire_time?: DateTimeNullableFilter<"sys_tenant"> | Date | string | null
     created_at?: DateTimeFilter<"sys_tenant"> | Date | string
     updated_at?: DateTimeFilter<"sys_tenant"> | Date | string
@@ -25254,7 +25219,7 @@ export namespace Prisma {
     contact_name?: StringNullableFilter<"sys_tenant"> | string | null
     contact_phone?: StringNullableFilter<"sys_tenant"> | string | null
     contact_email?: StringNullableFilter<"sys_tenant"> | string | null
-    status?: IntFilter<"sys_tenant"> | number
+    status?: StringFilter<"sys_tenant"> | string
     expire_time?: DateTimeNullableFilter<"sys_tenant"> | Date | string | null
     created_at?: DateTimeFilter<"sys_tenant"> | Date | string
     updated_at?: DateTimeFilter<"sys_tenant"> | Date | string
@@ -25294,7 +25259,7 @@ export namespace Prisma {
     contact_name?: StringNullableWithAggregatesFilter<"sys_tenant"> | string | null
     contact_phone?: StringNullableWithAggregatesFilter<"sys_tenant"> | string | null
     contact_email?: StringNullableWithAggregatesFilter<"sys_tenant"> | string | null
-    status?: IntWithAggregatesFilter<"sys_tenant"> | number
+    status?: StringWithAggregatesFilter<"sys_tenant"> | string
     expire_time?: DateTimeNullableWithAggregatesFilter<"sys_tenant"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"sys_tenant"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_tenant"> | Date | string
@@ -25316,7 +25281,8 @@ export namespace Prisma {
     email?: StringNullableFilter<"sys_user"> | string | null
     avatar?: StringNullableFilter<"sys_user"> | string | null
     gender?: IntNullableFilter<"sys_user"> | number | null
-    status?: IntFilter<"sys_user"> | number
+    status?: StringFilter<"sys_user"> | string
+    sort_order?: IntFilter<"sys_user"> | number
     last_login_ip?: StringNullableFilter<"sys_user"> | string | null
     last_login_time?: DateTimeNullableFilter<"sys_user"> | Date | string | null
     created_at?: DateTimeFilter<"sys_user"> | Date | string
@@ -25339,6 +25305,7 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     gender?: SortOrderInput | SortOrder
     status?: SortOrder
+    sort_order?: SortOrder
     last_login_ip?: SortOrderInput | SortOrder
     last_login_time?: SortOrderInput | SortOrder
     created_at?: SortOrder
@@ -25364,7 +25331,8 @@ export namespace Prisma {
     email?: StringNullableFilter<"sys_user"> | string | null
     avatar?: StringNullableFilter<"sys_user"> | string | null
     gender?: IntNullableFilter<"sys_user"> | number | null
-    status?: IntFilter<"sys_user"> | number
+    status?: StringFilter<"sys_user"> | string
+    sort_order?: IntFilter<"sys_user"> | number
     last_login_ip?: StringNullableFilter<"sys_user"> | string | null
     last_login_time?: DateTimeNullableFilter<"sys_user"> | Date | string | null
     created_at?: DateTimeFilter<"sys_user"> | Date | string
@@ -25387,6 +25355,7 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     gender?: SortOrderInput | SortOrder
     status?: SortOrder
+    sort_order?: SortOrder
     last_login_ip?: SortOrderInput | SortOrder
     last_login_time?: SortOrderInput | SortOrder
     created_at?: SortOrder
@@ -25414,7 +25383,8 @@ export namespace Prisma {
     email?: StringNullableWithAggregatesFilter<"sys_user"> | string | null
     avatar?: StringNullableWithAggregatesFilter<"sys_user"> | string | null
     gender?: IntNullableWithAggregatesFilter<"sys_user"> | number | null
-    status?: IntWithAggregatesFilter<"sys_user"> | number
+    status?: StringWithAggregatesFilter<"sys_user"> | string
+    sort_order?: IntWithAggregatesFilter<"sys_user"> | number
     last_login_ip?: StringNullableWithAggregatesFilter<"sys_user"> | string | null
     last_login_time?: DateTimeNullableWithAggregatesFilter<"sys_user"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"sys_user"> | Date | string
@@ -25434,7 +25404,7 @@ export namespace Prisma {
     role_name?: StringFilter<"sys_role"> | string
     description?: StringNullableFilter<"sys_role"> | string | null
     sort_order?: IntFilter<"sys_role"> | number
-    status?: IntFilter<"sys_role"> | number
+    status?: StringFilter<"sys_role"> | string
     created_at?: DateTimeFilter<"sys_role"> | Date | string
     updated_at?: DateTimeFilter<"sys_role"> | Date | string
     created_by?: UuidNullableFilter<"sys_role"> | string | null
@@ -25470,7 +25440,7 @@ export namespace Prisma {
     role_name?: StringFilter<"sys_role"> | string
     description?: StringNullableFilter<"sys_role"> | string | null
     sort_order?: IntFilter<"sys_role"> | number
-    status?: IntFilter<"sys_role"> | number
+    status?: StringFilter<"sys_role"> | string
     created_at?: DateTimeFilter<"sys_role"> | Date | string
     updated_at?: DateTimeFilter<"sys_role"> | Date | string
     created_by?: UuidNullableFilter<"sys_role"> | string | null
@@ -25509,7 +25479,7 @@ export namespace Prisma {
     role_name?: StringWithAggregatesFilter<"sys_role"> | string
     description?: StringNullableWithAggregatesFilter<"sys_role"> | string | null
     sort_order?: IntWithAggregatesFilter<"sys_role"> | number
-    status?: IntWithAggregatesFilter<"sys_role"> | number
+    status?: StringWithAggregatesFilter<"sys_role"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_role"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_role"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"sys_role"> | string | null
@@ -25530,7 +25500,7 @@ export namespace Prisma {
     phone?: StringNullableFilter<"sys_dept"> | string | null
     email?: StringNullableFilter<"sys_dept"> | string | null
     sort_order?: IntFilter<"sys_dept"> | number
-    status?: IntFilter<"sys_dept"> | number
+    status?: StringFilter<"sys_dept"> | string
     created_at?: DateTimeFilter<"sys_dept"> | Date | string
     updated_at?: DateTimeFilter<"sys_dept"> | Date | string
     created_by?: UuidNullableFilter<"sys_dept"> | string | null
@@ -25572,7 +25542,7 @@ export namespace Prisma {
     phone?: StringNullableFilter<"sys_dept"> | string | null
     email?: StringNullableFilter<"sys_dept"> | string | null
     sort_order?: IntFilter<"sys_dept"> | number
-    status?: IntFilter<"sys_dept"> | number
+    status?: StringFilter<"sys_dept"> | string
     created_at?: DateTimeFilter<"sys_dept"> | Date | string
     updated_at?: DateTimeFilter<"sys_dept"> | Date | string
     created_by?: UuidNullableFilter<"sys_dept"> | string | null
@@ -25617,7 +25587,7 @@ export namespace Prisma {
     phone?: StringNullableWithAggregatesFilter<"sys_dept"> | string | null
     email?: StringNullableWithAggregatesFilter<"sys_dept"> | string | null
     sort_order?: IntWithAggregatesFilter<"sys_dept"> | number
-    status?: IntWithAggregatesFilter<"sys_dept"> | number
+    status?: StringWithAggregatesFilter<"sys_dept"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_dept"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_dept"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"sys_dept"> | string | null
@@ -25639,7 +25609,7 @@ export namespace Prisma {
     component?: StringNullableFilter<"sys_menu"> | string | null
     permission?: StringNullableFilter<"sys_menu"> | string | null
     sort_order?: IntFilter<"sys_menu"> | number
-    status?: IntFilter<"sys_menu"> | number
+    status?: StringFilter<"sys_menu"> | string
     created_at?: DateTimeFilter<"sys_menu"> | Date | string
     updated_at?: DateTimeFilter<"sys_menu"> | Date | string
     created_by?: UuidNullableFilter<"sys_menu"> | string | null
@@ -25680,7 +25650,7 @@ export namespace Prisma {
     component?: StringNullableFilter<"sys_menu"> | string | null
     permission?: StringNullableFilter<"sys_menu"> | string | null
     sort_order?: IntFilter<"sys_menu"> | number
-    status?: IntFilter<"sys_menu"> | number
+    status?: StringFilter<"sys_menu"> | string
     created_at?: DateTimeFilter<"sys_menu"> | Date | string
     updated_at?: DateTimeFilter<"sys_menu"> | Date | string
     created_by?: UuidNullableFilter<"sys_menu"> | string | null
@@ -25726,7 +25696,7 @@ export namespace Prisma {
     component?: StringNullableWithAggregatesFilter<"sys_menu"> | string | null
     permission?: StringNullableWithAggregatesFilter<"sys_menu"> | string | null
     sort_order?: IntWithAggregatesFilter<"sys_menu"> | number
-    status?: IntWithAggregatesFilter<"sys_menu"> | number
+    status?: StringWithAggregatesFilter<"sys_menu"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_menu"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_menu"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"sys_menu"> | string | null
@@ -25745,7 +25715,7 @@ export namespace Prisma {
     resource_type?: StringFilter<"sys_permission"> | string
     action?: StringFilter<"sys_permission"> | string
     description?: StringNullableFilter<"sys_permission"> | string | null
-    status?: IntFilter<"sys_permission"> | number
+    status?: StringFilter<"sys_permission"> | string
     created_at?: DateTimeFilter<"sys_permission"> | Date | string
     updated_at?: DateTimeFilter<"sys_permission"> | Date | string
     created_by?: UuidNullableFilter<"sys_permission"> | string | null
@@ -25781,7 +25751,7 @@ export namespace Prisma {
     resource_type?: StringFilter<"sys_permission"> | string
     action?: StringFilter<"sys_permission"> | string
     description?: StringNullableFilter<"sys_permission"> | string | null
-    status?: IntFilter<"sys_permission"> | number
+    status?: StringFilter<"sys_permission"> | string
     created_at?: DateTimeFilter<"sys_permission"> | Date | string
     updated_at?: DateTimeFilter<"sys_permission"> | Date | string
     created_by?: UuidNullableFilter<"sys_permission"> | string | null
@@ -25821,7 +25791,7 @@ export namespace Prisma {
     resource_type?: StringWithAggregatesFilter<"sys_permission"> | string
     action?: StringWithAggregatesFilter<"sys_permission"> | string
     description?: StringNullableWithAggregatesFilter<"sys_permission"> | string | null
-    status?: IntWithAggregatesFilter<"sys_permission"> | number
+    status?: StringWithAggregatesFilter<"sys_permission"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_permission"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_permission"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"sys_permission"> | string | null
@@ -25838,7 +25808,7 @@ export namespace Prisma {
     dict_code?: StringFilter<"sys_dict_type"> | string
     dict_name?: StringFilter<"sys_dict_type"> | string
     description?: StringNullableFilter<"sys_dict_type"> | string | null
-    status?: IntFilter<"sys_dict_type"> | number
+    status?: StringFilter<"sys_dict_type"> | string
     created_at?: DateTimeFilter<"sys_dict_type"> | Date | string
     updated_at?: DateTimeFilter<"sys_dict_type"> | Date | string
     created_by?: UuidNullableFilter<"sys_dict_type"> | string | null
@@ -25870,7 +25840,7 @@ export namespace Prisma {
     dict_code?: StringFilter<"sys_dict_type"> | string
     dict_name?: StringFilter<"sys_dict_type"> | string
     description?: StringNullableFilter<"sys_dict_type"> | string | null
-    status?: IntFilter<"sys_dict_type"> | number
+    status?: StringFilter<"sys_dict_type"> | string
     created_at?: DateTimeFilter<"sys_dict_type"> | Date | string
     updated_at?: DateTimeFilter<"sys_dict_type"> | Date | string
     created_by?: UuidNullableFilter<"sys_dict_type"> | string | null
@@ -25906,7 +25876,7 @@ export namespace Prisma {
     dict_code?: StringWithAggregatesFilter<"sys_dict_type"> | string
     dict_name?: StringWithAggregatesFilter<"sys_dict_type"> | string
     description?: StringNullableWithAggregatesFilter<"sys_dict_type"> | string | null
-    status?: IntWithAggregatesFilter<"sys_dict_type"> | number
+    status?: StringWithAggregatesFilter<"sys_dict_type"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_dict_type"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_dict_type"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"sys_dict_type"> | string | null
@@ -25924,7 +25894,7 @@ export namespace Prisma {
     dict_label?: StringFilter<"sys_dict_data"> | string
     dict_value?: StringFilter<"sys_dict_data"> | string
     sort_order?: IntFilter<"sys_dict_data"> | number
-    status?: IntFilter<"sys_dict_data"> | number
+    status?: StringFilter<"sys_dict_data"> | string
     remark?: StringNullableFilter<"sys_dict_data"> | string | null
     created_at?: DateTimeFilter<"sys_dict_data"> | Date | string
     updated_at?: DateTimeFilter<"sys_dict_data"> | Date | string
@@ -25959,7 +25929,7 @@ export namespace Prisma {
     dict_label?: StringFilter<"sys_dict_data"> | string
     dict_value?: StringFilter<"sys_dict_data"> | string
     sort_order?: IntFilter<"sys_dict_data"> | number
-    status?: IntFilter<"sys_dict_data"> | number
+    status?: StringFilter<"sys_dict_data"> | string
     remark?: StringNullableFilter<"sys_dict_data"> | string | null
     created_at?: DateTimeFilter<"sys_dict_data"> | Date | string
     updated_at?: DateTimeFilter<"sys_dict_data"> | Date | string
@@ -25999,7 +25969,7 @@ export namespace Prisma {
     dict_label?: StringWithAggregatesFilter<"sys_dict_data"> | string
     dict_value?: StringWithAggregatesFilter<"sys_dict_data"> | string
     sort_order?: IntWithAggregatesFilter<"sys_dict_data"> | number
-    status?: IntWithAggregatesFilter<"sys_dict_data"> | number
+    status?: StringWithAggregatesFilter<"sys_dict_data"> | string
     remark?: StringNullableWithAggregatesFilter<"sys_dict_data"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"sys_dict_data"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_dict_data"> | Date | string
@@ -26017,7 +25987,8 @@ export namespace Prisma {
     title?: StringFilter<"sys_notice"> | string
     content?: StringNullableFilter<"sys_notice"> | string | null
     notice_type?: IntFilter<"sys_notice"> | number
-    status?: IntFilter<"sys_notice"> | number
+    status?: StringFilter<"sys_notice"> | string
+    is_read?: IntFilter<"sys_notice"> | number
     publish_time?: DateTimeNullableFilter<"sys_notice"> | Date | string | null
     created_at?: DateTimeFilter<"sys_notice"> | Date | string
     updated_at?: DateTimeFilter<"sys_notice"> | Date | string
@@ -26034,6 +26005,7 @@ export namespace Prisma {
     content?: SortOrderInput | SortOrder
     notice_type?: SortOrder
     status?: SortOrder
+    is_read?: SortOrder
     publish_time?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -26052,7 +26024,8 @@ export namespace Prisma {
     title?: StringFilter<"sys_notice"> | string
     content?: StringNullableFilter<"sys_notice"> | string | null
     notice_type?: IntFilter<"sys_notice"> | number
-    status?: IntFilter<"sys_notice"> | number
+    status?: StringFilter<"sys_notice"> | string
+    is_read?: IntFilter<"sys_notice"> | number
     publish_time?: DateTimeNullableFilter<"sys_notice"> | Date | string | null
     created_at?: DateTimeFilter<"sys_notice"> | Date | string
     updated_at?: DateTimeFilter<"sys_notice"> | Date | string
@@ -26069,6 +26042,7 @@ export namespace Prisma {
     content?: SortOrderInput | SortOrder
     notice_type?: SortOrder
     status?: SortOrder
+    is_read?: SortOrder
     publish_time?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -26091,7 +26065,8 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"sys_notice"> | string
     content?: StringNullableWithAggregatesFilter<"sys_notice"> | string | null
     notice_type?: IntWithAggregatesFilter<"sys_notice"> | number
-    status?: IntWithAggregatesFilter<"sys_notice"> | number
+    status?: StringWithAggregatesFilter<"sys_notice"> | string
+    is_read?: IntWithAggregatesFilter<"sys_notice"> | number
     publish_time?: DateTimeNullableWithAggregatesFilter<"sys_notice"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"sys_notice"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_notice"> | Date | string
@@ -26184,7 +26159,7 @@ export namespace Prisma {
     ip_address?: StringFilter<"sys_audit_log"> | string
     user_agent?: StringNullableFilter<"sys_audit_log"> | string | null
     execute_time?: IntFilter<"sys_audit_log"> | number
-    status?: IntFilter<"sys_audit_log"> | number
+    status?: StringFilter<"sys_audit_log"> | string
     error_msg?: StringNullableFilter<"sys_audit_log"> | string | null
     created_at?: DateTimeFilter<"sys_audit_log"> | Date | string
   }
@@ -26223,7 +26198,7 @@ export namespace Prisma {
     ip_address?: StringFilter<"sys_audit_log"> | string
     user_agent?: StringNullableFilter<"sys_audit_log"> | string | null
     execute_time?: IntFilter<"sys_audit_log"> | number
-    status?: IntFilter<"sys_audit_log"> | number
+    status?: StringFilter<"sys_audit_log"> | string
     error_msg?: StringNullableFilter<"sys_audit_log"> | string | null
     created_at?: DateTimeFilter<"sys_audit_log"> | Date | string
   }, "log_id">
@@ -26267,7 +26242,7 @@ export namespace Prisma {
     ip_address?: StringWithAggregatesFilter<"sys_audit_log"> | string
     user_agent?: StringNullableWithAggregatesFilter<"sys_audit_log"> | string | null
     execute_time?: IntWithAggregatesFilter<"sys_audit_log"> | number
-    status?: IntWithAggregatesFilter<"sys_audit_log"> | number
+    status?: StringWithAggregatesFilter<"sys_audit_log"> | string
     error_msg?: StringNullableWithAggregatesFilter<"sys_audit_log"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"sys_audit_log"> | Date | string
   }
@@ -26651,7 +26626,7 @@ export namespace Prisma {
     username?: StringFilter<"sys_login_log"> | string
     ip_address?: StringFilter<"sys_login_log"> | string
     user_agent?: StringNullableFilter<"sys_login_log"> | string | null
-    status?: IntFilter<"sys_login_log"> | number
+    status?: StringFilter<"sys_login_log"> | string
     message?: StringNullableFilter<"sys_login_log"> | string | null
     created_at?: DateTimeFilter<"sys_login_log"> | Date | string
   }
@@ -26678,7 +26653,7 @@ export namespace Prisma {
     username?: StringFilter<"sys_login_log"> | string
     ip_address?: StringFilter<"sys_login_log"> | string
     user_agent?: StringNullableFilter<"sys_login_log"> | string | null
-    status?: IntFilter<"sys_login_log"> | number
+    status?: StringFilter<"sys_login_log"> | string
     message?: StringNullableFilter<"sys_login_log"> | string | null
     created_at?: DateTimeFilter<"sys_login_log"> | Date | string
   }, "log_id">
@@ -26694,10 +26669,8 @@ export namespace Prisma {
     message?: SortOrderInput | SortOrder
     created_at?: SortOrder
     _count?: sys_login_logCountOrderByAggregateInput
-    _avg?: sys_login_logAvgOrderByAggregateInput
     _max?: sys_login_logMaxOrderByAggregateInput
     _min?: sys_login_logMinOrderByAggregateInput
-    _sum?: sys_login_logSumOrderByAggregateInput
   }
 
   export type sys_login_logScalarWhereWithAggregatesInput = {
@@ -26710,7 +26683,7 @@ export namespace Prisma {
     username?: StringWithAggregatesFilter<"sys_login_log"> | string
     ip_address?: StringWithAggregatesFilter<"sys_login_log"> | string
     user_agent?: StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
-    status?: IntWithAggregatesFilter<"sys_login_log"> | number
+    status?: StringWithAggregatesFilter<"sys_login_log"> | string
     message?: StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"sys_login_log"> | Date | string
   }
@@ -26802,7 +26775,7 @@ export namespace Prisma {
     contact_name?: string | null
     contact_phone?: string | null
     contact_email?: string | null
-    status?: number
+    status?: string
     expire_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -26818,7 +26791,7 @@ export namespace Prisma {
     contact_name?: string | null
     contact_phone?: string | null
     contact_email?: string | null
-    status?: number
+    status?: string
     expire_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -26834,7 +26807,7 @@ export namespace Prisma {
     contact_name?: NullableStringFieldUpdateOperationsInput | string | null
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     contact_email?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     expire_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26850,7 +26823,7 @@ export namespace Prisma {
     contact_name?: NullableStringFieldUpdateOperationsInput | string | null
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     contact_email?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     expire_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26866,7 +26839,7 @@ export namespace Prisma {
     contact_name?: string | null
     contact_phone?: string | null
     contact_email?: string | null
-    status?: number
+    status?: string
     expire_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -26882,7 +26855,7 @@ export namespace Prisma {
     contact_name?: NullableStringFieldUpdateOperationsInput | string | null
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     contact_email?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     expire_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26898,7 +26871,7 @@ export namespace Prisma {
     contact_name?: NullableStringFieldUpdateOperationsInput | string | null
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     contact_email?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     expire_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26917,7 +26890,8 @@ export namespace Prisma {
     email?: string | null
     avatar?: string | null
     gender?: number | null
-    status?: number
+    status?: string
+    sort_order?: number
     last_login_ip?: string | null
     last_login_time?: Date | string | null
     created_at?: Date | string
@@ -26939,7 +26913,8 @@ export namespace Prisma {
     email?: string | null
     avatar?: string | null
     gender?: number | null
-    status?: number
+    status?: string
+    sort_order?: number
     last_login_ip?: string | null
     last_login_time?: Date | string | null
     created_at?: Date | string
@@ -26961,7 +26936,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26983,7 +26959,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27005,7 +26982,8 @@ export namespace Prisma {
     email?: string | null
     avatar?: string | null
     gender?: number | null
-    status?: number
+    status?: string
+    sort_order?: number
     last_login_ip?: string | null
     last_login_time?: Date | string | null
     created_at?: Date | string
@@ -27025,7 +27003,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27045,7 +27024,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27062,7 +27042,7 @@ export namespace Prisma {
     role_name: string
     description?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27078,7 +27058,7 @@ export namespace Prisma {
     role_name: string
     description?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27094,7 +27074,7 @@ export namespace Prisma {
     role_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27110,7 +27090,7 @@ export namespace Prisma {
     role_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27126,7 +27106,7 @@ export namespace Prisma {
     role_name: string
     description?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27141,7 +27121,7 @@ export namespace Prisma {
     role_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27156,7 +27136,7 @@ export namespace Prisma {
     role_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27174,7 +27154,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27193,7 +27173,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27212,7 +27192,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27231,7 +27211,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27250,7 +27230,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27268,7 +27248,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27286,7 +27266,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27305,7 +27285,7 @@ export namespace Prisma {
     component?: string | null
     permission?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27324,7 +27304,7 @@ export namespace Prisma {
     component?: string | null
     permission?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27343,7 +27323,7 @@ export namespace Prisma {
     component?: NullableStringFieldUpdateOperationsInput | string | null
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27362,7 +27342,7 @@ export namespace Prisma {
     component?: NullableStringFieldUpdateOperationsInput | string | null
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27381,7 +27361,7 @@ export namespace Prisma {
     component?: string | null
     permission?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27400,7 +27380,7 @@ export namespace Prisma {
     component?: NullableStringFieldUpdateOperationsInput | string | null
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27419,7 +27399,7 @@ export namespace Prisma {
     component?: NullableStringFieldUpdateOperationsInput | string | null
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27435,7 +27415,7 @@ export namespace Prisma {
     resource_type: string
     action: string
     description?: string | null
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27451,7 +27431,7 @@ export namespace Prisma {
     resource_type: string
     action: string
     description?: string | null
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27467,7 +27447,7 @@ export namespace Prisma {
     resource_type?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27483,7 +27463,7 @@ export namespace Prisma {
     resource_type?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27499,7 +27479,7 @@ export namespace Prisma {
     resource_type: string
     action: string
     description?: string | null
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27515,7 +27495,7 @@ export namespace Prisma {
     resource_type?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27531,7 +27511,7 @@ export namespace Prisma {
     resource_type?: StringFieldUpdateOperationsInput | string
     action?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27545,7 +27525,7 @@ export namespace Prisma {
     dict_code: string
     dict_name: string
     description?: string | null
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27559,7 +27539,7 @@ export namespace Prisma {
     dict_code: string
     dict_name: string
     description?: string | null
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27573,7 +27553,7 @@ export namespace Prisma {
     dict_code?: StringFieldUpdateOperationsInput | string
     dict_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27587,7 +27567,7 @@ export namespace Prisma {
     dict_code?: StringFieldUpdateOperationsInput | string
     dict_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27601,7 +27581,7 @@ export namespace Prisma {
     dict_code: string
     dict_name: string
     description?: string | null
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -27615,7 +27595,7 @@ export namespace Prisma {
     dict_code?: StringFieldUpdateOperationsInput | string
     dict_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27629,7 +27609,7 @@ export namespace Prisma {
     dict_code?: StringFieldUpdateOperationsInput | string
     dict_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27644,7 +27624,7 @@ export namespace Prisma {
     dict_label: string
     dict_value: string
     sort_order?: number
-    status?: number
+    status?: string
     remark?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27660,7 +27640,7 @@ export namespace Prisma {
     dict_label: string
     dict_value: string
     sort_order?: number
-    status?: number
+    status?: string
     remark?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27676,7 +27656,7 @@ export namespace Prisma {
     dict_label?: StringFieldUpdateOperationsInput | string
     dict_value?: StringFieldUpdateOperationsInput | string
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     remark?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27692,7 +27672,7 @@ export namespace Prisma {
     dict_label?: StringFieldUpdateOperationsInput | string
     dict_value?: StringFieldUpdateOperationsInput | string
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     remark?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27708,7 +27688,7 @@ export namespace Prisma {
     dict_label: string
     dict_value: string
     sort_order?: number
-    status?: number
+    status?: string
     remark?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27724,7 +27704,7 @@ export namespace Prisma {
     dict_label?: StringFieldUpdateOperationsInput | string
     dict_value?: StringFieldUpdateOperationsInput | string
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     remark?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27740,7 +27720,7 @@ export namespace Prisma {
     dict_label?: StringFieldUpdateOperationsInput | string
     dict_value?: StringFieldUpdateOperationsInput | string
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     remark?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27755,7 +27735,8 @@ export namespace Prisma {
     title: string
     content?: string | null
     notice_type: number
-    status?: number
+    status?: string
+    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27771,7 +27752,8 @@ export namespace Prisma {
     title: string
     content?: string | null
     notice_type: number
-    status?: number
+    status?: string
+    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27787,7 +27769,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27803,7 +27786,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27819,7 +27803,8 @@ export namespace Prisma {
     title: string
     content?: string | null
     notice_type: number
-    status?: number
+    status?: string
+    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -27834,7 +27819,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27849,7 +27835,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27940,7 +27927,7 @@ export namespace Prisma {
     ip_address: string
     user_agent?: string | null
     execute_time?: number
-    status?: number
+    status?: string
     error_msg?: string | null
     created_at?: Date | string
   }
@@ -27958,7 +27945,7 @@ export namespace Prisma {
     ip_address: string
     user_agent?: string | null
     execute_time?: number
-    status?: number
+    status?: string
     error_msg?: string | null
     created_at?: Date | string
   }
@@ -27976,7 +27963,7 @@ export namespace Prisma {
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
     execute_time?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     error_msg?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27994,7 +27981,7 @@ export namespace Prisma {
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
     execute_time?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     error_msg?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28012,7 +27999,7 @@ export namespace Prisma {
     ip_address: string
     user_agent?: string | null
     execute_time?: number
-    status?: number
+    status?: string
     error_msg?: string | null
     created_at?: Date | string
   }
@@ -28030,7 +28017,7 @@ export namespace Prisma {
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
     execute_time?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     error_msg?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28048,7 +28035,7 @@ export namespace Prisma {
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
     execute_time?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     error_msg?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28441,7 +28428,7 @@ export namespace Prisma {
     username: string
     ip_address: string
     user_agent?: string | null
-    status?: number
+    status?: string
     message?: string | null
     created_at?: Date | string
   }
@@ -28453,7 +28440,7 @@ export namespace Prisma {
     username: string
     ip_address: string
     user_agent?: string | null
-    status?: number
+    status?: string
     message?: string | null
     created_at?: Date | string
   }
@@ -28465,7 +28452,7 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28477,7 +28464,7 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28489,7 +28476,7 @@ export namespace Prisma {
     username: string
     ip_address: string
     user_agent?: string | null
-    status?: number
+    status?: string
     message?: string | null
     created_at?: Date | string
   }
@@ -28501,7 +28488,7 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28513,7 +28500,7 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     ip_address?: StringFieldUpdateOperationsInput | string
     user_agent?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28651,17 +28638,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -28696,6 +28672,17 @@ export namespace Prisma {
     not?: NestedUuidNullableFilter<$PrismaModel> | string | null
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -28718,7 +28705,6 @@ export namespace Prisma {
   }
 
   export type sys_tenantAvgOrderByAggregateInput = {
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -28755,7 +28741,6 @@ export namespace Prisma {
   }
 
   export type sys_tenantSumOrderByAggregateInput = {
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -28810,22 +28795,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -28867,6 +28836,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -28916,6 +28901,7 @@ export namespace Prisma {
     avatar?: SortOrder
     gender?: SortOrder
     status?: SortOrder
+    sort_order?: SortOrder
     last_login_ip?: SortOrder
     last_login_time?: SortOrder
     created_at?: SortOrder
@@ -28927,7 +28913,7 @@ export namespace Prisma {
 
   export type sys_userAvgOrderByAggregateInput = {
     gender?: SortOrder
-    status?: SortOrder
+    sort_order?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -28942,6 +28928,7 @@ export namespace Prisma {
     avatar?: SortOrder
     gender?: SortOrder
     status?: SortOrder
+    sort_order?: SortOrder
     last_login_ip?: SortOrder
     last_login_time?: SortOrder
     created_at?: SortOrder
@@ -28962,6 +28949,7 @@ export namespace Prisma {
     avatar?: SortOrder
     gender?: SortOrder
     status?: SortOrder
+    sort_order?: SortOrder
     last_login_ip?: SortOrder
     last_login_time?: SortOrder
     created_at?: SortOrder
@@ -28973,7 +28961,7 @@ export namespace Prisma {
 
   export type sys_userSumOrderByAggregateInput = {
     gender?: SortOrder
-    status?: SortOrder
+    sort_order?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29015,7 +29003,6 @@ export namespace Prisma {
 
   export type sys_roleAvgOrderByAggregateInput = {
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29051,7 +29038,6 @@ export namespace Prisma {
 
   export type sys_roleSumOrderByAggregateInput = {
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29080,7 +29066,6 @@ export namespace Prisma {
 
   export type sys_deptAvgOrderByAggregateInput = {
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29122,7 +29107,6 @@ export namespace Prisma {
 
   export type sys_deptSumOrderByAggregateInput = {
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29148,7 +29132,6 @@ export namespace Prisma {
   export type sys_menuAvgOrderByAggregateInput = {
     menu_type?: SortOrder
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29193,7 +29176,6 @@ export namespace Prisma {
   export type sys_menuSumOrderByAggregateInput = {
     menu_type?: SortOrder
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29219,7 +29201,6 @@ export namespace Prisma {
   }
 
   export type sys_permissionAvgOrderByAggregateInput = {
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29256,7 +29237,6 @@ export namespace Prisma {
   }
 
   export type sys_permissionSumOrderByAggregateInput = {
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29280,7 +29260,6 @@ export namespace Prisma {
   }
 
   export type sys_dict_typeAvgOrderByAggregateInput = {
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29313,7 +29292,6 @@ export namespace Prisma {
   }
 
   export type sys_dict_typeSumOrderByAggregateInput = {
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29335,7 +29313,6 @@ export namespace Prisma {
 
   export type sys_dict_dataAvgOrderByAggregateInput = {
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29373,7 +29350,6 @@ export namespace Prisma {
 
   export type sys_dict_dataSumOrderByAggregateInput = {
     sort_order?: SortOrder
-    status?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29394,6 +29370,7 @@ export namespace Prisma {
     content?: SortOrder
     notice_type?: SortOrder
     status?: SortOrder
+    is_read?: SortOrder
     publish_time?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -29404,7 +29381,7 @@ export namespace Prisma {
 
   export type sys_noticeAvgOrderByAggregateInput = {
     notice_type?: SortOrder
-    status?: SortOrder
+    is_read?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29415,6 +29392,7 @@ export namespace Prisma {
     content?: SortOrder
     notice_type?: SortOrder
     status?: SortOrder
+    is_read?: SortOrder
     publish_time?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -29430,6 +29408,7 @@ export namespace Prisma {
     content?: SortOrder
     notice_type?: SortOrder
     status?: SortOrder
+    is_read?: SortOrder
     publish_time?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -29440,7 +29419,7 @@ export namespace Prisma {
 
   export type sys_noticeSumOrderByAggregateInput = {
     notice_type?: SortOrder
-    status?: SortOrder
+    is_read?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -29512,7 +29491,6 @@ export namespace Prisma {
 
   export type sys_audit_logAvgOrderByAggregateInput = {
     execute_time?: SortOrder
-    status?: SortOrder
   }
 
   export type sys_audit_logMaxOrderByAggregateInput = {
@@ -29553,7 +29531,6 @@ export namespace Prisma {
 
   export type sys_audit_logSumOrderByAggregateInput = {
     execute_time?: SortOrder
-    status?: SortOrder
   }
 
   export type Sys_userScalarRelationFilter = {
@@ -29794,10 +29771,6 @@ export namespace Prisma {
     created_at?: SortOrder
   }
 
-  export type sys_login_logAvgOrderByAggregateInput = {
-    status?: SortOrder
-  }
-
   export type sys_login_logMaxOrderByAggregateInput = {
     log_id?: SortOrder
     tenant_id?: SortOrder
@@ -29820,10 +29793,6 @@ export namespace Prisma {
     status?: SortOrder
     message?: SortOrder
     created_at?: SortOrder
-  }
-
-  export type sys_login_logSumOrderByAggregateInput = {
-    status?: SortOrder
   }
 
   export type sys_configTenant_idConfig_keyCompoundUniqueInput = {
@@ -29886,20 +29855,20 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type sys_user_roleCreateNestedManyWithoutUserInput = {
@@ -30229,17 +30198,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -30271,6 +30229,17 @@ export namespace Prisma {
     gt?: string | StringFieldRefInput<$PrismaModel>
     gte?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -30332,33 +30301,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -30399,6 +30341,33 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -30678,7 +30647,8 @@ export namespace Prisma {
     title: string
     content?: string | null
     notice_type: number
-    status?: number
+    status?: string
+    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -30693,7 +30663,8 @@ export namespace Prisma {
     title: string
     content?: string | null
     notice_type: number
-    status?: number
+    status?: string
+    is_read?: number
     publish_time?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -30724,7 +30695,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30739,7 +30711,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     notice_type?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_read?: IntFieldUpdateOperationsInput | number
     publish_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30758,7 +30731,8 @@ export namespace Prisma {
     email?: string | null
     avatar?: string | null
     gender?: number | null
-    status?: number
+    status?: string
+    sort_order?: number
     last_login_ip?: string | null
     last_login_time?: Date | string | null
     created_at?: Date | string
@@ -30779,7 +30753,8 @@ export namespace Prisma {
     email?: string | null
     avatar?: string | null
     gender?: number | null
-    status?: number
+    status?: string
+    sort_order?: number
     last_login_ip?: string | null
     last_login_time?: Date | string | null
     created_at?: Date | string
@@ -30802,7 +30777,7 @@ export namespace Prisma {
     role_name: string
     description?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -30817,7 +30792,7 @@ export namespace Prisma {
     role_name: string
     description?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -30851,7 +30826,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30872,7 +30848,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30901,7 +30878,7 @@ export namespace Prisma {
     role_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30916,7 +30893,7 @@ export namespace Prisma {
     role_name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30934,7 +30911,8 @@ export namespace Prisma {
     email?: string | null
     avatar?: string | null
     gender?: number | null
-    status?: number
+    status?: string
+    sort_order?: number
     last_login_ip?: string | null
     last_login_time?: Date | string | null
     created_at?: Date | string
@@ -30955,7 +30933,8 @@ export namespace Prisma {
     email?: string | null
     avatar?: string | null
     gender?: number | null
-    status?: number
+    status?: string
+    sort_order?: number
     last_login_ip?: string | null
     last_login_time?: Date | string | null
     created_at?: Date | string
@@ -30981,7 +30960,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -30999,7 +30978,7 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     sort_order?: number
-    status?: number
+    status?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -31033,7 +31012,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31054,7 +31034,8 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    sort_order?: IntFieldUpdateOperationsInput | number
     last_login_ip?: NullableStringFieldUpdateOperationsInput | string | null
     last_login_time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31086,7 +31067,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31104,7 +31085,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
-    status?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null

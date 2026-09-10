@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { jwtVerify, SignJWT } from "jose";
 import { env as config } from "@config/env.js";
-import { redis, getSession } from "@config/redis.js";
+import { redis, getSession, parseExpirationToSeconds } from "@config/redis.js";
 import { logger } from "@core/logger/index.js";
 import { AuthenticationError } from "@/core/errors.js";
 
@@ -20,7 +20,7 @@ export interface TokenPayload {
   userId: string;
   tenantId: string;
   username: string;
-  roles: string[];
+  roles?: string[];
 }
 
 export async function generateTokens(payload: TokenPayload) {
@@ -38,7 +38,12 @@ export async function generateTokens(payload: TokenPayload) {
     .setIssuedAt()
     .setExpirationTime(config.JWT_REFRESH_EXPIRES_IN)
     .sign(new TextEncoder().encode(config.JWT_REFRESH_SECRET));
-  // 存储会话（略）
+  // ✅ 保存 refresh token
+  await redis.setex(`refresh:${payload.userId}`, 3 * 24 * 3600, refreshToken);
+
+  // ✅ 保存 access token 会话标记（TTL 与 access token 有效期一致）
+  const accessTtl = parseExpirationToSeconds(config.JWT_EXPIRES_IN);
+  await redis.setex(`access:${payload.userId}`, accessTtl, "valid");
   return { accessToken, refreshToken };
 }
 function extractValidToken(rawToken: string): string | null {
@@ -56,9 +61,10 @@ function extractValidToken(rawToken: string): string | null {
 }
 export async function authMiddleware(
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction,
 ): Promise<void> {
+  // 白名单检查（保持不变）
   if (
     AUTH_WHITELIST.some(
       (path) => req.path === path || req.path.startsWith(path),
@@ -75,16 +81,16 @@ export async function authMiddleware(
 
     const rawToken = authHeader.slice(7);
     const token = extractValidToken(rawToken);
+    console.log(token, "token", authHeader);
     if (!token) {
       throw new AuthenticationError("Invalid token format");
     }
-    console.log("Token:", token);
+
     const { payload } = await jwtVerify(token, secret, { clockTolerance: 60 });
     if (payload.type !== "access") {
       throw new AuthenticationError("Invalid token type");
     }
 
-    // Check session in Redis
     const session = await redis.get(`access:${payload.userId}`);
     if (!session) {
       throw new AuthenticationError("Session expired");
@@ -99,7 +105,14 @@ export async function authMiddleware(
     (req as any).tenantId = payload.tenantId as string;
     next();
   } catch (err) {
-    next(err);
+    // 记录错误，但统一返回 401
+    console.error("Auth failed:", err);
+    return res.status(401).json({
+      code: 401001,
+      message: "未认证或令牌无效",
+      data: null,
+      timestamp: Date.now(),
+    });
   }
 }
 

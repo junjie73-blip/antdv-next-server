@@ -75,8 +75,8 @@ export default class UserController extends BaseController<any, any, any, any> {
         { email: { contains: query.keyword } },
       ];
     }
-    if (query.status !== undefined && query.status !== "") {
-      where.status = Number(query.status);
+    if (query.status !== undefined) {
+      where.status = query.status;
     }
     return where;
   }
@@ -104,7 +104,7 @@ export default class UserController extends BaseController<any, any, any, any> {
     return this.list(req, res);
   }
 
-  @Get("/:id")
+  @Get("/detail/:id")
   @ApiOperation("获取用户详情")
   @ApiResponse(200, "查询成功")
   async getDetail(@Req() req: Request, @Res() res: Response) {
@@ -281,5 +281,51 @@ export default class UserController extends BaseController<any, any, any, any> {
     } catch (err) {
       this.handleError(res, err);
     }
+  }
+  @Get("/options")
+  @ApiOperation("获取角色选项", "返回启用状态的角色列表")
+  @ApiResponse(200, "查询成功")
+  async options(@Req() req: Request, @Res() res: Response) {
+    const roles = await prisma.sys_role.findMany({
+      where: { tenant_id: req.tenantId!, status: "1", is_deleted: 0 },
+      select: { role_id: true, role_name: true },
+    });
+    success(
+      res,
+      roles.map((r) => ({ label: r.role_name, value: r.role_id })),
+    );
+  }
+  /**
+   * 获取全部用户选项（用于下拉选择）
+   * 返回字段：{ userId, username }
+   */
+  @Get("/all/options")
+  @ApiOperation("获取用户选项", "返回全部启用用户的 ID 和用户名")
+  @ApiResponse(200, "查询成功")
+  async useroOtions(@Req() req: Request, @Res() res: Response) {
+    const users = await prisma.sys_user.findMany({
+      where: {
+        tenant_id: req.tenantId!,
+        status: "1", // 只返回启用用户
+        is_deleted: 0,
+      },
+      select: {
+        user_id: true,
+        username: true,
+        real_name: true, // 可选，若需要显示姓名
+      },
+      orderBy: { username: "asc" },
+    });
+
+    // 转换为前端需要的格式
+    const options = users.map((user) => ({
+      userId: user.user_id,
+      username: user.username,
+      realName: user.real_name || user.username,
+      label: user.real_name || user.username, // 显示名称
+      value: user.user_id, // 值
+    }));
+
+    success(res, options);
   }
 }

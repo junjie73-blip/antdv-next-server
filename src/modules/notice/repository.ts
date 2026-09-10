@@ -1,7 +1,10 @@
 import { BaseRepository } from "@/core/base-repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { keysToSnakeCase } from "@/common/utils/case-convert.js";
+import {
+  keysToCamelCase,
+  keysToSnakeCase,
+} from "@/common/utils/case-convert.js";
 import { pushNotice } from "./pusher.js";
 
 export class NoticeRepository extends BaseRepository<any, any, any, any> {
@@ -11,22 +14,18 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
    * 创建通知（重写基类方法以处理目标用户关联）
    */
   async create(data: any, tenantId: string, userId?: string): Promise<any> {
-    const { targetUserIds, ...noticeData } = data;
-    const publishTime = noticeData.publishTime
-      ? new Date(noticeData.publishTime)
-      : null;
-
-    // 如果设置了发布未来时间，状态强制为草稿（0）
+    const { target_user_ids: targetUserIds, publishTime, ...noticeData } = data;
+    const publishTimeDate = publishTime ? new Date(publishTime) : null;
     const status =
-      publishTime && publishTime > new Date() ? 0 : noticeData.status;
+      publishTimeDate && publishTimeDate > new Date() ? "0" : data.status;
 
     return prisma.$transaction(async (tx) => {
-      // 1. 创建通知主记录
       const notice = await tx.sys_notice.create({
         data: {
-          ...((keysToSnakeCase(noticeData) as typeof noticeData) || {}),
+          // @ts-ignore
+          ...keysToSnakeCase(noticeData),
           status,
-          publish_time: publishTime,
+          publish_time: publishTimeDate,
           tenant_id: tenantId,
           created_by: userId,
           updated_by: userId,
@@ -36,8 +35,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
         },
       });
 
-      // 2. 如果指定了目标用户，插入关联表
-      if (targetUserIds && targetUserIds.length > 0) {
+      if (targetUserIds?.length) {
         await tx.sys_notice_user.createMany({
           data: targetUserIds.map((uid: string) => ({
             notice_id: notice.notice_id,
@@ -61,17 +59,15 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       prisma.sys_notice.findMany({
         where: {
           tenant_id: tenantId,
-          status: 1,
+          status: "1",
           is_deleted: 0,
-          //   @ts-ignore
-          sys_notice_user: { some: { user_id: userId } },
+          target_users: { some: { user_id: userId } },
         },
         skip,
         take: pageSize,
         orderBy: { publish_time: "desc" },
         include: {
-          // @ts-ignore
-          sys_notice_user: {
+          target_users: {
             where: { user_id: userId },
             select: { is_read: true },
           },
@@ -80,15 +76,14 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       prisma.sys_notice.count({
         where: {
           tenant_id: tenantId,
-          status: 1,
+          status: "1",
           is_deleted: 0,
-          //   @ts-ignore
-          sys_notice_user: { some: { user_id: userId } },
+          target_users: { some: { user_id: userId } },
         },
       }),
     ]);
     return {
-      list,
+      list: list.map((item) => keysToCamelCase(item)),
       total,
       page,
       pageSize,
@@ -110,8 +105,112 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
         tenant_id: tenantId,
         user_id: userId,
         is_read: 0,
-        notice: { status: 1, is_deleted: 0 }, // 只统计已发布未删除的通知
+        notice: { status: "1", is_deleted: 0 }, // 只统计已发布未删除的通知
       },
     });
+  }
+  async update(
+    id: string,
+    data: any,
+    tenantId: string,
+    userId?: string,
+  ): Promise<any> {
+    const {
+      target_user_ids: targetUserIds,
+      publish_time: publishTime,
+      ...noticeData
+    } = data;
+
+    const publishTimeDate = publishTime ? new Date(publishTime) : null;
+    let status = noticeData.status;
+    if (publishTimeDate && publishTimeDate > new Date()) {
+      status = "0";
+    }
+
+    return prisma.$transaction(async (tx) => {
+      // 更新通知主记录
+      await tx.sys_notice.update({
+        where: { notice_id: id },
+        data: {
+          // @ts-ignore
+          ...keysToSnakeCase(noticeData),
+          status,
+          publish_time: publishTimeDate,
+          updated_by: userId,
+          updated_at: new Date(),
+        },
+      });
+
+      // 处理目标用户
+      if (targetUserIds !== undefined) {
+        // 若提供了 targetUserIds，则按提供列表更新关联
+        await tx.sys_notice_user.deleteMany({
+          where: { notice_id: id, tenant_id: tenantId },
+        });
+        if (targetUserIds.length > 0) {
+          await tx.sys_notice_user.createMany({
+            data: targetUserIds.map((uid: string) => ({
+              notice_id: id,
+              user_id: uid,
+              tenant_id: tenantId,
+            })),
+          });
+        }
+      } else {
+        // 未提供 targetUserIds，且状态为发布，则自动发送给租户下所有有效用户
+        if (status === "1") {
+          // 删除可能已存在的旧关联
+          await tx.sys_notice_user.deleteMany({
+            where: { notice_id: id, tenant_id: tenantId },
+          });
+          // 查询租户下所有用户（排除软删除、禁用）
+          const users = await tx.sys_user.findMany({
+            where: { tenant_id: tenantId, is_deleted: 0, status: "1" },
+            select: { user_id: true },
+          });
+          if (users.length > 0) {
+            await tx.sys_notice_user.createMany({
+              data: users.map((u) => ({
+                notice_id: id,
+                user_id: u.user_id,
+                tenant_id: tenantId,
+              })),
+            });
+          }
+        }
+      }
+
+      return tx.sys_notice.findUnique({ where: { notice_id: id } });
+    });
+  }
+  async findDetailWithTargetUserIds(
+    noticeId: string,
+    tenantId: string,
+  ): Promise<any> {
+    const notice = await prisma.sys_notice.findFirst({
+      where: {
+        notice_id: noticeId,
+        tenant_id: tenantId,
+        is_deleted: 0,
+      },
+      include: {
+        target_users: {
+          // 注意关系字段名，根据 schema 应为 target_users
+          select: {
+            user_id: true,
+          },
+        },
+      },
+    });
+
+    if (!notice) return null;
+
+    // 将关联用户转换为 ID 数组
+    const targetUserIds = notice.target_users.map((tu: any) => tu.user_id);
+
+    return {
+      ...notice,
+      targetUserIds,
+    };
   }
 }

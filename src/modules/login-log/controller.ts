@@ -88,8 +88,9 @@ export default class LoginLogController {
   private buildWhere(query: any) {
     const where: any = {};
     if (query.username) where.username = { contains: query.username };
-    if (query.status !== undefined && query.status !== "")
-      where.status = Number(query.status);
+    if (query.status !== undefined) {
+      where.status = query.status;
+    }
     if (query.startTime)
       where.created_at = {
         ...(where.created_at || {}),

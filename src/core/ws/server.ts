@@ -1,45 +1,60 @@
+import { Server as HttpServer } from "http";
 import { WebSocketServer } from "ws";
-import { Server } from "http";
+import { jwtVerify } from "jose";
 import { wsManager } from "./manager.js";
 import { logger } from "@/core/logger/index.js";
-import { verifyAccessToken } from "@/common/security/jwt.js";
 
-export function initWebSocketServer(server: Server) {
-  const wss = new WebSocketServer({ server, path: "/ws" }); // 路径可自定义
+const secret = new TextEncoder().encode(
+  process.env.JWT_SECRET || "your-secret",
+);
+
+export function initWebSocketServer(server: HttpServer) {
+  const wss = new WebSocketServer({ server, path: "/ws" });
 
   wss.on("connection", async (ws, req) => {
-    // 从查询参数或 Header 中获取 token
-    const token = new URL(
-      req.url!,
-      `http://${req.headers.host}`,
-    ).searchParams.get("token");
-    if (!token) {
-      ws.close(1008, "Unauthorized");
-      return;
-    }
-
     try {
-      const payload = await verifyAccessToken(token); // 解析出 { userId, tenantId }
-      const { userId, tenantId } = payload;
+      const url = new URL(req.url!, `http://${req.headers.host}`);
+      const token = url.searchParams.get("token");
+      const type = (url.searchParams.get("type") || "notice") as any; // 默认 notice
 
-      // 保存连接
-      wsManager.addConnection(tenantId as string, userId as string, ws);
+      if (!token) {
+        ws.close(1008, "Missing token");
+        return;
+      }
 
-      // 发送欢迎消息（可选）
-      ws.send(
-        JSON.stringify({ type: "connected", message: "WebSocket connected" }),
-      );
+      // 验证 JWT
+      const { payload } = await jwtVerify(token, secret);
+      const userId = payload.userId as string;
+      const tenantId = payload.tenantId as string;
 
-      // 处理关闭
+      // 注册连接
+      wsManager.addConnection({ userId, tenantId, type }, ws);
+
+      // 可选：发送连接确认
+      ws.send(JSON.stringify({ type: "connected", data: { userId } }));
+
+      // 心跳处理
+      const pingInterval = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.ping();
+        }
+      }, 30000);
+
+      ws.on("pong", () => {
+        /* 连接存活 */
+      });
+
       ws.on("close", () => {
-        wsManager.removeConnection(tenantId as string, userId as string, ws);
+        clearInterval(pingInterval);
+        wsManager.removeConnection(ws);
       });
 
       ws.on("error", (error) => {
         logger.error({ error }, "WebSocket error");
-        wsManager.removeConnection(tenantId as string, userId as string, ws);
+        clearInterval(pingInterval);
+        wsManager.removeConnection(ws);
       });
-    } catch (error) {
+    } catch (err) {
       ws.close(1008, "Invalid token");
     }
   });

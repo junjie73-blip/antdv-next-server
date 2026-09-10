@@ -29,7 +29,7 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
       ];
     }
     if (query.status !== undefined) {
-      finalWhere.status = Number(query.status);
+      finalWhere.status = query.status;
     }
 
     const [list, total] = await Promise.all([
@@ -244,5 +244,12 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
     }
 
     return { successCount, failCount: errors.length, errors };
+  }
+  async findRoleMenuIds(roleId: string, tenantId: string): Promise<string[]> {
+    const roleMenus = await prisma.sys_role_menu.findMany({
+      where: { role_id: roleId, tenant_id: tenantId },
+      select: { menu_id: true },
+    });
+    return roleMenus.map((rm) => rm.menu_id);
   }
 }

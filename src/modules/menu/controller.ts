@@ -21,6 +21,7 @@ import {
 } from "./schema.js";
 import { AppError } from "@/middleware/error-handler.js";
 import { success } from "@/common/utils/response.js";
+import z from "zod";
 
 @Controller("/menu", { tags: ["菜单管理"] })
 export default class MenuController extends BaseController<any, any, any, any> {
@@ -41,8 +42,7 @@ export default class MenuController extends BaseController<any, any, any, any> {
   protected buildListWhere(query: any): any {
     const where: any = {};
     if (query.menuName) where.menu_name = { contains: query.menuName };
-    if (query.status !== undefined && query.status !== "")
-      where.status = Number(query.status);
+    if (query.status !== undefined) where.status = query.status;
     return where;
   }
 
@@ -96,8 +96,31 @@ export default class MenuController extends BaseController<any, any, any, any> {
   async listMenu(@Req() req: Request, @Res() res: Response) {
     return super.list(req, res);
   }
-
-  @Get("/:id")
+  // ========== 获取菜单下的按钮列表 ==========
+  @Get("/buttons")
+  @ApiOperation("获取菜单按钮列表", "根据父菜单ID获取该菜单下的所有按钮")
+  @ApiQuery(
+    z.object({
+      parentId: z.string().uuid({ message: "parentId 必须是有效的 UUID" }),
+    }),
+  )
+  @ApiResponse(200, "查询成功")
+  @ApiResponse(400, "参数错误")
+  async buttons(@Req() req: Request, @Res() res: Response) {
+    try {
+      const parentId = req.query.parentId as string;
+      if (!parentId) {
+        throw new AppError(400, "缺少 parentId 参数", 400);
+      }
+      const data = await (
+        this.repository as MenuRepository
+      ).findButtonsByParent(parentId, req.tenantId!);
+      success(res, data);
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+  @Get("/detail/:id")
   @ApiOperation("获取菜单详情")
   @ApiResponse(200, "查询成功")
   async detailMenu(@Req() req: Request, @Res() res: Response) {

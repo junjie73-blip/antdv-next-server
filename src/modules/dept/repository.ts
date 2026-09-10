@@ -26,9 +26,11 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
       tenant_id: query.tenantId,
       is_deleted: 0,
     };
-    if (query.deptName) finalWhere.dept_name = { contains: query.deptName };
-    if (query.status !== undefined) finalWhere.status = Number(query.status);
-
+    if (query.keyword) finalWhere.dept_name = { contains: query.keyword };
+    if (query.status !== undefined) finalWhere.status = query.status;
+    if (query.parentId) {
+      finalWhere.parent_id = query.parentId;
+    }
     const [list, total] = await Promise.all([
       this.model.findMany({
         where: finalWhere,
@@ -83,13 +85,29 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
 
   private buildTree(items: any[], parentId: string | null): any[] {
     return items
-      .filter((item) =>
-        parentId === null ? item.parent_id : item.parent_id === parentId,
-      )
-      .map((item) => ({
-        ...keysToCamelCase(item),
-        children: this.buildTree(items, item.dept_id),
-      }));
+      .filter((item) => {
+        if (parentId === null) {
+          // 根节点：parent_id 为 null、undefined、空字符串或全零 UUID
+          return (
+            item.parent_id === null ||
+            item.parent_id === undefined ||
+            item.parent_id === "" ||
+            item.parent_id === "00000000-0000-0000-0000-000000000000"
+          );
+        }
+        return item.parent_id === parentId;
+      })
+      .map((item) => {
+        const children = this.buildTree(items, item.dept_id);
+        const node = {
+          // @ts-ignore
+          ...keysToCamelCase(item),
+        };
+        if (children.length > 0) {
+          node.children = children;
+        }
+        return node;
+      });
   }
   async updateDeptUsers(deptId: string, userIds: string[], tenantId: string) {
     await prisma.$transaction([
@@ -112,11 +130,11 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
       where: { dept_id: deptId, tenant_id: tenantId },
       //   @ts-ignore
       include: {
-        sys_user: {
+        user: {
           select: { user_id: true, username: true, real_name: true },
         },
       },
     });
-    return users.map((u) => u.sys_user);
+    return users.map((u) => u.user);
   }
 }

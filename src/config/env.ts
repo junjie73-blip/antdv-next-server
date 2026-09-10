@@ -74,8 +74,8 @@ const envSchema = z.object({
   BLOB_READ_WRITE_TOKEN: isVercel ? z.string().min(1) : z.string().optional(),
   JWT_SECRET: z.string().min(32, "JWT_SECRET 至少32位"),
   JWT_REFRESH_SECRET: z.string().min(32, "JWT_REFRESH_SECRET 至少32位"),
-  JWT_EXPIRES_IN: z.string().default("15m"),
-  JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
+  JWT_EXPIRES_IN: z.string().default("15h"),
+  JWT_REFRESH_EXPIRES_IN: z.string().default("3h"),
   LOG_LEVEL: z
     .enum(["trace", "debug", "info", "warn", "error", "fatal"])
     .default("info"),

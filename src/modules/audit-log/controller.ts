@@ -13,36 +13,34 @@ import { AuditLogListSchema, AuditLogExportSchema } from "./schema.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { success, error } from "@/common/utils/response.js";
 import * as XLSX from "xlsx";
+import { BaseController } from "@/core/base-controller.js";
 
 @Controller("/audit-log", { tags: ["审计日志"] })
-export default class AuditLogController {
-  private repository = new AuditLogRepository();
+export default class AuditLogController extends BaseController<
+  any,
+  any,
+  any,
+  any
+> {
+  protected readonly repository = new AuditLogRepository();
+  protected readonly config = {
+    routePrefix: "/api/v1/audit-log",
+    tags: ["审计日志"],
+    permissionPrefix: "audit-log",
+    enableAudit: true,
+    defaultPageSize: 10,
+    maxPageSize: 100,
+  };
+  protected readonly createSchema = null;
+  protected readonly updateSchema = null;
+  protected readonly querySchema = AuditLogListSchema;
 
   @Get("/list")
   @ApiOperation("获取审计日志列表")
   @ApiQuery(AuditLogListSchema)
   @ApiResponse(200, "查询成功")
-  async list(@Req() req: Request, @Res() res: Response) {
-    try {
-      const query = {
-        tenantId: req.tenantId!,
-        username: req.query.username as string,
-        operation: req.query.operation as string,
-        method: req.query.method as string,
-        startTime: req.query.startTime as string,
-        endTime: req.query.endTime as string,
-      };
-      const where = this.buildWhere(query);
-      const data = await this.repository.findPage(query, where);
-      // 可选：数据转换
-      data.list = data.list.map((item: any) => ({
-        ...item,
-        created_at: item.created_at?.toISOString(),
-      }));
-      success(res, data);
-    } catch (err) {
-      this.handleError(res, err);
-    }
+  async logList(@Req() req: Request, @Res() res: Response) {
+    return super.list(req, res);
   }
 
   @Get("/export")
@@ -97,8 +95,7 @@ export default class AuditLogController {
     if (query.username) where.username = { contains: query.username };
     if (query.operation) where.operation = { contains: query.operation };
     if (query.method) where.method = query.method.toUpperCase();
-    if (query.status !== undefined && query.status !== "")
-      where.status = Number(query.status);
+    if (query.status !== undefined) where.status = query.status;
     if (query.startTime)
       where.created_at = {
         ...(where.created_at || {}),
@@ -110,14 +107,5 @@ export default class AuditLogController {
         lte: new Date(query.endTime),
       };
     return where;
-  }
-
-  private handleError(res: Response, err: any) {
-    error(
-      res,
-      err.message || "操作失败",
-      err.code || 500,
-      err.statusCode || 500,
-    );
   }
 }

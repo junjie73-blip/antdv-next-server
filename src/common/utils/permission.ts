@@ -32,7 +32,7 @@ export async function checkUserPermissions(
 
   // 3. 获取这些权限的编码
   const perms = await prisma.sys_permission.findMany({
-    where: { perm_id: { in: permIds }, tenant_id: user.tenantId, status: 1 },
+    where: { perm_id: { in: permIds }, tenant_id: user.tenantId, status: "1" },
     select: { perm_code: true },
   });
 

@@ -44,7 +44,7 @@ export class DictDataRepository extends BaseRepository<any, any, any, any> {
       ];
     }
     if (query.status !== undefined) {
-      finalWhere.status = Number(query.status);
+      finalWhere.status = query.status;
     }
 
     const [list, total] = await Promise.all([
@@ -74,7 +74,7 @@ export class DictDataRepository extends BaseRepository<any, any, any, any> {
       dict_code: dictCode,
       tenant_id: tenantId,
       is_deleted: 0,
-      status: 1,
+      status: "1",
     };
     if (dictTypeId) {
       typeWhere.dict_type_id = dictTypeId;
@@ -86,9 +86,71 @@ export class DictDataRepository extends BaseRepository<any, any, any, any> {
         dict_type_id: dictType.dict_type_id,
         tenant_id: tenantId,
         is_deleted: 0,
-        status: 1,
+        status: "1",
       },
       orderBy: { sort_order: "asc" },
     });
+  }
+  /**
+   * 获取字典树：所有启用的字典类型及其启用的字典数据
+   */
+  async findTree(
+    tenantId: string,
+    filter?: { dictTypeId?: string; dictCode?: string },
+  ) {
+    // 查询字典类型（启用状态）
+    const typeWhere: any = {
+      tenant_id: tenantId,
+      status: "1",
+      is_deleted: 0,
+    };
+    if (filter?.dictTypeId) {
+      typeWhere.dict_type_id = filter.dictTypeId;
+    }
+    if (filter?.dictCode) {
+      typeWhere.dict_code = filter.dictCode;
+    }
+
+    const dictTypes = await prisma.sys_dict_type.findMany({
+      where: typeWhere,
+      orderBy: { created_at: "asc" },
+      select: {
+        dict_type_id: true,
+        dict_code: true,
+        dict_name: true,
+      },
+    });
+
+    if (dictTypes.length === 0) return [];
+
+    const typeIds = dictTypes.map((t) => t.dict_type_id);
+
+    // 查询这些类型下的启用字典数据
+    const dictDataList = await prisma.sys_dict_data.findMany({
+      where: {
+        tenant_id: tenantId,
+        dict_type_id: { in: typeIds },
+        status: "1",
+        is_deleted: 0,
+      },
+      orderBy: { sort_order: "asc" },
+    });
+
+    // 组装树形结构
+    const tree = dictTypes.map((type) => ({
+      dictTypeId: type.dict_type_id,
+      dictCode: type.dict_code,
+      dictName: type.dict_name,
+      children: dictDataList
+        .filter((data) => data.dict_type_id === type.dict_type_id)
+        .map((data) => ({
+          dictDataId: data.dict_data_id,
+          dictLabel: data.dict_label,
+          dictValue: data.dict_value,
+          sortOrder: data.sort_order,
+        })),
+    }));
+
+    return tree;
   }
 }

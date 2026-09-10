@@ -78,7 +78,7 @@ export default class RoleController extends BaseController<any, any, any, any> {
       ];
     }
     if (query.status !== undefined) {
-      where.status = Number(query.status);
+      where.status = query.status;
     }
     return where;
   }
@@ -217,15 +217,11 @@ export default class RoleController extends BaseController<any, any, any, any> {
   async getRoleMenuTree(@Req() req: Request, @Res() res: Response) {
     try {
       const roleId = req.params.id;
-      const tenantId = req.tenantId!;
-      const repo = this.repository as RoleRepository;
-      const [allMenus, checkedMenuIds] = await Promise.all([
-        repo.findAllMenus(tenantId),
-        repo.getRoleMenuIds(roleId, tenantId),
-      ]);
-      const checkedSet = new Set(checkedMenuIds);
-      const tree = this.buildTreeWithChecked(allMenus, null, checkedSet);
-      success(res, tree, "查询成功");
+      const menuIds = await (this.repository as RoleRepository).findRoleMenuIds(
+        roleId,
+        req.tenantId!,
+      );
+      success(res, menuIds);
     } catch (err) {
       this.handleError(res, err);
     }

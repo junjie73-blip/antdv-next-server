@@ -16,7 +16,7 @@ model sys_tenant {
   contact_name  String?   @db.VarChar(64) /// 联系人姓名
   contact_phone String?   @db.VarChar(32) /// 联系电话
   contact_email String?   @db.VarChar(128) /// 联系邮箱
-  status        Int       @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status        String    @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
   expire_time   DateTime? @db.Timestamptz(6) /// 租户过期时间
   created_at    DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at    DateTime  @updatedAt @db.Timestamptz(6) /// 更新时间
@@ -42,7 +42,8 @@ model sys_user {
   email           String?   @db.VarChar(128) /// 邮箱
   avatar          String?   @db.VarChar(512) /// 头像URL
   gender          Int?      @db.SmallInt /// 性别：0-未知，1-男，2-女
-  status          Int       @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status          String    @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
+  sort_order      Int       @default(0) @db.SmallInt
   last_login_ip   String?   @db.VarChar(64) /// 最后登录IP
   last_login_time DateTime? @db.Timestamptz(6) /// 最后登录时间
   created_at      DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
@@ -70,7 +71,7 @@ model sys_role {
   role_name   String   @db.VarChar(128) /// 角色名称
   description String?  @db.VarChar(512) /// 角色描述
   sort_order  Int      @default(0) /// 排序值
-  status      Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status      String   @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
   created_at  DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at  DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
   created_by  String?  @db.Uuid /// 创建人ID
@@ -98,7 +99,7 @@ model sys_dept {
   phone      String?  @db.VarChar(32) /// 联系电话
   email      String?  @db.VarChar(128) /// 邮箱
   sort_order Int      @default(0) /// 排序值
-  status     Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status     String   @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
   created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
   created_by String?  @db.Uuid /// 创建人ID
@@ -127,7 +128,7 @@ model sys_menu {
   component  String?  @db.VarChar(256) /// 前端组件路径
   permission String?  @db.VarChar(128) /// 权限标识，如 system:user:list
   sort_order Int      @default(0) /// 排序值
-  status     Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status     String   @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
   created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
   created_by String?  @db.Uuid /// 创建人ID
@@ -150,7 +151,7 @@ model sys_permission {
   resource_type String   @db.VarChar(32) /// 资源类型，如 api、button
   action        String   @db.VarChar(32) /// 动作，如 create、read、update、delete
   description   String?  @db.VarChar(512) /// 描述
-  status        Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status        String   @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
   created_at    DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at    DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
   created_by    String?  @db.Uuid /// 创建人ID
@@ -172,7 +173,7 @@ model sys_dict_type {
   dict_code    String   @db.VarChar(64) /// 字典编码
   dict_name    String   @db.VarChar(128) /// 字典名称
   description  String?  @db.VarChar(512) /// 描述
-  status       Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status       String   @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
   created_at   DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at   DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
   created_by   String?  @db.Uuid /// 创建人ID
@@ -195,7 +196,7 @@ model sys_dict_data {
   dict_label   String   @db.VarChar(128) /// 字典标签
   dict_value   String   @db.VarChar(128) /// 字典值
   sort_order   Int      @default(0) /// 排序值
-  status       Int      @default(1) @db.SmallInt /// 状态：0-禁用，1-启用
+  status       String   @default("1") @db.VarChar(10) /// 状态：'0'-禁用，'1'-启用
   remark       String?  @db.VarChar(512) /// 备注
   created_at   DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at   DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
@@ -217,7 +218,8 @@ model sys_notice {
   title        String    @db.VarChar(256) /// 通知标题
   content      String?   @db.Text /// 通知内容（支持富文本）
   notice_type  Int       @db.SmallInt /// 通知类型：1-通知，2-公告，3-提醒
-  status       Int       @default(1) @db.SmallInt /// 状态：0-草稿，1-发布
+  status       String    @default("1") @db.VarChar(10) /// 状态：'0'-草稿，'1'-发布
+  is_read      Int       @default(0) @db.SmallInt /// 状态：'0'-未读，'1'-已读
   publish_time DateTime? @db.Timestamptz(6) /// 定时发布时间
   created_at   DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
   updated_at   DateTime  @updatedAt @db.Timestamptz(6) /// 更新时间
@@ -266,7 +268,7 @@ model sys_audit_log {
   ip_address     String   @db.VarChar(64) /// 客户端IP
   user_agent     String?  @db.VarChar(512) /// 用户代理
   execute_time   Int      @default(0) /// 执行时间（毫秒）
-  status         Int      @default(1) @db.SmallInt /// 状态：0-失败，1-成功
+  status         String   @default("1") @db.VarChar(10) /// 状态：'0'-失败，'1'-成功
   error_msg      String?  @db.Text /// 错误信息
   created_at     DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
 
@@ -389,7 +391,7 @@ model sys_login_log {
   username   String   @db.VarChar(64) /// 用户名
   ip_address String   @db.VarChar(64) /// 登录IP
   user_agent String?  @db.VarChar(512) /// 用户代理
-  status     Int      @default(1) @db.SmallInt /// 登录状态：0-失败，1-成功
+  status     String   @default("1") @db.VarChar(10) /// 登录状态：'0'-失败，'1'-成功
   message    String?  @db.VarChar(256) /// 附加信息（如失败原因）
   created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
 

@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { ApiResponse, PageResponse } from "@/types/api-response.js";
 import dayjs from "dayjs";
+import { keysToCamelCase } from "./case-convert.js";
 
 /**
  * 成功响应封装
@@ -62,7 +63,14 @@ export function pageSuccess<T>(
     code: 200,
     message,
     data: {
-      list,
+      list: list.map(keysToCamelCase).map((item: any) => {
+        for (const key in item) {
+          if (item[key] instanceof Date) {
+            item[key] = dayjs(item[key]).format("YYYY-MM-DD HH:mm:ss");
+          }
+        }
+        return item;
+      }),
       total,
       pageNum,
       pageSize,

@@ -63,7 +63,7 @@ export default class TenantController extends BaseController<
       where.tenant_name = { contains: query.tenant_name };
     }
     if (query.status !== undefined) {
-      where.status = Number(query.status);
+      where.status = query.status;
     }
     return where;
   }

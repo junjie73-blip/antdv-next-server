@@ -29,7 +29,7 @@ export async function tenantResolver(
       where: {
         tenant_id: tenantId,
         is_deleted: 0,
-        status: 1,
+        status: "1",
       },
     });
 

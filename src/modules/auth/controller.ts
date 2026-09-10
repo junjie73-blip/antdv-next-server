@@ -24,16 +24,16 @@ import {
 } from "./schema.js";
 import { keysToCamelCase } from "@/common/utils/case-convert.js";
 import { decrypt, encrypt } from "@/common/utils/crypto.js";
-import { parseExpirationToSeconds, redis } from "@/config/redis.js";
+import { redis } from "@/config/redis.js";
+import { UserRepository } from "../user/repository.js";
+import { generateTokens } from "@/middleware/auth.js";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "your-secret-key",
 );
-const ACCESS_TOKEN_EXPIRES = "3h";
-const REFRESH_TOKEN_EXPIRES = "15m";
-
 @Controller("/auth", { tags: ["认证"] })
 export default class AuthController {
+  private userRepository = new UserRepository();
   private async generateTokens(user: any) {
     const basePayload = {
       userId: user.user_id,
@@ -41,17 +41,7 @@ export default class AuthController {
       username: user.username,
     };
 
-    const accessToken = await new SignJWT({ ...basePayload, type: "access" })
-      .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime(ACCESS_TOKEN_EXPIRES)
-      .sign(JWT_SECRET);
-
-    const refreshToken = await new SignJWT({ ...basePayload, type: "refresh" })
-      .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime(REFRESH_TOKEN_EXPIRES)
-      .sign(JWT_SECRET);
-
-    return { accessToken, refreshToken };
+    return generateTokens(basePayload);
   }
 
   @Post("/login")
@@ -68,7 +58,7 @@ export default class AuthController {
       const user = await prisma.sys_user.findFirst({
         where: { username, is_deleted: 0 },
       });
-
+      console.log(user, "user", username);
       if (!user) {
         // 记录登录失败日志
         await prisma.sys_login_log.create({
@@ -78,14 +68,14 @@ export default class AuthController {
             username,
             ip_address: ip,
             user_agent: userAgent,
-            status: 0,
+            status: "0",
             message: "用户名不存在",
           },
         });
         throw new AppError(401, "用户名或密码错误", 401);
       }
 
-      const valid = await compare(password, user.password);
+      const valid = decrypt(user.password) === password;
       if (!valid) {
         // 记录登录失败日志
         await prisma.sys_login_log.create({
@@ -95,7 +85,7 @@ export default class AuthController {
             username,
             ip_address: ip,
             user_agent: userAgent,
-            status: 0,
+            status: "0",
             message: "密码错误",
           },
         });
@@ -106,7 +96,7 @@ export default class AuthController {
       const tenant = await prisma.sys_tenant.findUnique({
         where: { tenant_id: user.tenant_id },
       });
-      if (!tenant || tenant.status !== 1) {
+      if (!tenant || tenant.status !== "1") {
         await prisma.sys_login_log.create({
           data: {
             tenant_id: user.tenant_id,
@@ -114,7 +104,7 @@ export default class AuthController {
             username,
             ip_address: ip,
             user_agent: userAgent,
-            status: 0,
+            status: "0",
             message: "租户已禁用",
           },
         });
@@ -138,7 +128,7 @@ export default class AuthController {
           username,
           ip_address: ip,
           user_agent: userAgent,
-          status: 1,
+          status: "1",
           message: "登录成功",
         },
       });
@@ -202,17 +192,15 @@ export default class AuthController {
       });
       if (!user) throw new AppError(404, "用户不存在", 404);
       success(res, {
-        userId: user.user_id,
         username: user.username,
         realName: user.real_name,
         email: user.email,
         phone: user.phone,
+        avatar: user.avatar,
         tenantId: user.tenant_id,
-        // @ts-ignore
         roles: (user.sys_user_role as any[]).map(
           (ur: any) => ur.sys_role?.role_code,
         ),
-        // @ts-ignore
         depts: (user.sys_user_dept as any[]).map(
           (ud: any) => ud.sys_dept?.dept_name,
         ),
@@ -318,7 +306,7 @@ export default class AuthController {
         where: {
           menu_id: { in: menuIds },
           tenant_id: tenantId,
-          status: 1,
+          status: "1",
           is_deleted: 0,
           menu_type: { in: [1, 2] },
         },
@@ -364,7 +352,7 @@ export default class AuthController {
 
       // 3. 查询权限编码
       const perms = await prisma.sys_permission.findMany({
-        where: { perm_id: { in: permIds }, tenant_id: tenantId, status: 1 },
+        where: { perm_id: { in: permIds }, tenant_id: tenantId, status: "1" },
         select: { perm_code: true },
       });
 
@@ -394,5 +382,50 @@ export default class AuthController {
       await redis.del(`refresh:${userId}`);
     }
     success(res, null, "登出成功");
+  }
+  @Post("/register")
+  @ApiOperation("用户注册", "在已有租户下注册新用户")
+  @ApiBody(RegisterSchema)
+  @ApiResponse(201, "注册成功")
+  @ApiResponse(400, "参数错误")
+  @ApiResponse(409, "用户名已存在")
+  async register(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { tenantCode, tenantName, username, password, email, phone } =
+        RegisterSchema.parse(req.body);
+
+      // 1. 检查租户编码是否已存在（全局唯一）
+      const tenantExists =
+        await this.userRepository.findTenantByCode(tenantCode);
+      if (tenantExists) {
+        throw new AppError(409, "租户编码已存在", 409);
+      }
+
+      // 2. 事务创建租户和用户
+      const { tenant, user } = await this.userRepository.registerTenantWithUser(
+        {
+          tenantCode,
+          tenantName,
+          username,
+          password,
+          email,
+          phone,
+        },
+      );
+
+      // 3. 返回结果
+      success(
+        res,
+        {
+          tenantId: tenant.tenant_id,
+          userId: user.user_id,
+          username: user.username,
+        },
+        "注册成功",
+        201,
+      );
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 }

@@ -47,8 +47,7 @@ export default class PermissionController extends BaseController<
     if (query.permCode) where.perm_code = { contains: query.permCode };
     if (query.permName) where.perm_name = { contains: query.permName };
     if (query.resourceType) where.resource_type = query.resourceType;
-    if (query.status !== undefined && query.status !== "")
-      where.status = Number(query.status);
+    if (query.status !== undefined) where.status = query.status;
     return where;
   }
 

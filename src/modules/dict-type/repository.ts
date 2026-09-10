@@ -37,7 +37,7 @@ export class DictTypeRepository extends BaseRepository<any, any, any, any> {
       ];
     }
     if (query.status !== undefined) {
-      finalWhere.status = Number(query.status);
+      finalWhere.status = query.status;
     }
 
     const [list, total] = await Promise.all([

@@ -25,6 +25,7 @@ import { AppError } from "@/middleware/error-handler.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { prisma } from "@/config/database.js";
 import { pushNotice } from "./pusher.js";
+import { keysToCamelCase } from "@/common/utils/case-convert.js";
 
 @Controller("/notice", { tags: ["通知公告"] })
 export default class NoticeController extends BaseController<
@@ -88,11 +89,25 @@ export default class NoticeController extends BaseController<
     return super.remove(req, res);
   }
 
-  @Get("/:id")
+  @Get("/detail/:id")
   @ApiOperation("获取通知详情")
   @ApiResponse(200, "查询成功")
   async getDetailNotice(@Req() req: Request, @Res() res: Response) {
-    return super.detail(req, res);
+    try {
+      const noticeId = req.params.id;
+      const tenantId = req.tenantId!;
+      const detail = await (
+        this.repository as NoticeRepository
+      ).findDetailWithTargetUserIds(noticeId, tenantId);
+      if (!detail) {
+        throw new AppError(404, "通知不存在", 404);
+      }
+      // 转换字段名为驼峰（如果 repository 返回 snake_case）
+      const result = keysToCamelCase(detail);
+      success(res, result);
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
   @Get("/my")
   @ApiOperation("获取我的通知列表")
@@ -162,12 +177,30 @@ export default class NoticeController extends BaseController<
   @ApiResponse(200, "发送成功")
   async sendNotice(@Req() req: Request, @Res() res: Response) {
     try {
-      const notice = await prisma.sys_notice.findUnique({
-        where: { notice_id: req.params.id },
+      const noticeId = req.params.id;
+      const tenantId = req.tenantId!;
+
+      // 检查通知是否存在且已发布
+      const notice = await prisma.sys_notice.findFirst({
+        where: {
+          notice_id: noticeId,
+          tenant_id: tenantId,
+          is_deleted: 0,
+          status: "1",
+        },
+        include: { target_users: { select: { user_id: true } } },
       });
-      if (!notice || notice.status !== 1)
-        throw new AppError(400, "通知未发布", 400);
-      await pushNotice(notice.notice_id); // 调用已有的推送函数
+
+      if (!notice) {
+        throw new AppError(404, "通知不存在或未发布", 404);
+      }
+
+      if (!notice.target_users || notice.target_users.length === 0) {
+        throw new AppError(400, "该通知没有指定目标用户，无法发送", 400);
+      }
+
+      // 调用推送逻辑
+      await pushNotice(noticeId);
       success(res, null, "发送成功");
     } catch (err) {
       this.handleError(res, err);

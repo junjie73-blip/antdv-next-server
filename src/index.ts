@@ -23,6 +23,7 @@ import { createServer } from "http";
 import { authMiddleware } from "./middleware/auth.js";
 import { auditMiddleware } from "./middleware/audit.js";
 import { timingMiddleware } from "./middleware/timing.js";
+import { env } from "./config/env.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -31,12 +32,16 @@ const _server = createServer(app);
 // 1. Helmet 配置
 app.use(
   helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-      },
-    },
+    contentSecurityPolicy:
+      env.NODE_ENV === "development"
+        ? false
+        : {
+            directives: {
+              defaultSrc: ["'self'"],
+              connectSrc: ["'self'", "http://localhost:9080"],
+              scriptSrc: ["'self'", "'unsafe-inline'"],
+            },
+          },
     hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
   }),
 );

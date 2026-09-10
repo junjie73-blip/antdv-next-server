@@ -106,18 +106,43 @@ export abstract class BaseRepository<
     const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
     const skip = (pageNum - 1) * pageSize;
 
+    let select: Record<string, boolean> | undefined;
+    if (query.fields) {
+      const fields = Array.isArray(query.fields)
+        ? query.fields
+        : (query.fields as string)
+            .split(",")
+            .map((f) =>
+              f
+                .trim()
+                .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`),
+            )
+            .filter(Boolean);
+      if (fields.length > 0) {
+        select = {};
+        fields.forEach((field) => {
+          select![field] = true;
+        });
+      }
+    }
+
     const finalWhere = this.buildWhereWithTenant(where, query.tenantId);
+    const findManyArgs: any = {
+      where: finalWhere,
+      skip,
+      take: pageSize,
+      orderBy: this.buildOrderBy(query.sort),
+    };
+
+    // 如果有 select，则添加
+    if (select) {
+      findManyArgs.select = select;
+    }
 
     const [list, total] = await Promise.all([
-      this.model.findMany({
-        where: finalWhere,
-        skip,
-        take: pageSize,
-        orderBy: this.buildOrderBy(query.sort),
-      }),
+      this.model.findMany(findManyArgs),
       this.model.count({ where: finalWhere }),
     ]);
-
     const totalPages = Math.ceil(total / pageSize);
 
     return {
