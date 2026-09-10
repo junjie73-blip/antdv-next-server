@@ -14,6 +14,7 @@ import { RequirePermission } from "@/core/decorator/permission.js";
 import { success, error } from "@/common/utils/response.js";
 import * as XLSX from "xlsx";
 import { BaseController } from "@/core/base-controller.js";
+import { ZodTypeAny } from "zod";
 
 @Controller("/audit-log", { tags: ["审计日志"] })
 export default class AuditLogController extends BaseController<
@@ -31,8 +32,8 @@ export default class AuditLogController extends BaseController<
     defaultPageSize: 10,
     maxPageSize: 100,
   };
-  protected readonly createSchema = null;
-  protected readonly updateSchema = null;
+  protected readonly createSchema = undefined;
+  protected readonly updateSchema = undefined;
   protected readonly querySchema = AuditLogListSchema;
 
   @Get("/list")

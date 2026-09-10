@@ -16,8 +16,9 @@ export function success<T = any>(
   message = "操作成功",
   code = 200,
 ): void {
-  if (data && data.list) {
-    data.list = data.list.map(keysToCamelCase).map((item: any) => {
+  const _data = data as any;
+  if (_data && _data.list) {
+    _data.list = _data.list.map(keysToCamelCase).map((item: any) => {
       for (const key in item) {
         if (item[key] instanceof Date) {
           item[key] = dayjs(item[key]).format("YYYY-MM-DD HH:mm:ss");
@@ -29,7 +30,7 @@ export function success<T = any>(
   const response: ApiResponse<T> = {
     code,
     message,
-    data,
+    data: _data,
     timestamp: new Date().getTime(),
   };
   res.status(code >= 200 && code < 300 ? code : 200).json(response);

@@ -60,12 +60,12 @@ export type sys_dict_data = $Result.DefaultSelection<Prisma.$sys_dict_dataPayloa
 export type sys_notice = $Result.DefaultSelection<Prisma.$sys_noticePayload>
 /**
  * Model sys_notice_user
- * 通知与用户关联表，记录通知的接收用户及已读状态
+ * 通知与用户关联表
  */
 export type sys_notice_user = $Result.DefaultSelection<Prisma.$sys_notice_userPayload>
 /**
  * Model sys_audit_log
- * 审计日志表，记录系统操作日志
+ * 审计日志表
  */
 export type sys_audit_log = $Result.DefaultSelection<Prisma.$sys_audit_logPayload>
 /**
@@ -80,14 +80,19 @@ export type sys_user_role = $Result.DefaultSelection<Prisma.$sys_user_rolePayloa
 export type sys_user_dept = $Result.DefaultSelection<Prisma.$sys_user_deptPayload>
 /**
  * Model sys_role_menu
- * 角色与菜单关联表
+ * 
  */
 export type sys_role_menu = $Result.DefaultSelection<Prisma.$sys_role_menuPayload>
 /**
  * Model sys_role_permission
- * 角色与权限关联表
+ * 
  */
 export type sys_role_permission = $Result.DefaultSelection<Prisma.$sys_role_permissionPayload>
+/**
+ * Model sys_role_dept
+ * 
+ */
+export type sys_role_dept = $Result.DefaultSelection<Prisma.$sys_role_deptPayload>
 /**
  * Model sys_mfa_config
  * 用户多因素认证配置表
@@ -95,17 +100,17 @@ export type sys_role_permission = $Result.DefaultSelection<Prisma.$sys_role_perm
 export type sys_mfa_config = $Result.DefaultSelection<Prisma.$sys_mfa_configPayload>
 /**
  * Model sys_file
- * 文件管理表，记录上传的文件信息
+ * 文件管理表
  */
 export type sys_file = $Result.DefaultSelection<Prisma.$sys_filePayload>
 /**
  * Model sys_login_log
- * 登录日志表，记录用户登录历史
+ * 登录日志表
  */
 export type sys_login_log = $Result.DefaultSelection<Prisma.$sys_login_logPayload>
 /**
  * Model sys_config
- * 系统配置表，存储租户级配置项
+ * 系统配置表
  */
 export type sys_config = $Result.DefaultSelection<Prisma.$sys_configPayload>
 /**
@@ -118,11 +123,6 @@ export type sys_job = $Result.DefaultSelection<Prisma.$sys_jobPayload>
  * 
  */
 export type sys_job_log = $Result.DefaultSelection<Prisma.$sys_job_logPayload>
-/**
- * Model sys_role_dept
- * 
- */
-export type sys_role_dept = $Result.DefaultSelection<Prisma.$sys_role_deptPayload>
 /**
  * Model sys_todo
  * 
@@ -406,6 +406,16 @@ export class PrismaClient<
   get sys_role_permission(): Prisma.sys_role_permissionDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.sys_role_dept`: Exposes CRUD operations for the **sys_role_dept** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sys_role_depts
+    * const sys_role_depts = await prisma.sys_role_dept.findMany()
+    * ```
+    */
+  get sys_role_dept(): Prisma.sys_role_deptDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.sys_mfa_config`: Exposes CRUD operations for the **sys_mfa_config** model.
     * Example usage:
     * ```ts
@@ -464,16 +474,6 @@ export class PrismaClient<
     * ```
     */
   get sys_job_log(): Prisma.sys_job_logDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.sys_role_dept`: Exposes CRUD operations for the **sys_role_dept** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Sys_role_depts
-    * const sys_role_depts = await prisma.sys_role_dept.findMany()
-    * ```
-    */
-  get sys_role_dept(): Prisma.sys_role_deptDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.sys_todo`: Exposes CRUD operations for the **sys_todo** model.
@@ -956,13 +956,13 @@ export namespace Prisma {
     sys_user_dept: 'sys_user_dept',
     sys_role_menu: 'sys_role_menu',
     sys_role_permission: 'sys_role_permission',
+    sys_role_dept: 'sys_role_dept',
     sys_mfa_config: 'sys_mfa_config',
     sys_file: 'sys_file',
     sys_login_log: 'sys_login_log',
     sys_config: 'sys_config',
     sys_job: 'sys_job',
     sys_job_log: 'sys_job_log',
-    sys_role_dept: 'sys_role_dept',
     sys_todo: 'sys_todo',
     sys_ip_rule: 'sys_ip_rule'
   };
@@ -980,7 +980,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_role_dept" | "sys_todo" | "sys_ip_rule"
+      modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2094,6 +2094,80 @@ export namespace Prisma {
           }
         }
       }
+      sys_role_dept: {
+        payload: Prisma.$sys_role_deptPayload<ExtArgs>
+        fields: Prisma.sys_role_deptFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sys_role_deptFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sys_role_deptFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          findFirst: {
+            args: Prisma.sys_role_deptFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sys_role_deptFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          findMany: {
+            args: Prisma.sys_role_deptFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
+          }
+          create: {
+            args: Prisma.sys_role_deptCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          createMany: {
+            args: Prisma.sys_role_deptCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sys_role_deptCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
+          }
+          delete: {
+            args: Prisma.sys_role_deptDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          update: {
+            args: Prisma.sys_role_deptUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          deleteMany: {
+            args: Prisma.sys_role_deptDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sys_role_deptUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.sys_role_deptUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
+          }
+          upsert: {
+            args: Prisma.sys_role_deptUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
+          }
+          aggregate: {
+            args: Prisma.Sys_role_deptAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSys_role_dept>
+          }
+          groupBy: {
+            args: Prisma.sys_role_deptGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sys_role_deptGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sys_role_deptCountArgs<ExtArgs>
+            result: $Utils.Optional<Sys_role_deptCountAggregateOutputType> | number
+          }
+        }
+      }
       sys_mfa_config: {
         payload: Prisma.$sys_mfa_configPayload<ExtArgs>
         fields: Prisma.sys_mfa_configFieldRefs
@@ -2538,80 +2612,6 @@ export namespace Prisma {
           }
         }
       }
-      sys_role_dept: {
-        payload: Prisma.$sys_role_deptPayload<ExtArgs>
-        fields: Prisma.sys_role_deptFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.sys_role_deptFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.sys_role_deptFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
-          }
-          findFirst: {
-            args: Prisma.sys_role_deptFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.sys_role_deptFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
-          }
-          findMany: {
-            args: Prisma.sys_role_deptFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
-          }
-          create: {
-            args: Prisma.sys_role_deptCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
-          }
-          createMany: {
-            args: Prisma.sys_role_deptCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.sys_role_deptCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
-          }
-          delete: {
-            args: Prisma.sys_role_deptDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
-          }
-          update: {
-            args: Prisma.sys_role_deptUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
-          }
-          deleteMany: {
-            args: Prisma.sys_role_deptDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.sys_role_deptUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.sys_role_deptUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>[]
-          }
-          upsert: {
-            args: Prisma.sys_role_deptUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$sys_role_deptPayload>
-          }
-          aggregate: {
-            args: Prisma.Sys_role_deptAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateSys_role_dept>
-          }
-          groupBy: {
-            args: Prisma.sys_role_deptGroupByArgs<ExtArgs>
-            result: $Utils.Optional<Sys_role_deptGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.sys_role_deptCountArgs<ExtArgs>
-            result: $Utils.Optional<Sys_role_deptCountAggregateOutputType> | number
-          }
-        }
-      }
       sys_todo: {
         payload: Prisma.$sys_todoPayload<ExtArgs>
         fields: Prisma.sys_todoFieldRefs
@@ -2898,13 +2898,13 @@ export namespace Prisma {
     sys_user_dept?: sys_user_deptOmit
     sys_role_menu?: sys_role_menuOmit
     sys_role_permission?: sys_role_permissionOmit
+    sys_role_dept?: sys_role_deptOmit
     sys_mfa_config?: sys_mfa_configOmit
     sys_file?: sys_fileOmit
     sys_login_log?: sys_login_logOmit
     sys_config?: sys_configOmit
     sys_job?: sys_jobOmit
     sys_job_log?: sys_job_logOmit
-    sys_role_dept?: sys_role_deptOmit
     sys_todo?: sys_todoOmit
     sys_ip_rule?: sys_ip_ruleOmit
   }
@@ -3028,10 +3028,16 @@ export namespace Prisma {
 
   export type Sys_roleCountOutputType = {
     sys_user_role: number
+    sys_role_menu: number
+    sys_role_permission: number
+    sys_role_dept: number
   }
 
   export type Sys_roleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sys_user_role?: boolean | Sys_roleCountOutputTypeCountSys_user_roleArgs
+    sys_role_menu?: boolean | Sys_roleCountOutputTypeCountSys_role_menuArgs
+    sys_role_permission?: boolean | Sys_roleCountOutputTypeCountSys_role_permissionArgs
+    sys_role_dept?: boolean | Sys_roleCountOutputTypeCountSys_role_deptArgs
   }
 
   // Custom InputTypes
@@ -3052,6 +3058,27 @@ export namespace Prisma {
     where?: sys_user_roleWhereInput
   }
 
+  /**
+   * Sys_roleCountOutputType without action
+   */
+  export type Sys_roleCountOutputTypeCountSys_role_menuArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_menuWhereInput
+  }
+
+  /**
+   * Sys_roleCountOutputType without action
+   */
+  export type Sys_roleCountOutputTypeCountSys_role_permissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_permissionWhereInput
+  }
+
+  /**
+   * Sys_roleCountOutputType without action
+   */
+  export type Sys_roleCountOutputTypeCountSys_role_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_deptWhereInput
+  }
+
 
   /**
    * Count Type Sys_deptCountOutputType
@@ -3059,10 +3086,12 @@ export namespace Prisma {
 
   export type Sys_deptCountOutputType = {
     sys_user_dept: number
+    sys_role_dept: number
   }
 
   export type Sys_deptCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sys_user_dept?: boolean | Sys_deptCountOutputTypeCountSys_user_deptArgs
+    sys_role_dept?: boolean | Sys_deptCountOutputTypeCountSys_role_deptArgs
   }
 
   // Custom InputTypes
@@ -3081,6 +3110,75 @@ export namespace Prisma {
    */
   export type Sys_deptCountOutputTypeCountSys_user_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: sys_user_deptWhereInput
+  }
+
+  /**
+   * Sys_deptCountOutputType without action
+   */
+  export type Sys_deptCountOutputTypeCountSys_role_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_deptWhereInput
+  }
+
+
+  /**
+   * Count Type Sys_menuCountOutputType
+   */
+
+  export type Sys_menuCountOutputType = {
+    sys_role_menu: number
+  }
+
+  export type Sys_menuCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_role_menu?: boolean | Sys_menuCountOutputTypeCountSys_role_menuArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Sys_menuCountOutputType without action
+   */
+  export type Sys_menuCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sys_menuCountOutputType
+     */
+    select?: Sys_menuCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Sys_menuCountOutputType without action
+   */
+  export type Sys_menuCountOutputTypeCountSys_role_menuArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_menuWhereInput
+  }
+
+
+  /**
+   * Count Type Sys_permissionCountOutputType
+   */
+
+  export type Sys_permissionCountOutputType = {
+    sys_role_permission: number
+  }
+
+  export type Sys_permissionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_role_permission?: boolean | Sys_permissionCountOutputTypeCountSys_role_permissionArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Sys_permissionCountOutputType without action
+   */
+  export type Sys_permissionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sys_permissionCountOutputType
+     */
+    select?: Sys_permissionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Sys_permissionCountOutputType without action
+   */
+  export type Sys_permissionCountOutputTypeCountSys_role_permissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_permissionWhereInput
   }
 
 
@@ -3437,57 +3535,18 @@ export namespace Prisma {
     name: "sys_tenant"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 租户ID（主键，UUID）
-       */
       tenant_id: string
-      /**
-       * 租户编码（全局唯一）
-       */
       tenant_code: string
-      /**
-       * 租户名称
-       */
       tenant_name: string
-      /**
-       * 联系人姓名
-       */
       contact_name: string | null
-      /**
-       * 联系电话
-       */
       contact_phone: string | null
-      /**
-       * 联系邮箱
-       */
       contact_email: string | null
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
-      /**
-       * 租户过期时间
-       */
       expire_time: Date | null
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_tenant"]>
     composites: {}
@@ -4686,84 +4745,27 @@ export namespace Prisma {
   export type $sys_userPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_user"
     objects: {
-      /**
-       * 用户角色关联列表
-       */
       sys_user_role: Prisma.$sys_user_rolePayload<ExtArgs>[]
-      /**
-       * 用户部门关联列表
-       */
       sys_user_dept: Prisma.$sys_user_deptPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 用户ID（主键，UUID）
-       */
       user_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 用户名
-       */
       username: string
-      /**
-       * 密码（哈希存储）
-       */
       password: string
-      /**
-       * 真实姓名
-       */
       real_name: string | null
-      /**
-       * 手机号
-       */
       phone: string | null
-      /**
-       * 邮箱
-       */
       email: string | null
-      /**
-       * 头像URL
-       */
       avatar: string | null
-      /**
-       * 性别：0-未知，1-男，2-女
-       */
       gender: number | null
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
       sort_order: number
-      /**
-       * 最后登录IP
-       */
       last_login_ip: string | null
-      /**
-       * 最后登录时间
-       */
       last_login_time: Date | null
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_user"]>
     composites: {}
@@ -5697,6 +5699,7 @@ export namespace Prisma {
     description: string | null
     sort_order: number | null
     status: string | null
+    data_scope: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -5712,6 +5715,7 @@ export namespace Prisma {
     description: string | null
     sort_order: number | null
     status: string | null
+    data_scope: string | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -5727,6 +5731,7 @@ export namespace Prisma {
     description: number
     sort_order: number
     status: number
+    data_scope: number
     created_at: number
     updated_at: number
     created_by: number
@@ -5754,6 +5759,7 @@ export namespace Prisma {
     description?: true
     sort_order?: true
     status?: true
+    data_scope?: true
     created_at?: true
     updated_at?: true
     created_by?: true
@@ -5769,6 +5775,7 @@ export namespace Prisma {
     description?: true
     sort_order?: true
     status?: true
+    data_scope?: true
     created_at?: true
     updated_at?: true
     created_by?: true
@@ -5784,6 +5791,7 @@ export namespace Prisma {
     description?: true
     sort_order?: true
     status?: true
+    data_scope?: true
     created_at?: true
     updated_at?: true
     created_by?: true
@@ -5886,6 +5894,7 @@ export namespace Prisma {
     description: string | null
     sort_order: number
     status: string
+    data_scope: string
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -5920,12 +5929,16 @@ export namespace Prisma {
     description?: boolean
     sort_order?: boolean
     status?: boolean
+    data_scope?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
     updated_by?: boolean
     is_deleted?: boolean
     sys_user_role?: boolean | sys_role$sys_user_roleArgs<ExtArgs>
+    sys_role_menu?: boolean | sys_role$sys_role_menuArgs<ExtArgs>
+    sys_role_permission?: boolean | sys_role$sys_role_permissionArgs<ExtArgs>
+    sys_role_dept?: boolean | sys_role$sys_role_deptArgs<ExtArgs>
     _count?: boolean | Sys_roleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role"]>
 
@@ -5937,6 +5950,7 @@ export namespace Prisma {
     description?: boolean
     sort_order?: boolean
     status?: boolean
+    data_scope?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
@@ -5952,6 +5966,7 @@ export namespace Prisma {
     description?: boolean
     sort_order?: boolean
     status?: boolean
+    data_scope?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
@@ -5967,6 +5982,7 @@ export namespace Prisma {
     description?: boolean
     sort_order?: boolean
     status?: boolean
+    data_scope?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
@@ -5974,9 +5990,12 @@ export namespace Prisma {
     is_deleted?: boolean
   }
 
-  export type sys_roleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"role_id" | "tenant_id" | "role_code" | "role_name" | "description" | "sort_order" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_role"]>
+  export type sys_roleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"role_id" | "tenant_id" | "role_code" | "role_name" | "description" | "sort_order" | "status" | "data_scope" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_role"]>
   export type sys_roleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sys_user_role?: boolean | sys_role$sys_user_roleArgs<ExtArgs>
+    sys_role_menu?: boolean | sys_role$sys_role_menuArgs<ExtArgs>
+    sys_role_permission?: boolean | sys_role$sys_role_permissionArgs<ExtArgs>
+    sys_role_dept?: boolean | sys_role$sys_role_deptArgs<ExtArgs>
     _count?: boolean | Sys_roleCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type sys_roleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5985,59 +6004,27 @@ export namespace Prisma {
   export type $sys_rolePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_role"
     objects: {
-      /**
-       * 用户角色关联列表
-       */
       sys_user_role: Prisma.$sys_user_rolePayload<ExtArgs>[]
+      sys_role_menu: Prisma.$sys_role_menuPayload<ExtArgs>[]
+      sys_role_permission: Prisma.$sys_role_permissionPayload<ExtArgs>[]
+      sys_role_dept: Prisma.$sys_role_deptPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 角色ID（主键，UUID）
-       */
       role_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 角色编码
-       */
       role_code: string
-      /**
-       * 角色名称
-       */
       role_name: string
-      /**
-       * 角色描述
-       */
       description: string | null
-      /**
-       * 排序值
-       */
       sort_order: number
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
       /**
-       * 创建时间
+       * 数据范围：1-全部 2-自定义 3-本部门 4-本部门及以下 5-仅本人
        */
+      data_scope: string
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_role"]>
     composites: {}
@@ -6434,6 +6421,9 @@ export namespace Prisma {
   export interface Prisma__sys_roleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     sys_user_role<T extends sys_role$sys_user_roleArgs<ExtArgs> = {}>(args?: Subset<T, sys_role$sys_user_roleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_user_rolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sys_role_menu<T extends sys_role$sys_role_menuArgs<ExtArgs> = {}>(args?: Subset<T, sys_role$sys_role_menuArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_menuPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sys_role_permission<T extends sys_role$sys_role_permissionArgs<ExtArgs> = {}>(args?: Subset<T, sys_role$sys_role_permissionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_permissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sys_role_dept<T extends sys_role$sys_role_deptArgs<ExtArgs> = {}>(args?: Subset<T, sys_role$sys_role_deptArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6470,6 +6460,7 @@ export namespace Prisma {
     readonly description: FieldRef<"sys_role", 'String'>
     readonly sort_order: FieldRef<"sys_role", 'Int'>
     readonly status: FieldRef<"sys_role", 'String'>
+    readonly data_scope: FieldRef<"sys_role", 'String'>
     readonly created_at: FieldRef<"sys_role", 'DateTime'>
     readonly updated_at: FieldRef<"sys_role", 'DateTime'>
     readonly created_by: FieldRef<"sys_role", 'String'>
@@ -6892,6 +6883,78 @@ export namespace Prisma {
   }
 
   /**
+   * sys_role.sys_role_menu
+   */
+  export type sys_role$sys_role_menuArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_menu
+     */
+    select?: sys_role_menuSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_menu
+     */
+    omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
+    where?: sys_role_menuWhereInput
+    orderBy?: sys_role_menuOrderByWithRelationInput | sys_role_menuOrderByWithRelationInput[]
+    cursor?: sys_role_menuWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_role_menuScalarFieldEnum | Sys_role_menuScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role.sys_role_permission
+   */
+  export type sys_role$sys_role_permissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_permission
+     */
+    select?: sys_role_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_permission
+     */
+    omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
+    where?: sys_role_permissionWhereInput
+    orderBy?: sys_role_permissionOrderByWithRelationInput | sys_role_permissionOrderByWithRelationInput[]
+    cursor?: sys_role_permissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_role_permissionScalarFieldEnum | Sys_role_permissionScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role.sys_role_dept
+   */
+  export type sys_role$sys_role_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    where?: sys_role_deptWhereInput
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    cursor?: sys_role_deptWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
    * sys_role without action
    */
   export type sys_roleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7193,6 +7256,7 @@ export namespace Prisma {
     updated_by?: boolean
     is_deleted?: boolean
     sys_user_dept?: boolean | sys_dept$sys_user_deptArgs<ExtArgs>
+    sys_role_dept?: boolean | sys_dept$sys_role_deptArgs<ExtArgs>
     _count?: boolean | Sys_deptCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_dept"]>
 
@@ -7253,6 +7317,7 @@ export namespace Prisma {
   export type sys_deptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"dept_id" | "tenant_id" | "parent_id" | "dept_code" | "dept_name" | "leader" | "phone" | "email" | "sort_order" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_dept"]>
   export type sys_deptInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sys_user_dept?: boolean | sys_dept$sys_user_deptArgs<ExtArgs>
+    sys_role_dept?: boolean | sys_dept$sys_role_deptArgs<ExtArgs>
     _count?: boolean | Sys_deptCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type sys_deptIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -7261,71 +7326,24 @@ export namespace Prisma {
   export type $sys_deptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_dept"
     objects: {
-      /**
-       * 用户部门关联列表
-       */
       sys_user_dept: Prisma.$sys_user_deptPayload<ExtArgs>[]
+      sys_role_dept: Prisma.$sys_role_deptPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 部门ID（主键，UUID）
-       */
       dept_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 父部门ID（顶级或子部门）
-       */
       parent_id: string | null
-      /**
-       * 部门编码
-       */
       dept_code: string
-      /**
-       * 部门名称
-       */
       dept_name: string
-      /**
-       * 负责人
-       */
       leader: string | null
-      /**
-       * 联系电话
-       */
       phone: string | null
-      /**
-       * 邮箱
-       */
       email: string | null
-      /**
-       * 排序值
-       */
       sort_order: number
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_dept"]>
     composites: {}
@@ -7722,6 +7740,7 @@ export namespace Prisma {
   export interface Prisma__sys_deptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     sys_user_dept<T extends sys_dept$sys_user_deptArgs<ExtArgs> = {}>(args?: Subset<T, sys_dept$sys_user_deptArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_user_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sys_role_dept<T extends sys_dept$sys_role_deptArgs<ExtArgs> = {}>(args?: Subset<T, sys_dept$sys_role_deptArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8183,6 +8202,30 @@ export namespace Prisma {
   }
 
   /**
+   * sys_dept.sys_role_dept
+   */
+  export type sys_dept$sys_role_deptArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    where?: sys_role_deptWhereInput
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    cursor?: sys_role_deptWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
    * sys_dept without action
    */
   export type sys_deptDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8216,12 +8259,14 @@ export namespace Prisma {
   export type Sys_menuAvgAggregateOutputType = {
     menu_type: number | null
     sort_order: number | null
+    is_platform: number | null
     is_deleted: number | null
   }
 
   export type Sys_menuSumAggregateOutputType = {
     menu_type: number | null
     sort_order: number | null
+    is_platform: number | null
     is_deleted: number | null
   }
 
@@ -8237,6 +8282,7 @@ export namespace Prisma {
     permission: string | null
     sort_order: number | null
     status: string | null
+    is_platform: number | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -8256,6 +8302,7 @@ export namespace Prisma {
     permission: string | null
     sort_order: number | null
     status: string | null
+    is_platform: number | null
     created_at: Date | null
     updated_at: Date | null
     created_by: string | null
@@ -8275,6 +8322,7 @@ export namespace Prisma {
     permission: number
     sort_order: number
     status: number
+    is_platform: number
     created_at: number
     updated_at: number
     created_by: number
@@ -8287,12 +8335,14 @@ export namespace Prisma {
   export type Sys_menuAvgAggregateInputType = {
     menu_type?: true
     sort_order?: true
+    is_platform?: true
     is_deleted?: true
   }
 
   export type Sys_menuSumAggregateInputType = {
     menu_type?: true
     sort_order?: true
+    is_platform?: true
     is_deleted?: true
   }
 
@@ -8308,6 +8358,7 @@ export namespace Prisma {
     permission?: true
     sort_order?: true
     status?: true
+    is_platform?: true
     created_at?: true
     updated_at?: true
     created_by?: true
@@ -8327,6 +8378,7 @@ export namespace Prisma {
     permission?: true
     sort_order?: true
     status?: true
+    is_platform?: true
     created_at?: true
     updated_at?: true
     created_by?: true
@@ -8346,6 +8398,7 @@ export namespace Prisma {
     permission?: true
     sort_order?: true
     status?: true
+    is_platform?: true
     created_at?: true
     updated_at?: true
     created_by?: true
@@ -8452,6 +8505,7 @@ export namespace Prisma {
     permission: string | null
     sort_order: number
     status: string
+    is_platform: number
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -8490,11 +8544,14 @@ export namespace Prisma {
     permission?: boolean
     sort_order?: boolean
     status?: boolean
+    is_platform?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
     updated_by?: boolean
     is_deleted?: boolean
+    sys_role_menu?: boolean | sys_menu$sys_role_menuArgs<ExtArgs>
+    _count?: boolean | Sys_menuCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_menu"]>
 
   export type sys_menuSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8509,6 +8566,7 @@ export namespace Prisma {
     permission?: boolean
     sort_order?: boolean
     status?: boolean
+    is_platform?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
@@ -8528,6 +8586,7 @@ export namespace Prisma {
     permission?: boolean
     sort_order?: boolean
     status?: boolean
+    is_platform?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
@@ -8547,6 +8606,7 @@ export namespace Prisma {
     permission?: boolean
     sort_order?: boolean
     status?: boolean
+    is_platform?: boolean
     created_at?: boolean
     updated_at?: boolean
     created_by?: boolean
@@ -8554,75 +8614,42 @@ export namespace Prisma {
     is_deleted?: boolean
   }
 
-  export type sys_menuOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"menu_id" | "tenant_id" | "parent_id" | "menu_name" | "menu_type" | "icon" | "path" | "component" | "permission" | "sort_order" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_menu"]>
+  export type sys_menuOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"menu_id" | "tenant_id" | "parent_id" | "menu_name" | "menu_type" | "icon" | "path" | "component" | "permission" | "sort_order" | "status" | "is_platform" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_menu"]>
+  export type sys_menuInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_role_menu?: boolean | sys_menu$sys_role_menuArgs<ExtArgs>
+    _count?: boolean | Sys_menuCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type sys_menuIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type sys_menuIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $sys_menuPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_menu"
-    objects: {}
+    objects: {
+      sys_role_menu: Prisma.$sys_role_menuPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 菜单ID（主键，UUID）
-       */
       menu_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 父菜单ID（顶级为全零UUID）
-       */
       parent_id: string | null
-      /**
-       * 菜单名称
-       */
       menu_name: string
       /**
-       * 菜单类型：1-目录，2-菜单，3-按钮
+       * 1-目录 2-菜单 3-按钮
        */
       menu_type: number
-      /**
-       * 图标
-       */
       icon: string | null
-      /**
-       * 路由路径
-       */
       path: string | null
-      /**
-       * 前端组件路径
-       */
       component: string | null
-      /**
-       * 权限标识，如 system:user:list
-       */
       permission: string | null
-      /**
-       * 排序值
-       */
       sort_order: number
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
       /**
-       * 创建时间
+       * 1-平台级菜单，0-业务菜单
        */
+      is_platform: number
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_menu"]>
     composites: {}
@@ -9018,6 +9045,7 @@ export namespace Prisma {
    */
   export interface Prisma__sys_menuClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    sys_role_menu<T extends sys_menu$sys_role_menuArgs<ExtArgs> = {}>(args?: Subset<T, sys_menu$sys_role_menuArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_menuPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9058,6 +9086,7 @@ export namespace Prisma {
     readonly permission: FieldRef<"sys_menu", 'String'>
     readonly sort_order: FieldRef<"sys_menu", 'Int'>
     readonly status: FieldRef<"sys_menu", 'String'>
+    readonly is_platform: FieldRef<"sys_menu", 'Int'>
     readonly created_at: FieldRef<"sys_menu", 'DateTime'>
     readonly updated_at: FieldRef<"sys_menu", 'DateTime'>
     readonly created_by: FieldRef<"sys_menu", 'String'>
@@ -9080,6 +9109,10 @@ export namespace Prisma {
      */
     omit?: sys_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
+    /**
      * Filter, which sys_menu to fetch.
      */
     where: sys_menuWhereUniqueInput
@@ -9098,6 +9131,10 @@ export namespace Prisma {
      */
     omit?: sys_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
+    /**
      * Filter, which sys_menu to fetch.
      */
     where: sys_menuWhereUniqueInput
@@ -9115,6 +9152,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_menu
      */
     omit?: sys_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
     /**
      * Filter, which sys_menu to fetch.
      */
@@ -9164,6 +9205,10 @@ export namespace Prisma {
      */
     omit?: sys_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
+    /**
      * Filter, which sys_menu to fetch.
      */
     where?: sys_menuWhereInput
@@ -9211,6 +9256,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_menu
      */
     omit?: sys_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
     /**
      * Filter, which sys_menus to fetch.
      */
@@ -9260,6 +9309,10 @@ export namespace Prisma {
      */
     omit?: sys_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_menu.
      */
     data: XOR<sys_menuCreateInput, sys_menuUncheckedCreateInput>
@@ -9307,6 +9360,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_menu
      */
     omit?: sys_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_menu.
      */
@@ -9374,6 +9431,10 @@ export namespace Prisma {
      */
     omit?: sys_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
+    /**
      * The filter to search for the sys_menu to update in case it exists.
      */
     where: sys_menuWhereUniqueInput
@@ -9400,6 +9461,10 @@ export namespace Prisma {
      */
     omit?: sys_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
+    /**
      * Filter which sys_menu to delete.
      */
     where: sys_menuWhereUniqueInput
@@ -9420,6 +9485,30 @@ export namespace Prisma {
   }
 
   /**
+   * sys_menu.sys_role_menu
+   */
+  export type sys_menu$sys_role_menuArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_menu
+     */
+    select?: sys_role_menuSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_menu
+     */
+    omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
+    where?: sys_role_menuWhereInput
+    orderBy?: sys_role_menuOrderByWithRelationInput | sys_role_menuOrderByWithRelationInput[]
+    cursor?: sys_role_menuWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_role_menuScalarFieldEnum | Sys_role_menuScalarFieldEnum[]
+  }
+
+  /**
    * sys_menu without action
    */
   export type sys_menuDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9431,6 +9520,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_menu
      */
     omit?: sys_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_menuInclude<ExtArgs> | null
   }
 
 
@@ -9653,7 +9746,7 @@ export namespace Prisma {
     perm_code: string
     perm_name: string
     resource_type: string
-    action: string
+    action: string | null
     description: string | null
     status: string
     created_at: Date
@@ -9696,6 +9789,8 @@ export namespace Prisma {
     created_by?: boolean
     updated_by?: boolean
     is_deleted?: boolean
+    sys_role_permission?: boolean | sys_permission$sys_role_permissionArgs<ExtArgs>
+    _count?: boolean | Sys_permissionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_permission"]>
 
   export type sys_permissionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9747,62 +9842,31 @@ export namespace Prisma {
   }
 
   export type sys_permissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"perm_id" | "tenant_id" | "perm_code" | "perm_name" | "resource_type" | "action" | "description" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_permission"]>
+  export type sys_permissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sys_role_permission?: boolean | sys_permission$sys_role_permissionArgs<ExtArgs>
+    _count?: boolean | Sys_permissionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type sys_permissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type sys_permissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $sys_permissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_permission"
-    objects: {}
+    objects: {
+      sys_role_permission: Prisma.$sys_role_permissionPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 权限ID（主键，UUID）
-       */
       perm_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 权限编码，如 user:create
-       */
       perm_code: string
-      /**
-       * 权限名称
-       */
       perm_name: string
-      /**
-       * 资源类型，如 api、button
-       */
       resource_type: string
-      /**
-       * 动作，如 create、read、update、delete
-       */
-      action: string
-      /**
-       * 描述
-       */
+      action: string | null
       description: string | null
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_permission"]>
     composites: {}
@@ -10198,6 +10262,7 @@ export namespace Prisma {
    */
   export interface Prisma__sys_permissionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    sys_role_permission<T extends sys_permission$sys_role_permissionArgs<ExtArgs> = {}>(args?: Subset<T, sys_permission$sys_role_permissionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_permissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10257,6 +10322,10 @@ export namespace Prisma {
      */
     omit?: sys_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
+    /**
      * Filter, which sys_permission to fetch.
      */
     where: sys_permissionWhereUniqueInput
@@ -10275,6 +10344,10 @@ export namespace Prisma {
      */
     omit?: sys_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
+    /**
      * Filter, which sys_permission to fetch.
      */
     where: sys_permissionWhereUniqueInput
@@ -10292,6 +10365,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_permission
      */
     omit?: sys_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
     /**
      * Filter, which sys_permission to fetch.
      */
@@ -10341,6 +10418,10 @@ export namespace Prisma {
      */
     omit?: sys_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
+    /**
      * Filter, which sys_permission to fetch.
      */
     where?: sys_permissionWhereInput
@@ -10388,6 +10469,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_permission
      */
     omit?: sys_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
     /**
      * Filter, which sys_permissions to fetch.
      */
@@ -10437,6 +10522,10 @@ export namespace Prisma {
      */
     omit?: sys_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_permission.
      */
     data: XOR<sys_permissionCreateInput, sys_permissionUncheckedCreateInput>
@@ -10484,6 +10573,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_permission
      */
     omit?: sys_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_permission.
      */
@@ -10551,6 +10644,10 @@ export namespace Prisma {
      */
     omit?: sys_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
+    /**
      * The filter to search for the sys_permission to update in case it exists.
      */
     where: sys_permissionWhereUniqueInput
@@ -10577,6 +10674,10 @@ export namespace Prisma {
      */
     omit?: sys_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
+    /**
      * Filter which sys_permission to delete.
      */
     where: sys_permissionWhereUniqueInput
@@ -10597,6 +10698,30 @@ export namespace Prisma {
   }
 
   /**
+   * sys_permission.sys_role_permission
+   */
+  export type sys_permission$sys_role_permissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_permission
+     */
+    select?: sys_role_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_permission
+     */
+    omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
+    where?: sys_role_permissionWhereInput
+    orderBy?: sys_role_permissionOrderByWithRelationInput | sys_role_permissionOrderByWithRelationInput[]
+    cursor?: sys_role_permissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sys_role_permissionScalarFieldEnum | Sys_role_permissionScalarFieldEnum[]
+  }
+
+  /**
    * sys_permission without action
    */
   export type sys_permissionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10608,6 +10733,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_permission
      */
     omit?: sys_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_permissionInclude<ExtArgs> | null
   }
 
 
@@ -10907,49 +11036,16 @@ export namespace Prisma {
     name: "sys_dict_type"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 字典类型ID（主键，UUID）
-       */
       dict_type_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 字典编码
-       */
       dict_code: string
-      /**
-       * 字典名称
-       */
       dict_name: string
-      /**
-       * 描述
-       */
       description: string | null
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_dict_type"]>
     composites: {}
@@ -12078,57 +12174,18 @@ export namespace Prisma {
     name: "sys_dict_data"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 字典数据ID（主键，UUID）
-       */
       dict_data_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 所属字典类型ID
-       */
       dict_type_id: string
-      /**
-       * 字典标签
-       */
       dict_label: string
-      /**
-       * 字典值
-       */
       dict_value: string
-      /**
-       * 排序值
-       */
       sort_order: number
-      /**
-       * 状态：'0'-禁用，'1'-启用
-       */
       status: string
-      /**
-       * 备注
-       */
       remark: string | null
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_dict_data"]>
     composites: {}
@@ -13255,59 +13312,20 @@ export namespace Prisma {
   export type $sys_noticePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_notice"
     objects: {
-      /**
-       * 目标用户关联列表
-       */
       target_users: Prisma.$sys_notice_userPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 通知ID（主键，UUID）
-       */
       notice_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 通知标题
-       */
       title: string
-      /**
-       * 通知内容（支持富文本）
-       */
       content: string | null
-      /**
-       * 通知类型：1-通知，2-公告，3-提醒
-       */
       notice_type: number
-      /**
-       * 状态：'0'-草稿，'1'-发布
-       */
       status: string
-      /**
-       * 定时发布时间
-       */
       publish_time: Date | null
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
-      /**
-       * 创建人ID
-       */
       created_by: string | null
-      /**
-       * 更新人ID
-       */
       updated_by: string | null
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_notice"]>
     composites: {}
@@ -14443,39 +14461,15 @@ export namespace Prisma {
   export type $sys_notice_userPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_notice_user"
     objects: {
-      /**
-       * 关联的通知
-       */
       notice: Prisma.$sys_noticePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 关联ID（主键，UUID）
-       */
       id: string
-      /**
-       * 通知ID
-       */
       notice_id: string
-      /**
-       * 用户ID
-       */
       user_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 是否已读：0-未读，1-已读
-       */
       is_read: number
-      /**
-       * 阅读时间
-       */
       read_time: Date | null
-      /**
-       * 创建时间
-       */
       created_at: Date
     }, ExtArgs["result"]["sys_notice_user"]>
     composites: {}
@@ -15667,65 +15661,20 @@ export namespace Prisma {
     name: "sys_audit_log"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 日志ID（主键，UUID）
-       */
       log_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 操作用户ID
-       */
       user_id: string | null
-      /**
-       * 操作用户名
-       */
       username: string | null
-      /**
-       * 操作描述
-       */
       operation: string
-      /**
-       * HTTP方法
-       */
       method: string
-      /**
-       * 请求URL
-       */
       request_url: string
-      /**
-       * 请求参数（JSON字符串）
-       */
       request_params: string | null
-      /**
-       * 响应数据（JSON字符串）
-       */
       response_data: string | null
-      /**
-       * 客户端IP
-       */
       ip_address: string
-      /**
-       * 用户代理
-       */
       user_agent: string | null
-      /**
-       * 执行时间（毫秒）
-       */
       execute_time: number
-      /**
-       * 状态：'0'-失败，'1'-成功
-       */
       status: string
-      /**
-       * 错误信息
-       */
       error_msg: string | null
-      /**
-       * 创建时间
-       */
       created_at: Date
     }, ExtArgs["result"]["sys_audit_log"]>
     composites: {}
@@ -16749,35 +16698,14 @@ export namespace Prisma {
   export type $sys_user_rolePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_user_role"
     objects: {
-      /**
-       * 关联的用户
-       */
       user: Prisma.$sys_userPayload<ExtArgs>
-      /**
-       * 关联的角色
-       */
       role: Prisma.$sys_rolePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 关联ID（主键，UUID）
-       */
       id: string
-      /**
-       * 用户ID
-       */
       user_id: string
-      /**
-       * 角色ID
-       */
       role_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 创建时间
-       */
       created_at: Date
     }, ExtArgs["result"]["sys_user_role"]>
     composites: {}
@@ -17886,39 +17814,15 @@ export namespace Prisma {
   export type $sys_user_deptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_user_dept"
     objects: {
-      /**
-       * 关联的用户
-       */
       user: Prisma.$sys_userPayload<ExtArgs>
-      /**
-       * 关联的部门
-       */
       dept: Prisma.$sys_deptPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 关联ID（主键，UUID）
-       */
       id: string
-      /**
-       * 用户ID
-       */
       user_id: string
-      /**
-       * 部门ID
-       */
       dept_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 是否主部门：0-否，1-是
-       */
       is_primary: number
-      /**
-       * 创建时间
-       */
       created_at: Date
     }, ExtArgs["result"]["sys_user_dept"]>
     composites: {}
@@ -18934,6 +18838,8 @@ export namespace Prisma {
     menu_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    menu?: boolean | sys_menuDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role_menu"]>
 
   export type sys_role_menuSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18942,6 +18848,8 @@ export namespace Prisma {
     menu_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    menu?: boolean | sys_menuDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role_menu"]>
 
   export type sys_role_menuSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18950,6 +18858,8 @@ export namespace Prisma {
     menu_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    menu?: boolean | sys_menuDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role_menu"]>
 
   export type sys_role_menuSelectScalar = {
@@ -18961,10 +18871,25 @@ export namespace Prisma {
   }
 
   export type sys_role_menuOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role_id" | "menu_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_menu"]>
+  export type sys_role_menuInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    menu?: boolean | sys_menuDefaultArgs<ExtArgs>
+  }
+  export type sys_role_menuIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    menu?: boolean | sys_menuDefaultArgs<ExtArgs>
+  }
+  export type sys_role_menuIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    menu?: boolean | sys_menuDefaultArgs<ExtArgs>
+  }
 
   export type $sys_role_menuPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_role_menu"
-    objects: {}
+    objects: {
+      role: Prisma.$sys_rolePayload<ExtArgs>
+      menu: Prisma.$sys_menuPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       /**
        * 关联ID（主键，UUID）
@@ -19380,6 +19305,8 @@ export namespace Prisma {
    */
   export interface Prisma__sys_role_menuClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    role<T extends sys_roleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_roleDefaultArgs<ExtArgs>>): Prisma__sys_roleClient<$Result.GetResult<Prisma.$sys_rolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    menu<T extends sys_menuDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_menuDefaultArgs<ExtArgs>>): Prisma__sys_menuClient<$Result.GetResult<Prisma.$sys_menuPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19431,6 +19358,10 @@ export namespace Prisma {
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role_menu to fetch.
      */
     where: sys_role_menuWhereUniqueInput
@@ -19449,6 +19380,10 @@ export namespace Prisma {
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role_menu to fetch.
      */
     where: sys_role_menuWhereUniqueInput
@@ -19466,6 +19401,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_menu
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
     /**
      * Filter, which sys_role_menu to fetch.
      */
@@ -19515,6 +19454,10 @@ export namespace Prisma {
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role_menu to fetch.
      */
     where?: sys_role_menuWhereInput
@@ -19562,6 +19505,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_menu
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
     /**
      * Filter, which sys_role_menus to fetch.
      */
@@ -19611,6 +19558,10 @@ export namespace Prisma {
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_role_menu.
      */
     data: XOR<sys_role_menuCreateInput, sys_role_menuUncheckedCreateInput>
@@ -19644,6 +19595,10 @@ export namespace Prisma {
      */
     data: sys_role_menuCreateManyInput | sys_role_menuCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -19658,6 +19613,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_menu
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_role_menu.
      */
@@ -19710,6 +19669,10 @@ export namespace Prisma {
      * Limit how many sys_role_menus to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -19724,6 +19687,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_menu
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
     /**
      * The filter to search for the sys_role_menu to update in case it exists.
      */
@@ -19750,6 +19717,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_menu
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
     /**
      * Filter which sys_role_menu to delete.
      */
@@ -19782,6 +19753,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_menu
      */
     omit?: sys_role_menuOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_menuInclude<ExtArgs> | null
   }
 
 
@@ -19949,6 +19924,8 @@ export namespace Prisma {
     perm_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    permission?: boolean | sys_permissionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role_permission"]>
 
   export type sys_role_permissionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -19957,6 +19934,8 @@ export namespace Prisma {
     perm_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    permission?: boolean | sys_permissionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role_permission"]>
 
   export type sys_role_permissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -19965,6 +19944,8 @@ export namespace Prisma {
     perm_id?: boolean
     tenant_id?: boolean
     created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    permission?: boolean | sys_permissionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sys_role_permission"]>
 
   export type sys_role_permissionSelectScalar = {
@@ -19976,30 +19957,30 @@ export namespace Prisma {
   }
 
   export type sys_role_permissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role_id" | "perm_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_permission"]>
+  export type sys_role_permissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    permission?: boolean | sys_permissionDefaultArgs<ExtArgs>
+  }
+  export type sys_role_permissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    permission?: boolean | sys_permissionDefaultArgs<ExtArgs>
+  }
+  export type sys_role_permissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    permission?: boolean | sys_permissionDefaultArgs<ExtArgs>
+  }
 
   export type $sys_role_permissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sys_role_permission"
-    objects: {}
+    objects: {
+      role: Prisma.$sys_rolePayload<ExtArgs>
+      permission: Prisma.$sys_permissionPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 关联ID（主键，UUID）
-       */
       id: string
-      /**
-       * 角色ID
-       */
       role_id: string
-      /**
-       * 权限ID
-       */
       perm_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 创建时间
-       */
       created_at: Date
     }, ExtArgs["result"]["sys_role_permission"]>
     composites: {}
@@ -20395,6 +20376,8 @@ export namespace Prisma {
    */
   export interface Prisma__sys_role_permissionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    role<T extends sys_roleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_roleDefaultArgs<ExtArgs>>): Prisma__sys_roleClient<$Result.GetResult<Prisma.$sys_rolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    permission<T extends sys_permissionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_permissionDefaultArgs<ExtArgs>>): Prisma__sys_permissionClient<$Result.GetResult<Prisma.$sys_permissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20446,6 +20429,10 @@ export namespace Prisma {
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role_permission to fetch.
      */
     where: sys_role_permissionWhereUniqueInput
@@ -20464,6 +20451,10 @@ export namespace Prisma {
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role_permission to fetch.
      */
     where: sys_role_permissionWhereUniqueInput
@@ -20481,6 +20472,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_permission
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
     /**
      * Filter, which sys_role_permission to fetch.
      */
@@ -20530,6 +20525,10 @@ export namespace Prisma {
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
+    /**
      * Filter, which sys_role_permission to fetch.
      */
     where?: sys_role_permissionWhereInput
@@ -20577,6 +20576,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_permission
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
     /**
      * Filter, which sys_role_permissions to fetch.
      */
@@ -20626,6 +20629,10 @@ export namespace Prisma {
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
+    /**
      * The data needed to create a sys_role_permission.
      */
     data: XOR<sys_role_permissionCreateInput, sys_role_permissionUncheckedCreateInput>
@@ -20659,6 +20666,10 @@ export namespace Prisma {
      */
     data: sys_role_permissionCreateManyInput | sys_role_permissionCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -20673,6 +20684,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_permission
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
     /**
      * The data needed to update a sys_role_permission.
      */
@@ -20725,6 +20740,10 @@ export namespace Prisma {
      * Limit how many sys_role_permissions to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -20739,6 +20758,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_permission
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
     /**
      * The filter to search for the sys_role_permission to update in case it exists.
      */
@@ -20765,6 +20788,10 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_permission
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
     /**
      * Filter which sys_role_permission to delete.
      */
@@ -20797,6 +20824,1081 @@ export namespace Prisma {
      * Omit specific fields from the sys_role_permission
      */
     omit?: sys_role_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_permissionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sys_role_dept
+   */
+
+  export type AggregateSys_role_dept = {
+    _count: Sys_role_deptCountAggregateOutputType | null
+    _min: Sys_role_deptMinAggregateOutputType | null
+    _max: Sys_role_deptMaxAggregateOutputType | null
+  }
+
+  export type Sys_role_deptMinAggregateOutputType = {
+    id: string | null
+    role_id: string | null
+    dept_id: string | null
+    tenant_id: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_role_deptMaxAggregateOutputType = {
+    id: string | null
+    role_id: string | null
+    dept_id: string | null
+    tenant_id: string | null
+    created_at: Date | null
+  }
+
+  export type Sys_role_deptCountAggregateOutputType = {
+    id: number
+    role_id: number
+    dept_id: number
+    tenant_id: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type Sys_role_deptMinAggregateInputType = {
+    id?: true
+    role_id?: true
+    dept_id?: true
+    tenant_id?: true
+    created_at?: true
+  }
+
+  export type Sys_role_deptMaxAggregateInputType = {
+    id?: true
+    role_id?: true
+    dept_id?: true
+    tenant_id?: true
+    created_at?: true
+  }
+
+  export type Sys_role_deptCountAggregateInputType = {
+    id?: true
+    role_id?: true
+    dept_id?: true
+    tenant_id?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type Sys_role_deptAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_role_dept to aggregate.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sys_role_depts
+    **/
+    _count?: true | Sys_role_deptCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sys_role_deptMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sys_role_deptMaxAggregateInputType
+  }
+
+  export type GetSys_role_deptAggregateType<T extends Sys_role_deptAggregateArgs> = {
+        [P in keyof T & keyof AggregateSys_role_dept]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSys_role_dept[P]>
+      : GetScalarType<T[P], AggregateSys_role_dept[P]>
+  }
+
+
+
+
+  export type sys_role_deptGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sys_role_deptWhereInput
+    orderBy?: sys_role_deptOrderByWithAggregationInput | sys_role_deptOrderByWithAggregationInput[]
+    by: Sys_role_deptScalarFieldEnum[] | Sys_role_deptScalarFieldEnum
+    having?: sys_role_deptScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sys_role_deptCountAggregateInputType | true
+    _min?: Sys_role_deptMinAggregateInputType
+    _max?: Sys_role_deptMaxAggregateInputType
+  }
+
+  export type Sys_role_deptGroupByOutputType = {
+    id: string
+    role_id: string
+    dept_id: string
+    tenant_id: string
+    created_at: Date
+    _count: Sys_role_deptCountAggregateOutputType | null
+    _min: Sys_role_deptMinAggregateOutputType | null
+    _max: Sys_role_deptMaxAggregateOutputType | null
+  }
+
+  type GetSys_role_deptGroupByPayload<T extends sys_role_deptGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sys_role_deptGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sys_role_deptGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sys_role_deptGroupByOutputType[P]>
+            : GetScalarType<T[P], Sys_role_deptGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sys_role_deptSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sys_role_dept"]>
+
+  export type sys_role_deptSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sys_role_dept"]>
+
+  export type sys_role_deptSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sys_role_dept"]>
+
+  export type sys_role_deptSelectScalar = {
+    id?: boolean
+    role_id?: boolean
+    dept_id?: boolean
+    tenant_id?: boolean
+    created_at?: boolean
+  }
+
+  export type sys_role_deptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role_id" | "dept_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_dept"]>
+  export type sys_role_deptInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }
+  export type sys_role_deptIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }
+  export type sys_role_deptIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    role?: boolean | sys_roleDefaultArgs<ExtArgs>
+    dept?: boolean | sys_deptDefaultArgs<ExtArgs>
+  }
+
+  export type $sys_role_deptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sys_role_dept"
+    objects: {
+      role: Prisma.$sys_rolePayload<ExtArgs>
+      dept: Prisma.$sys_deptPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      role_id: string
+      dept_id: string
+      tenant_id: string
+      created_at: Date
+    }, ExtArgs["result"]["sys_role_dept"]>
+    composites: {}
+  }
+
+  type sys_role_deptGetPayload<S extends boolean | null | undefined | sys_role_deptDefaultArgs> = $Result.GetResult<Prisma.$sys_role_deptPayload, S>
+
+  type sys_role_deptCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<sys_role_deptFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Sys_role_deptCountAggregateInputType | true
+    }
+
+  export interface sys_role_deptDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_role_dept'], meta: { name: 'sys_role_dept' } }
+    /**
+     * Find zero or one Sys_role_dept that matches the filter.
+     * @param {sys_role_deptFindUniqueArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sys_role_deptFindUniqueArgs>(args: SelectSubset<T, sys_role_deptFindUniqueArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Sys_role_dept that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {sys_role_deptFindUniqueOrThrowArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sys_role_deptFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_role_deptFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_role_dept that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptFindFirstArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sys_role_deptFindFirstArgs>(args?: SelectSubset<T, sys_role_deptFindFirstArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Sys_role_dept that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptFindFirstOrThrowArgs} args - Arguments to find a Sys_role_dept
+     * @example
+     * // Get one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sys_role_deptFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_role_deptFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sys_role_depts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sys_role_depts
+     * const sys_role_depts = await prisma.sys_role_dept.findMany()
+     * 
+     * // Get first 10 Sys_role_depts
+     * const sys_role_depts = await prisma.sys_role_dept.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends sys_role_deptFindManyArgs>(args?: SelectSubset<T, sys_role_deptFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Sys_role_dept.
+     * @param {sys_role_deptCreateArgs} args - Arguments to create a Sys_role_dept.
+     * @example
+     * // Create one Sys_role_dept
+     * const Sys_role_dept = await prisma.sys_role_dept.create({
+     *   data: {
+     *     // ... data to create a Sys_role_dept
+     *   }
+     * })
+     * 
+     */
+    create<T extends sys_role_deptCreateArgs>(args: SelectSubset<T, sys_role_deptCreateArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sys_role_depts.
+     * @param {sys_role_deptCreateManyArgs} args - Arguments to create many Sys_role_depts.
+     * @example
+     * // Create many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sys_role_deptCreateManyArgs>(args?: SelectSubset<T, sys_role_deptCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sys_role_depts and returns the data saved in the database.
+     * @param {sys_role_deptCreateManyAndReturnArgs} args - Arguments to create many Sys_role_depts.
+     * @example
+     * // Create many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sys_role_depts and only return the `id`
+     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sys_role_deptCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_role_deptCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Sys_role_dept.
+     * @param {sys_role_deptDeleteArgs} args - Arguments to delete one Sys_role_dept.
+     * @example
+     * // Delete one Sys_role_dept
+     * const Sys_role_dept = await prisma.sys_role_dept.delete({
+     *   where: {
+     *     // ... filter to delete one Sys_role_dept
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sys_role_deptDeleteArgs>(args: SelectSubset<T, sys_role_deptDeleteArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Sys_role_dept.
+     * @param {sys_role_deptUpdateArgs} args - Arguments to update one Sys_role_dept.
+     * @example
+     * // Update one Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sys_role_deptUpdateArgs>(args: SelectSubset<T, sys_role_deptUpdateArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sys_role_depts.
+     * @param {sys_role_deptDeleteManyArgs} args - Arguments to filter Sys_role_depts to delete.
+     * @example
+     * // Delete a few Sys_role_depts
+     * const { count } = await prisma.sys_role_dept.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sys_role_deptDeleteManyArgs>(args?: SelectSubset<T, sys_role_deptDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_role_depts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sys_role_deptUpdateManyArgs>(args: SelectSubset<T, sys_role_deptUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sys_role_depts and returns the data updated in the database.
+     * @param {sys_role_deptUpdateManyAndReturnArgs} args - Arguments to update many Sys_role_depts.
+     * @example
+     * // Update many Sys_role_depts
+     * const sys_role_dept = await prisma.sys_role_dept.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sys_role_depts and only return the `id`
+     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends sys_role_deptUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_role_deptUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Sys_role_dept.
+     * @param {sys_role_deptUpsertArgs} args - Arguments to update or create a Sys_role_dept.
+     * @example
+     * // Update or create a Sys_role_dept
+     * const sys_role_dept = await prisma.sys_role_dept.upsert({
+     *   create: {
+     *     // ... data to create a Sys_role_dept
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sys_role_dept we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sys_role_deptUpsertArgs>(args: SelectSubset<T, sys_role_deptUpsertArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sys_role_depts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptCountArgs} args - Arguments to filter Sys_role_depts to count.
+     * @example
+     * // Count the number of Sys_role_depts
+     * const count = await prisma.sys_role_dept.count({
+     *   where: {
+     *     // ... the filter for the Sys_role_depts we want to count
+     *   }
+     * })
+    **/
+    count<T extends sys_role_deptCountArgs>(
+      args?: Subset<T, sys_role_deptCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sys_role_deptCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sys_role_dept.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sys_role_deptAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sys_role_deptAggregateArgs>(args: Subset<T, Sys_role_deptAggregateArgs>): Prisma.PrismaPromise<GetSys_role_deptAggregateType<T>>
+
+    /**
+     * Group by Sys_role_dept.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sys_role_deptGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sys_role_deptGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sys_role_deptGroupByArgs['orderBy'] }
+        : { orderBy?: sys_role_deptGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sys_role_deptGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_role_deptGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sys_role_dept model
+   */
+  readonly fields: sys_role_deptFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sys_role_dept.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sys_role_deptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    role<T extends sys_roleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_roleDefaultArgs<ExtArgs>>): Prisma__sys_roleClient<$Result.GetResult<Prisma.$sys_rolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    dept<T extends sys_deptDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sys_deptDefaultArgs<ExtArgs>>): Prisma__sys_deptClient<$Result.GetResult<Prisma.$sys_deptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sys_role_dept model
+   */
+  interface sys_role_deptFieldRefs {
+    readonly id: FieldRef<"sys_role_dept", 'String'>
+    readonly role_id: FieldRef<"sys_role_dept", 'String'>
+    readonly dept_id: FieldRef<"sys_role_dept", 'String'>
+    readonly tenant_id: FieldRef<"sys_role_dept", 'String'>
+    readonly created_at: FieldRef<"sys_role_dept", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sys_role_dept findUnique
+   */
+  export type sys_role_deptFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept findUniqueOrThrow
+   */
+  export type sys_role_deptFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept findFirst
+   */
+  export type sys_role_deptFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_role_depts.
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_role_depts.
+     */
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role_dept findFirstOrThrow
+   */
+  export type sys_role_deptFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_role_dept to fetch.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sys_role_depts.
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_role_depts.
+     */
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role_dept findMany
+   */
+  export type sys_role_deptFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * Filter, which sys_role_depts to fetch.
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sys_role_depts to fetch.
+     */
+    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sys_role_depts.
+     */
+    cursor?: sys_role_deptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sys_role_depts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sys_role_depts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sys_role_depts.
+     */
+    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
+  }
+
+  /**
+   * sys_role_dept create
+   */
+  export type sys_role_deptCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * The data needed to create a sys_role_dept.
+     */
+    data: XOR<sys_role_deptCreateInput, sys_role_deptUncheckedCreateInput>
+  }
+
+  /**
+   * sys_role_dept createMany
+   */
+  export type sys_role_deptCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sys_role_depts.
+     */
+    data: sys_role_deptCreateManyInput | sys_role_deptCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sys_role_dept createManyAndReturn
+   */
+  export type sys_role_deptCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * The data used to create many sys_role_depts.
+     */
+    data: sys_role_deptCreateManyInput | sys_role_deptCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * sys_role_dept update
+   */
+  export type sys_role_deptUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * The data needed to update a sys_role_dept.
+     */
+    data: XOR<sys_role_deptUpdateInput, sys_role_deptUncheckedUpdateInput>
+    /**
+     * Choose, which sys_role_dept to update.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept updateMany
+   */
+  export type sys_role_deptUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sys_role_depts.
+     */
+    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_role_depts to update
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * Limit how many sys_role_depts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_role_dept updateManyAndReturn
+   */
+  export type sys_role_deptUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * The data used to update sys_role_depts.
+     */
+    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyInput>
+    /**
+     * Filter which sys_role_depts to update
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * Limit how many sys_role_depts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * sys_role_dept upsert
+   */
+  export type sys_role_deptUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * The filter to search for the sys_role_dept to update in case it exists.
+     */
+    where: sys_role_deptWhereUniqueInput
+    /**
+     * In case the sys_role_dept found by the `where` argument doesn't exist, create a new sys_role_dept with this data.
+     */
+    create: XOR<sys_role_deptCreateInput, sys_role_deptUncheckedCreateInput>
+    /**
+     * In case the sys_role_dept was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sys_role_deptUpdateInput, sys_role_deptUncheckedUpdateInput>
+  }
+
+  /**
+   * sys_role_dept delete
+   */
+  export type sys_role_deptDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
+    /**
+     * Filter which sys_role_dept to delete.
+     */
+    where: sys_role_deptWhereUniqueInput
+  }
+
+  /**
+   * sys_role_dept deleteMany
+   */
+  export type sys_role_deptDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sys_role_depts to delete
+     */
+    where?: sys_role_deptWhereInput
+    /**
+     * Limit how many sys_role_depts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * sys_role_dept without action
+   */
+  export type sys_role_deptDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sys_role_dept
+     */
+    select?: sys_role_deptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the sys_role_dept
+     */
+    omit?: sys_role_deptOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sys_role_deptInclude<ExtArgs> | null
   }
 
 
@@ -21052,33 +22154,12 @@ export namespace Prisma {
     name: "sys_mfa_config"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * MFA配置ID（主键，UUID）
-       */
       mfa_id: string
-      /**
-       * 用户ID（唯一）
-       */
       user_id: string
-      /**
-       * TOTP密钥
-       */
       secret: string
-      /**
-       * 是否启用：0-未启用，1-启用
-       */
       enabled: number
-      /**
-       * 备用验证码（JSON数组字符串）
-       */
       backup_codes: string | null
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 更新时间
-       */
       updated_at: Date
     }, ExtArgs["result"]["sys_mfa_config"]>
     composites: {}
@@ -22159,41 +23240,14 @@ export namespace Prisma {
     name: "sys_file"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 文件ID（主键，UUID）
-       */
       file_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 原始文件名
-       */
       filename: string
-      /**
-       * 文件访问URL
-       */
       url: string
-      /**
-       * 文件大小（字节）
-       */
       size: number
-      /**
-       * MIME类型
-       */
       mime_type: string | null
-      /**
-       * 上传人ID
-       */
       uploader: string | null
-      /**
-       * 创建时间
-       */
       created_at: Date
-      /**
-       * 软删除标记：0-正常，1-已删除
-       */
       is_deleted: number
     }, ExtArgs["result"]["sys_file"]>
     composites: {}
@@ -23238,41 +24292,14 @@ export namespace Prisma {
     name: "sys_login_log"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 日志ID（主键，UUID）
-       */
       log_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 用户ID（可能为空，如登录失败）
-       */
       user_id: string | null
-      /**
-       * 用户名
-       */
       username: string
-      /**
-       * 登录IP
-       */
       ip_address: string
-      /**
-       * 用户代理
-       */
       user_agent: string | null
-      /**
-       * 登录状态：'0'-失败，'1'-成功
-       */
       status: string
-      /**
-       * 附加信息（如失败原因）
-       */
       message: string | null
-      /**
-       * 创建时间
-       */
       created_at: Date
     }, ExtArgs["result"]["sys_login_log"]>
     composites: {}
@@ -24362,25 +25389,10 @@ export namespace Prisma {
     name: "sys_config"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      /**
-       * 配置ID（主键，UUID）
-       */
       config_id: string
-      /**
-       * 所属租户ID
-       */
       tenant_id: string
-      /**
-       * 配置键
-       */
       config_key: string
-      /**
-       * 配置值
-       */
       config_value: string | null
-      /**
-       * 配置描述
-       */
       description: string | null
       created_by: string | null
       updated_by: string | null
@@ -25543,9 +26555,6 @@ export namespace Prisma {
       tenant_id: string
       job_name: string
       job_group: string
-      /**
-       * 执行目标，如 notice:publish
-       */
       invoke_target: string
       cron_expression: string
       misfire_policy: number
@@ -27406,1006 +28415,6 @@ export namespace Prisma {
 
 
   /**
-   * Model sys_role_dept
-   */
-
-  export type AggregateSys_role_dept = {
-    _count: Sys_role_deptCountAggregateOutputType | null
-    _min: Sys_role_deptMinAggregateOutputType | null
-    _max: Sys_role_deptMaxAggregateOutputType | null
-  }
-
-  export type Sys_role_deptMinAggregateOutputType = {
-    id: string | null
-    role_id: string | null
-    dept_id: string | null
-    tenant_id: string | null
-    created_at: Date | null
-  }
-
-  export type Sys_role_deptMaxAggregateOutputType = {
-    id: string | null
-    role_id: string | null
-    dept_id: string | null
-    tenant_id: string | null
-    created_at: Date | null
-  }
-
-  export type Sys_role_deptCountAggregateOutputType = {
-    id: number
-    role_id: number
-    dept_id: number
-    tenant_id: number
-    created_at: number
-    _all: number
-  }
-
-
-  export type Sys_role_deptMinAggregateInputType = {
-    id?: true
-    role_id?: true
-    dept_id?: true
-    tenant_id?: true
-    created_at?: true
-  }
-
-  export type Sys_role_deptMaxAggregateInputType = {
-    id?: true
-    role_id?: true
-    dept_id?: true
-    tenant_id?: true
-    created_at?: true
-  }
-
-  export type Sys_role_deptCountAggregateInputType = {
-    id?: true
-    role_id?: true
-    dept_id?: true
-    tenant_id?: true
-    created_at?: true
-    _all?: true
-  }
-
-  export type Sys_role_deptAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which sys_role_dept to aggregate.
-     */
-    where?: sys_role_deptWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of sys_role_depts to fetch.
-     */
-    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: sys_role_deptWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` sys_role_depts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` sys_role_depts.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned sys_role_depts
-    **/
-    _count?: true | Sys_role_deptCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: Sys_role_deptMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: Sys_role_deptMaxAggregateInputType
-  }
-
-  export type GetSys_role_deptAggregateType<T extends Sys_role_deptAggregateArgs> = {
-        [P in keyof T & keyof AggregateSys_role_dept]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateSys_role_dept[P]>
-      : GetScalarType<T[P], AggregateSys_role_dept[P]>
-  }
-
-
-
-
-  export type sys_role_deptGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: sys_role_deptWhereInput
-    orderBy?: sys_role_deptOrderByWithAggregationInput | sys_role_deptOrderByWithAggregationInput[]
-    by: Sys_role_deptScalarFieldEnum[] | Sys_role_deptScalarFieldEnum
-    having?: sys_role_deptScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: Sys_role_deptCountAggregateInputType | true
-    _min?: Sys_role_deptMinAggregateInputType
-    _max?: Sys_role_deptMaxAggregateInputType
-  }
-
-  export type Sys_role_deptGroupByOutputType = {
-    id: string
-    role_id: string
-    dept_id: string
-    tenant_id: string
-    created_at: Date
-    _count: Sys_role_deptCountAggregateOutputType | null
-    _min: Sys_role_deptMinAggregateOutputType | null
-    _max: Sys_role_deptMaxAggregateOutputType | null
-  }
-
-  type GetSys_role_deptGroupByPayload<T extends sys_role_deptGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<Sys_role_deptGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof Sys_role_deptGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], Sys_role_deptGroupByOutputType[P]>
-            : GetScalarType<T[P], Sys_role_deptGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type sys_role_deptSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    role_id?: boolean
-    dept_id?: boolean
-    tenant_id?: boolean
-    created_at?: boolean
-  }, ExtArgs["result"]["sys_role_dept"]>
-
-  export type sys_role_deptSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    role_id?: boolean
-    dept_id?: boolean
-    tenant_id?: boolean
-    created_at?: boolean
-  }, ExtArgs["result"]["sys_role_dept"]>
-
-  export type sys_role_deptSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    role_id?: boolean
-    dept_id?: boolean
-    tenant_id?: boolean
-    created_at?: boolean
-  }, ExtArgs["result"]["sys_role_dept"]>
-
-  export type sys_role_deptSelectScalar = {
-    id?: boolean
-    role_id?: boolean
-    dept_id?: boolean
-    tenant_id?: boolean
-    created_at?: boolean
-  }
-
-  export type sys_role_deptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role_id" | "dept_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_dept"]>
-
-  export type $sys_role_deptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "sys_role_dept"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      role_id: string
-      dept_id: string
-      tenant_id: string
-      created_at: Date
-    }, ExtArgs["result"]["sys_role_dept"]>
-    composites: {}
-  }
-
-  type sys_role_deptGetPayload<S extends boolean | null | undefined | sys_role_deptDefaultArgs> = $Result.GetResult<Prisma.$sys_role_deptPayload, S>
-
-  type sys_role_deptCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<sys_role_deptFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: Sys_role_deptCountAggregateInputType | true
-    }
-
-  export interface sys_role_deptDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sys_role_dept'], meta: { name: 'sys_role_dept' } }
-    /**
-     * Find zero or one Sys_role_dept that matches the filter.
-     * @param {sys_role_deptFindUniqueArgs} args - Arguments to find a Sys_role_dept
-     * @example
-     * // Get one Sys_role_dept
-     * const sys_role_dept = await prisma.sys_role_dept.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends sys_role_deptFindUniqueArgs>(args: SelectSubset<T, sys_role_deptFindUniqueArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Sys_role_dept that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {sys_role_deptFindUniqueOrThrowArgs} args - Arguments to find a Sys_role_dept
-     * @example
-     * // Get one Sys_role_dept
-     * const sys_role_dept = await prisma.sys_role_dept.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends sys_role_deptFindUniqueOrThrowArgs>(args: SelectSubset<T, sys_role_deptFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Sys_role_dept that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {sys_role_deptFindFirstArgs} args - Arguments to find a Sys_role_dept
-     * @example
-     * // Get one Sys_role_dept
-     * const sys_role_dept = await prisma.sys_role_dept.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends sys_role_deptFindFirstArgs>(args?: SelectSubset<T, sys_role_deptFindFirstArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Sys_role_dept that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {sys_role_deptFindFirstOrThrowArgs} args - Arguments to find a Sys_role_dept
-     * @example
-     * // Get one Sys_role_dept
-     * const sys_role_dept = await prisma.sys_role_dept.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends sys_role_deptFindFirstOrThrowArgs>(args?: SelectSubset<T, sys_role_deptFindFirstOrThrowArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Sys_role_depts that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {sys_role_deptFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Sys_role_depts
-     * const sys_role_depts = await prisma.sys_role_dept.findMany()
-     * 
-     * // Get first 10 Sys_role_depts
-     * const sys_role_depts = await prisma.sys_role_dept.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends sys_role_deptFindManyArgs>(args?: SelectSubset<T, sys_role_deptFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Sys_role_dept.
-     * @param {sys_role_deptCreateArgs} args - Arguments to create a Sys_role_dept.
-     * @example
-     * // Create one Sys_role_dept
-     * const Sys_role_dept = await prisma.sys_role_dept.create({
-     *   data: {
-     *     // ... data to create a Sys_role_dept
-     *   }
-     * })
-     * 
-     */
-    create<T extends sys_role_deptCreateArgs>(args: SelectSubset<T, sys_role_deptCreateArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Sys_role_depts.
-     * @param {sys_role_deptCreateManyArgs} args - Arguments to create many Sys_role_depts.
-     * @example
-     * // Create many Sys_role_depts
-     * const sys_role_dept = await prisma.sys_role_dept.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends sys_role_deptCreateManyArgs>(args?: SelectSubset<T, sys_role_deptCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Sys_role_depts and returns the data saved in the database.
-     * @param {sys_role_deptCreateManyAndReturnArgs} args - Arguments to create many Sys_role_depts.
-     * @example
-     * // Create many Sys_role_depts
-     * const sys_role_dept = await prisma.sys_role_dept.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Sys_role_depts and only return the `id`
-     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends sys_role_deptCreateManyAndReturnArgs>(args?: SelectSubset<T, sys_role_deptCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Sys_role_dept.
-     * @param {sys_role_deptDeleteArgs} args - Arguments to delete one Sys_role_dept.
-     * @example
-     * // Delete one Sys_role_dept
-     * const Sys_role_dept = await prisma.sys_role_dept.delete({
-     *   where: {
-     *     // ... filter to delete one Sys_role_dept
-     *   }
-     * })
-     * 
-     */
-    delete<T extends sys_role_deptDeleteArgs>(args: SelectSubset<T, sys_role_deptDeleteArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Sys_role_dept.
-     * @param {sys_role_deptUpdateArgs} args - Arguments to update one Sys_role_dept.
-     * @example
-     * // Update one Sys_role_dept
-     * const sys_role_dept = await prisma.sys_role_dept.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends sys_role_deptUpdateArgs>(args: SelectSubset<T, sys_role_deptUpdateArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Sys_role_depts.
-     * @param {sys_role_deptDeleteManyArgs} args - Arguments to filter Sys_role_depts to delete.
-     * @example
-     * // Delete a few Sys_role_depts
-     * const { count } = await prisma.sys_role_dept.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends sys_role_deptDeleteManyArgs>(args?: SelectSubset<T, sys_role_deptDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Sys_role_depts.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {sys_role_deptUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Sys_role_depts
-     * const sys_role_dept = await prisma.sys_role_dept.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends sys_role_deptUpdateManyArgs>(args: SelectSubset<T, sys_role_deptUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Sys_role_depts and returns the data updated in the database.
-     * @param {sys_role_deptUpdateManyAndReturnArgs} args - Arguments to update many Sys_role_depts.
-     * @example
-     * // Update many Sys_role_depts
-     * const sys_role_dept = await prisma.sys_role_dept.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Sys_role_depts and only return the `id`
-     * const sys_role_deptWithIdOnly = await prisma.sys_role_dept.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends sys_role_deptUpdateManyAndReturnArgs>(args: SelectSubset<T, sys_role_deptUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Sys_role_dept.
-     * @param {sys_role_deptUpsertArgs} args - Arguments to update or create a Sys_role_dept.
-     * @example
-     * // Update or create a Sys_role_dept
-     * const sys_role_dept = await prisma.sys_role_dept.upsert({
-     *   create: {
-     *     // ... data to create a Sys_role_dept
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Sys_role_dept we want to update
-     *   }
-     * })
-     */
-    upsert<T extends sys_role_deptUpsertArgs>(args: SelectSubset<T, sys_role_deptUpsertArgs<ExtArgs>>): Prisma__sys_role_deptClient<$Result.GetResult<Prisma.$sys_role_deptPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Sys_role_depts.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {sys_role_deptCountArgs} args - Arguments to filter Sys_role_depts to count.
-     * @example
-     * // Count the number of Sys_role_depts
-     * const count = await prisma.sys_role_dept.count({
-     *   where: {
-     *     // ... the filter for the Sys_role_depts we want to count
-     *   }
-     * })
-    **/
-    count<T extends sys_role_deptCountArgs>(
-      args?: Subset<T, sys_role_deptCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], Sys_role_deptCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Sys_role_dept.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Sys_role_deptAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends Sys_role_deptAggregateArgs>(args: Subset<T, Sys_role_deptAggregateArgs>): Prisma.PrismaPromise<GetSys_role_deptAggregateType<T>>
-
-    /**
-     * Group by Sys_role_dept.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {sys_role_deptGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends sys_role_deptGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: sys_role_deptGroupByArgs['orderBy'] }
-        : { orderBy?: sys_role_deptGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, sys_role_deptGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSys_role_deptGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the sys_role_dept model
-   */
-  readonly fields: sys_role_deptFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for sys_role_dept.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__sys_role_deptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the sys_role_dept model
-   */
-  interface sys_role_deptFieldRefs {
-    readonly id: FieldRef<"sys_role_dept", 'String'>
-    readonly role_id: FieldRef<"sys_role_dept", 'String'>
-    readonly dept_id: FieldRef<"sys_role_dept", 'String'>
-    readonly tenant_id: FieldRef<"sys_role_dept", 'String'>
-    readonly created_at: FieldRef<"sys_role_dept", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * sys_role_dept findUnique
-   */
-  export type sys_role_deptFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * Filter, which sys_role_dept to fetch.
-     */
-    where: sys_role_deptWhereUniqueInput
-  }
-
-  /**
-   * sys_role_dept findUniqueOrThrow
-   */
-  export type sys_role_deptFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * Filter, which sys_role_dept to fetch.
-     */
-    where: sys_role_deptWhereUniqueInput
-  }
-
-  /**
-   * sys_role_dept findFirst
-   */
-  export type sys_role_deptFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * Filter, which sys_role_dept to fetch.
-     */
-    where?: sys_role_deptWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of sys_role_depts to fetch.
-     */
-    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for sys_role_depts.
-     */
-    cursor?: sys_role_deptWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` sys_role_depts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` sys_role_depts.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of sys_role_depts.
-     */
-    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
-  }
-
-  /**
-   * sys_role_dept findFirstOrThrow
-   */
-  export type sys_role_deptFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * Filter, which sys_role_dept to fetch.
-     */
-    where?: sys_role_deptWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of sys_role_depts to fetch.
-     */
-    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for sys_role_depts.
-     */
-    cursor?: sys_role_deptWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` sys_role_depts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` sys_role_depts.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of sys_role_depts.
-     */
-    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
-  }
-
-  /**
-   * sys_role_dept findMany
-   */
-  export type sys_role_deptFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * Filter, which sys_role_depts to fetch.
-     */
-    where?: sys_role_deptWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of sys_role_depts to fetch.
-     */
-    orderBy?: sys_role_deptOrderByWithRelationInput | sys_role_deptOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing sys_role_depts.
-     */
-    cursor?: sys_role_deptWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` sys_role_depts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` sys_role_depts.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of sys_role_depts.
-     */
-    distinct?: Sys_role_deptScalarFieldEnum | Sys_role_deptScalarFieldEnum[]
-  }
-
-  /**
-   * sys_role_dept create
-   */
-  export type sys_role_deptCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * The data needed to create a sys_role_dept.
-     */
-    data: XOR<sys_role_deptCreateInput, sys_role_deptUncheckedCreateInput>
-  }
-
-  /**
-   * sys_role_dept createMany
-   */
-  export type sys_role_deptCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many sys_role_depts.
-     */
-    data: sys_role_deptCreateManyInput | sys_role_deptCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * sys_role_dept createManyAndReturn
-   */
-  export type sys_role_deptCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * The data used to create many sys_role_depts.
-     */
-    data: sys_role_deptCreateManyInput | sys_role_deptCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * sys_role_dept update
-   */
-  export type sys_role_deptUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * The data needed to update a sys_role_dept.
-     */
-    data: XOR<sys_role_deptUpdateInput, sys_role_deptUncheckedUpdateInput>
-    /**
-     * Choose, which sys_role_dept to update.
-     */
-    where: sys_role_deptWhereUniqueInput
-  }
-
-  /**
-   * sys_role_dept updateMany
-   */
-  export type sys_role_deptUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update sys_role_depts.
-     */
-    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyInput>
-    /**
-     * Filter which sys_role_depts to update
-     */
-    where?: sys_role_deptWhereInput
-    /**
-     * Limit how many sys_role_depts to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * sys_role_dept updateManyAndReturn
-   */
-  export type sys_role_deptUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * The data used to update sys_role_depts.
-     */
-    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyInput>
-    /**
-     * Filter which sys_role_depts to update
-     */
-    where?: sys_role_deptWhereInput
-    /**
-     * Limit how many sys_role_depts to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * sys_role_dept upsert
-   */
-  export type sys_role_deptUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * The filter to search for the sys_role_dept to update in case it exists.
-     */
-    where: sys_role_deptWhereUniqueInput
-    /**
-     * In case the sys_role_dept found by the `where` argument doesn't exist, create a new sys_role_dept with this data.
-     */
-    create: XOR<sys_role_deptCreateInput, sys_role_deptUncheckedCreateInput>
-    /**
-     * In case the sys_role_dept was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<sys_role_deptUpdateInput, sys_role_deptUncheckedUpdateInput>
-  }
-
-  /**
-   * sys_role_dept delete
-   */
-  export type sys_role_deptDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-    /**
-     * Filter which sys_role_dept to delete.
-     */
-    where: sys_role_deptWhereUniqueInput
-  }
-
-  /**
-   * sys_role_dept deleteMany
-   */
-  export type sys_role_deptDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which sys_role_depts to delete
-     */
-    where?: sys_role_deptWhereInput
-    /**
-     * Limit how many sys_role_depts to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * sys_role_dept without action
-   */
-  export type sys_role_deptDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the sys_role_dept
-     */
-    select?: sys_role_deptSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the sys_role_dept
-     */
-    omit?: sys_role_deptOmit<ExtArgs> | null
-  }
-
-
-  /**
    * Model sys_todo
    */
 
@@ -28710,14 +28719,8 @@ export namespace Prisma {
       user_id: string
       title: string
       content: string | null
-      /**
-       * 0-普通 1-重要 2-紧急
-       */
       priority: number
       due_time: Date | null
-      /**
-       * '0'-未完成 '1'-已完成
-       */
       status: string
       created_at: Date
       updated_at: Date
@@ -30704,6 +30707,7 @@ export namespace Prisma {
     description: 'description',
     sort_order: 'sort_order',
     status: 'status',
+    data_scope: 'data_scope',
     created_at: 'created_at',
     updated_at: 'updated_at',
     created_by: 'created_by',
@@ -30747,6 +30751,7 @@ export namespace Prisma {
     permission: 'permission',
     sort_order: 'sort_order',
     status: 'status',
+    is_platform: 'is_platform',
     created_at: 'created_at',
     updated_at: 'updated_at',
     created_by: 'created_by',
@@ -30909,6 +30914,17 @@ export namespace Prisma {
   export type Sys_role_permissionScalarFieldEnum = (typeof Sys_role_permissionScalarFieldEnum)[keyof typeof Sys_role_permissionScalarFieldEnum]
 
 
+  export const Sys_role_deptScalarFieldEnum: {
+    id: 'id',
+    role_id: 'role_id',
+    dept_id: 'dept_id',
+    tenant_id: 'tenant_id',
+    created_at: 'created_at'
+  };
+
+  export type Sys_role_deptScalarFieldEnum = (typeof Sys_role_deptScalarFieldEnum)[keyof typeof Sys_role_deptScalarFieldEnum]
+
+
   export const Sys_mfa_configScalarFieldEnum: {
     mfa_id: 'mfa_id',
     user_id: 'user_id',
@@ -31001,17 +31017,6 @@ export namespace Prisma {
   };
 
   export type Sys_job_logScalarFieldEnum = (typeof Sys_job_logScalarFieldEnum)[keyof typeof Sys_job_logScalarFieldEnum]
-
-
-  export const Sys_role_deptScalarFieldEnum: {
-    id: 'id',
-    role_id: 'role_id',
-    dept_id: 'dept_id',
-    tenant_id: 'tenant_id',
-    created_at: 'created_at'
-  };
-
-  export type Sys_role_deptScalarFieldEnum = (typeof Sys_role_deptScalarFieldEnum)[keyof typeof Sys_role_deptScalarFieldEnum]
 
 
   export const Sys_todoScalarFieldEnum: {
@@ -31367,12 +31372,16 @@ export namespace Prisma {
     description?: StringNullableFilter<"sys_role"> | string | null
     sort_order?: IntFilter<"sys_role"> | number
     status?: StringFilter<"sys_role"> | string
+    data_scope?: StringFilter<"sys_role"> | string
     created_at?: DateTimeFilter<"sys_role"> | Date | string
     updated_at?: DateTimeFilter<"sys_role"> | Date | string
     created_by?: UuidNullableFilter<"sys_role"> | string | null
     updated_by?: UuidNullableFilter<"sys_role"> | string | null
     is_deleted?: IntFilter<"sys_role"> | number
     sys_user_role?: Sys_user_roleListRelationFilter
+    sys_role_menu?: Sys_role_menuListRelationFilter
+    sys_role_permission?: Sys_role_permissionListRelationFilter
+    sys_role_dept?: Sys_role_deptListRelationFilter
   }
 
   export type sys_roleOrderByWithRelationInput = {
@@ -31383,12 +31392,16 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    data_scope?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
     sys_user_role?: sys_user_roleOrderByRelationAggregateInput
+    sys_role_menu?: sys_role_menuOrderByRelationAggregateInput
+    sys_role_permission?: sys_role_permissionOrderByRelationAggregateInput
+    sys_role_dept?: sys_role_deptOrderByRelationAggregateInput
   }
 
   export type sys_roleWhereUniqueInput = Prisma.AtLeast<{
@@ -31403,12 +31416,16 @@ export namespace Prisma {
     description?: StringNullableFilter<"sys_role"> | string | null
     sort_order?: IntFilter<"sys_role"> | number
     status?: StringFilter<"sys_role"> | string
+    data_scope?: StringFilter<"sys_role"> | string
     created_at?: DateTimeFilter<"sys_role"> | Date | string
     updated_at?: DateTimeFilter<"sys_role"> | Date | string
     created_by?: UuidNullableFilter<"sys_role"> | string | null
     updated_by?: UuidNullableFilter<"sys_role"> | string | null
     is_deleted?: IntFilter<"sys_role"> | number
     sys_user_role?: Sys_user_roleListRelationFilter
+    sys_role_menu?: Sys_role_menuListRelationFilter
+    sys_role_permission?: Sys_role_permissionListRelationFilter
+    sys_role_dept?: Sys_role_deptListRelationFilter
   }, "role_id" | "tenant_id_role_code">
 
   export type sys_roleOrderByWithAggregationInput = {
@@ -31419,6 +31436,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    data_scope?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrderInput | SortOrder
@@ -31442,6 +31460,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"sys_role"> | string | null
     sort_order?: IntWithAggregatesFilter<"sys_role"> | number
     status?: StringWithAggregatesFilter<"sys_role"> | string
+    data_scope?: StringWithAggregatesFilter<"sys_role"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_role"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_role"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"sys_role"> | string | null
@@ -31469,6 +31488,7 @@ export namespace Prisma {
     updated_by?: UuidNullableFilter<"sys_dept"> | string | null
     is_deleted?: IntFilter<"sys_dept"> | number
     sys_user_dept?: Sys_user_deptListRelationFilter
+    sys_role_dept?: Sys_role_deptListRelationFilter
   }
 
   export type sys_deptOrderByWithRelationInput = {
@@ -31488,6 +31508,7 @@ export namespace Prisma {
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
     sys_user_dept?: sys_user_deptOrderByRelationAggregateInput
+    sys_role_dept?: sys_role_deptOrderByRelationAggregateInput
   }
 
   export type sys_deptWhereUniqueInput = Prisma.AtLeast<{
@@ -31511,6 +31532,7 @@ export namespace Prisma {
     updated_by?: UuidNullableFilter<"sys_dept"> | string | null
     is_deleted?: IntFilter<"sys_dept"> | number
     sys_user_dept?: Sys_user_deptListRelationFilter
+    sys_role_dept?: Sys_role_deptListRelationFilter
   }, "dept_id" | "tenant_id_dept_code">
 
   export type sys_deptOrderByWithAggregationInput = {
@@ -31572,11 +31594,13 @@ export namespace Prisma {
     permission?: StringNullableFilter<"sys_menu"> | string | null
     sort_order?: IntFilter<"sys_menu"> | number
     status?: StringFilter<"sys_menu"> | string
+    is_platform?: IntFilter<"sys_menu"> | number
     created_at?: DateTimeFilter<"sys_menu"> | Date | string
     updated_at?: DateTimeFilter<"sys_menu"> | Date | string
     created_by?: UuidNullableFilter<"sys_menu"> | string | null
     updated_by?: UuidNullableFilter<"sys_menu"> | string | null
     is_deleted?: IntFilter<"sys_menu"> | number
+    sys_role_menu?: Sys_role_menuListRelationFilter
   }
 
   export type sys_menuOrderByWithRelationInput = {
@@ -31591,11 +31615,13 @@ export namespace Prisma {
     permission?: SortOrderInput | SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    is_platform?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
+    sys_role_menu?: sys_role_menuOrderByRelationAggregateInput
   }
 
   export type sys_menuWhereUniqueInput = Prisma.AtLeast<{
@@ -31613,11 +31639,13 @@ export namespace Prisma {
     permission?: StringNullableFilter<"sys_menu"> | string | null
     sort_order?: IntFilter<"sys_menu"> | number
     status?: StringFilter<"sys_menu"> | string
+    is_platform?: IntFilter<"sys_menu"> | number
     created_at?: DateTimeFilter<"sys_menu"> | Date | string
     updated_at?: DateTimeFilter<"sys_menu"> | Date | string
     created_by?: UuidNullableFilter<"sys_menu"> | string | null
     updated_by?: UuidNullableFilter<"sys_menu"> | string | null
     is_deleted?: IntFilter<"sys_menu"> | number
+    sys_role_menu?: Sys_role_menuListRelationFilter
   }, "menu_id">
 
   export type sys_menuOrderByWithAggregationInput = {
@@ -31632,6 +31660,7 @@ export namespace Prisma {
     permission?: SortOrderInput | SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    is_platform?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrderInput | SortOrder
@@ -31659,6 +31688,7 @@ export namespace Prisma {
     permission?: StringNullableWithAggregatesFilter<"sys_menu"> | string | null
     sort_order?: IntWithAggregatesFilter<"sys_menu"> | number
     status?: StringWithAggregatesFilter<"sys_menu"> | string
+    is_platform?: IntWithAggregatesFilter<"sys_menu"> | number
     created_at?: DateTimeWithAggregatesFilter<"sys_menu"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"sys_menu"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"sys_menu"> | string | null
@@ -31675,7 +31705,7 @@ export namespace Prisma {
     perm_code?: StringFilter<"sys_permission"> | string
     perm_name?: StringFilter<"sys_permission"> | string
     resource_type?: StringFilter<"sys_permission"> | string
-    action?: StringFilter<"sys_permission"> | string
+    action?: StringNullableFilter<"sys_permission"> | string | null
     description?: StringNullableFilter<"sys_permission"> | string | null
     status?: StringFilter<"sys_permission"> | string
     created_at?: DateTimeFilter<"sys_permission"> | Date | string
@@ -31683,6 +31713,7 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_permission"> | string | null
     updated_by?: UuidNullableFilter<"sys_permission"> | string | null
     is_deleted?: IntFilter<"sys_permission"> | number
+    sys_role_permission?: Sys_role_permissionListRelationFilter
   }
 
   export type sys_permissionOrderByWithRelationInput = {
@@ -31691,7 +31722,7 @@ export namespace Prisma {
     perm_code?: SortOrder
     perm_name?: SortOrder
     resource_type?: SortOrder
-    action?: SortOrder
+    action?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     created_at?: SortOrder
@@ -31699,6 +31730,7 @@ export namespace Prisma {
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
     is_deleted?: SortOrder
+    sys_role_permission?: sys_role_permissionOrderByRelationAggregateInput
   }
 
   export type sys_permissionWhereUniqueInput = Prisma.AtLeast<{
@@ -31711,7 +31743,7 @@ export namespace Prisma {
     perm_code?: StringFilter<"sys_permission"> | string
     perm_name?: StringFilter<"sys_permission"> | string
     resource_type?: StringFilter<"sys_permission"> | string
-    action?: StringFilter<"sys_permission"> | string
+    action?: StringNullableFilter<"sys_permission"> | string | null
     description?: StringNullableFilter<"sys_permission"> | string | null
     status?: StringFilter<"sys_permission"> | string
     created_at?: DateTimeFilter<"sys_permission"> | Date | string
@@ -31719,6 +31751,7 @@ export namespace Prisma {
     created_by?: UuidNullableFilter<"sys_permission"> | string | null
     updated_by?: UuidNullableFilter<"sys_permission"> | string | null
     is_deleted?: IntFilter<"sys_permission"> | number
+    sys_role_permission?: Sys_role_permissionListRelationFilter
   }, "perm_id" | "tenant_id_perm_code">
 
   export type sys_permissionOrderByWithAggregationInput = {
@@ -31727,7 +31760,7 @@ export namespace Prisma {
     perm_code?: SortOrder
     perm_name?: SortOrder
     resource_type?: SortOrder
-    action?: SortOrder
+    action?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     created_at?: SortOrder
@@ -31751,7 +31784,7 @@ export namespace Prisma {
     perm_code?: StringWithAggregatesFilter<"sys_permission"> | string
     perm_name?: StringWithAggregatesFilter<"sys_permission"> | string
     resource_type?: StringWithAggregatesFilter<"sys_permission"> | string
-    action?: StringWithAggregatesFilter<"sys_permission"> | string
+    action?: StringNullableWithAggregatesFilter<"sys_permission"> | string | null
     description?: StringNullableWithAggregatesFilter<"sys_permission"> | string | null
     status?: StringWithAggregatesFilter<"sys_permission"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_permission"> | Date | string
@@ -32338,6 +32371,8 @@ export namespace Prisma {
     menu_id?: UuidFilter<"sys_role_menu"> | string
     tenant_id?: UuidFilter<"sys_role_menu"> | string
     created_at?: DateTimeFilter<"sys_role_menu"> | Date | string
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
+    menu?: XOR<Sys_menuScalarRelationFilter, sys_menuWhereInput>
   }
 
   export type sys_role_menuOrderByWithRelationInput = {
@@ -32346,6 +32381,8 @@ export namespace Prisma {
     menu_id?: SortOrder
     tenant_id?: SortOrder
     created_at?: SortOrder
+    role?: sys_roleOrderByWithRelationInput
+    menu?: sys_menuOrderByWithRelationInput
   }
 
   export type sys_role_menuWhereUniqueInput = Prisma.AtLeast<{
@@ -32358,6 +32395,8 @@ export namespace Prisma {
     menu_id?: UuidFilter<"sys_role_menu"> | string
     tenant_id?: UuidFilter<"sys_role_menu"> | string
     created_at?: DateTimeFilter<"sys_role_menu"> | Date | string
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
+    menu?: XOR<Sys_menuScalarRelationFilter, sys_menuWhereInput>
   }, "id" | "role_id_menu_id">
 
   export type sys_role_menuOrderByWithAggregationInput = {
@@ -32391,6 +32430,8 @@ export namespace Prisma {
     perm_id?: UuidFilter<"sys_role_permission"> | string
     tenant_id?: UuidFilter<"sys_role_permission"> | string
     created_at?: DateTimeFilter<"sys_role_permission"> | Date | string
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
+    permission?: XOR<Sys_permissionScalarRelationFilter, sys_permissionWhereInput>
   }
 
   export type sys_role_permissionOrderByWithRelationInput = {
@@ -32399,6 +32440,8 @@ export namespace Prisma {
     perm_id?: SortOrder
     tenant_id?: SortOrder
     created_at?: SortOrder
+    role?: sys_roleOrderByWithRelationInput
+    permission?: sys_permissionOrderByWithRelationInput
   }
 
   export type sys_role_permissionWhereUniqueInput = Prisma.AtLeast<{
@@ -32411,6 +32454,8 @@ export namespace Prisma {
     perm_id?: UuidFilter<"sys_role_permission"> | string
     tenant_id?: UuidFilter<"sys_role_permission"> | string
     created_at?: DateTimeFilter<"sys_role_permission"> | Date | string
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
+    permission?: XOR<Sys_permissionScalarRelationFilter, sys_permissionWhereInput>
   }, "id" | "role_id_perm_id">
 
   export type sys_role_permissionOrderByWithAggregationInput = {
@@ -32433,6 +32478,65 @@ export namespace Prisma {
     perm_id?: UuidWithAggregatesFilter<"sys_role_permission"> | string
     tenant_id?: UuidWithAggregatesFilter<"sys_role_permission"> | string
     created_at?: DateTimeWithAggregatesFilter<"sys_role_permission"> | Date | string
+  }
+
+  export type sys_role_deptWhereInput = {
+    AND?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    OR?: sys_role_deptWhereInput[]
+    NOT?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    id?: UuidFilter<"sys_role_dept"> | string
+    role_id?: UuidFilter<"sys_role_dept"> | string
+    dept_id?: UuidFilter<"sys_role_dept"> | string
+    tenant_id?: UuidFilter<"sys_role_dept"> | string
+    created_at?: DateTimeFilter<"sys_role_dept"> | Date | string
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
+    dept?: XOR<Sys_deptScalarRelationFilter, sys_deptWhereInput>
+  }
+
+  export type sys_role_deptOrderByWithRelationInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+    role?: sys_roleOrderByWithRelationInput
+    dept?: sys_deptOrderByWithRelationInput
+  }
+
+  export type sys_role_deptWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    role_id_dept_id?: sys_role_deptRole_idDept_idCompoundUniqueInput
+    AND?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    OR?: sys_role_deptWhereInput[]
+    NOT?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
+    role_id?: UuidFilter<"sys_role_dept"> | string
+    dept_id?: UuidFilter<"sys_role_dept"> | string
+    tenant_id?: UuidFilter<"sys_role_dept"> | string
+    created_at?: DateTimeFilter<"sys_role_dept"> | Date | string
+    role?: XOR<Sys_roleScalarRelationFilter, sys_roleWhereInput>
+    dept?: XOR<Sys_deptScalarRelationFilter, sys_deptWhereInput>
+  }, "id" | "role_id_dept_id">
+
+  export type sys_role_deptOrderByWithAggregationInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+    _count?: sys_role_deptCountOrderByAggregateInput
+    _max?: sys_role_deptMaxOrderByAggregateInput
+    _min?: sys_role_deptMinOrderByAggregateInput
+  }
+
+  export type sys_role_deptScalarWhereWithAggregatesInput = {
+    AND?: sys_role_deptScalarWhereWithAggregatesInput | sys_role_deptScalarWhereWithAggregatesInput[]
+    OR?: sys_role_deptScalarWhereWithAggregatesInput[]
+    NOT?: sys_role_deptScalarWhereWithAggregatesInput | sys_role_deptScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    role_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    dept_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    tenant_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
+    created_at?: DateTimeWithAggregatesFilter<"sys_role_dept"> | Date | string
   }
 
   export type sys_mfa_configWhereInput = {
@@ -32896,59 +33000,6 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"sys_job_log"> | Date | string
   }
 
-  export type sys_role_deptWhereInput = {
-    AND?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
-    OR?: sys_role_deptWhereInput[]
-    NOT?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
-    id?: UuidFilter<"sys_role_dept"> | string
-    role_id?: UuidFilter<"sys_role_dept"> | string
-    dept_id?: UuidFilter<"sys_role_dept"> | string
-    tenant_id?: UuidFilter<"sys_role_dept"> | string
-    created_at?: DateTimeFilter<"sys_role_dept"> | Date | string
-  }
-
-  export type sys_role_deptOrderByWithRelationInput = {
-    id?: SortOrder
-    role_id?: SortOrder
-    dept_id?: SortOrder
-    tenant_id?: SortOrder
-    created_at?: SortOrder
-  }
-
-  export type sys_role_deptWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    role_id_dept_id?: sys_role_deptRole_idDept_idCompoundUniqueInput
-    AND?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
-    OR?: sys_role_deptWhereInput[]
-    NOT?: sys_role_deptWhereInput | sys_role_deptWhereInput[]
-    role_id?: UuidFilter<"sys_role_dept"> | string
-    dept_id?: UuidFilter<"sys_role_dept"> | string
-    tenant_id?: UuidFilter<"sys_role_dept"> | string
-    created_at?: DateTimeFilter<"sys_role_dept"> | Date | string
-  }, "id" | "role_id_dept_id">
-
-  export type sys_role_deptOrderByWithAggregationInput = {
-    id?: SortOrder
-    role_id?: SortOrder
-    dept_id?: SortOrder
-    tenant_id?: SortOrder
-    created_at?: SortOrder
-    _count?: sys_role_deptCountOrderByAggregateInput
-    _max?: sys_role_deptMaxOrderByAggregateInput
-    _min?: sys_role_deptMinOrderByAggregateInput
-  }
-
-  export type sys_role_deptScalarWhereWithAggregatesInput = {
-    AND?: sys_role_deptScalarWhereWithAggregatesInput | sys_role_deptScalarWhereWithAggregatesInput[]
-    OR?: sys_role_deptScalarWhereWithAggregatesInput[]
-    NOT?: sys_role_deptScalarWhereWithAggregatesInput | sys_role_deptScalarWhereWithAggregatesInput[]
-    id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
-    role_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
-    dept_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
-    tenant_id?: UuidWithAggregatesFilter<"sys_role_dept"> | string
-    created_at?: DateTimeWithAggregatesFilter<"sys_role_dept"> | Date | string
-  }
-
   export type sys_todoWhereInput = {
     AND?: sys_todoWhereInput | sys_todoWhereInput[]
     OR?: sys_todoWhereInput[]
@@ -33392,12 +33443,16 @@ export namespace Prisma {
     description?: string | null
     sort_order?: number
     status?: string
+    data_scope?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
     sys_user_role?: sys_user_roleCreateNestedManyWithoutRoleInput
+    sys_role_menu?: sys_role_menuCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptCreateNestedManyWithoutRoleInput
   }
 
   export type sys_roleUncheckedCreateInput = {
@@ -33408,12 +33463,16 @@ export namespace Prisma {
     description?: string | null
     sort_order?: number
     status?: string
+    data_scope?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
     sys_user_role?: sys_user_roleUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_menu?: sys_role_menuUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptUncheckedCreateNestedManyWithoutRoleInput
   }
 
   export type sys_roleUpdateInput = {
@@ -33424,12 +33483,16 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
     sys_user_role?: sys_user_roleUpdateManyWithoutRoleNestedInput
+    sys_role_menu?: sys_role_menuUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUpdateManyWithoutRoleNestedInput
   }
 
   export type sys_roleUncheckedUpdateInput = {
@@ -33440,12 +33503,16 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
     sys_user_role?: sys_user_roleUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_menu?: sys_role_menuUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUncheckedUpdateManyWithoutRoleNestedInput
   }
 
   export type sys_roleCreateManyInput = {
@@ -33456,6 +33523,7 @@ export namespace Prisma {
     description?: string | null
     sort_order?: number
     status?: string
+    data_scope?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -33471,6 +33539,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33486,6 +33555,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33510,6 +33580,7 @@ export namespace Prisma {
     updated_by?: string | null
     is_deleted?: number
     sys_user_dept?: sys_user_deptCreateNestedManyWithoutDeptInput
+    sys_role_dept?: sys_role_deptCreateNestedManyWithoutDeptInput
   }
 
   export type sys_deptUncheckedCreateInput = {
@@ -33529,6 +33600,7 @@ export namespace Prisma {
     updated_by?: string | null
     is_deleted?: number
     sys_user_dept?: sys_user_deptUncheckedCreateNestedManyWithoutDeptInput
+    sys_role_dept?: sys_role_deptUncheckedCreateNestedManyWithoutDeptInput
   }
 
   export type sys_deptUpdateInput = {
@@ -33548,6 +33620,7 @@ export namespace Prisma {
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
     sys_user_dept?: sys_user_deptUpdateManyWithoutDeptNestedInput
+    sys_role_dept?: sys_role_deptUpdateManyWithoutDeptNestedInput
   }
 
   export type sys_deptUncheckedUpdateInput = {
@@ -33567,6 +33640,7 @@ export namespace Prisma {
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
     sys_user_dept?: sys_user_deptUncheckedUpdateManyWithoutDeptNestedInput
+    sys_role_dept?: sys_role_deptUncheckedUpdateManyWithoutDeptNestedInput
   }
 
   export type sys_deptCreateManyInput = {
@@ -33635,11 +33709,13 @@ export namespace Prisma {
     permission?: string | null
     sort_order?: number
     status?: string
+    is_platform?: number
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_menu?: sys_role_menuCreateNestedManyWithoutMenuInput
   }
 
   export type sys_menuUncheckedCreateInput = {
@@ -33654,11 +33730,13 @@ export namespace Prisma {
     permission?: string | null
     sort_order?: number
     status?: string
+    is_platform?: number
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_menu?: sys_role_menuUncheckedCreateNestedManyWithoutMenuInput
   }
 
   export type sys_menuUpdateInput = {
@@ -33673,11 +33751,13 @@ export namespace Prisma {
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    is_platform?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_menu?: sys_role_menuUpdateManyWithoutMenuNestedInput
   }
 
   export type sys_menuUncheckedUpdateInput = {
@@ -33692,11 +33772,13 @@ export namespace Prisma {
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    is_platform?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_menu?: sys_role_menuUncheckedUpdateManyWithoutMenuNestedInput
   }
 
   export type sys_menuCreateManyInput = {
@@ -33711,6 +33793,7 @@ export namespace Prisma {
     permission?: string | null
     sort_order?: number
     status?: string
+    is_platform?: number
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
@@ -33730,6 +33813,7 @@ export namespace Prisma {
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    is_platform?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33749,6 +33833,7 @@ export namespace Prisma {
     permission?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    is_platform?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33762,7 +33847,7 @@ export namespace Prisma {
     perm_code: string
     perm_name: string
     resource_type: string
-    action: string
+    action?: string | null
     description?: string | null
     status?: string
     created_at?: Date | string
@@ -33770,6 +33855,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_permission?: sys_role_permissionCreateNestedManyWithoutPermissionInput
   }
 
   export type sys_permissionUncheckedCreateInput = {
@@ -33778,7 +33864,7 @@ export namespace Prisma {
     perm_code: string
     perm_name: string
     resource_type: string
-    action: string
+    action?: string | null
     description?: string | null
     status?: string
     created_at?: Date | string
@@ -33786,6 +33872,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_permission?: sys_role_permissionUncheckedCreateNestedManyWithoutPermissionInput
   }
 
   export type sys_permissionUpdateInput = {
@@ -33794,7 +33881,7 @@ export namespace Prisma {
     perm_code?: StringFieldUpdateOperationsInput | string
     perm_name?: StringFieldUpdateOperationsInput | string
     resource_type?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    action?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33802,6 +33889,7 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_permission?: sys_role_permissionUpdateManyWithoutPermissionNestedInput
   }
 
   export type sys_permissionUncheckedUpdateInput = {
@@ -33810,7 +33898,7 @@ export namespace Prisma {
     perm_code?: StringFieldUpdateOperationsInput | string
     perm_name?: StringFieldUpdateOperationsInput | string
     resource_type?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    action?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33818,6 +33906,7 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_permission?: sys_role_permissionUncheckedUpdateManyWithoutPermissionNestedInput
   }
 
   export type sys_permissionCreateManyInput = {
@@ -33826,7 +33915,7 @@ export namespace Prisma {
     perm_code: string
     perm_name: string
     resource_type: string
-    action: string
+    action?: string | null
     description?: string | null
     status?: string
     created_at?: Date | string
@@ -33842,7 +33931,7 @@ export namespace Prisma {
     perm_code?: StringFieldUpdateOperationsInput | string
     perm_name?: StringFieldUpdateOperationsInput | string
     resource_type?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    action?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33858,7 +33947,7 @@ export namespace Prisma {
     perm_code?: StringFieldUpdateOperationsInput | string
     perm_name?: StringFieldUpdateOperationsInput | string
     resource_type?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    action?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34499,10 +34588,10 @@ export namespace Prisma {
 
   export type sys_role_menuCreateInput = {
     id?: string
-    role_id: string
-    menu_id: string
     tenant_id: string
     created_at?: Date | string
+    role: sys_roleCreateNestedOneWithoutSys_role_menuInput
+    menu: sys_menuCreateNestedOneWithoutSys_role_menuInput
   }
 
   export type sys_role_menuUncheckedCreateInput = {
@@ -34515,10 +34604,10 @@ export namespace Prisma {
 
   export type sys_role_menuUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    menu_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: sys_roleUpdateOneRequiredWithoutSys_role_menuNestedInput
+    menu?: sys_menuUpdateOneRequiredWithoutSys_role_menuNestedInput
   }
 
   export type sys_role_menuUncheckedUpdateInput = {
@@ -34539,8 +34628,6 @@ export namespace Prisma {
 
   export type sys_role_menuUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    menu_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34555,10 +34642,10 @@ export namespace Prisma {
 
   export type sys_role_permissionCreateInput = {
     id?: string
-    role_id: string
-    perm_id: string
     tenant_id: string
     created_at?: Date | string
+    role: sys_roleCreateNestedOneWithoutSys_role_permissionInput
+    permission: sys_permissionCreateNestedOneWithoutSys_role_permissionInput
   }
 
   export type sys_role_permissionUncheckedCreateInput = {
@@ -34571,10 +34658,10 @@ export namespace Prisma {
 
   export type sys_role_permissionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    perm_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: sys_roleUpdateOneRequiredWithoutSys_role_permissionNestedInput
+    permission?: sys_permissionUpdateOneRequiredWithoutSys_role_permissionNestedInput
   }
 
   export type sys_role_permissionUncheckedUpdateInput = {
@@ -34595,8 +34682,6 @@ export namespace Prisma {
 
   export type sys_role_permissionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    perm_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34605,6 +34690,60 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     role_id?: StringFieldUpdateOperationsInput | string
     perm_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptCreateInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    role: sys_roleCreateNestedOneWithoutSys_role_deptInput
+    dept: sys_deptCreateNestedOneWithoutSys_role_deptInput
+  }
+
+  export type sys_role_deptUncheckedCreateInput = {
+    id?: string
+    role_id: string
+    dept_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: sys_roleUpdateOneRequiredWithoutSys_role_deptNestedInput
+    dept?: sys_deptUpdateOneRequiredWithoutSys_role_deptNestedInput
+  }
+
+  export type sys_role_deptUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptCreateManyInput = {
+    id?: string
+    role_id: string
+    dept_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -35138,62 +35277,6 @@ export namespace Prisma {
     job_message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     exception_info?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type sys_role_deptCreateInput = {
-    id?: string
-    role_id: string
-    dept_id: string
-    tenant_id: string
-    created_at?: Date | string
-  }
-
-  export type sys_role_deptUncheckedCreateInput = {
-    id?: string
-    role_id: string
-    dept_id: string
-    tenant_id: string
-    created_at?: Date | string
-  }
-
-  export type sys_role_deptUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    dept_id?: StringFieldUpdateOperationsInput | string
-    tenant_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type sys_role_deptUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    dept_id?: StringFieldUpdateOperationsInput | string
-    tenant_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type sys_role_deptCreateManyInput = {
-    id?: string
-    role_id: string
-    dept_id: string
-    tenant_id: string
-    created_at?: Date | string
-  }
-
-  export type sys_role_deptUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    dept_id?: StringFieldUpdateOperationsInput | string
-    tenant_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type sys_role_deptUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role_id?: StringFieldUpdateOperationsInput | string
-    dept_id?: StringFieldUpdateOperationsInput | string
-    tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35778,6 +35861,36 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type Sys_role_menuListRelationFilter = {
+    every?: sys_role_menuWhereInput
+    some?: sys_role_menuWhereInput
+    none?: sys_role_menuWhereInput
+  }
+
+  export type Sys_role_permissionListRelationFilter = {
+    every?: sys_role_permissionWhereInput
+    some?: sys_role_permissionWhereInput
+    none?: sys_role_permissionWhereInput
+  }
+
+  export type Sys_role_deptListRelationFilter = {
+    every?: sys_role_deptWhereInput
+    some?: sys_role_deptWhereInput
+    none?: sys_role_deptWhereInput
+  }
+
+  export type sys_role_menuOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type sys_role_permissionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type sys_role_deptOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type sys_roleTenant_idRole_codeCompoundUniqueInput = {
     tenant_id: string
     role_code: string
@@ -35791,6 +35904,7 @@ export namespace Prisma {
     description?: SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    data_scope?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrder
@@ -35811,6 +35925,7 @@ export namespace Prisma {
     description?: SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    data_scope?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrder
@@ -35826,6 +35941,7 @@ export namespace Prisma {
     description?: SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    data_scope?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrder
@@ -35919,6 +36035,7 @@ export namespace Prisma {
     permission?: SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    is_platform?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrder
@@ -35929,6 +36046,7 @@ export namespace Prisma {
   export type sys_menuAvgOrderByAggregateInput = {
     menu_type?: SortOrder
     sort_order?: SortOrder
+    is_platform?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -35944,6 +36062,7 @@ export namespace Prisma {
     permission?: SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    is_platform?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrder
@@ -35963,6 +36082,7 @@ export namespace Prisma {
     permission?: SortOrder
     sort_order?: SortOrder
     status?: SortOrder
+    is_platform?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     created_by?: SortOrder
@@ -35973,6 +36093,7 @@ export namespace Prisma {
   export type sys_menuSumOrderByAggregateInput = {
     menu_type?: SortOrder
     sort_order?: SortOrder
+    is_platform?: SortOrder
     is_deleted?: SortOrder
   }
 
@@ -36409,6 +36530,11 @@ export namespace Prisma {
     is_primary?: SortOrder
   }
 
+  export type Sys_menuScalarRelationFilter = {
+    is?: sys_menuWhereInput
+    isNot?: sys_menuWhereInput
+  }
+
   export type sys_role_menuRole_idMenu_idCompoundUniqueInput = {
     role_id: string
     menu_id: string
@@ -36438,6 +36564,11 @@ export namespace Prisma {
     created_at?: SortOrder
   }
 
+  export type Sys_permissionScalarRelationFilter = {
+    is?: sys_permissionWhereInput
+    isNot?: sys_permissionWhereInput
+  }
+
   export type sys_role_permissionRole_idPerm_idCompoundUniqueInput = {
     role_id: string
     perm_id: string
@@ -36463,6 +36594,35 @@ export namespace Prisma {
     id?: SortOrder
     role_id?: SortOrder
     perm_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_role_deptRole_idDept_idCompoundUniqueInput = {
+    role_id: string
+    dept_id: string
+  }
+
+  export type sys_role_deptCountOrderByAggregateInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_role_deptMaxOrderByAggregateInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
+    tenant_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sys_role_deptMinOrderByAggregateInput = {
+    id?: SortOrder
+    role_id?: SortOrder
+    dept_id?: SortOrder
     tenant_id?: SortOrder
     created_at?: SortOrder
   }
@@ -36738,35 +36898,6 @@ export namespace Prisma {
     created_at?: SortOrder
   }
 
-  export type sys_role_deptRole_idDept_idCompoundUniqueInput = {
-    role_id: string
-    dept_id: string
-  }
-
-  export type sys_role_deptCountOrderByAggregateInput = {
-    id?: SortOrder
-    role_id?: SortOrder
-    dept_id?: SortOrder
-    tenant_id?: SortOrder
-    created_at?: SortOrder
-  }
-
-  export type sys_role_deptMaxOrderByAggregateInput = {
-    id?: SortOrder
-    role_id?: SortOrder
-    dept_id?: SortOrder
-    tenant_id?: SortOrder
-    created_at?: SortOrder
-  }
-
-  export type sys_role_deptMinOrderByAggregateInput = {
-    id?: SortOrder
-    role_id?: SortOrder
-    dept_id?: SortOrder
-    tenant_id?: SortOrder
-    created_at?: SortOrder
-  }
-
   export type sys_todoCountOrderByAggregateInput = {
     todo_id?: SortOrder
     tenant_id?: SortOrder
@@ -36992,11 +37123,53 @@ export namespace Prisma {
     connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
   }
 
+  export type sys_role_menuCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_role_menuCreateWithoutRoleInput, sys_role_menuUncheckedCreateWithoutRoleInput> | sys_role_menuCreateWithoutRoleInput[] | sys_role_menuUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutRoleInput | sys_role_menuCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_role_menuCreateManyRoleInputEnvelope
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+  }
+
+  export type sys_role_permissionCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_role_permissionCreateWithoutRoleInput, sys_role_permissionUncheckedCreateWithoutRoleInput> | sys_role_permissionCreateWithoutRoleInput[] | sys_role_permissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutRoleInput | sys_role_permissionCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_role_permissionCreateManyRoleInputEnvelope
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+  }
+
+  export type sys_role_deptCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_role_deptCreateWithoutRoleInput, sys_role_deptUncheckedCreateWithoutRoleInput> | sys_role_deptCreateWithoutRoleInput[] | sys_role_deptUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutRoleInput | sys_role_deptCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_role_deptCreateManyRoleInputEnvelope
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+  }
+
   export type sys_user_roleUncheckedCreateNestedManyWithoutRoleInput = {
     create?: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput> | sys_user_roleCreateWithoutRoleInput[] | sys_user_roleUncheckedCreateWithoutRoleInput[]
     connectOrCreate?: sys_user_roleCreateOrConnectWithoutRoleInput | sys_user_roleCreateOrConnectWithoutRoleInput[]
     createMany?: sys_user_roleCreateManyRoleInputEnvelope
     connect?: sys_user_roleWhereUniqueInput | sys_user_roleWhereUniqueInput[]
+  }
+
+  export type sys_role_menuUncheckedCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_role_menuCreateWithoutRoleInput, sys_role_menuUncheckedCreateWithoutRoleInput> | sys_role_menuCreateWithoutRoleInput[] | sys_role_menuUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutRoleInput | sys_role_menuCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_role_menuCreateManyRoleInputEnvelope
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+  }
+
+  export type sys_role_permissionUncheckedCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_role_permissionCreateWithoutRoleInput, sys_role_permissionUncheckedCreateWithoutRoleInput> | sys_role_permissionCreateWithoutRoleInput[] | sys_role_permissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutRoleInput | sys_role_permissionCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_role_permissionCreateManyRoleInputEnvelope
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+  }
+
+  export type sys_role_deptUncheckedCreateNestedManyWithoutRoleInput = {
+    create?: XOR<sys_role_deptCreateWithoutRoleInput, sys_role_deptUncheckedCreateWithoutRoleInput> | sys_role_deptCreateWithoutRoleInput[] | sys_role_deptUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutRoleInput | sys_role_deptCreateOrConnectWithoutRoleInput[]
+    createMany?: sys_role_deptCreateManyRoleInputEnvelope
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
   }
 
   export type sys_user_roleUpdateManyWithoutRoleNestedInput = {
@@ -37013,6 +37186,48 @@ export namespace Prisma {
     deleteMany?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
   }
 
+  export type sys_role_menuUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_role_menuCreateWithoutRoleInput, sys_role_menuUncheckedCreateWithoutRoleInput> | sys_role_menuCreateWithoutRoleInput[] | sys_role_menuUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutRoleInput | sys_role_menuCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_role_menuUpsertWithWhereUniqueWithoutRoleInput | sys_role_menuUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_role_menuCreateManyRoleInputEnvelope
+    set?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    disconnect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    delete?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    update?: sys_role_menuUpdateWithWhereUniqueWithoutRoleInput | sys_role_menuUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_role_menuUpdateManyWithWhereWithoutRoleInput | sys_role_menuUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_role_menuScalarWhereInput | sys_role_menuScalarWhereInput[]
+  }
+
+  export type sys_role_permissionUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_role_permissionCreateWithoutRoleInput, sys_role_permissionUncheckedCreateWithoutRoleInput> | sys_role_permissionCreateWithoutRoleInput[] | sys_role_permissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutRoleInput | sys_role_permissionCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_role_permissionUpsertWithWhereUniqueWithoutRoleInput | sys_role_permissionUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_role_permissionCreateManyRoleInputEnvelope
+    set?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    disconnect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    delete?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    update?: sys_role_permissionUpdateWithWhereUniqueWithoutRoleInput | sys_role_permissionUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_role_permissionUpdateManyWithWhereWithoutRoleInput | sys_role_permissionUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_role_permissionScalarWhereInput | sys_role_permissionScalarWhereInput[]
+  }
+
+  export type sys_role_deptUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_role_deptCreateWithoutRoleInput, sys_role_deptUncheckedCreateWithoutRoleInput> | sys_role_deptCreateWithoutRoleInput[] | sys_role_deptUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutRoleInput | sys_role_deptCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_role_deptUpsertWithWhereUniqueWithoutRoleInput | sys_role_deptUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_role_deptCreateManyRoleInputEnvelope
+    set?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    disconnect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    delete?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    update?: sys_role_deptUpdateWithWhereUniqueWithoutRoleInput | sys_role_deptUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_role_deptUpdateManyWithWhereWithoutRoleInput | sys_role_deptUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_role_deptScalarWhereInput | sys_role_deptScalarWhereInput[]
+  }
+
   export type sys_user_roleUncheckedUpdateManyWithoutRoleNestedInput = {
     create?: XOR<sys_user_roleCreateWithoutRoleInput, sys_user_roleUncheckedCreateWithoutRoleInput> | sys_user_roleCreateWithoutRoleInput[] | sys_user_roleUncheckedCreateWithoutRoleInput[]
     connectOrCreate?: sys_user_roleCreateOrConnectWithoutRoleInput | sys_user_roleCreateOrConnectWithoutRoleInput[]
@@ -37027,6 +37242,48 @@ export namespace Prisma {
     deleteMany?: sys_user_roleScalarWhereInput | sys_user_roleScalarWhereInput[]
   }
 
+  export type sys_role_menuUncheckedUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_role_menuCreateWithoutRoleInput, sys_role_menuUncheckedCreateWithoutRoleInput> | sys_role_menuCreateWithoutRoleInput[] | sys_role_menuUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutRoleInput | sys_role_menuCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_role_menuUpsertWithWhereUniqueWithoutRoleInput | sys_role_menuUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_role_menuCreateManyRoleInputEnvelope
+    set?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    disconnect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    delete?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    update?: sys_role_menuUpdateWithWhereUniqueWithoutRoleInput | sys_role_menuUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_role_menuUpdateManyWithWhereWithoutRoleInput | sys_role_menuUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_role_menuScalarWhereInput | sys_role_menuScalarWhereInput[]
+  }
+
+  export type sys_role_permissionUncheckedUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_role_permissionCreateWithoutRoleInput, sys_role_permissionUncheckedCreateWithoutRoleInput> | sys_role_permissionCreateWithoutRoleInput[] | sys_role_permissionUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutRoleInput | sys_role_permissionCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_role_permissionUpsertWithWhereUniqueWithoutRoleInput | sys_role_permissionUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_role_permissionCreateManyRoleInputEnvelope
+    set?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    disconnect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    delete?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    update?: sys_role_permissionUpdateWithWhereUniqueWithoutRoleInput | sys_role_permissionUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_role_permissionUpdateManyWithWhereWithoutRoleInput | sys_role_permissionUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_role_permissionScalarWhereInput | sys_role_permissionScalarWhereInput[]
+  }
+
+  export type sys_role_deptUncheckedUpdateManyWithoutRoleNestedInput = {
+    create?: XOR<sys_role_deptCreateWithoutRoleInput, sys_role_deptUncheckedCreateWithoutRoleInput> | sys_role_deptCreateWithoutRoleInput[] | sys_role_deptUncheckedCreateWithoutRoleInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutRoleInput | sys_role_deptCreateOrConnectWithoutRoleInput[]
+    upsert?: sys_role_deptUpsertWithWhereUniqueWithoutRoleInput | sys_role_deptUpsertWithWhereUniqueWithoutRoleInput[]
+    createMany?: sys_role_deptCreateManyRoleInputEnvelope
+    set?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    disconnect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    delete?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    update?: sys_role_deptUpdateWithWhereUniqueWithoutRoleInput | sys_role_deptUpdateWithWhereUniqueWithoutRoleInput[]
+    updateMany?: sys_role_deptUpdateManyWithWhereWithoutRoleInput | sys_role_deptUpdateManyWithWhereWithoutRoleInput[]
+    deleteMany?: sys_role_deptScalarWhereInput | sys_role_deptScalarWhereInput[]
+  }
+
   export type sys_user_deptCreateNestedManyWithoutDeptInput = {
     create?: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput> | sys_user_deptCreateWithoutDeptInput[] | sys_user_deptUncheckedCreateWithoutDeptInput[]
     connectOrCreate?: sys_user_deptCreateOrConnectWithoutDeptInput | sys_user_deptCreateOrConnectWithoutDeptInput[]
@@ -37034,11 +37291,25 @@ export namespace Prisma {
     connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
   }
 
+  export type sys_role_deptCreateNestedManyWithoutDeptInput = {
+    create?: XOR<sys_role_deptCreateWithoutDeptInput, sys_role_deptUncheckedCreateWithoutDeptInput> | sys_role_deptCreateWithoutDeptInput[] | sys_role_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutDeptInput | sys_role_deptCreateOrConnectWithoutDeptInput[]
+    createMany?: sys_role_deptCreateManyDeptInputEnvelope
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+  }
+
   export type sys_user_deptUncheckedCreateNestedManyWithoutDeptInput = {
     create?: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput> | sys_user_deptCreateWithoutDeptInput[] | sys_user_deptUncheckedCreateWithoutDeptInput[]
     connectOrCreate?: sys_user_deptCreateOrConnectWithoutDeptInput | sys_user_deptCreateOrConnectWithoutDeptInput[]
     createMany?: sys_user_deptCreateManyDeptInputEnvelope
     connect?: sys_user_deptWhereUniqueInput | sys_user_deptWhereUniqueInput[]
+  }
+
+  export type sys_role_deptUncheckedCreateNestedManyWithoutDeptInput = {
+    create?: XOR<sys_role_deptCreateWithoutDeptInput, sys_role_deptUncheckedCreateWithoutDeptInput> | sys_role_deptCreateWithoutDeptInput[] | sys_role_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutDeptInput | sys_role_deptCreateOrConnectWithoutDeptInput[]
+    createMany?: sys_role_deptCreateManyDeptInputEnvelope
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
   }
 
   export type sys_user_deptUpdateManyWithoutDeptNestedInput = {
@@ -37055,6 +37326,20 @@ export namespace Prisma {
     deleteMany?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
   }
 
+  export type sys_role_deptUpdateManyWithoutDeptNestedInput = {
+    create?: XOR<sys_role_deptCreateWithoutDeptInput, sys_role_deptUncheckedCreateWithoutDeptInput> | sys_role_deptCreateWithoutDeptInput[] | sys_role_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutDeptInput | sys_role_deptCreateOrConnectWithoutDeptInput[]
+    upsert?: sys_role_deptUpsertWithWhereUniqueWithoutDeptInput | sys_role_deptUpsertWithWhereUniqueWithoutDeptInput[]
+    createMany?: sys_role_deptCreateManyDeptInputEnvelope
+    set?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    disconnect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    delete?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    update?: sys_role_deptUpdateWithWhereUniqueWithoutDeptInput | sys_role_deptUpdateWithWhereUniqueWithoutDeptInput[]
+    updateMany?: sys_role_deptUpdateManyWithWhereWithoutDeptInput | sys_role_deptUpdateManyWithWhereWithoutDeptInput[]
+    deleteMany?: sys_role_deptScalarWhereInput | sys_role_deptScalarWhereInput[]
+  }
+
   export type sys_user_deptUncheckedUpdateManyWithoutDeptNestedInput = {
     create?: XOR<sys_user_deptCreateWithoutDeptInput, sys_user_deptUncheckedCreateWithoutDeptInput> | sys_user_deptCreateWithoutDeptInput[] | sys_user_deptUncheckedCreateWithoutDeptInput[]
     connectOrCreate?: sys_user_deptCreateOrConnectWithoutDeptInput | sys_user_deptCreateOrConnectWithoutDeptInput[]
@@ -37067,6 +37352,104 @@ export namespace Prisma {
     update?: sys_user_deptUpdateWithWhereUniqueWithoutDeptInput | sys_user_deptUpdateWithWhereUniqueWithoutDeptInput[]
     updateMany?: sys_user_deptUpdateManyWithWhereWithoutDeptInput | sys_user_deptUpdateManyWithWhereWithoutDeptInput[]
     deleteMany?: sys_user_deptScalarWhereInput | sys_user_deptScalarWhereInput[]
+  }
+
+  export type sys_role_deptUncheckedUpdateManyWithoutDeptNestedInput = {
+    create?: XOR<sys_role_deptCreateWithoutDeptInput, sys_role_deptUncheckedCreateWithoutDeptInput> | sys_role_deptCreateWithoutDeptInput[] | sys_role_deptUncheckedCreateWithoutDeptInput[]
+    connectOrCreate?: sys_role_deptCreateOrConnectWithoutDeptInput | sys_role_deptCreateOrConnectWithoutDeptInput[]
+    upsert?: sys_role_deptUpsertWithWhereUniqueWithoutDeptInput | sys_role_deptUpsertWithWhereUniqueWithoutDeptInput[]
+    createMany?: sys_role_deptCreateManyDeptInputEnvelope
+    set?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    disconnect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    delete?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    connect?: sys_role_deptWhereUniqueInput | sys_role_deptWhereUniqueInput[]
+    update?: sys_role_deptUpdateWithWhereUniqueWithoutDeptInput | sys_role_deptUpdateWithWhereUniqueWithoutDeptInput[]
+    updateMany?: sys_role_deptUpdateManyWithWhereWithoutDeptInput | sys_role_deptUpdateManyWithWhereWithoutDeptInput[]
+    deleteMany?: sys_role_deptScalarWhereInput | sys_role_deptScalarWhereInput[]
+  }
+
+  export type sys_role_menuCreateNestedManyWithoutMenuInput = {
+    create?: XOR<sys_role_menuCreateWithoutMenuInput, sys_role_menuUncheckedCreateWithoutMenuInput> | sys_role_menuCreateWithoutMenuInput[] | sys_role_menuUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutMenuInput | sys_role_menuCreateOrConnectWithoutMenuInput[]
+    createMany?: sys_role_menuCreateManyMenuInputEnvelope
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+  }
+
+  export type sys_role_menuUncheckedCreateNestedManyWithoutMenuInput = {
+    create?: XOR<sys_role_menuCreateWithoutMenuInput, sys_role_menuUncheckedCreateWithoutMenuInput> | sys_role_menuCreateWithoutMenuInput[] | sys_role_menuUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutMenuInput | sys_role_menuCreateOrConnectWithoutMenuInput[]
+    createMany?: sys_role_menuCreateManyMenuInputEnvelope
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+  }
+
+  export type sys_role_menuUpdateManyWithoutMenuNestedInput = {
+    create?: XOR<sys_role_menuCreateWithoutMenuInput, sys_role_menuUncheckedCreateWithoutMenuInput> | sys_role_menuCreateWithoutMenuInput[] | sys_role_menuUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutMenuInput | sys_role_menuCreateOrConnectWithoutMenuInput[]
+    upsert?: sys_role_menuUpsertWithWhereUniqueWithoutMenuInput | sys_role_menuUpsertWithWhereUniqueWithoutMenuInput[]
+    createMany?: sys_role_menuCreateManyMenuInputEnvelope
+    set?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    disconnect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    delete?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    update?: sys_role_menuUpdateWithWhereUniqueWithoutMenuInput | sys_role_menuUpdateWithWhereUniqueWithoutMenuInput[]
+    updateMany?: sys_role_menuUpdateManyWithWhereWithoutMenuInput | sys_role_menuUpdateManyWithWhereWithoutMenuInput[]
+    deleteMany?: sys_role_menuScalarWhereInput | sys_role_menuScalarWhereInput[]
+  }
+
+  export type sys_role_menuUncheckedUpdateManyWithoutMenuNestedInput = {
+    create?: XOR<sys_role_menuCreateWithoutMenuInput, sys_role_menuUncheckedCreateWithoutMenuInput> | sys_role_menuCreateWithoutMenuInput[] | sys_role_menuUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: sys_role_menuCreateOrConnectWithoutMenuInput | sys_role_menuCreateOrConnectWithoutMenuInput[]
+    upsert?: sys_role_menuUpsertWithWhereUniqueWithoutMenuInput | sys_role_menuUpsertWithWhereUniqueWithoutMenuInput[]
+    createMany?: sys_role_menuCreateManyMenuInputEnvelope
+    set?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    disconnect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    delete?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    connect?: sys_role_menuWhereUniqueInput | sys_role_menuWhereUniqueInput[]
+    update?: sys_role_menuUpdateWithWhereUniqueWithoutMenuInput | sys_role_menuUpdateWithWhereUniqueWithoutMenuInput[]
+    updateMany?: sys_role_menuUpdateManyWithWhereWithoutMenuInput | sys_role_menuUpdateManyWithWhereWithoutMenuInput[]
+    deleteMany?: sys_role_menuScalarWhereInput | sys_role_menuScalarWhereInput[]
+  }
+
+  export type sys_role_permissionCreateNestedManyWithoutPermissionInput = {
+    create?: XOR<sys_role_permissionCreateWithoutPermissionInput, sys_role_permissionUncheckedCreateWithoutPermissionInput> | sys_role_permissionCreateWithoutPermissionInput[] | sys_role_permissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutPermissionInput | sys_role_permissionCreateOrConnectWithoutPermissionInput[]
+    createMany?: sys_role_permissionCreateManyPermissionInputEnvelope
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+  }
+
+  export type sys_role_permissionUncheckedCreateNestedManyWithoutPermissionInput = {
+    create?: XOR<sys_role_permissionCreateWithoutPermissionInput, sys_role_permissionUncheckedCreateWithoutPermissionInput> | sys_role_permissionCreateWithoutPermissionInput[] | sys_role_permissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutPermissionInput | sys_role_permissionCreateOrConnectWithoutPermissionInput[]
+    createMany?: sys_role_permissionCreateManyPermissionInputEnvelope
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+  }
+
+  export type sys_role_permissionUpdateManyWithoutPermissionNestedInput = {
+    create?: XOR<sys_role_permissionCreateWithoutPermissionInput, sys_role_permissionUncheckedCreateWithoutPermissionInput> | sys_role_permissionCreateWithoutPermissionInput[] | sys_role_permissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutPermissionInput | sys_role_permissionCreateOrConnectWithoutPermissionInput[]
+    upsert?: sys_role_permissionUpsertWithWhereUniqueWithoutPermissionInput | sys_role_permissionUpsertWithWhereUniqueWithoutPermissionInput[]
+    createMany?: sys_role_permissionCreateManyPermissionInputEnvelope
+    set?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    disconnect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    delete?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    update?: sys_role_permissionUpdateWithWhereUniqueWithoutPermissionInput | sys_role_permissionUpdateWithWhereUniqueWithoutPermissionInput[]
+    updateMany?: sys_role_permissionUpdateManyWithWhereWithoutPermissionInput | sys_role_permissionUpdateManyWithWhereWithoutPermissionInput[]
+    deleteMany?: sys_role_permissionScalarWhereInput | sys_role_permissionScalarWhereInput[]
+  }
+
+  export type sys_role_permissionUncheckedUpdateManyWithoutPermissionNestedInput = {
+    create?: XOR<sys_role_permissionCreateWithoutPermissionInput, sys_role_permissionUncheckedCreateWithoutPermissionInput> | sys_role_permissionCreateWithoutPermissionInput[] | sys_role_permissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: sys_role_permissionCreateOrConnectWithoutPermissionInput | sys_role_permissionCreateOrConnectWithoutPermissionInput[]
+    upsert?: sys_role_permissionUpsertWithWhereUniqueWithoutPermissionInput | sys_role_permissionUpsertWithWhereUniqueWithoutPermissionInput[]
+    createMany?: sys_role_permissionCreateManyPermissionInputEnvelope
+    set?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    disconnect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    delete?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    connect?: sys_role_permissionWhereUniqueInput | sys_role_permissionWhereUniqueInput[]
+    update?: sys_role_permissionUpdateWithWhereUniqueWithoutPermissionInput | sys_role_permissionUpdateWithWhereUniqueWithoutPermissionInput[]
+    updateMany?: sys_role_permissionUpdateManyWithWhereWithoutPermissionInput | sys_role_permissionUpdateManyWithWhereWithoutPermissionInput[]
+    deleteMany?: sys_role_permissionScalarWhereInput | sys_role_permissionScalarWhereInput[]
   }
 
   export type sys_notice_userCreateNestedManyWithoutNoticeInput = {
@@ -37179,6 +37562,90 @@ export namespace Prisma {
     upsert?: sys_deptUpsertWithoutSys_user_deptInput
     connect?: sys_deptWhereUniqueInput
     update?: XOR<XOR<sys_deptUpdateToOneWithWhereWithoutSys_user_deptInput, sys_deptUpdateWithoutSys_user_deptInput>, sys_deptUncheckedUpdateWithoutSys_user_deptInput>
+  }
+
+  export type sys_roleCreateNestedOneWithoutSys_role_menuInput = {
+    create?: XOR<sys_roleCreateWithoutSys_role_menuInput, sys_roleUncheckedCreateWithoutSys_role_menuInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_role_menuInput
+    connect?: sys_roleWhereUniqueInput
+  }
+
+  export type sys_menuCreateNestedOneWithoutSys_role_menuInput = {
+    create?: XOR<sys_menuCreateWithoutSys_role_menuInput, sys_menuUncheckedCreateWithoutSys_role_menuInput>
+    connectOrCreate?: sys_menuCreateOrConnectWithoutSys_role_menuInput
+    connect?: sys_menuWhereUniqueInput
+  }
+
+  export type sys_roleUpdateOneRequiredWithoutSys_role_menuNestedInput = {
+    create?: XOR<sys_roleCreateWithoutSys_role_menuInput, sys_roleUncheckedCreateWithoutSys_role_menuInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_role_menuInput
+    upsert?: sys_roleUpsertWithoutSys_role_menuInput
+    connect?: sys_roleWhereUniqueInput
+    update?: XOR<XOR<sys_roleUpdateToOneWithWhereWithoutSys_role_menuInput, sys_roleUpdateWithoutSys_role_menuInput>, sys_roleUncheckedUpdateWithoutSys_role_menuInput>
+  }
+
+  export type sys_menuUpdateOneRequiredWithoutSys_role_menuNestedInput = {
+    create?: XOR<sys_menuCreateWithoutSys_role_menuInput, sys_menuUncheckedCreateWithoutSys_role_menuInput>
+    connectOrCreate?: sys_menuCreateOrConnectWithoutSys_role_menuInput
+    upsert?: sys_menuUpsertWithoutSys_role_menuInput
+    connect?: sys_menuWhereUniqueInput
+    update?: XOR<XOR<sys_menuUpdateToOneWithWhereWithoutSys_role_menuInput, sys_menuUpdateWithoutSys_role_menuInput>, sys_menuUncheckedUpdateWithoutSys_role_menuInput>
+  }
+
+  export type sys_roleCreateNestedOneWithoutSys_role_permissionInput = {
+    create?: XOR<sys_roleCreateWithoutSys_role_permissionInput, sys_roleUncheckedCreateWithoutSys_role_permissionInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_role_permissionInput
+    connect?: sys_roleWhereUniqueInput
+  }
+
+  export type sys_permissionCreateNestedOneWithoutSys_role_permissionInput = {
+    create?: XOR<sys_permissionCreateWithoutSys_role_permissionInput, sys_permissionUncheckedCreateWithoutSys_role_permissionInput>
+    connectOrCreate?: sys_permissionCreateOrConnectWithoutSys_role_permissionInput
+    connect?: sys_permissionWhereUniqueInput
+  }
+
+  export type sys_roleUpdateOneRequiredWithoutSys_role_permissionNestedInput = {
+    create?: XOR<sys_roleCreateWithoutSys_role_permissionInput, sys_roleUncheckedCreateWithoutSys_role_permissionInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_role_permissionInput
+    upsert?: sys_roleUpsertWithoutSys_role_permissionInput
+    connect?: sys_roleWhereUniqueInput
+    update?: XOR<XOR<sys_roleUpdateToOneWithWhereWithoutSys_role_permissionInput, sys_roleUpdateWithoutSys_role_permissionInput>, sys_roleUncheckedUpdateWithoutSys_role_permissionInput>
+  }
+
+  export type sys_permissionUpdateOneRequiredWithoutSys_role_permissionNestedInput = {
+    create?: XOR<sys_permissionCreateWithoutSys_role_permissionInput, sys_permissionUncheckedCreateWithoutSys_role_permissionInput>
+    connectOrCreate?: sys_permissionCreateOrConnectWithoutSys_role_permissionInput
+    upsert?: sys_permissionUpsertWithoutSys_role_permissionInput
+    connect?: sys_permissionWhereUniqueInput
+    update?: XOR<XOR<sys_permissionUpdateToOneWithWhereWithoutSys_role_permissionInput, sys_permissionUpdateWithoutSys_role_permissionInput>, sys_permissionUncheckedUpdateWithoutSys_role_permissionInput>
+  }
+
+  export type sys_roleCreateNestedOneWithoutSys_role_deptInput = {
+    create?: XOR<sys_roleCreateWithoutSys_role_deptInput, sys_roleUncheckedCreateWithoutSys_role_deptInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_role_deptInput
+    connect?: sys_roleWhereUniqueInput
+  }
+
+  export type sys_deptCreateNestedOneWithoutSys_role_deptInput = {
+    create?: XOR<sys_deptCreateWithoutSys_role_deptInput, sys_deptUncheckedCreateWithoutSys_role_deptInput>
+    connectOrCreate?: sys_deptCreateOrConnectWithoutSys_role_deptInput
+    connect?: sys_deptWhereUniqueInput
+  }
+
+  export type sys_roleUpdateOneRequiredWithoutSys_role_deptNestedInput = {
+    create?: XOR<sys_roleCreateWithoutSys_role_deptInput, sys_roleUncheckedCreateWithoutSys_role_deptInput>
+    connectOrCreate?: sys_roleCreateOrConnectWithoutSys_role_deptInput
+    upsert?: sys_roleUpsertWithoutSys_role_deptInput
+    connect?: sys_roleWhereUniqueInput
+    update?: XOR<XOR<sys_roleUpdateToOneWithWhereWithoutSys_role_deptInput, sys_roleUpdateWithoutSys_role_deptInput>, sys_roleUncheckedUpdateWithoutSys_role_deptInput>
+  }
+
+  export type sys_deptUpdateOneRequiredWithoutSys_role_deptNestedInput = {
+    create?: XOR<sys_deptCreateWithoutSys_role_deptInput, sys_deptUncheckedCreateWithoutSys_role_deptInput>
+    connectOrCreate?: sys_deptCreateOrConnectWithoutSys_role_deptInput
+    upsert?: sys_deptUpsertWithoutSys_role_deptInput
+    connect?: sys_deptWhereUniqueInput
+    update?: XOR<XOR<sys_deptUpdateToOneWithWhereWithoutSys_role_deptInput, sys_deptUpdateWithoutSys_role_deptInput>, sys_deptUncheckedUpdateWithoutSys_role_deptInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -37548,6 +38015,78 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type sys_role_menuCreateWithoutRoleInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    menu: sys_menuCreateNestedOneWithoutSys_role_menuInput
+  }
+
+  export type sys_role_menuUncheckedCreateWithoutRoleInput = {
+    id?: string
+    menu_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_menuCreateOrConnectWithoutRoleInput = {
+    where: sys_role_menuWhereUniqueInput
+    create: XOR<sys_role_menuCreateWithoutRoleInput, sys_role_menuUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_role_menuCreateManyRoleInputEnvelope = {
+    data: sys_role_menuCreateManyRoleInput | sys_role_menuCreateManyRoleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_role_permissionCreateWithoutRoleInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    permission: sys_permissionCreateNestedOneWithoutSys_role_permissionInput
+  }
+
+  export type sys_role_permissionUncheckedCreateWithoutRoleInput = {
+    id?: string
+    perm_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_permissionCreateOrConnectWithoutRoleInput = {
+    where: sys_role_permissionWhereUniqueInput
+    create: XOR<sys_role_permissionCreateWithoutRoleInput, sys_role_permissionUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_role_permissionCreateManyRoleInputEnvelope = {
+    data: sys_role_permissionCreateManyRoleInput | sys_role_permissionCreateManyRoleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_role_deptCreateWithoutRoleInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    dept: sys_deptCreateNestedOneWithoutSys_role_deptInput
+  }
+
+  export type sys_role_deptUncheckedCreateWithoutRoleInput = {
+    id?: string
+    dept_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptCreateOrConnectWithoutRoleInput = {
+    where: sys_role_deptWhereUniqueInput
+    create: XOR<sys_role_deptCreateWithoutRoleInput, sys_role_deptUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_role_deptCreateManyRoleInputEnvelope = {
+    data: sys_role_deptCreateManyRoleInput | sys_role_deptCreateManyRoleInput[]
+    skipDuplicates?: boolean
+  }
+
   export type sys_user_roleUpsertWithWhereUniqueWithoutRoleInput = {
     where: sys_user_roleWhereUniqueInput
     update: XOR<sys_user_roleUpdateWithoutRoleInput, sys_user_roleUncheckedUpdateWithoutRoleInput>
@@ -37562,6 +38101,87 @@ export namespace Prisma {
   export type sys_user_roleUpdateManyWithWhereWithoutRoleInput = {
     where: sys_user_roleScalarWhereInput
     data: XOR<sys_user_roleUpdateManyMutationInput, sys_user_roleUncheckedUpdateManyWithoutRoleInput>
+  }
+
+  export type sys_role_menuUpsertWithWhereUniqueWithoutRoleInput = {
+    where: sys_role_menuWhereUniqueInput
+    update: XOR<sys_role_menuUpdateWithoutRoleInput, sys_role_menuUncheckedUpdateWithoutRoleInput>
+    create: XOR<sys_role_menuCreateWithoutRoleInput, sys_role_menuUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_role_menuUpdateWithWhereUniqueWithoutRoleInput = {
+    where: sys_role_menuWhereUniqueInput
+    data: XOR<sys_role_menuUpdateWithoutRoleInput, sys_role_menuUncheckedUpdateWithoutRoleInput>
+  }
+
+  export type sys_role_menuUpdateManyWithWhereWithoutRoleInput = {
+    where: sys_role_menuScalarWhereInput
+    data: XOR<sys_role_menuUpdateManyMutationInput, sys_role_menuUncheckedUpdateManyWithoutRoleInput>
+  }
+
+  export type sys_role_menuScalarWhereInput = {
+    AND?: sys_role_menuScalarWhereInput | sys_role_menuScalarWhereInput[]
+    OR?: sys_role_menuScalarWhereInput[]
+    NOT?: sys_role_menuScalarWhereInput | sys_role_menuScalarWhereInput[]
+    id?: UuidFilter<"sys_role_menu"> | string
+    role_id?: UuidFilter<"sys_role_menu"> | string
+    menu_id?: UuidFilter<"sys_role_menu"> | string
+    tenant_id?: UuidFilter<"sys_role_menu"> | string
+    created_at?: DateTimeFilter<"sys_role_menu"> | Date | string
+  }
+
+  export type sys_role_permissionUpsertWithWhereUniqueWithoutRoleInput = {
+    where: sys_role_permissionWhereUniqueInput
+    update: XOR<sys_role_permissionUpdateWithoutRoleInput, sys_role_permissionUncheckedUpdateWithoutRoleInput>
+    create: XOR<sys_role_permissionCreateWithoutRoleInput, sys_role_permissionUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_role_permissionUpdateWithWhereUniqueWithoutRoleInput = {
+    where: sys_role_permissionWhereUniqueInput
+    data: XOR<sys_role_permissionUpdateWithoutRoleInput, sys_role_permissionUncheckedUpdateWithoutRoleInput>
+  }
+
+  export type sys_role_permissionUpdateManyWithWhereWithoutRoleInput = {
+    where: sys_role_permissionScalarWhereInput
+    data: XOR<sys_role_permissionUpdateManyMutationInput, sys_role_permissionUncheckedUpdateManyWithoutRoleInput>
+  }
+
+  export type sys_role_permissionScalarWhereInput = {
+    AND?: sys_role_permissionScalarWhereInput | sys_role_permissionScalarWhereInput[]
+    OR?: sys_role_permissionScalarWhereInput[]
+    NOT?: sys_role_permissionScalarWhereInput | sys_role_permissionScalarWhereInput[]
+    id?: UuidFilter<"sys_role_permission"> | string
+    role_id?: UuidFilter<"sys_role_permission"> | string
+    perm_id?: UuidFilter<"sys_role_permission"> | string
+    tenant_id?: UuidFilter<"sys_role_permission"> | string
+    created_at?: DateTimeFilter<"sys_role_permission"> | Date | string
+  }
+
+  export type sys_role_deptUpsertWithWhereUniqueWithoutRoleInput = {
+    where: sys_role_deptWhereUniqueInput
+    update: XOR<sys_role_deptUpdateWithoutRoleInput, sys_role_deptUncheckedUpdateWithoutRoleInput>
+    create: XOR<sys_role_deptCreateWithoutRoleInput, sys_role_deptUncheckedCreateWithoutRoleInput>
+  }
+
+  export type sys_role_deptUpdateWithWhereUniqueWithoutRoleInput = {
+    where: sys_role_deptWhereUniqueInput
+    data: XOR<sys_role_deptUpdateWithoutRoleInput, sys_role_deptUncheckedUpdateWithoutRoleInput>
+  }
+
+  export type sys_role_deptUpdateManyWithWhereWithoutRoleInput = {
+    where: sys_role_deptScalarWhereInput
+    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyWithoutRoleInput>
+  }
+
+  export type sys_role_deptScalarWhereInput = {
+    AND?: sys_role_deptScalarWhereInput | sys_role_deptScalarWhereInput[]
+    OR?: sys_role_deptScalarWhereInput[]
+    NOT?: sys_role_deptScalarWhereInput | sys_role_deptScalarWhereInput[]
+    id?: UuidFilter<"sys_role_dept"> | string
+    role_id?: UuidFilter<"sys_role_dept"> | string
+    dept_id?: UuidFilter<"sys_role_dept"> | string
+    tenant_id?: UuidFilter<"sys_role_dept"> | string
+    created_at?: DateTimeFilter<"sys_role_dept"> | Date | string
   }
 
   export type sys_user_deptCreateWithoutDeptInput = {
@@ -37590,6 +38210,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type sys_role_deptCreateWithoutDeptInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    role: sys_roleCreateNestedOneWithoutSys_role_deptInput
+  }
+
+  export type sys_role_deptUncheckedCreateWithoutDeptInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptCreateOrConnectWithoutDeptInput = {
+    where: sys_role_deptWhereUniqueInput
+    create: XOR<sys_role_deptCreateWithoutDeptInput, sys_role_deptUncheckedCreateWithoutDeptInput>
+  }
+
+  export type sys_role_deptCreateManyDeptInputEnvelope = {
+    data: sys_role_deptCreateManyDeptInput | sys_role_deptCreateManyDeptInput[]
+    skipDuplicates?: boolean
+  }
+
   export type sys_user_deptUpsertWithWhereUniqueWithoutDeptInput = {
     where: sys_user_deptWhereUniqueInput
     update: XOR<sys_user_deptUpdateWithoutDeptInput, sys_user_deptUncheckedUpdateWithoutDeptInput>
@@ -37604,6 +38248,102 @@ export namespace Prisma {
   export type sys_user_deptUpdateManyWithWhereWithoutDeptInput = {
     where: sys_user_deptScalarWhereInput
     data: XOR<sys_user_deptUpdateManyMutationInput, sys_user_deptUncheckedUpdateManyWithoutDeptInput>
+  }
+
+  export type sys_role_deptUpsertWithWhereUniqueWithoutDeptInput = {
+    where: sys_role_deptWhereUniqueInput
+    update: XOR<sys_role_deptUpdateWithoutDeptInput, sys_role_deptUncheckedUpdateWithoutDeptInput>
+    create: XOR<sys_role_deptCreateWithoutDeptInput, sys_role_deptUncheckedCreateWithoutDeptInput>
+  }
+
+  export type sys_role_deptUpdateWithWhereUniqueWithoutDeptInput = {
+    where: sys_role_deptWhereUniqueInput
+    data: XOR<sys_role_deptUpdateWithoutDeptInput, sys_role_deptUncheckedUpdateWithoutDeptInput>
+  }
+
+  export type sys_role_deptUpdateManyWithWhereWithoutDeptInput = {
+    where: sys_role_deptScalarWhereInput
+    data: XOR<sys_role_deptUpdateManyMutationInput, sys_role_deptUncheckedUpdateManyWithoutDeptInput>
+  }
+
+  export type sys_role_menuCreateWithoutMenuInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    role: sys_roleCreateNestedOneWithoutSys_role_menuInput
+  }
+
+  export type sys_role_menuUncheckedCreateWithoutMenuInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_menuCreateOrConnectWithoutMenuInput = {
+    where: sys_role_menuWhereUniqueInput
+    create: XOR<sys_role_menuCreateWithoutMenuInput, sys_role_menuUncheckedCreateWithoutMenuInput>
+  }
+
+  export type sys_role_menuCreateManyMenuInputEnvelope = {
+    data: sys_role_menuCreateManyMenuInput | sys_role_menuCreateManyMenuInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_role_menuUpsertWithWhereUniqueWithoutMenuInput = {
+    where: sys_role_menuWhereUniqueInput
+    update: XOR<sys_role_menuUpdateWithoutMenuInput, sys_role_menuUncheckedUpdateWithoutMenuInput>
+    create: XOR<sys_role_menuCreateWithoutMenuInput, sys_role_menuUncheckedCreateWithoutMenuInput>
+  }
+
+  export type sys_role_menuUpdateWithWhereUniqueWithoutMenuInput = {
+    where: sys_role_menuWhereUniqueInput
+    data: XOR<sys_role_menuUpdateWithoutMenuInput, sys_role_menuUncheckedUpdateWithoutMenuInput>
+  }
+
+  export type sys_role_menuUpdateManyWithWhereWithoutMenuInput = {
+    where: sys_role_menuScalarWhereInput
+    data: XOR<sys_role_menuUpdateManyMutationInput, sys_role_menuUncheckedUpdateManyWithoutMenuInput>
+  }
+
+  export type sys_role_permissionCreateWithoutPermissionInput = {
+    id?: string
+    tenant_id: string
+    created_at?: Date | string
+    role: sys_roleCreateNestedOneWithoutSys_role_permissionInput
+  }
+
+  export type sys_role_permissionUncheckedCreateWithoutPermissionInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_permissionCreateOrConnectWithoutPermissionInput = {
+    where: sys_role_permissionWhereUniqueInput
+    create: XOR<sys_role_permissionCreateWithoutPermissionInput, sys_role_permissionUncheckedCreateWithoutPermissionInput>
+  }
+
+  export type sys_role_permissionCreateManyPermissionInputEnvelope = {
+    data: sys_role_permissionCreateManyPermissionInput | sys_role_permissionCreateManyPermissionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sys_role_permissionUpsertWithWhereUniqueWithoutPermissionInput = {
+    where: sys_role_permissionWhereUniqueInput
+    update: XOR<sys_role_permissionUpdateWithoutPermissionInput, sys_role_permissionUncheckedUpdateWithoutPermissionInput>
+    create: XOR<sys_role_permissionCreateWithoutPermissionInput, sys_role_permissionUncheckedCreateWithoutPermissionInput>
+  }
+
+  export type sys_role_permissionUpdateWithWhereUniqueWithoutPermissionInput = {
+    where: sys_role_permissionWhereUniqueInput
+    data: XOR<sys_role_permissionUpdateWithoutPermissionInput, sys_role_permissionUncheckedUpdateWithoutPermissionInput>
+  }
+
+  export type sys_role_permissionUpdateManyWithWhereWithoutPermissionInput = {
+    where: sys_role_permissionScalarWhereInput
+    data: XOR<sys_role_permissionUpdateManyMutationInput, sys_role_permissionUncheckedUpdateManyWithoutPermissionInput>
   }
 
   export type sys_notice_userCreateWithoutNoticeInput = {
@@ -37796,11 +38536,15 @@ export namespace Prisma {
     description?: string | null
     sort_order?: number
     status?: string
+    data_scope?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_menu?: sys_role_menuCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptCreateNestedManyWithoutRoleInput
   }
 
   export type sys_roleUncheckedCreateWithoutSys_user_roleInput = {
@@ -37811,11 +38555,15 @@ export namespace Prisma {
     description?: string | null
     sort_order?: number
     status?: string
+    data_scope?: string
     created_at?: Date | string
     updated_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_menu?: sys_role_menuUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptUncheckedCreateNestedManyWithoutRoleInput
   }
 
   export type sys_roleCreateOrConnectWithoutSys_user_roleInput = {
@@ -37897,11 +38645,15 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_menu?: sys_role_menuUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUpdateManyWithoutRoleNestedInput
   }
 
   export type sys_roleUncheckedUpdateWithoutSys_user_roleInput = {
@@ -37912,11 +38664,15 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sort_order?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_menu?: sys_role_menuUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUncheckedUpdateManyWithoutRoleNestedInput
   }
 
   export type sys_userCreateWithoutSys_user_deptInput = {
@@ -37984,6 +38740,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_dept?: sys_role_deptCreateNestedManyWithoutDeptInput
   }
 
   export type sys_deptUncheckedCreateWithoutSys_user_deptInput = {
@@ -38002,6 +38759,7 @@ export namespace Prisma {
     created_by?: string | null
     updated_by?: string | null
     is_deleted?: number
+    sys_role_dept?: sys_role_deptUncheckedCreateNestedManyWithoutDeptInput
   }
 
   export type sys_deptCreateOrConnectWithoutSys_user_deptInput = {
@@ -38091,6 +38849,7 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_dept?: sys_role_deptUpdateManyWithoutDeptNestedInput
   }
 
   export type sys_deptUncheckedUpdateWithoutSys_user_deptInput = {
@@ -38109,6 +38868,551 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
     is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_role_dept?: sys_role_deptUncheckedUpdateManyWithoutDeptNestedInput
+  }
+
+  export type sys_roleCreateWithoutSys_role_menuInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: string
+    data_scope?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptCreateNestedManyWithoutRoleInput
+  }
+
+  export type sys_roleUncheckedCreateWithoutSys_role_menuInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: string
+    data_scope?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptUncheckedCreateNestedManyWithoutRoleInput
+  }
+
+  export type sys_roleCreateOrConnectWithoutSys_role_menuInput = {
+    where: sys_roleWhereUniqueInput
+    create: XOR<sys_roleCreateWithoutSys_role_menuInput, sys_roleUncheckedCreateWithoutSys_role_menuInput>
+  }
+
+  export type sys_menuCreateWithoutSys_role_menuInput = {
+    menu_id?: string
+    tenant_id: string
+    parent_id?: string | null
+    menu_name: string
+    menu_type: number
+    icon?: string | null
+    path?: string | null
+    component?: string | null
+    permission?: string | null
+    sort_order?: number
+    status?: string
+    is_platform?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_menuUncheckedCreateWithoutSys_role_menuInput = {
+    menu_id?: string
+    tenant_id: string
+    parent_id?: string | null
+    menu_name: string
+    menu_type: number
+    icon?: string | null
+    path?: string | null
+    component?: string | null
+    permission?: string | null
+    sort_order?: number
+    status?: string
+    is_platform?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_menuCreateOrConnectWithoutSys_role_menuInput = {
+    where: sys_menuWhereUniqueInput
+    create: XOR<sys_menuCreateWithoutSys_role_menuInput, sys_menuUncheckedCreateWithoutSys_role_menuInput>
+  }
+
+  export type sys_roleUpsertWithoutSys_role_menuInput = {
+    update: XOR<sys_roleUpdateWithoutSys_role_menuInput, sys_roleUncheckedUpdateWithoutSys_role_menuInput>
+    create: XOR<sys_roleCreateWithoutSys_role_menuInput, sys_roleUncheckedCreateWithoutSys_role_menuInput>
+    where?: sys_roleWhereInput
+  }
+
+  export type sys_roleUpdateToOneWithWhereWithoutSys_role_menuInput = {
+    where?: sys_roleWhereInput
+    data: XOR<sys_roleUpdateWithoutSys_role_menuInput, sys_roleUncheckedUpdateWithoutSys_role_menuInput>
+  }
+
+  export type sys_roleUpdateWithoutSys_role_menuInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUpdateManyWithoutRoleNestedInput
+  }
+
+  export type sys_roleUncheckedUpdateWithoutSys_role_menuInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUncheckedUpdateManyWithoutRoleNestedInput
+  }
+
+  export type sys_menuUpsertWithoutSys_role_menuInput = {
+    update: XOR<sys_menuUpdateWithoutSys_role_menuInput, sys_menuUncheckedUpdateWithoutSys_role_menuInput>
+    create: XOR<sys_menuCreateWithoutSys_role_menuInput, sys_menuUncheckedCreateWithoutSys_role_menuInput>
+    where?: sys_menuWhereInput
+  }
+
+  export type sys_menuUpdateToOneWithWhereWithoutSys_role_menuInput = {
+    where?: sys_menuWhereInput
+    data: XOR<sys_menuUpdateWithoutSys_role_menuInput, sys_menuUncheckedUpdateWithoutSys_role_menuInput>
+  }
+
+  export type sys_menuUpdateWithoutSys_role_menuInput = {
+    menu_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    menu_name?: StringFieldUpdateOperationsInput | string
+    menu_type?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    path?: NullableStringFieldUpdateOperationsInput | string | null
+    component?: NullableStringFieldUpdateOperationsInput | string | null
+    permission?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_platform?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_menuUncheckedUpdateWithoutSys_role_menuInput = {
+    menu_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    menu_name?: StringFieldUpdateOperationsInput | string
+    menu_type?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    path?: NullableStringFieldUpdateOperationsInput | string | null
+    component?: NullableStringFieldUpdateOperationsInput | string | null
+    permission?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    is_platform?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_roleCreateWithoutSys_role_permissionInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: string
+    data_scope?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleCreateNestedManyWithoutRoleInput
+    sys_role_menu?: sys_role_menuCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptCreateNestedManyWithoutRoleInput
+  }
+
+  export type sys_roleUncheckedCreateWithoutSys_role_permissionInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: string
+    data_scope?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_menu?: sys_role_menuUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_dept?: sys_role_deptUncheckedCreateNestedManyWithoutRoleInput
+  }
+
+  export type sys_roleCreateOrConnectWithoutSys_role_permissionInput = {
+    where: sys_roleWhereUniqueInput
+    create: XOR<sys_roleCreateWithoutSys_role_permissionInput, sys_roleUncheckedCreateWithoutSys_role_permissionInput>
+  }
+
+  export type sys_permissionCreateWithoutSys_role_permissionInput = {
+    perm_id?: string
+    tenant_id: string
+    perm_code: string
+    perm_name: string
+    resource_type: string
+    action?: string | null
+    description?: string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_permissionUncheckedCreateWithoutSys_role_permissionInput = {
+    perm_id?: string
+    tenant_id: string
+    perm_code: string
+    perm_name: string
+    resource_type: string
+    action?: string | null
+    description?: string | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+  }
+
+  export type sys_permissionCreateOrConnectWithoutSys_role_permissionInput = {
+    where: sys_permissionWhereUniqueInput
+    create: XOR<sys_permissionCreateWithoutSys_role_permissionInput, sys_permissionUncheckedCreateWithoutSys_role_permissionInput>
+  }
+
+  export type sys_roleUpsertWithoutSys_role_permissionInput = {
+    update: XOR<sys_roleUpdateWithoutSys_role_permissionInput, sys_roleUncheckedUpdateWithoutSys_role_permissionInput>
+    create: XOR<sys_roleCreateWithoutSys_role_permissionInput, sys_roleUncheckedCreateWithoutSys_role_permissionInput>
+    where?: sys_roleWhereInput
+  }
+
+  export type sys_roleUpdateToOneWithWhereWithoutSys_role_permissionInput = {
+    where?: sys_roleWhereInput
+    data: XOR<sys_roleUpdateWithoutSys_role_permissionInput, sys_roleUncheckedUpdateWithoutSys_role_permissionInput>
+  }
+
+  export type sys_roleUpdateWithoutSys_role_permissionInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUpdateManyWithoutRoleNestedInput
+    sys_role_menu?: sys_role_menuUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUpdateManyWithoutRoleNestedInput
+  }
+
+  export type sys_roleUncheckedUpdateWithoutSys_role_permissionInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_menu?: sys_role_menuUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_dept?: sys_role_deptUncheckedUpdateManyWithoutRoleNestedInput
+  }
+
+  export type sys_permissionUpsertWithoutSys_role_permissionInput = {
+    update: XOR<sys_permissionUpdateWithoutSys_role_permissionInput, sys_permissionUncheckedUpdateWithoutSys_role_permissionInput>
+    create: XOR<sys_permissionCreateWithoutSys_role_permissionInput, sys_permissionUncheckedCreateWithoutSys_role_permissionInput>
+    where?: sys_permissionWhereInput
+  }
+
+  export type sys_permissionUpdateToOneWithWhereWithoutSys_role_permissionInput = {
+    where?: sys_permissionWhereInput
+    data: XOR<sys_permissionUpdateWithoutSys_role_permissionInput, sys_permissionUncheckedUpdateWithoutSys_role_permissionInput>
+  }
+
+  export type sys_permissionUpdateWithoutSys_role_permissionInput = {
+    perm_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    perm_code?: StringFieldUpdateOperationsInput | string
+    perm_name?: StringFieldUpdateOperationsInput | string
+    resource_type?: StringFieldUpdateOperationsInput | string
+    action?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_permissionUncheckedUpdateWithoutSys_role_permissionInput = {
+    perm_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    perm_code?: StringFieldUpdateOperationsInput | string
+    perm_name?: StringFieldUpdateOperationsInput | string
+    resource_type?: StringFieldUpdateOperationsInput | string
+    action?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type sys_roleCreateWithoutSys_role_deptInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: string
+    data_scope?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleCreateNestedManyWithoutRoleInput
+    sys_role_menu?: sys_role_menuCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionCreateNestedManyWithoutRoleInput
+  }
+
+  export type sys_roleUncheckedCreateWithoutSys_role_deptInput = {
+    role_id?: string
+    tenant_id: string
+    role_code: string
+    role_name: string
+    description?: string | null
+    sort_order?: number
+    status?: string
+    data_scope?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_role?: sys_user_roleUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_menu?: sys_role_menuUncheckedCreateNestedManyWithoutRoleInput
+    sys_role_permission?: sys_role_permissionUncheckedCreateNestedManyWithoutRoleInput
+  }
+
+  export type sys_roleCreateOrConnectWithoutSys_role_deptInput = {
+    where: sys_roleWhereUniqueInput
+    create: XOR<sys_roleCreateWithoutSys_role_deptInput, sys_roleUncheckedCreateWithoutSys_role_deptInput>
+  }
+
+  export type sys_deptCreateWithoutSys_role_deptInput = {
+    dept_id?: string
+    tenant_id: string
+    parent_id?: string | null
+    dept_code: string
+    dept_name: string
+    leader?: string | null
+    phone?: string | null
+    email?: string | null
+    sort_order?: number
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_dept?: sys_user_deptCreateNestedManyWithoutDeptInput
+  }
+
+  export type sys_deptUncheckedCreateWithoutSys_role_deptInput = {
+    dept_id?: string
+    tenant_id: string
+    parent_id?: string | null
+    dept_code: string
+    dept_name: string
+    leader?: string | null
+    phone?: string | null
+    email?: string | null
+    sort_order?: number
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    is_deleted?: number
+    sys_user_dept?: sys_user_deptUncheckedCreateNestedManyWithoutDeptInput
+  }
+
+  export type sys_deptCreateOrConnectWithoutSys_role_deptInput = {
+    where: sys_deptWhereUniqueInput
+    create: XOR<sys_deptCreateWithoutSys_role_deptInput, sys_deptUncheckedCreateWithoutSys_role_deptInput>
+  }
+
+  export type sys_roleUpsertWithoutSys_role_deptInput = {
+    update: XOR<sys_roleUpdateWithoutSys_role_deptInput, sys_roleUncheckedUpdateWithoutSys_role_deptInput>
+    create: XOR<sys_roleCreateWithoutSys_role_deptInput, sys_roleUncheckedCreateWithoutSys_role_deptInput>
+    where?: sys_roleWhereInput
+  }
+
+  export type sys_roleUpdateToOneWithWhereWithoutSys_role_deptInput = {
+    where?: sys_roleWhereInput
+    data: XOR<sys_roleUpdateWithoutSys_role_deptInput, sys_roleUncheckedUpdateWithoutSys_role_deptInput>
+  }
+
+  export type sys_roleUpdateWithoutSys_role_deptInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUpdateManyWithoutRoleNestedInput
+    sys_role_menu?: sys_role_menuUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUpdateManyWithoutRoleNestedInput
+  }
+
+  export type sys_roleUncheckedUpdateWithoutSys_role_deptInput = {
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    role_code?: StringFieldUpdateOperationsInput | string
+    role_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    data_scope?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_role?: sys_user_roleUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_menu?: sys_role_menuUncheckedUpdateManyWithoutRoleNestedInput
+    sys_role_permission?: sys_role_permissionUncheckedUpdateManyWithoutRoleNestedInput
+  }
+
+  export type sys_deptUpsertWithoutSys_role_deptInput = {
+    update: XOR<sys_deptUpdateWithoutSys_role_deptInput, sys_deptUncheckedUpdateWithoutSys_role_deptInput>
+    create: XOR<sys_deptCreateWithoutSys_role_deptInput, sys_deptUncheckedCreateWithoutSys_role_deptInput>
+    where?: sys_deptWhereInput
+  }
+
+  export type sys_deptUpdateToOneWithWhereWithoutSys_role_deptInput = {
+    where?: sys_deptWhereInput
+    data: XOR<sys_deptUpdateWithoutSys_role_deptInput, sys_deptUncheckedUpdateWithoutSys_role_deptInput>
+  }
+
+  export type sys_deptUpdateWithoutSys_role_deptInput = {
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    dept_code?: StringFieldUpdateOperationsInput | string
+    dept_name?: StringFieldUpdateOperationsInput | string
+    leader?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_dept?: sys_user_deptUpdateManyWithoutDeptNestedInput
+  }
+
+  export type sys_deptUncheckedUpdateWithoutSys_role_deptInput = {
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    dept_code?: StringFieldUpdateOperationsInput | string
+    dept_name?: StringFieldUpdateOperationsInput | string
+    leader?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    sort_order?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    is_deleted?: IntFieldUpdateOperationsInput | number
+    sys_user_dept?: sys_user_deptUncheckedUpdateManyWithoutDeptNestedInput
   }
 
   export type sys_user_roleCreateManyUserInput = {
@@ -38178,6 +39482,27 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
+  export type sys_role_menuCreateManyRoleInput = {
+    id?: string
+    menu_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_permissionCreateManyRoleInput = {
+    id?: string
+    perm_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptCreateManyRoleInput = {
+    id?: string
+    dept_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
   export type sys_user_roleUpdateWithoutRoleInput = {
     id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
@@ -38199,11 +39524,81 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type sys_role_menuUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    menu?: sys_menuUpdateOneRequiredWithoutSys_role_menuNestedInput
+  }
+
+  export type sys_role_menuUncheckedUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    menu_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_menuUncheckedUpdateManyWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    menu_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_permissionUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    permission?: sys_permissionUpdateOneRequiredWithoutSys_role_permissionNestedInput
+  }
+
+  export type sys_role_permissionUncheckedUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    perm_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_permissionUncheckedUpdateManyWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    perm_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    dept?: sys_deptUpdateOneRequiredWithoutSys_role_deptNestedInput
+  }
+
+  export type sys_role_deptUncheckedUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptUncheckedUpdateManyWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dept_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type sys_user_deptCreateManyDeptInput = {
     id?: string
     user_id: string
     tenant_id: string
     is_primary?: number
+    created_at?: Date | string
+  }
+
+  export type sys_role_deptCreateManyDeptInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
     created_at?: Date | string
   }
 
@@ -38228,6 +39623,83 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     tenant_id?: StringFieldUpdateOperationsInput | string
     is_primary?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptUpdateWithoutDeptInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: sys_roleUpdateOneRequiredWithoutSys_role_deptNestedInput
+  }
+
+  export type sys_role_deptUncheckedUpdateWithoutDeptInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_deptUncheckedUpdateManyWithoutDeptInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_menuCreateManyMenuInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_menuUpdateWithoutMenuInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: sys_roleUpdateOneRequiredWithoutSys_role_menuNestedInput
+  }
+
+  export type sys_role_menuUncheckedUpdateWithoutMenuInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_menuUncheckedUpdateManyWithoutMenuInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_permissionCreateManyPermissionInput = {
+    id?: string
+    role_id: string
+    tenant_id: string
+    created_at?: Date | string
+  }
+
+  export type sys_role_permissionUpdateWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: sys_roleUpdateOneRequiredWithoutSys_role_permissionNestedInput
+  }
+
+  export type sys_role_permissionUncheckedUpdateWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sys_role_permissionUncheckedUpdateManyWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role_id?: StringFieldUpdateOperationsInput | string
+    tenant_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

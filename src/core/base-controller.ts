@@ -37,10 +37,10 @@ export abstract class BaseController<
   protected abstract readonly config: BaseControllerConfig;
 
   /** 创建验证 Schema */
-  protected abstract readonly createSchema: ZodTypeAny;
+  protected abstract readonly createSchema?: ZodTypeAny;
 
   /** 更新验证 Schema */
-  protected abstract readonly updateSchema: ZodTypeAny;
+  protected abstract readonly updateSchema?: ZodTypeAny;
 
   /** 查询验证 Schema */
   protected readonly querySchema: ZodTypeAny = z.object({
@@ -63,10 +63,10 @@ export abstract class BaseController<
 
   async afterList(data: T[], _req: Request): Promise<T[]> {
     return data
-      .map((item) => keysToCamelCase(item))
-      .map((item) => {
+      .map((item: any) => keysToCamelCase(item))
+      .map((item: any) => {
         // 判断当前字段是不是时间格式，如果是就转成 YYYY-MM-DD HH:mm:ss 格式
-        for (const key in item as any) {
+        for (const key in item) {
           if (item[key] instanceof Date) {
             item[key] = dayjs(item[key]).format("YYYY-MM-DD HH:mm:ss");
           }
@@ -153,7 +153,7 @@ export abstract class BaseController<
 
       // 解析并验证查询参数
       let query = this.parseQueryParams(req.query) as QueryDto;
-      query.tenantId = tenantId;
+      query.tenantId = tenantId!;
 
       // 执行查询前钩子
       query = await this.beforeList(query, req);

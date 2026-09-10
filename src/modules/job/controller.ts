@@ -94,4 +94,14 @@ export default class JobController extends BaseController<any, any, any, any> {
     );
     success(res, null, "已清空");
   }
+  @Get("/list")
+  @ApiOperation("任务列表")
+  async jobList(@Req() req: Request, @Res() res: Response) {
+    return super.list(req, res);
+  }
+  @Post("/")
+  @ApiOperation("创建任务")
+  async jobCreate(@Req() req: Request, @Res() res: Response) {
+    return super.create(req, res);
+  }
 }

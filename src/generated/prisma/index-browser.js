@@ -165,6 +165,7 @@ exports.Prisma.Sys_roleScalarFieldEnum = {
   description: 'description',
   sort_order: 'sort_order',
   status: 'status',
+  data_scope: 'data_scope',
   created_at: 'created_at',
   updated_at: 'updated_at',
   created_by: 'created_by',
@@ -202,6 +203,7 @@ exports.Prisma.Sys_menuScalarFieldEnum = {
   permission: 'permission',
   sort_order: 'sort_order',
   status: 'status',
+  is_platform: 'is_platform',
   created_at: 'created_at',
   updated_at: 'updated_at',
   created_by: 'created_by',
@@ -331,6 +333,14 @@ exports.Prisma.Sys_role_permissionScalarFieldEnum = {
   created_at: 'created_at'
 };
 
+exports.Prisma.Sys_role_deptScalarFieldEnum = {
+  id: 'id',
+  role_id: 'role_id',
+  dept_id: 'dept_id',
+  tenant_id: 'tenant_id',
+  created_at: 'created_at'
+};
+
 exports.Prisma.Sys_mfa_configScalarFieldEnum = {
   mfa_id: 'mfa_id',
   user_id: 'user_id',
@@ -407,14 +417,6 @@ exports.Prisma.Sys_job_logScalarFieldEnum = {
   created_at: 'created_at'
 };
 
-exports.Prisma.Sys_role_deptScalarFieldEnum = {
-  id: 'id',
-  role_id: 'role_id',
-  dept_id: 'dept_id',
-  tenant_id: 'tenant_id',
-  created_at: 'created_at'
-};
-
 exports.Prisma.Sys_todoScalarFieldEnum = {
   todo_id: 'todo_id',
   tenant_id: 'tenant_id',
@@ -475,13 +477,13 @@ exports.Prisma.ModelName = {
   sys_user_dept: 'sys_user_dept',
   sys_role_menu: 'sys_role_menu',
   sys_role_permission: 'sys_role_permission',
+  sys_role_dept: 'sys_role_dept',
   sys_mfa_config: 'sys_mfa_config',
   sys_file: 'sys_file',
   sys_login_log: 'sys_login_log',
   sys_config: 'sys_config',
   sys_job: 'sys_job',
   sys_job_log: 'sys_job_log',
-  sys_role_dept: 'sys_role_dept',
   sys_todo: 'sys_todo',
   sys_ip_rule: 'sys_ip_rule'
 };

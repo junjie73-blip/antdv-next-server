@@ -84,9 +84,6 @@ async function healthCheck() {
     console.log("✅ Neon PostgreSQL connected");
   } catch (e) {
     console.error("❌ Neon PostgreSQL failed");
-    console.error("Error stack:", e?.stack);
-    if (e?.cause) console.error("Cause:", e.cause);
-    if (e?.errors) console.error("Aggregate errors:", e.errors);
   }
 
   try {

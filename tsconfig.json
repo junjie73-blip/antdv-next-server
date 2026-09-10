@@ -20,7 +20,8 @@
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noEmitOnError": false
   },
   "include": ["./src/**/*", "./src/config"],
   "exclude": ["node_modules", "dist"]

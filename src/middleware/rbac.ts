@@ -1,60 +1,125 @@
-import { Request, Response, NextFunction } from "express";
-import { rbacService } from "@common/rbac/service.js";
-import { auditLog } from "@common/logger/index.js";
+import type { Request, Response, NextFunction } from "express";
+import { getUserPermissions, getUserRoles } from "@common/rbac/service.js";
+import { logger } from "@core/logger/index.js";
 
 export interface AuthRequest extends Request {
   user?: {
-    id: string;
-    email: string;
-    role: string;
+    userId: string;
     tenantId: string;
+    username: string;
+    roles?: string[];
   };
+  tenantId?: string;
 }
 
-/** 生成权限校验中间件（供 BaseController.addRoute 和 scanner 使用） */
-export function createRbacMiddleware(
-  requiredPermissions: string[] = [],
-  requiredRoles: string[] = [],
-) {
+export interface RbacOptions {
+  /** 需要的权限码（全部满足） */
+  permissions?: string[];
+  /** 需要的权限码（任意一个满足即可） */
+  anyPermissions?: string[];
+  /** 需要的角色（任意一个满足即可） */
+  roles?: string[];
+  /** 是否要求已认证（默认 true） */
+  requireAuth?: boolean;
+}
+
+/**
+ * 通用 RBAC 中间件工厂
+ */
+export function createRbacMiddleware(options: RbacOptions = {}) {
+  const {
+    permissions = [],
+    anyPermissions = [],
+    roles = [],
+    requireAuth = true,
+  } = options;
+
   return async (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      return res.status(401).json({ success: false, message: "未认证" });
-    }
+    try {
+      const user = req.user;
 
-    const { id: userId, tenantId } = req.user;
-
-    // 角色校验
-    if (requiredRoles.length > 0) {
-      const ok = await rbacService.hasAnyRole(tenantId, userId, requiredRoles);
-      if (!ok) {
-        auditLog("rbac.denied", tenantId, userId, {
-          reason: "role",
-          required: requiredRoles,
+      // ========== 1. 认证校验 ==========
+      if (requireAuth && !user) {
+        return res.status(401).json({
+          code: 401,
+          message: "未认证",
+          data: null,
+          timestamp: Date.now(),
         });
-        return res
-          .status(403)
-          .json({ success: false, message: "角色权限不足" });
       }
-    }
 
-    // 权限校验
-    if (requiredPermissions.length > 0) {
-      const ok = await rbacService.hasAllPermissions(
-        tenantId,
-        userId,
-        requiredPermissions,
-      );
-      if (!ok) {
-        auditLog("rbac.denied", tenantId, userId, {
-          reason: "permission",
-          required: requiredPermissions,
-        });
-        return res
-          .status(403)
-          .json({ success: false, message: "缺少操作权限" });
+      if (!user) {
+        // requireAuth = false 时，未登录也放行
+        return next();
       }
-    }
 
-    next();
+      const { userId, tenantId } = user;
+
+      // ========== 2. 角色校验 ==========
+      if (roles.length > 0) {
+        const userRoles =
+          user.roles && user.roles.length > 0
+            ? user.roles
+            : await getUserRoles(userId, tenantId);
+        const hasRole = roles.some((r) => userRoles.includes(r));
+        if (!hasRole) {
+          logger.warn(
+            { userId, tenantId, required: roles, path: req.path },
+            "RBAC denied: role",
+          );
+          return res.status(403).json({
+            code: 403,
+            message: "角色权限不足",
+            data: null,
+            timestamp: Date.now(),
+          });
+        }
+      }
+
+      // ========== 3. 权限校验（全部满足） ==========
+      if (permissions.length > 0) {
+        const userPerms = await getUserPermissions(userId, tenantId);
+        const hasAll =
+          userPerms.includes("*") ||
+          permissions.every((p) => userPerms.includes(p));
+        if (!hasAll) {
+          logger.warn(
+            { userId, tenantId, required: permissions, path: req.path },
+            "RBAC denied: permissions",
+          );
+          return res.status(403).json({
+            code: 403,
+            message: "缺少操作权限",
+            data: null,
+            timestamp: Date.now(),
+          });
+        }
+      }
+
+      // ========== 4. 权限校验（任意一个满足） ==========
+      if (anyPermissions.length > 0) {
+        const userPerms = await getUserPermissions(userId, tenantId);
+        const hasAny =
+          userPerms.includes("*") ||
+          anyPermissions.some((p) => userPerms.includes(p));
+        if (!hasAny) {
+          logger.warn(
+            { userId, tenantId, required: anyPermissions, path: req.path },
+            "RBAC denied: any-permission",
+          );
+          return res.status(403).json({
+            code: 403,
+            message: "缺少操作权限",
+            data: null,
+            timestamp: Date.now(),
+          });
+        }
+      }
+
+      next();
+    } catch (err) {
+      logger.error({ err }, "RBAC middleware error");
+      next(err);
+    }
   };
 }

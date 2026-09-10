@@ -138,8 +138,8 @@ export default class UserController extends BaseController<any, any, any, any> {
   @ApiOperation("批量删除用户")
   @ApiBody(z.object({ ids: z.array(z.string().uuid()).min(1) }))
   @ApiResponse(200, "批量删除成功")
-  async batchDelete(@Req() req: Request, @Res() res: Response) {
-    return this.batchDelete(req, res);
+  async batchDeleteUser(@Req() req: Request, @Res() res: Response) {
+    return super.batchRemove(req, res);
   }
 
   // ========== 导入导出（已下沉到 Repository） ==========

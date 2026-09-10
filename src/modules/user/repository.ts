@@ -11,7 +11,8 @@ import { AppError } from "@/middleware/error-handler.js";
 import { UserCreateDto, UserImportRowSchema } from "./schema.js";
 import { Prisma } from "@/generated/prisma/index.js";
 import { encrypt } from "@/common/utils/crypto.js";
-
+import { v4 as uuidv4 } from "uuid";
+const TEMPLATE_TENANT_CODE = "__TEMPLATE__";
 export class UserRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "user_id";
   protected readonly model = prisma.sys_user;
@@ -658,4 +659,195 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     dfs(parentDeptId);
     return result;
   }
+
+  /**
+   * 从模板租户复制菜单、权限、角色到新租户
+   */
+  async initTenantData(tenantId: string, userId: string) {
+    // 1. 查找模板租户
+    const templateTenant = await prisma.sys_tenant.findFirst({
+      where: { tenant_code: TEMPLATE_TENANT_CODE, is_deleted: 0 },
+    });
+    if (!templateTenant) {
+      console.warn("[initTenantData] 模板租户不存在，跳过初始化");
+      return;
+    }
+    const templateId = templateTenant.tenant_id;
+
+    return prisma.$transaction(async (tx) => {
+      // ========== 2. 复制菜单 ==========
+      const templateMenus = await tx.sys_menu.findMany({
+        where: { tenant_id: templateId, is_deleted: 0, is_platform: 0 },
+        orderBy: { sort_order: "asc" },
+      });
+
+      // 菜单ID映射表：模板菜单ID → 新菜单ID
+      const menuIdMap = new Map<string, string>();
+
+      // 按层级复制（父菜单在前），因为要维护 parent_id
+      // 简单起见先按 parent_id 排序
+      const menuTree = buildSortedMenus(templateMenus);
+
+      for (const menu of menuTree) {
+        const newMenuId = uuidv4();
+        menuIdMap.set(menu.menu_id, newMenuId);
+
+        // 处理 parent_id 映射
+        const newParentId = menu.parent_id
+          ? menuIdMap.get(menu.parent_id) ||
+            "00000000-0000-0000-0000-000000000000"
+          : "00000000-0000-0000-0000-000000000000";
+
+        await tx.sys_menu.create({
+          data: {
+            menu_id: newMenuId,
+            tenant_id: tenantId,
+            parent_id: newParentId,
+            menu_name: menu.menu_name,
+            menu_type: menu.menu_type,
+            icon: menu.icon,
+            path: menu.path,
+            component: menu.component,
+            permission: menu.permission,
+            sort_order: menu.sort_order,
+            status: menu.status,
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: userId,
+            updated_by: userId,
+            is_deleted: 0,
+          },
+        });
+      }
+
+      // ========== 3. 复制权限点 ==========
+      const templatePerms = await tx.sys_permission.findMany({
+        where: { tenant_id: templateId, is_deleted: 0 },
+      });
+
+      const permIdMap = new Map<string, string>();
+      for (const perm of templatePerms) {
+        const newPermId = uuidv4();
+        permIdMap.set(perm.perm_id, newPermId);
+
+        await tx.sys_permission.create({
+          data: {
+            perm_id: newPermId,
+            tenant_id: tenantId,
+            perm_code: perm.perm_code,
+            perm_name: perm.perm_name,
+            resource_type: perm.resource_type,
+            action: perm.action,
+            description: perm.description,
+            status: perm.status,
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: userId,
+            updated_by: userId,
+            is_deleted: 0,
+          },
+        });
+      }
+
+      // ========== 4. 创建超级管理员角色 ==========
+      const superRole = await tx.sys_role.create({
+        data: {
+          tenant_id: tenantId,
+          role_code: "SUPER_ADMIN",
+          role_name: "超级管理员",
+          description: "系统内置最高权限角色",
+          status: "1",
+          sort_order: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+          created_by: userId,
+          updated_by: userId,
+          is_deleted: 0,
+        },
+      });
+
+      // ========== 5. 角色关联所有新菜单 ==========
+      if (menuIdMap.size > 0) {
+        await tx.sys_role_menu.createMany({
+          data: Array.from(menuIdMap.values()).map((newMenuId) => ({
+            role_id: superRole.role_id,
+            menu_id: newMenuId,
+            tenant_id: tenantId,
+          })),
+        });
+      }
+
+      // ========== 6. 角色关联所有新权限 ==========
+      if (permIdMap.size > 0) {
+        await tx.sys_role_permission.createMany({
+          data: Array.from(permIdMap.values()).map((newPermId) => ({
+            role_id: superRole.role_id,
+            perm_id: newPermId,
+            tenant_id: tenantId,
+          })),
+        });
+      }
+
+      // ========== 7. 用户绑定超级管理员角色 ==========
+      await tx.sys_user_role.create({
+        data: {
+          user_id: userId,
+          role_id: superRole.role_id,
+          tenant_id: tenantId,
+        },
+      });
+
+      return {
+        roleId: superRole.role_id,
+        menuCount: menuIdMap.size,
+        permCount: permIdMap.size,
+      };
+    });
+  }
+  /**
+   * 创建租户
+   */
+  async createTenant(data: {
+    tenantCode: string;
+    tenantName: string;
+    contactName?: string;
+    contactPhone?: string;
+    contactEmail?: string;
+  }) {
+    return prisma.sys_tenant.create({
+      data: {
+        tenant_code: data.tenantCode,
+        tenant_name: data.tenantName,
+        contact_name: data.contactName ?? null,
+        contact_phone: data.contactPhone ?? null,
+        contact_email: data.contactEmail ?? null,
+        status: "1",
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_deleted: 0,
+      },
+    });
+  }
+}
+/**
+ * 菜单按层级排序（父菜单在前），保证 parent_id 能被正确映射
+ */
+function buildSortedMenus(menus: any[]) {
+  const byId = new Map(menus.map((m) => [m.menu_id, m]));
+  const sorted: any[] = [];
+  const visited = new Set<string>();
+
+  function visit(menu: any) {
+    if (visited.has(menu.menu_id)) return;
+    if (menu.parent_id && byId.has(menu.parent_id)) {
+      visit(byId.get(menu.parent_id));
+    }
+    if (!visited.has(menu.menu_id)) {
+      visited.add(menu.menu_id);
+      sorted.push(menu);
+    }
+  }
+
+  menus.forEach(visit);
+  return sorted;
 }

@@ -15,7 +15,6 @@ export default class ServerController {
   private repository = new ServerRepository();
 
   @Get("/info")
-  @RequirePermission("monitor:server:info")
   @ApiOperation("服务器信息")
   async info(@Req() _req: Request, @Res() res: Response) {
     success(res, await this.repository.info());

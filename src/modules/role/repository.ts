@@ -57,7 +57,6 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
   async findRoleDetail(roleId: string, tenantId: string) {
     return this.model.findFirst({
       where: { role_id: roleId, tenant_id: tenantId, is_deleted: 0 },
-      //   @ts-ignore
       include: {
         sys_role_menu: { select: { menu_id: true } },
         sys_role_permission: { select: { perm_id: true } },
@@ -142,14 +141,13 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
   async findRoleUsers(roleId: string, tenantId: string) {
     const users = await prisma.sys_user_role.findMany({
       where: { role_id: roleId, tenant_id: tenantId },
-      //   @ts-ignore
       include: {
-        sys_user: {
+        user: {
           select: { user_id: true, username: true, real_name: true },
         },
       },
     });
-    return users.map((u) => u.sys_user);
+    return users.map((u) => u.user);
   }
   async findAllMenus(tenantId: string) {
     return prisma.sys_menu.findMany({

@@ -24,7 +24,9 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
     if (query.permName) finalWhere.perm_name = { contains: query.permName };
     if (query.resourceType) finalWhere.resource_type = query.resourceType;
     if (query.status !== undefined) finalWhere.status = query.status;
-
+    if (!query.isPlatformAdmin) {
+      finalWhere.perm_code = { not: { startsWith: "platform:" } };
+    }
     const [list, total] = await Promise.all([
       this.model.findMany({
         where: finalWhere,

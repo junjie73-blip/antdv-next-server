@@ -264,9 +264,7 @@ export abstract class BaseRepository<
   /**
    * 事务处理
    */
-  async transaction<R>(
-    callback: (tx: Prisma.TransactionClient) => Promise<R>,
-  ): Promise<R> {
+  async transaction<R>(callback: (tx: any) => Promise<R>): Promise<R> {
     return prisma.$transaction(async (tx) => {
       return callback(tx);
     });

@@ -130,7 +130,7 @@ export default class NoticeController extends BaseController<
         req.tenantId!,
         pageNum,
         pageSize,
-        req.query.isRead,
+        Number(req.query.isRead!),
       );
       success(res, data);
     } catch (err) {

@@ -93,8 +93,8 @@ export class DecoratorRouter {
           }
         }
         const args = paramMetadata
-          .sort((a, b) => a.index - b.index)
-          .map((param) => {
+          .sort((a: any, b: any) => a.index - b.index)
+          .map((param: any) => {
             switch (param.type) {
               case "body":
                 return param.key ? req.body[param.key] : req.body;

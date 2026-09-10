@@ -17,6 +17,7 @@ export const PermissionCreateSchema = z
     action: z
       .string()
       .max(32)
+      .optional()
       .openapi({ description: "动作，如 create、read、update、delete" }),
     description: z
       .string()
@@ -24,11 +25,10 @@ export const PermissionCreateSchema = z
       .optional()
       .openapi({ description: "描述" }),
     status: z
-      .number()
-      .int()
+      .string()
       .min(0)
       .max(1)
-      .default(1)
+      .default("1")
       .openapi({ description: "状态：0-禁用，1-启用" }),
   })
   .openapi("PermissionCreate");

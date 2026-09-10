@@ -107,7 +107,7 @@ export async function authMiddleware(
   } catch (err) {
     // 记录错误，但统一返回 401
     console.error("Auth failed:", err);
-    return res.status(401).json({
+    res.status(401).json({
       code: 401001,
       message: "未认证或令牌无效",
       data: null,

@@ -30,6 +30,7 @@ import { generateTokens } from "@/middleware/auth.js";
 import { getIpRules } from "../ip-rule/cache.js";
 import { checkIpAgainstRules } from "../ip-rule/matcher.js";
 import { getClientIp } from "@/common/utils/ip.js";
+import { isPlatformAdmin } from "@/common/utils/platform.js";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "your-secret-key",
@@ -61,12 +62,11 @@ export default class AuthController {
       const user = await prisma.sys_user.findFirst({
         where: { username, is_deleted: 0 },
       });
-      console.log(user, "user", username);
       if (!user) {
         // 记录登录失败日志
         await prisma.sys_login_log.create({
           data: {
-            tenant_id: user?.tenant_id || null, // 可能没有租户信息，使用 null 或已知租户
+            tenant_id: ((user as any)?.tenant_id as string) ?? "", // 可能没有租户信息，使用 null 或已知租户
             user_id: null,
             username,
             ip_address: ip,
@@ -286,22 +286,34 @@ export default class AuthController {
   @ApiResponse(200, "更新成功")
   async updateProfile(@Req() req: Request, @Res() res: Response) {
     try {
-      const userId = req.user!.userId;
+      const userId = req.user?.userId;
+      if (!userId) throw new AppError(401, "未认证", 401);
+
       const dto = UpdateProfileSchema.parse(req.body);
-      // 只更新允许的字段
-      const allowed = {
-        real_name: dto.realName,
-        email: dto.email,
-        phone: dto.phone,
-        avatar: dto.avatar,
-      };
-      Object.keys(allowed).forEach(
-        (key) => allowed[key] === undefined && delete allowed[key],
+
+      // 只保留有值的字段
+      const updateData = Object.fromEntries(
+        Object.entries({
+          real_name: dto.realName,
+          email: dto.email,
+          phone: dto.phone,
+          avatar: dto.avatar,
+        }).filter(([, value]) => value !== undefined),
       );
+
+      // 如果没有任何字段需要更新，直接返回
+      if (Object.keys(updateData).length === 0) {
+        return success(res, null, "没有需要更新的字段");
+      }
+
       await prisma.sys_user.update({
         where: { user_id: userId },
-        data: { ...allowed, updated_at: new Date() },
+        data: {
+          ...updateData,
+          updated_at: new Date(),
+        },
       });
+
       success(res, null, "个人信息更新成功");
     } catch (err) {
       this.handleError(res, err);
@@ -344,6 +356,9 @@ export default class AuthController {
           status: "1",
           is_deleted: 0,
           menu_type: { in: [1, 2] },
+          ...((await isPlatformAdmin(userId, tenantId))
+            ? {}
+            : { is_platform: 0 }),
         },
         orderBy: { sort_order: "asc" },
       });
@@ -429,41 +444,67 @@ export default class AuthController {
       const { tenantCode, tenantName, username, password, email, phone } =
         RegisterSchema.parse(req.body);
 
-      // ========== 1. 校验租户编码是否存在 ==========
-      const tenantByCode =
-        await this.userRepository.findTenantByCode(tenantCode);
-      if (!tenantByCode) {
-        throw new AppError(400, `租户编码 '${tenantCode}' 不存在`, 400);
+      // ========== 1. 查找租户 ==========
+      let tenant = await this.userRepository.findTenantByCode(tenantCode);
+
+      if (!tenant) {
+        // 场景一：租户不存在 → 创建新租户
+        tenant = await this.userRepository.createTenant({
+          tenantCode,
+          tenantName,
+        });
+        // 新租户刚创建，tenant_code 全局唯一，无需再校验名称
+      } else {
+        // 场景二：租户已存在 → 校验名称、状态、有效期
+        if (tenant.tenant_name !== tenantName) {
+          throw new AppError(400, "租户名称与编码不匹配，请核对后重试", 400);
+        }
+        if (tenant.status !== "1") {
+          throw new AppError(403, "该租户已被禁用，无法注册", 403);
+        }
+        if (tenant.expire_time && tenant.expire_time < new Date()) {
+          throw new AppError(403, "该租户已过期，无法注册", 403);
+        }
       }
 
-      // ========== 2. 校验租户名称是否匹配 ==========
-      if (tenantByCode.tenant_name !== tenantName) {
-        throw new AppError(400, `租户名称与编码不匹配，请核对后重试`, 400);
-      }
-
-      // ========== 3. 校验租户状态 ==========
-      if (tenantByCode.status !== "1") {
-        throw new AppError(403, "该租户已被禁用，无法注册", 403);
-      }
-      if (tenantByCode.expire_time && tenantByCode.expire_time < new Date()) {
-        throw new AppError(403, "该租户已过期，无法注册", 403);
-      }
-
-      // ========== 4. 在已存在的租户下创建用户 ==========
+      // ========== 2. 在租户下创建用户 ==========
       const user = await this.userRepository.registerUserInTenant({
-        tenantId: tenantByCode.tenant_id,
+        tenantId: tenant.tenant_id,
         username,
         password,
         email,
         phone,
       });
 
+      // ========== 3. 判断是否是该租户的第一个用户 ==========
+      // 新租户场景：租户刚创建，用户一定是第一个
+      // 已有租户场景：可能是第一个，也可能是后续加入的
+      const userCount = await prisma.sys_user.count({
+        where: { tenant_id: tenant.tenant_id, is_deleted: 0 },
+      });
+
+      if (userCount === 1) {
+        // 是第一个用户 → 初始化租户基础数据（角色、菜单、权限）
+        // 通过 try/catch 隔离，避免初始化失败导致整个注册回滚
+        try {
+          await this.userRepository.initTenantData(
+            tenant.tenant_id,
+            user.user_id,
+          );
+        } catch (initErr) {
+          // 记录错误但不阻塞注册（用户已创建，可以后续补数据）
+          console.error("[register] 租户数据初始化失败:", initErr);
+        }
+      }
+
+      // ========== 4. 返回 ==========
       success(
         res,
         {
-          tenantId: tenantByCode.tenant_id,
+          tenantId: tenant.tenant_id,
           userId: user.user_id,
           username: user.username,
+          isNewTenant: userCount === 1, // 前端可据此提示"您是管理员"
         },
         "注册成功",
         201,

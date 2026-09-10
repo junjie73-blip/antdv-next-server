@@ -43,7 +43,7 @@ async function handleNoticePush(noticeId: string) {
       include: { target_users: { select: { user_id: true } } },
     });
 
-    if (!notice || notice.status !== 1) return;
+    if (!notice || notice.status !== "1") return;
 
     const userIds = notice.target_users.map((tu) => tu.user_id);
     const payload = {
@@ -58,7 +58,7 @@ async function handleNoticePush(noticeId: string) {
       timestamp: Date.now(),
     };
 
-    wsManager.sendToUsers(notice.tenant_id, userIds, payload);
+    wsManager.sendToUsers(userIds, payload);
     logger.info(
       { noticeId, userIds },
       "Notice pushed to local WebSocket clients",

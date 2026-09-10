@@ -19,14 +19,12 @@ export default class CacheController {
   private repository = new CacheRepository();
 
   @Get("/info")
-  @RequirePermission("monitor:cache:info")
   @ApiOperation("Redis 信息")
   async info(@Req() req: Request, @Res() res: Response) {
     success(res, await this.repository.info());
   }
 
   @Get("/keys")
-  @RequirePermission("monitor:cache:list")
   @ApiOperation("Key 列表")
   @ApiQuery({ name: "pattern", required: false })
   async keys(@Req() req: Request, @Res() res: Response) {
@@ -35,7 +33,6 @@ export default class CacheController {
   }
 
   @Delete("/key/:key")
-  @RequirePermission("monitor:cache:delete")
   @ApiOperation("删除 Key")
   async deleteKey(@Req() req: Request, @Res() res: Response) {
     await this.repository.deleteKey(req.params.key);
@@ -43,7 +40,6 @@ export default class CacheController {
   }
 
   @Post("/clear")
-  @RequirePermission("monitor:cache:clear")
   @ApiOperation("清空缓存")
   async clear(@Req() req: Request, @Res() res: Response) {
     await this.repository.clear();
