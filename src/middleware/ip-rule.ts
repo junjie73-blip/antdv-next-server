@@ -56,7 +56,8 @@ function isWhitelistPath(path: string): boolean {
   return (
     path.startsWith("/api/v1/health") ||
     path.startsWith("/api/v1/uploads") ||
-    path.startsWith("/api/v1/docs") ||
-    path.startsWith("/api/v1/auth")
+    path.startsWith("/api/docs") ||
+    path.startsWith("/api/auth") ||
+    path.startsWith("/favicon.ico")
   );
 }

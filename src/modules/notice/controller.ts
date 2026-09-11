@@ -123,6 +123,7 @@ export default class NoticeController extends BaseController<
     try {
       const pageNum = Number(req.query.pageNum) || 1;
       const pageSize = Number(req.query.pageSize) || 10;
+      const where = {};
       const data = await (
         this.repository as NoticeRepository
       ).findNoticesForUser(

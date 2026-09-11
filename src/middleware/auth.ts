@@ -4,17 +4,19 @@ import { env as config } from "@config/env.js";
 import { redis, getSession, parseExpirationToSeconds } from "@config/redis.js";
 import { logger } from "@core/logger/index.js";
 import { AuthenticationError } from "@/core/errors.js";
-
+import { getKickedFlag } from "@/core/ws/force-logout.js";
 const secret = new TextEncoder().encode(config.JWT_SECRET);
 // 定义无需认证的路径白名单
 const AUTH_WHITELIST = [
   "/api/v1/auth/login",
   "/api/v1/auth/register",
   "/api/v1/auth/refresh",
+  "/api/v1/auth/logout",
   "/health",
   "/api/docs", // Swagger UI
   "/api/docs.json", // Swagger JSON
   "/uploads", // 静态文件（可选）
+  "/favicon.ico",
 ];
 export interface TokenPayload {
   userId: string;
@@ -72,7 +74,13 @@ export async function authMiddleware(
   ) {
     return next();
   }
-
+  console.log(
+    req.path,
+    "req.path",
+    AUTH_WHITELIST.some(
+      (path) => req.path === path || req.path.startsWith(path),
+    ),
+  );
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith("Bearer ")) {
@@ -103,6 +111,11 @@ export async function authMiddleware(
       roles: payload.roles as string[],
     };
     (req as any).tenantId = payload.tenantId as string;
+    const kicked = await getKickedFlag(req.user.userId);
+    if (kicked) {
+      throw new AuthenticationError(kicked.reason || "您已被强制下线");
+    }
+
     next();
   } catch (err) {
     // 记录错误，但统一返回 401

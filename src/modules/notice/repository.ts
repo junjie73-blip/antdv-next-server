@@ -58,10 +58,9 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
     const skip = (page - 1) * pageSize;
 
     const userFilter: any = { user_id: userId };
-    if (isRead !== undefined) {
+    if (isRead !== undefined && !isNaN(isRead)) {
       userFilter.is_read = isRead;
     }
-
     const where: any = {
       tenant_id: tenantId,
       status: "1",

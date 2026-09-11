@@ -1,4 +1,4 @@
-import { redis } from "@/config/redis.js";
+import { redis, scanAll } from "@/config/redis.js";
 import { prisma } from "@/config/database.js";
 
 export class OnlineRepository {
@@ -7,10 +7,13 @@ export class OnlineRepository {
     const keys: string[] = [];
     let cursor = "0";
     do {
-      const [next, batch] = await redis.scan(cursor, {
-        match: "access:*",
-        count: 100,
-      });
+      const [next, batch] = await redis.scan(
+        cursor,
+        "MATCH",
+        "access:*",
+        "COUNT",
+        100,
+      );
       cursor = next;
       keys.push(...batch);
     } while (cursor !== "0");
@@ -52,12 +55,6 @@ export class OnlineRepository {
     );
 
     return result.filter(Boolean);
-  }
-
-  /** 强制下线 */
-  async kick(userId: string) {
-    await redis.del(`access:${userId}`);
-    await redis.del(`refresh:${userId}`);
   }
 
   /** 全部下线 */

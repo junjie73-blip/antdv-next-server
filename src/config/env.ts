@@ -50,14 +50,6 @@ if (!process.env.DATABASE_URL) {
   });
 }
 
-// ========== Vercel 变量自动映射 ==========
-if (!process.env.DATABASE_URL && process.env.POSTGRES_URL) {
-  process.env.DATABASE_URL = process.env.POSTGRES_URL;
-}
-if (!process.env.REDIS_URL && process.env.KV_REST_API_URL) {
-  process.env.REDIS_URL = process.env.KV_REST_API_URL;
-}
-
 // ========== 校验 ==========
 const isVercel = process.env.VERCEL === "1";
 

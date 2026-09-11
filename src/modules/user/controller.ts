@@ -9,6 +9,7 @@ import {
   ApiBody,
   ApiQuery,
   ApiResponse,
+  Delete,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { BaseController } from "@/core/base-controller.js";
@@ -127,7 +128,7 @@ export default class UserController extends BaseController<any, any, any, any> {
     return this.update(req, res);
   }
 
-  @Get("/remove/:id")
+  @Delete("/remove/:id")
   @ApiOperation("删除用户")
   @ApiResponse(200, "删除成功")
   async deleteUser(@Req() req: Request, @Res() res: Response) {

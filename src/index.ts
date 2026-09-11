@@ -26,6 +26,7 @@ import { timingMiddleware } from "./middleware/timing.js";
 import { env } from "./config/env.js";
 import { loadJobs } from "./modules/job/scheduler.js";
 import { ipRuleMiddleware } from "./middleware/ip-rule.js";
+import { startForceLogoutSubscriber } from "./core/ws/force-logout.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -79,8 +80,8 @@ async function healthCheck() {
     startNoticeScheduler();
     initWebSocketServer(_server);
     // 启动 Redis 订阅（用于多实例通知广播）
-    startNoticeSubscriber();
-
+    await startNoticeSubscriber();
+    await startForceLogoutSubscriber();
     console.log("✅ Neon PostgreSQL connected");
   } catch (e) {
     console.error("❌ Neon PostgreSQL failed");

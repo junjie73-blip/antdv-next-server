@@ -12,6 +12,7 @@ import { UserCreateDto, UserImportRowSchema } from "./schema.js";
 import { Prisma } from "@/generated/prisma/index.js";
 import { encrypt } from "@/common/utils/crypto.js";
 import { v4 as uuidv4 } from "uuid";
+import { copyMenusFromTemplate } from "../menu/service.js";
 const TEMPLATE_TENANT_CODE = "__TEMPLATE__";
 export class UserRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "user_id";
@@ -574,60 +575,97 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
    */
   async registerUserInTenant(data: {
     tenantId: string;
+    tenantName: string;
     username: string;
     password: string;
     email?: string;
     phone?: string;
     realName?: string;
   }) {
-    const { tenantId, username, password, email, phone, realName } = data;
-    const hashedPassword = await encrypt(password);
+    const { tenantId, tenantName, username, password, email, phone, realName } =
+      data;
+    const hashedPassword = encrypt(password);
 
-    return prisma.$transaction(async (tx) => {
-      // 1. 校验用户名在该租户下唯一
-      const existUser = await tx.sys_user.findFirst({
-        where: {
-          tenant_id: tenantId,
-          username,
-          is_deleted: 0,
-        },
-      });
-      if (existUser) {
-        throw new AppError(409, `用户名 '${username}' 在租户下已存在`, 409);
-      }
+    return prisma.$transaction(
+      async (tx) => {
+        // 1. 校验用户名在该租户下唯一
+        const existUser = await tx.sys_user.findFirst({
+          where: {
+            tenant_id: tenantId,
+            username,
+            is_deleted: 0,
+          },
+        });
+        if (existUser) {
+          throw new AppError(409, `用户名 '${username}' 在租户下已存在`, 409);
+        }
+        const TEMPLATE_TENANT_ID = process.env.TEMPLATE_TENANT_ID;
+        if (!TEMPLATE_TENANT_ID) {
+          throw new Error("缺少环境变量 TEMPLATE_TENANT_ID");
+        }
+        // 2) 复制模板菜单（含 parent_id 重映射）
+        const menuIds = await copyMenusFromTemplate(
+          tx,
+          TEMPLATE_TENANT_ID!,
+          tenantId,
+        );
+        const role = await tx.sys_role.create({
+          data: {
+            tenant_id: tenantId,
+            role_code: "tenant_admin",
+            role_name: "租户管理员",
+            description: "系统自动创建的租户管理员角色",
+            data_scope: "1", // 全部数据
+            status: "1",
+            sort_order: 0,
+            is_deleted: 0,
+          },
+        });
 
-      // 2. 创建用户
-      const user = await tx.sys_user.create({
-        data: {
-          tenant_id: tenantId,
-          username,
-          password: hashedPassword,
-          email: email ?? null,
-          phone: phone ?? null,
-          real_name: realName ?? null,
-          status: "1",
-          created_at: new Date(),
-          updated_at: new Date(),
-          is_deleted: 0,
-        },
-      });
+        // 4) 角色绑定全部菜单
+        if (menuIds.length > 0) {
+          await tx.sys_role_menu.createMany({
+            data: menuIds.map((menuId) => ({
+              role_id: role.role_id,
+              menu_id: menuId,
+              tenant_id: tenantId, // ⚠️ 你的表有这个字段，必须带
+            })),
+            skipDuplicates: true,
+          });
+        }
+        // 2. 创建用户
+        const user = await tx.sys_user.create({
+          data: {
+            tenant_id: tenantId,
+            username,
+            password: hashedPassword,
+            email: email ?? null,
+            phone: phone ?? null,
+            real_name: realName ?? null,
+            status: "1",
+            created_at: new Date(),
+            updated_at: new Date(),
+            is_deleted: 0,
+          },
+        });
 
-      // 3. 可选：分配默认角色（例如查询租户下的"普通用户"角色并绑定）
-      // const defaultRole = await tx.sys_role.findFirst({
-      //   where: { tenant_id: tenantId, role_code: 'USER', is_deleted: 0 },
-      // });
-      // if (defaultRole) {
-      //   await tx.sys_user_role.create({
-      //     data: {
-      //       user_id: user.user_id,
-      //       role_id: defaultRole.role_id,
-      //       tenant_id: tenantId,
-      //     },
-      //   });
-      // }
+        // 3. 可选：分配默认角色（例如查询租户下的"普通用户"角色并绑定）
+        // 6) 用户绑定角色
+        await tx.sys_user_role.create({
+          data: {
+            user_id: user.user_id,
+            role_id: role.role_id,
+            tenant_id: tenantId, // ⚠️ 同样必须带
+          },
+        });
 
-      return user;
-    });
+        return user;
+      },
+      {
+        timeout: 30000,
+        isolationLevel: "ReadCommitted",
+      },
+    );
   }
   async getAllChildDeptIds(
     parentDeptId: string,

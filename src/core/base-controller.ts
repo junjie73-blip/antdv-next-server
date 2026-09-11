@@ -154,7 +154,7 @@ export abstract class BaseController<
       // 解析并验证查询参数
       let query = this.parseQueryParams(req.query) as QueryDto;
       query.tenantId = tenantId!;
-
+      console.log(query, "query");
       // 执行查询前钩子
       query = await this.beforeList(query, req);
 
@@ -225,7 +225,7 @@ export abstract class BaseController<
       // 执行创建后钩子
       await this.afterCreate(result, req);
 
-      success(res, null, "创建成功", 201);
+      success(res, null, "创建成功", 200);
     } catch (err) {
       this.handleError(res, err);
     }

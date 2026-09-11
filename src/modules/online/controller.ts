@@ -12,6 +12,8 @@ import { Request, Response } from "express";
 import { OnlineRepository } from "./repository.js";
 import { success } from "@/common/utils/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
+import { AppError } from "@/middleware/error-handler.js";
+import { kickUser } from "@/core/ws/force-logout.js";
 
 @Controller("/online", { tags: ["在线用户"] })
 export default class OnlineController {
@@ -29,8 +31,19 @@ export default class OnlineController {
   @ApiOperation("强制下线")
   @ApiResponse(200, "操作成功")
   async kick(@Req() req: Request, @Res() res: Response) {
-    await this.repository.kick(req.params.userId);
-    success(res, null, "已强制下线");
+    const { userId } = req.params;
+    const operatorId = req.user!.userId;
+
+    if (userId === operatorId) {
+      throw new AppError(400, "不能踢自己下线", 400);
+    }
+
+    await kickUser(userId, {
+      reason: "您已被管理员强制下线",
+      operatorId,
+    });
+
+    success(res, null, "已将该用户强制下线");
   }
 
   @Post("/kick-all")

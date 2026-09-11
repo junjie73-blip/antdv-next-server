@@ -31,6 +31,7 @@ import { getIpRules } from "../ip-rule/cache.js";
 import { checkIpAgainstRules } from "../ip-rule/matcher.js";
 import { getClientIp } from "@/common/utils/ip.js";
 import { isPlatformAdmin } from "@/common/utils/platform.js";
+import { clearKickedFlag } from "@/core/ws/force-logout.js";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "your-secret-key",
@@ -140,7 +141,7 @@ export default class AuthController {
           message: "登录成功",
         },
       });
-
+      await clearKickedFlag(user.user_id);
       const tokens = await this.generateTokens(user);
       success(
         res,
@@ -436,7 +437,7 @@ export default class AuthController {
   @Post("/register")
   @ApiOperation("用户注册", "在已存在的租户下注册新用户")
   @ApiBody(RegisterSchema)
-  @ApiResponse(201, "注册成功")
+  @ApiResponse(200, "注册成功")
   @ApiResponse(400, "租户或参数错误")
   @ApiResponse(409, "用户名已存在")
   async register(@Req() req: Request, @Res() res: Response) {
@@ -470,6 +471,7 @@ export default class AuthController {
       // ========== 2. 在租户下创建用户 ==========
       const user = await this.userRepository.registerUserInTenant({
         tenantId: tenant.tenant_id,
+        tenantName: tenant.tenant_name,
         username,
         password,
         email,
@@ -507,7 +509,7 @@ export default class AuthController {
           isNewTenant: userCount === 1, // 前端可据此提示"您是管理员"
         },
         "注册成功",
-        201,
+        200,
       );
     } catch (err) {
       this.handleError(res, err);

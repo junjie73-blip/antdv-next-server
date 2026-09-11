@@ -1,19 +1,39 @@
-import { Redis } from "@upstash/redis";
+import { Redis } from "ioredis";
+// 先加载 env，确保 dotenv 已执行
+import "@/config/env.js";
 
-const redisUrl =
-  process.env.antdv_REDIS_URL || process.env.antdv_KV_REST_API_URL || "";
-const redisToken =
-  process.env.antdv_REDIS_TOKEN || process.env.antdv_KV_REST_API_TOKEN || "";
+const redisUrl = process.env.REDIS_URL || "";
 
-export const redis = new Redis({
-  url: redisUrl,
-  token: redisToken,
-});
-// 用于订阅的独立客户端（避免阻塞其他操作）
-export const subRedis = new Redis({
-  url: redisUrl,
-  token: redisToken,
-});
+if (!redisUrl) {
+  console.warn(
+    "[redis] REDIS_URL 未配置，Redis 相关功能（会话/缓存/限流/通知推送）将不可用",
+  );
+}
+
+// 统一的连接选项
+const baseOptions = {
+  // 没配 URL 时不要疯狂重连打日志
+  lazyConnect: !redisUrl,
+  // 单条命令失败重试次数
+  maxRetriesPerRequest: 3,
+  retryStrategy(times: number) {
+    if (!redisUrl) return null; // 未配置则不重连
+    return Math.min(times * 200, 2000);
+  },
+  // Upstash 是远程服务，建议开启 keepAlive
+  keepAlive: 10000,
+} as const;
+
+// ioredis 直接接受连接串；未配置时退化成一个永不连接的 lazy 客户端
+export const redis = redisUrl
+  ? new Redis(redisUrl, baseOptions)
+  : new Redis({ lazyConnect: true, retryStrategy: () => null });
+
+// 订阅需要独立连接（订阅会阻塞该连接）
+export const subRedis = redisUrl
+  ? new Redis(redisUrl, baseOptions)
+  : new Redis({ lazyConnect: true, retryStrategy: () => null });
+
 export const SESSION_PREFIX = "session:";
 export const CACHE_PREFIX = "cache:";
 export const MFA_PREFIX = "mfa:";
@@ -29,7 +49,7 @@ export async function setSession(
 
 export async function getSession<T>(sessionId: string): Promise<T | null> {
   const data = await redis.get(`${SESSION_PREFIX}${sessionId}`);
-  return data ? (JSON.parse(data as string) as T) : null;
+  return data ? (JSON.parse(data) as T) : null;
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {
@@ -46,7 +66,7 @@ export async function setCache<T>(
 
 export async function getCache<T>(key: string): Promise<T | null> {
   const data = await redis.get(`${CACHE_PREFIX}${key}`);
-  return data ? (JSON.parse(data as string) as T) : null;
+  return data ? (JSON.parse(data) as T) : null;
 }
 
 export async function deleteCache(key: string): Promise<void> {
@@ -70,4 +90,24 @@ export function parseExpirationToSeconds(expiresIn: string): number {
     default:
       return 900;
   }
+}
+
+export async function scanAll(
+  pattern: string,
+  batchSize = 200,
+): Promise<string[]> {
+  const keys: string[] = [];
+  let cursor = "0";
+  do {
+    const [next, batch] = await redis.scan(
+      cursor,
+      "MATCH",
+      pattern,
+      "COUNT",
+      batchSize,
+    );
+    cursor = next;
+    keys.push(...batch);
+  } while (cursor !== "0");
+  return keys;
 }
