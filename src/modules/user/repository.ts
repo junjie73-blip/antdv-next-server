@@ -586,54 +586,78 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       data;
     const hashedPassword = encrypt(password);
 
+    const TEMPLATE_TENANT_ID = process.env.TEMPLATE_TENANT_ID;
+    if (!TEMPLATE_TENANT_ID) {
+      throw new Error("缺少环境变量 TEMPLATE_TENANT_ID");
+    }
+
     return prisma.$transaction(
       async (tx) => {
-        // 1. 校验用户名在该租户下唯一
+        // 1) 校验用户名在该租户下唯一
         const existUser = await tx.sys_user.findFirst({
-          where: {
-            tenant_id: tenantId,
-            username,
-            is_deleted: 0,
-          },
+          where: { tenant_id: tenantId, username, is_deleted: 0 },
         });
         if (existUser) {
           throw new AppError(409, `用户名 '${username}' 在租户下已存在`, 409);
         }
-        const TEMPLATE_TENANT_ID = process.env.TEMPLATE_TENANT_ID;
-        if (!TEMPLATE_TENANT_ID) {
-          throw new Error("缺少环境变量 TEMPLATE_TENANT_ID");
+
+        // 2) 【关键】判断该租户是否已经初始化过菜单
+        const existingMenus = await tx.sys_menu.findMany({
+          where: { tenant_id: tenantId, is_deleted: 0, is_platform: 0 },
+          select: { menu_id: true },
+        });
+
+        let menuIds: string[];
+
+        if (existingMenus.length === 0) {
+          // 2a) 租户还没有菜单 → 从模板新增一份（INSERT，不碰模板行）
+          menuIds = await copyMenusFromTemplate(
+            tx,
+            TEMPLATE_TENANT_ID,
+            tenantId,
+          );
+        } else {
+          // 2b) 已有菜单 → 直接复用，不重复插入
+          menuIds = existingMenus.map((m) => m.menu_id);
         }
-        // 2) 复制模板菜单（含 parent_id 重映射）
-        const menuIds = await copyMenusFromTemplate(
-          tx,
-          TEMPLATE_TENANT_ID!,
-          tenantId,
-        );
-        const role = await tx.sys_role.create({
-          data: {
+
+        // 3) 查找或创建租户管理员角色（幂等，避免重复角色）
+        let role = await tx.sys_role.findFirst({
+          where: {
             tenant_id: tenantId,
             role_code: "tenant_admin",
-            role_name: "租户管理员",
-            description: "系统自动创建的租户管理员角色",
-            data_scope: "1", // 全部数据
-            status: "1",
-            sort_order: 0,
             is_deleted: 0,
           },
         });
 
-        // 4) 角色绑定全部菜单
+        if (!role) {
+          role = await tx.sys_role.create({
+            data: {
+              tenant_id: tenantId,
+              role_code: "tenant_admin",
+              role_name: "租户管理员",
+              description: "系统自动创建的租户管理员角色",
+              data_scope: "1",
+              status: "1",
+              sort_order: 0,
+              is_deleted: 0,
+            },
+          });
+        }
+
+        // 4) 角色绑定全部菜单（用 skipDuplicates 保证幂等，不会重复）
         if (menuIds.length > 0) {
           await tx.sys_role_menu.createMany({
             data: menuIds.map((menuId) => ({
-              role_id: role.role_id,
+              role_id: role!.role_id,
               menu_id: menuId,
-              tenant_id: tenantId, // ⚠️ 你的表有这个字段，必须带
+              tenant_id: tenantId,
             })),
-            skipDuplicates: true,
+            skipDuplicates: true, // ← 关键：已存在的绑定跳过
           });
         }
-        // 2. 创建用户
+
+        // 5) 创建用户
         const user = await tx.sys_user.create({
           data: {
             tenant_id: tenantId,
@@ -643,20 +667,20 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
             phone: phone ?? null,
             real_name: realName ?? null,
             status: "1",
-            created_at: new Date(),
-            updated_at: new Date(),
             is_deleted: 0,
           },
         });
 
-        // 3. 可选：分配默认角色（例如查询租户下的"普通用户"角色并绑定）
-        // 6) 用户绑定角色
-        await tx.sys_user_role.create({
-          data: {
-            user_id: user.user_id,
-            role_id: role.role_id,
-            tenant_id: tenantId, // ⚠️ 同样必须带
-          },
+        // 6) 用户绑定角色（幂等）
+        await tx.sys_user_role.createMany({
+          data: [
+            {
+              user_id: user.user_id,
+              role_id: role.role_id,
+              tenant_id: tenantId,
+            },
+          ],
+          skipDuplicates: true,
         });
 
         return user;

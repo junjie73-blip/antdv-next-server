@@ -11,7 +11,7 @@ export async function publishNoticePush(noticeId: string) {
 
 export async function startNoticeSubscriber() {
   try {
-    const subscriber = await subRedis.subscribe(NOTICE_CHANNEL);
+    const subscriber = (await subRedis.subscribe(NOTICE_CHANNEL)) as any;
 
     // 使用 any 类型接收消息，避免类型不匹配
     subscriber.on("message", (message: any) => {

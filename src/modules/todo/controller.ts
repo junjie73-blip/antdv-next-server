@@ -51,20 +51,7 @@ export default class TodoController extends BaseController<any, any, any, any> {
   @ApiOperation("待办列表")
   @ApiResponse(200, "查询成功")
   async todoList(@Req() req: Request, @Res() res: Response) {
-    try {
-      const data = await (this.repository as TodoRepository).findPage(
-        {
-          ...req.query,
-          tenantId: req.tenantId,
-          userId: req.user?.userId,
-        },
-        {},
-      );
-      success(res, data);
-    } catch (err) {
-      // 使用基类或手动返回错误
-      return this.handleError(res, err);
-    }
+    return super.list(req, res);
   }
 
   @Get("/stats")

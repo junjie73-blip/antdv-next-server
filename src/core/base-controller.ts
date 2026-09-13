@@ -212,14 +212,11 @@ export abstract class BaseController<
 
       // 转换请求数据
       let dto = this.parseCreateDto(req.body);
-
       // 执行创建前钩子
       dto = await this.beforeCreate(dto, req);
 
       // 转换为数据库命名风格
-      const dbData = keysToSnakeCase({ ...dto, tenantId });
-
-      // 执行创建
+      const dbData = keysToSnakeCase({ ...dto, tenantId }); // 执行创建
       const result = await this.repository.create(dbData, tenantId, userId);
 
       // 执行创建后钩子

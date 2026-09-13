@@ -44,6 +44,8 @@ export type Sys_todoMinAggregateOutputType = {
   content: string | null
   priority: number | null
   due_time: Date | null
+  created_by: string | null
+  updated_by: string | null
   status: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -58,6 +60,8 @@ export type Sys_todoMaxAggregateOutputType = {
   content: string | null
   priority: number | null
   due_time: Date | null
+  created_by: string | null
+  updated_by: string | null
   status: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -72,6 +76,8 @@ export type Sys_todoCountAggregateOutputType = {
   content: number
   priority: number
   due_time: number
+  created_by: number
+  updated_by: number
   status: number
   created_at: number
   updated_at: number
@@ -98,6 +104,8 @@ export type Sys_todoMinAggregateInputType = {
   content?: true
   priority?: true
   due_time?: true
+  created_by?: true
+  updated_by?: true
   status?: true
   created_at?: true
   updated_at?: true
@@ -112,6 +120,8 @@ export type Sys_todoMaxAggregateInputType = {
   content?: true
   priority?: true
   due_time?: true
+  created_by?: true
+  updated_by?: true
   status?: true
   created_at?: true
   updated_at?: true
@@ -126,6 +136,8 @@ export type Sys_todoCountAggregateInputType = {
   content?: true
   priority?: true
   due_time?: true
+  created_by?: true
+  updated_by?: true
   status?: true
   created_at?: true
   updated_at?: true
@@ -227,6 +239,8 @@ export type Sys_todoGroupByOutputType = {
   content: string | null
   priority: number
   due_time: Date | null
+  created_by: string | null
+  updated_by: string | null
   status: string
   created_at: Date
   updated_at: Date
@@ -264,6 +278,8 @@ export type sys_todoWhereInput = {
   content?: Prisma.StringNullableFilter<"sys_todo"> | string | null
   priority?: Prisma.IntFilter<"sys_todo"> | number
   due_time?: Prisma.DateTimeNullableFilter<"sys_todo"> | Date | string | null
+  created_by?: Prisma.UuidNullableFilter<"sys_todo"> | string | null
+  updated_by?: Prisma.UuidNullableFilter<"sys_todo"> | string | null
   status?: Prisma.StringFilter<"sys_todo"> | string
   created_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
@@ -278,6 +294,8 @@ export type sys_todoOrderByWithRelationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrder
   due_time?: Prisma.SortOrderInput | Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -295,6 +313,8 @@ export type sys_todoWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringNullableFilter<"sys_todo"> | string | null
   priority?: Prisma.IntFilter<"sys_todo"> | number
   due_time?: Prisma.DateTimeNullableFilter<"sys_todo"> | Date | string | null
+  created_by?: Prisma.UuidNullableFilter<"sys_todo"> | string | null
+  updated_by?: Prisma.UuidNullableFilter<"sys_todo"> | string | null
   status?: Prisma.StringFilter<"sys_todo"> | string
   created_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
@@ -309,6 +329,8 @@ export type sys_todoOrderByWithAggregationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrder
   due_time?: Prisma.SortOrderInput | Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -331,6 +353,8 @@ export type sys_todoScalarWhereWithAggregatesInput = {
   content?: Prisma.StringNullableWithAggregatesFilter<"sys_todo"> | string | null
   priority?: Prisma.IntWithAggregatesFilter<"sys_todo"> | number
   due_time?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_todo"> | Date | string | null
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_todo"> | string | null
+  updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_todo"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"sys_todo"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_todo"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_todo"> | Date | string
@@ -345,6 +369,8 @@ export type sys_todoCreateInput = {
   content?: string | null
   priority?: number
   due_time?: Date | string | null
+  created_by?: string | null
+  updated_by?: string | null
   status?: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -359,6 +385,8 @@ export type sys_todoUncheckedCreateInput = {
   content?: string | null
   priority?: number
   due_time?: Date | string | null
+  created_by?: string | null
+  updated_by?: string | null
   status?: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -373,6 +401,8 @@ export type sys_todoUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   due_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -387,6 +417,8 @@ export type sys_todoUncheckedUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   due_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -401,6 +433,8 @@ export type sys_todoCreateManyInput = {
   content?: string | null
   priority?: number
   due_time?: Date | string | null
+  created_by?: string | null
+  updated_by?: string | null
   status?: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -415,6 +449,8 @@ export type sys_todoUpdateManyMutationInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   due_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -429,6 +465,8 @@ export type sys_todoUncheckedUpdateManyInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   due_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -443,6 +481,8 @@ export type sys_todoCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   due_time?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
+  updated_by?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -462,6 +502,8 @@ export type sys_todoMaxOrderByAggregateInput = {
   content?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   due_time?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
+  updated_by?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -476,6 +518,8 @@ export type sys_todoMinOrderByAggregateInput = {
   content?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   due_time?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
+  updated_by?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -497,6 +541,8 @@ export type sys_todoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   content?: boolean
   priority?: boolean
   due_time?: boolean
+  created_by?: boolean
+  updated_by?: boolean
   status?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -511,6 +557,8 @@ export type sys_todoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   content?: boolean
   priority?: boolean
   due_time?: boolean
+  created_by?: boolean
+  updated_by?: boolean
   status?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -525,6 +573,8 @@ export type sys_todoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   content?: boolean
   priority?: boolean
   due_time?: boolean
+  created_by?: boolean
+  updated_by?: boolean
   status?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -539,13 +589,15 @@ export type sys_todoSelectScalar = {
   content?: boolean
   priority?: boolean
   due_time?: boolean
+  created_by?: boolean
+  updated_by?: boolean
   status?: boolean
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
 }
 
-export type sys_todoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"todo_id" | "tenant_id" | "user_id" | "title" | "content" | "priority" | "due_time" | "status" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["sys_todo"]>
+export type sys_todoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"todo_id" | "tenant_id" | "user_id" | "title" | "content" | "priority" | "due_time" | "created_by" | "updated_by" | "status" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["sys_todo"]>
 
 export type $sys_todoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_todo"
@@ -558,6 +610,8 @@ export type $sys_todoPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     content: string | null
     priority: number
     due_time: Date | null
+    created_by: string | null
+    updated_by: string | null
     status: string
     created_at: Date
     updated_at: Date
@@ -992,6 +1046,8 @@ export interface sys_todoFieldRefs {
   readonly content: Prisma.FieldRef<"sys_todo", 'String'>
   readonly priority: Prisma.FieldRef<"sys_todo", 'Int'>
   readonly due_time: Prisma.FieldRef<"sys_todo", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_todo", 'String'>
+  readonly updated_by: Prisma.FieldRef<"sys_todo", 'String'>
   readonly status: Prisma.FieldRef<"sys_todo", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_todo", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"sys_todo", 'DateTime'>

@@ -76,7 +76,7 @@ export async function getKickedFlag(
 /** 订阅频道，收到消息后通过 wsManager 推给本进程持有的连接 */
 export async function startForceLogoutSubscriber() {
   try {
-    const subscriber = await subRedis.subscribe(FORCE_LOGOUT_CHANNEL);
+    const subscriber = (await subRedis.subscribe(FORCE_LOGOUT_CHANNEL)) as any;
 
     subscriber.on("message", (channel: string, message: any) => {
       if (channel !== FORCE_LOGOUT_CHANNEL) return;

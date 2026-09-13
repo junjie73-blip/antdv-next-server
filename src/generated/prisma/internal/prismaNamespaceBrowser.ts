@@ -464,6 +464,8 @@ export const Sys_todoScalarFieldEnum = {
   content: 'content',
   priority: 'priority',
   due_time: 'due_time',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
   status: 'status',
   created_at: 'created_at',
   updated_at: 'updated_at',
