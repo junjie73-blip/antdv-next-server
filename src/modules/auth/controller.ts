@@ -386,7 +386,7 @@ export default class AuthController {
 
       // 3) 用户有效性
       const user = await prisma.sys_user.findUnique({
-        where: { user_id: userId },
+        where: { user_id: userId, tenant_id: tenantId, is_deleted: 0 },
       });
       if (!user || user.is_deleted !== 0) {
         throw new AppError("无效的刷新令牌", 401001, 401);
@@ -421,7 +421,7 @@ export default class AuthController {
       if (!userId) throw new AppError("未认证", 401001, 401);
 
       const user = await prisma.sys_user.findUnique({
-        where: { user_id: userId, tenant_id: tenantId },
+        where: { user_id: userId, tenant_id: tenantId, is_deleted: 0 },
         include: {
           sys_user_role: {
             include: {
@@ -482,8 +482,11 @@ export default class AuthController {
       const userId = req.user?.userId;
       if (!userId) throw new AppError("未认证", 401001, 401);
 
+      const tenantId = req?.tenantId;
+      if (!tenantId) throw new AppError("未认证", 401001, 401);
+
       const user = await prisma.sys_user.findUnique({
-        where: { user_id: userId },
+        where: { user_id: userId, tenant_id: tenantId, is_deleted: 0 },
       });
       if (!user) throw new AppError("用户不存在", 404001, 404);
 
@@ -492,7 +495,7 @@ export default class AuthController {
 
       const hashed = await hash(newPassword, 10);
       await prisma.sys_user.update({
-        where: { user_id: userId },
+        where: { user_id: userId, tenant_id: tenantId, is_deleted: 0 },
         data: { password: hashed, updated_at: new Date() },
       });
 
@@ -527,8 +530,11 @@ export default class AuthController {
         return success(res, null, "没有需要更新的字段");
       }
 
+      const tenantId = req?.tenantId;
+      if (!tenantId) throw new AppError("未认证", 401001, 401);
+
       await prisma.sys_user.update({
-        where: { user_id: userId },
+        where: { user_id: userId, tenant_id: tenantId, is_deleted: 0 },
         data: { ...updateData, updated_at: new Date() },
       });
       success(res, null, "个人信息更新成功");
@@ -719,50 +725,62 @@ export default class AuthController {
     }
   }
   @Post("/forgot-password")
-  @ApiOperation("忘记密码", "根据租户编码 + 用户名 + 原密码重置新密码")
-  @ApiBody(ForgotPasswordSchema)
-  @ApiResponse(200, "密码重置成功，请重新登录")
-  @ApiResponse(400, "原密码错误")
-  @ApiResponse(404, "租户或用户不存在")
-  async forgotPassword(@Req() req: Request, @Res() res: Response) {
+  @ApiOperation("忘记密码")
+  async forgotPassword(@Req() req, @Res() res) {
+    const clientIp = getClientIp(req) || "unknown";
     try {
       const { tenantCode, username, oldPassword, newPassword } =
         ForgotPasswordSchema.parse(req.body);
 
-      // 1) 找租户
+      const failKey = `${LOGIN_FAIL_PREFIX}reset:${tenantCode}:${username}:${clientIp}`;
+      const lockKey = `${LOGIN_LOCK_PREFIX}reset:${tenantCode}:${username}:${clientIp}`;
+
+      const locked = await redis.get(lockKey);
+      if (locked) {
+        const ttl = await redis.ttl(lockKey);
+        throw new AppError(
+          `尝试次数过多，请 ${Math.max(1, Math.ceil(ttl / 60))} 分钟后再试`,
+          429001,
+          429,
+        );
+      }
+
       const tenant = await prisma.sys_tenant.findFirst({
         where: { tenant_code: tenantCode, is_deleted: 0, status: "1" },
-        select: { tenant_id: true },
+        select: { tenant_id: true, expire_time: true },
       });
       if (!tenant) throw new AppError("租户不存在或已禁用", 404001, 404);
+      if (tenant.expire_time && new Date(tenant.expire_time) < new Date()) {
+        throw new AppError("租户已过期", 403001, 403);
+      }
 
-      // 2) 找用户
       const user = await prisma.sys_user.findFirst({
-        where: {
-          tenant_id: tenant.tenant_id,
-          username,
-          is_deleted: 0,
-        },
+        where: { tenant_id: tenant.tenant_id, username, is_deleted: 0 },
         select: { user_id: true, password: true },
       });
       if (!user) throw new AppError("用户不存在", 404001, 404);
 
-      // 3) 校验旧密码
       const valid = await compare(oldPassword, user.password);
-      if (!valid) throw new AppError("原密码错误", 400001, 400);
+      if (!valid) {
+        await this.recordLoginFail(failKey, lockKey); // ⭐
+        throw new AppError("原密码错误", 400001, 400);
+      }
 
-      // 4) 更新新密码
       const hashed = await hash(newPassword, 10);
       await prisma.sys_user.update({
         where: { user_id: user.user_id },
         data: { password: hashed, updated_at: new Date() },
       });
 
-      // 5) 撤销该用户所有会话
+      // 撤销所有会话
       const accessKeys = await scanAll(`access:*:${user.user_id}:*`);
       const refreshKeys = await scanAll(`refresh:*:${user.user_id}:*`);
       if (accessKeys.length) await redis.del(...accessKeys);
       if (refreshKeys.length) await redis.del(...refreshKeys);
+
+      // 清失败计数
+      await redis.del(failKey);
+      await redis.del(lockKey);
 
       success(res, null, "密码重置成功，请重新登录");
     } catch (err) {

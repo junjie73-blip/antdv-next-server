@@ -272,21 +272,22 @@ export abstract class BaseRepository<
     tenantId: string,
     userId?: string,
   ): Promise<T> {
-    const exists = await this.findById(id, tenantId);
-    if (!exists) throw new AppError("记录不存在", 404001, 404);
-
-    const updateData = {
-      ...data,
-      [this.updatedByField]: userId || null,
-      [this.updatedAtField]: new Date(),
-    };
-
-    return this.model.update({
+    const exists = await this.model.findFirst({
       where: {
         [this.primaryKey]: id,
         [this.tenantField]: tenantId,
+        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
       },
-      data: updateData,
+    });
+    if (!exists) throw new AppError("记录不存在", 404001, 404);
+
+    return this.model.update({
+      where: { [this.primaryKey]: id },
+      data: {
+        ...data,
+        [this.updatedByField]: userId || null,
+        [this.updatedAtField]: new Date(),
+      },
     });
   }
 
@@ -409,13 +410,12 @@ export abstract class BaseRepository<
       [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
     };
   }
+  protected get defaultOrderBy(): any {
+    return { [this.createdAtField]: "desc" };
+  }
 
-  protected buildOrderBy(
-    sort?: Array<{ field: string; direction: "asc" | "desc" }>,
-  ): any {
-    if (!sort || sort.length === 0) {
-      return { [this.createdAtField]: "desc" };
-    }
+  protected buildOrderBy(sort) {
+    if (!sort || sort.length === 0) return this.defaultOrderBy;
     return sort.map((s) => ({ [s.field]: s.direction }));
   }
 }

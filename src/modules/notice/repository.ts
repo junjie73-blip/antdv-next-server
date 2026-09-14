@@ -14,7 +14,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
   /**
    * 创建通知（重写基类方法以处理目标用户关联）
    */
-  async create(data: any, tenantId: string, userId?: string): Promise<any> {
+  async create(data, tenantId, userId) {
     const { target_user_ids: targetUserIds, publishTime, ...noticeData } = data;
     const publishTimeDate = publishTime ? new Date(publishTime) : null;
     const status =
@@ -39,26 +39,25 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       });
 
       if (targetUserIds?.length) {
-        if (targetUserIds?.length) {
-          // ⭐ 归属校验
-          const validCount = await tx.sys_user.count({
-            where: {
-              user_id: { in: targetUserIds },
-              tenant_id: tenantId,
-              is_deleted: 0,
-            },
-          });
-          if (validCount !== targetUserIds.length) {
-            throw new AppError("存在无效的接收人", 400001, 400);
-          }
+        // ⭐ 归属校验
+        const uniqueIds = [...new Set(targetUserIds)];
+        const validCount = await tx.sys_user.count({
+          where: {
+            user_id: { in: uniqueIds as string[] },
+            tenant_id: tenantId,
+            is_deleted: 0,
+          },
+        });
+        if (validCount !== uniqueIds.length) {
+          throw new AppError("存在无效的接收人", 400001, 400);
         }
         await tx.sys_notice_user.createMany({
-          data: targetUserIds.map((uid: string) => ({
+          data: uniqueIds.map((uid: string) => ({
             notice_id: notice.notice_id,
             user_id: uid,
             tenant_id: tenantId,
           })),
-          skipDuplicates: true,
+          skipDuplicates: true, // ⭐
         });
       }
 
@@ -138,30 +137,24 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       },
     });
   }
-  async update(
-    id: string,
-    data: any,
-    tenantId: string,
-    userId?: string,
-  ): Promise<any> {
-    const {
-      target_user_ids: targetUserIds,
-      publish_time: publishTime,
-      ...noticeData
-    } = data;
-
-    const publishTimeDate = publishTime ? new Date(publishTime) : null;
-    let status = noticeData.status;
-    if (publishTimeDate && publishTimeDate > new Date()) {
-      status = "0";
-    }
+  async update(id, data, tenantId, userId) {
+    // ⭐ 先校验归属
     const exists = await prisma.sys_notice.findFirst({
       where: { notice_id: id, tenant_id: tenantId, is_deleted: 0 },
       select: { notice_id: true },
     });
     if (!exists) throw new AppError("通知不存在", 404001, 404);
+
+    const {
+      target_user_ids: targetUserIds,
+      publish_time: publishTime,
+      ...noticeData
+    } = data;
+    const publishTimeDate = publishTime ? new Date(publishTime) : null;
+    let status = noticeData.status;
+    if (publishTimeDate && publishTimeDate > new Date()) status = "0";
+
     return prisma.$transaction(async (tx) => {
-      // 更新通知主记录
       await tx.sys_notice.update({
         where: { notice_id: id },
         data: {
@@ -174,44 +167,48 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
         },
       });
 
-      // 处理目标用户
       if (targetUserIds !== undefined) {
-        // 若提供了 targetUserIds，则按提供列表更新关联
         await tx.sys_notice_user.deleteMany({
           where: { notice_id: id, tenant_id: tenantId },
         });
         if (targetUserIds.length > 0) {
+          const uniqueIds = [...new Set(targetUserIds)];
+          const validCount = await tx.sys_user.count({
+            where: {
+              user_id: { in: uniqueIds as string[] },
+              tenant_id: tenantId,
+              is_deleted: 0,
+            },
+          });
+          if (validCount !== uniqueIds.length) {
+            throw new AppError("存在无效的接收人", 400001, 400);
+          }
           await tx.sys_notice_user.createMany({
-            data: targetUserIds.map((uid: string) => ({
+            data: uniqueIds.map((uid: string) => ({
               notice_id: id,
               user_id: uid,
               tenant_id: tenantId,
             })),
-            skipDuplicates: true,
+            skipDuplicates: true, // ⭐
           });
         }
-      } else {
-        // 未提供 targetUserIds，且状态为发布，则自动发送给租户下所有有效用户
-        if (status === "1") {
-          // 删除可能已存在的旧关联
-          await tx.sys_notice_user.deleteMany({
-            where: { notice_id: id, tenant_id: tenantId },
+      } else if (status === "1") {
+        await tx.sys_notice_user.deleteMany({
+          where: { notice_id: id, tenant_id: tenantId },
+        });
+        const users = await tx.sys_user.findMany({
+          where: { tenant_id: tenantId, is_deleted: 0, status: "1" },
+          select: { user_id: true },
+        });
+        if (users.length > 0) {
+          await tx.sys_notice_user.createMany({
+            data: users.map((u) => ({
+              notice_id: id,
+              user_id: u.user_id,
+              tenant_id: tenantId,
+            })),
+            skipDuplicates: true, // ⭐
           });
-          // 查询租户下所有用户（排除软删除、禁用）
-          const users = await tx.sys_user.findMany({
-            where: { tenant_id: tenantId, is_deleted: 0, status: "1" },
-            select: { user_id: true },
-          });
-          if (users.length > 0) {
-            await tx.sys_notice_user.createMany({
-              data: users.map((u) => ({
-                notice_id: id,
-                user_id: u.user_id,
-                tenant_id: tenantId,
-              })),
-              skipDuplicates: true,
-            });
-          }
         }
       }
 
@@ -222,15 +219,15 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
     noticeId: string,
     tenantId: string,
   ): Promise<any> {
+    const where = this.mergeDataScope({
+      notice_id: noticeId,
+      tenant_id: tenantId,
+      is_deleted: 0,
+    });
     const notice = await prisma.sys_notice.findFirst({
-      where: {
-        notice_id: noticeId,
-        tenant_id: tenantId,
-        is_deleted: 0,
-      },
+      where,
       include: {
         target_users: {
-          // 注意关系字段名，根据 schema 应为 target_users
           select: {
             user_id: true,
           },

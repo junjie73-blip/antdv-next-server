@@ -83,9 +83,13 @@ function scheduleFlush() {
 async function flush(): Promise<void> {
   if (flushing || queue.length === 0) return;
   flushing = true;
-  try {
-    while (queue.length > 0) {
-      const batch = queue.splice(0, FLUSH_BATCH);
+  const MAX_RETRIES = 3;
+  while (queue.length > 0) {
+    const batch = queue.splice(0, FLUSH_BATCH);
+    let retried = 0;
+    let success = false;
+
+    while (retried < MAX_RETRIES && !success) {
       try {
         await prisma.sys_audit_log.createMany({
           data: batch.map((it) => ({
@@ -104,14 +108,22 @@ async function flush(): Promise<void> {
             error_msg: it.errorMsg ?? null,
           })),
         });
+        success = true;
       } catch (err) {
-        logger.error({ err, size: batch.length }, "[audit] flush failed");
-        // 简单退避，避免打爆数据库
-        await new Promise((r) => setTimeout(r, 500));
+        retried++;
+        logger.error({ err, retried }, "[audit] flush failed");
+        if (retried < MAX_RETRIES) {
+          await new Promise((r) => setTimeout(r, 500 * retried));
+        }
       }
     }
-  } finally {
-    flushing = false;
+
+    if (!success) {
+      logger.error(
+        { size: batch.length },
+        "[audit] batch dropped after retries",
+      );
+    }
   }
 }
 
@@ -121,5 +133,12 @@ export async function drainAuditQueue(): Promise<void> {
     clearTimeout(timer);
     timer = null;
   }
+
+  // 等待正在进行的 flush 完成
+  while (flushing) {
+    await new Promise((r) => setTimeout(r, 50));
+  }
+
+  // 触发新的 flush
   await flush();
 }

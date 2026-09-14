@@ -1,17 +1,13 @@
-import { wsManager } from "@/core/ws/manager.js";
 import { prisma } from "@/config/database.js";
 import { logger } from "@/core/logger/index.js";
-import { publishNoticePush } from "@/core/redis/pubsub.js";
 import { dispatchNotice } from "./channels/index.js";
 
-/**
- * 通知发布后推送 WebSocket 消息
- * @param noticeId 通知ID
- */
-export async function pushNotice(noticeId: string, tenantId: string) {
+export async function pushNotice(
+  noticeId: string,
+  tenantId?: string,
+): Promise<void> {
   try {
-    const { prisma } = await import("@/config/database.js");
-    const notice = await prisma.sys_notice.findUnique({
+    const notice = await prisma.sys_notice.findFirst({
       where: {
         notice_id: noticeId,
         ...(tenantId ? { tenant_id: tenantId } : {}),

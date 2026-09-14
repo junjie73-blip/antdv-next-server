@@ -212,13 +212,6 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
     return rows.map((r) => r.menu_id);
   }
 
-  async findAllMenus(tenantId: string) {
-    return prisma.sys_menu.findMany({
-      where: { tenant_id: tenantId, is_deleted: 0 },
-      orderBy: { sort_order: "asc" },
-    });
-  }
-
   // ============================================================
   // 导出
   // ============================================================

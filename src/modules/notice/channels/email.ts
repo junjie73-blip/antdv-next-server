@@ -11,6 +11,7 @@ export const emailChannel: NoticeChannel = {
     let success = 0;
 
     for (const to of ctx.receivers) {
+      // ⭐ 检查返回值（sendMail 永不抛异常）
       const ok = await sendMail({
         to,
         subject: ctx.title,

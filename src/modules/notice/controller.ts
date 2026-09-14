@@ -149,12 +149,7 @@ export default class NoticeController extends BaseController<
         req.user!.userId,
         req.tenantId!,
       );
-      res.json({
-        code: 200,
-        message: "已标记为已读",
-        data: null,
-        timestamp: Date.now(),
-      });
+      success(res, null, "已标记为已读");
     } catch (err) {
       this.handleError(res, err);
     }
@@ -170,12 +165,7 @@ export default class NoticeController extends BaseController<
         req.user!.userId,
         req.tenantId!,
       );
-      res.json({
-        code: 200,
-        message: "success",
-        data: { count },
-        timestamp: Date.now(),
-      });
+      success(res, { count }, "success");
     } catch (err) {
       this.handleError(res, err);
     }

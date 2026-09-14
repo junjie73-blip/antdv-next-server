@@ -89,6 +89,11 @@ export default class RoleController extends BaseController<any, any, any, any> {
   @ApiResponse(200, "Excel文件")
   async export(@Req() req: Request, @Res() res: Response) {
     try {
+      const query = RoleListSchema.parse({
+        ...req.query,
+        pageNum: Number(req.query.pageNum) || 1,
+        pageSize: Number(req.query.pageSize) || 10,
+      });
       const where = this.buildListWhere(req.query);
       const buffer = await (this.repository as RoleRepository).exportRoles(
         where,

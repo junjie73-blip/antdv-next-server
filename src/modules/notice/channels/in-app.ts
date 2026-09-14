@@ -2,6 +2,7 @@ import { prisma } from "@/config/database.js";
 import { publishNoticePush } from "@/core/redis/pubsub.js";
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
 
+/** 站内信：通过 Redis pub/sub 广播，各实例推自己的连接 */
 export const inAppChannel: NoticeChannel = {
   type: "in_app",
   isReady: () => true,
@@ -17,7 +18,7 @@ export const inAppChannel: NoticeChannel = {
       };
     }
 
-    // ⭐ 改为走 Redis pub/sub
+    // ⭐ 通过 Redis pub/sub 广播（多实例安全）
     await publishNoticePush(ctx.noticeId);
 
     const count = await prisma.sys_notice_user.count({

@@ -1,7 +1,8 @@
 import { prisma } from "@/config/database.js";
 import type { NextFunction, Request, Response } from "express";
 import { logger } from "@/core/logger/index.js";
-
+import { redis } from "@/config/redis.js";
+export const SCOPE_CACHE_TTL = 60 * 5;
 /**
  * 数据权限上下文
  * - deptIds === "*" 表示全部
@@ -62,16 +63,7 @@ async function expandDeptTree(
   return [...result];
 }
 
-/**
- * 计算用户的数据范围
- * 规则：以最宽松的为准
- *   1-全部        → deptIds = "*"
- *   2-自定义       → 查 sys_role_dept
- *   3-本部门       → 用户所有部门
- *   4-本部门及以下  → 用户所有部门 + 子部门
- *   5-仅本人       → selfOnly = true
- */
-export async function computeDataScope(
+async function computeDataScopeInternal(
   userId: string,
   tenantId: string,
 ): Promise<DataScopeContext> {
@@ -146,7 +138,43 @@ export async function computeDataScope(
     selfOnly: false,
   };
 }
+/**
+ * 计算用户的数据范围
+ * 规则：以最宽松的为准
+ *   1-全部        → deptIds = "*"
+ *   2-自定义       → 查 sys_role_dept
+ *   3-本部门       → 用户所有部门
+ *   4-本部门及以下  → 用户所有部门 + 子部门
+ *   5-仅本人       → selfOnly = true
+ */
+export async function computeDataScope(
+  userId: string,
+  tenantId: string,
+): Promise<DataScopeContext> {
+  const cacheKey = `rbac:scope:${tenantId}:${userId}`;
+  try {
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+  } catch {
+    // 缓存失败继续走 DB
+  }
 
+  const result = await computeDataScopeInternal(userId, tenantId);
+
+  try {
+    await redis.setex(cacheKey, SCOPE_CACHE_TTL, JSON.stringify(result));
+  } catch {}
+
+  return result;
+}
+export async function invalidateDataScopeCache(
+  userId: string,
+  tenantId: string,
+) {
+  try {
+    await redis.del(`rbac:scope:${tenantId}:${userId}`);
+  } catch {}
+}
 /**
  * Express 中间件：把 DataScopeContext + where 片段挂到 req
  * - req.dataScope       → DataScopeContext（供业务读取）

@@ -1,6 +1,7 @@
-// src/middleware/timing.ts
-import { logger } from "@/core/logger/logger.js";
+import { logger } from "@/core/logger/index.js";
 import { Request, Response, NextFunction } from "express";
+
+const SLOW_THRESHOLD_MS = 1000;
 
 export function timingMiddleware(
   req: Request,
@@ -10,10 +11,12 @@ export function timingMiddleware(
   const start = Date.now();
   res.on("finish", () => {
     const duration = Date.now() - start;
-    logger.debug(
-      { method: req.method, url: req.originalUrl, duration },
-      "request timing",
-    );
+    if (duration > SLOW_THRESHOLD_MS) {
+      logger.warn(
+        { method: req.method, url: req.originalUrl, duration },
+        "slow request",
+      );
+    }
   });
   next();
 }

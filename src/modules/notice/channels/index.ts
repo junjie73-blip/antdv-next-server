@@ -22,9 +22,7 @@ export interface DispatchInput {
   noticeId?: string;
   title: string;
   content?: string;
-  /** 允许指定用哪些渠道，默认读取 sys_notice_channel 里 enabled=1 的 */
   channels?: string[];
-  /** 按渠道给收件人；缺省则由 dispatcher 从 notice 目标用户推导 */
   receiversByChannel?: Record<string, string[]>;
 }
 
@@ -33,26 +31,35 @@ export async function dispatchNotice(
 ): Promise<SendResult[]> {
   const { tenantId, noticeId, title, content } = input;
 
-  // 1) 找出该租户启用的渠道
+  // 1) 查租户渠道配置
   const enabled = await prisma.sys_notice_channel.findMany({
     where: { tenant_id: tenantId, enabled: 1, is_deleted: 0 },
   });
 
-  const selected = [
-    // 站内信强制加入（除非被显式禁用）
-    { channel_type: "in_app", config: null } as any,
+  // ⭐ 站内信隐式启用：未配置 → 默认启用
+  const hasInAppConfig = enabled.some((c) => c.channel_type === "in_app");
+  const implicitInApp =
+    !hasInAppConfig ||
+    enabled.some((c) => c.channel_type === "in_app" && c.enabled === 1);
+
+  const selectedList = [
+    ...(implicitInApp ? [{ channel_type: "in_app", config: null } as any] : []),
     ...(input.channels
       ? enabled.filter((c) => input.channels!.includes(c.channel_type))
       : enabled.filter((c) => c.channel_type !== "in_app")),
   ];
-  if (selected.length === 0) return [];
+
+  // 去重
   const seen = new Set<string>();
-  const deduped = selected.filter((c) => {
+  const selected = selectedList.filter((c) => {
     if (seen.has(c.channel_type)) return false;
     seen.add(c.channel_type);
     return true;
   });
-  // 2) 若未指定各渠道收件人，从 notice 目标用户推导
+
+  if (selected.length === 0) return [];
+
+  // 2) 收件人推导
   let fallbackReceivers: Record<string, string[]> = {};
   if (!input.receiversByChannel && noticeId) {
     const targets = await prisma.sys_notice_user.findMany({
@@ -73,7 +80,8 @@ export async function dispatchNotice(
   }
 
   const results: SendResult[] = [];
-  for (const ch of deduped) {
+
+  for (const ch of selected) {
     const impl = getChannel(ch.channel_type);
     if (!impl) {
       logger.warn({ type: ch.channel_type }, "[notice] channel not registered");
@@ -102,35 +110,35 @@ export async function dispatchNotice(
     });
     results.push(result);
 
-    // 写发送日志
-    try {
-      const logs: any[] = [];
-      if (result.errors.length > 0) {
-        result.errors.forEach((e) => {
-          logs.push({
-            tenant_id: tenantId,
-            notice_id: noticeId ?? null,
-            channel_type: ch.channel_type,
-            receiver: e.receiver,
-            status: "0",
-            error_msg: e.reason,
-          });
-        });
-      }
-      if (result.success > 0) {
+    // ⭐ 写日志：区分成功 / 失败
+    const logs: any[] = [];
+    if (result.errors.length > 0) {
+      result.errors.forEach((e) => {
         logs.push({
           tenant_id: tenantId,
           notice_id: noticeId ?? null,
           channel_type: ch.channel_type,
-          receiver: "*",
-          status: "1",
+          receiver: e.receiver,
+          status: "0",
+          error_msg: e.reason,
         });
-      }
-      if (logs.length > 0) {
+      });
+    }
+    if (result.success > 0) {
+      logs.push({
+        tenant_id: tenantId,
+        notice_id: noticeId ?? null,
+        channel_type: ch.channel_type,
+        receiver: "*",
+        status: "1",
+      });
+    }
+    if (logs.length > 0) {
+      try {
         await prisma.sys_notice_send_log.createMany({ data: logs });
+      } catch (err) {
+        logger.error({ err }, "[notice] write send-log failed");
       }
-    } catch (err) {
-      logger.error({ err }, "[notice] write send-log failed");
     }
   }
 
@@ -140,7 +148,8 @@ export async function dispatchNotice(
 function safeParse(s: string): Record<string, any> {
   try {
     return JSON.parse(s);
-  } catch {
+  } catch (err) {
+    logger.warn({ err, raw: s.slice(0, 200) }, "[notice] config parse failed");
     return {};
   }
 }

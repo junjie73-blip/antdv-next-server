@@ -16,8 +16,7 @@ export function getClientIp(req: Request): string {
     ip = req.socket?.remoteAddress || "";
   }
 
-  // 归一化
-  if (ip.startsWith("::ffff:")) return ip.slice(7);
-  if (ip === "::1") return "127.0.0.1";
-  return ip;
+  if (ip.startsWith("::ffff:")) ip = ip.slice(7);
+  if (ip === "::1") ip = "127.0.0.1";
+  return ip || "unknown"; // ⭐
 }

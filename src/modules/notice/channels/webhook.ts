@@ -1,15 +1,19 @@
-// webhook.ts
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
+
+const TIMEOUT_MS = 10_000;
 
 export const webhookChannel: NoticeChannel = {
   type: "webhook",
   isReady: (cfg) => !!(cfg.url && typeof cfg.url === "string"),
+
   async send(ctx: SendContext): Promise<SendResult> {
     const errors: SendResult["errors"] = [];
     let success = 0;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10_000);
+
     for (const url of ctx.receivers) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
       try {
         const res = await fetch(url, {
           method: "POST",
@@ -29,6 +33,7 @@ export const webhookChannel: NoticeChannel = {
         clearTimeout(timer);
       }
     }
+
     return {
       channel: this.type,
       total: ctx.receivers.length,
