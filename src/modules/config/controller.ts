@@ -59,7 +59,7 @@ export default class ConfigController extends BaseController<
     dto = await super.beforeCreate(dto, req);
     const repo = this.repository as ConfigRepository;
     const exist = await repo.findByKey(dto.configKey, req.tenantId!);
-    if (exist) throw new AppError(409, `配置键 '${dto.configKey}' 已存在`, 409);
+    if (exist) throw new AppError(`配置键 '${dto.configKey}' 已存在`, 409, 409);
     return dto;
   }
 
@@ -69,7 +69,7 @@ export default class ConfigController extends BaseController<
     if (dto.configKey) {
       const exist = await repo.findByKey(dto.configKey, req.tenantId!, id);
       if (exist)
-        throw new AppError(409, `配置键 '${dto.configKey}' 已存在`, 409);
+        throw new AppError(`配置键 '${dto.configKey}' 已存在`, 409, 409);
     }
     return dto;
   }

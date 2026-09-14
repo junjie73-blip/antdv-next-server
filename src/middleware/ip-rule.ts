@@ -18,7 +18,6 @@ export async function ipRuleMiddleware(
     const tenantId = (req as any).tenantId;
     // 无租户上下文时跳过（比如登录接口）
     if (!tenantId) return next();
-    console.log(req.path, "req.path");
     // 白名单路径（比如健康检查、静态资源）跳过
     if (isWhitelistPath(req.path)) return next();
 
@@ -57,7 +56,9 @@ function isWhitelistPath(path: string): boolean {
     path.startsWith("/api/v1/health") ||
     path.startsWith("/api/v1/uploads") ||
     path.startsWith("/api/docs") ||
-    path.startsWith("/api/auth") ||
-    path.startsWith("/favicon.ico")
+    path.startsWith("/api/auth/login") ||
+    path.startsWith("/favicon.ico") ||
+    path.startsWith("/api/v1/auth/forgot-password") ||
+    path.startsWith("/api/v1/auth/register")
   );
 }

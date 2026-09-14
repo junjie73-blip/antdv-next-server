@@ -4,8 +4,16 @@ extendZodWithOpenApi(z);
 
 export const LoginSchema = z
   .object({
-    username: z.string().min(1),
-    password: z.string().min(1),
+    tenantCode: z.string().min(1).max(64).openapi({
+      description: "租户编码（注册时填写的 tenantCode）",
+      example: "acme",
+    }),
+    username: z.string().min(1).openapi({ description: "用户名" }),
+    password: z.string().min(1).openapi({ description: "密码" }),
+    deviceId: z.string().max(64).optional().openapi({
+      description: "设备标识（可选，多设备登录用）",
+      example: "desktop",
+    }),
   })
   .openapi("Login");
 
@@ -47,3 +55,12 @@ export const RegisterSchema = z
     phone: z.string().max(32).optional(),
   })
   .openapi("Register");
+// ========== 忘记密码 ==========
+export const ForgotPasswordSchema = z
+  .object({
+    tenantCode: z.string().min(2).max(64).openapi({ description: "租户编码" }),
+    username: z.string().min(1).max(64).openapi({ description: "用户名" }),
+    oldPassword: z.string().min(1).max(64).openapi({ description: "原密码" }),
+    newPassword: z.string().min(6).max(64).openapi({ description: "新密码" }),
+  })
+  .openapi("ForgotPassword");

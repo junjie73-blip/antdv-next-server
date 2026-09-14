@@ -56,7 +56,7 @@ export default class DictDataController extends BaseController<
         id,
       );
       if (exist) {
-        throw new AppError(409, `字典标签 '${dto.dictLabel}' 已存在`, 409);
+        throw new AppError(`字典标签 '${dto.dictLabel}' 已存在`, 409, 409);
       }
     }
     return dto;
@@ -87,7 +87,7 @@ export default class DictDataController extends BaseController<
       tenantId,
     );
     if (existing) {
-      throw new AppError(409, `字典标签 '${dto.dictLabel}' 已存在`, 409);
+      throw new AppError(`字典标签 '${dto.dictLabel}' 已存在`, 409, 409);
     }
     return dto;
   }
@@ -98,13 +98,6 @@ export default class DictDataController extends BaseController<
   @ApiResponse(200, "查询成功")
   async listDictData(@Req() req: Request, @Res() res: Response) {
     return super.list(req, res);
-  }
-
-  @Get("/:id")
-  @ApiOperation("获取字典数据详情")
-  @ApiResponse(200, "查询成功")
-  async detailDictData(@Req() req: Request, @Res() res: Response) {
-    return super.detail(req, res);
   }
 
   @Post("/")
@@ -147,14 +140,6 @@ export default class DictDataController extends BaseController<
       this.handleError(res, err);
     }
   }
-  // 批量刪除
-  @Post("/batch-remove")
-  @ApiBody(z.object({ ids: z.array(z.string().uuid()).min(1) }))
-  @ApiOperation("批量删除字典数据")
-  @ApiResponse(200, "删除成功")
-  async batchRemoveDictData(@Req() req: Request, @Res() res: Response) {
-    return this.batchRemove(req, res);
-  }
   /**
    * 字典树接口
    */
@@ -173,5 +158,20 @@ export default class DictDataController extends BaseController<
     } catch (err) {
       this.handleError(res, err);
     }
+  }
+  @Get("/:id")
+  @ApiOperation("获取字典数据详情")
+  @ApiResponse(200, "查询成功")
+  async detailDictData(@Req() req: Request, @Res() res: Response) {
+    return super.detail(req, res);
+  }
+
+  // 批量刪除
+  @Post("/batch-remove")
+  @ApiBody(z.object({ ids: z.array(z.string().uuid()).min(1) }))
+  @ApiOperation("批量删除字典数据")
+  @ApiResponse(200, "删除成功")
+  async batchRemoveDictData(@Req() req: Request, @Res() res: Response) {
+    return this.batchRemove(req, res);
   }
 }

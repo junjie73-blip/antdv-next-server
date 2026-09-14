@@ -1,4 +1,5 @@
 // src/middleware/timing.ts
+import { logger } from "@/core/logger/logger.js";
 import { Request, Response, NextFunction } from "express";
 
 export function timingMiddleware(
@@ -9,7 +10,10 @@ export function timingMiddleware(
   const start = Date.now();
   res.on("finish", () => {
     const duration = Date.now() - start;
-    console.log(`${req.method} ${req.originalUrl} - ${duration}ms`);
+    logger.debug(
+      { method: req.method, url: req.originalUrl, duration },
+      "request timing",
+    );
   });
   next();
 }

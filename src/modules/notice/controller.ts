@@ -54,7 +54,7 @@ export default class NoticeController extends BaseController<
       tenantId,
     );
     if (exist) {
-      throw new AppError(409, `通知标题 '${dto.title}' 已存在`, 409);
+      throw new AppError(`通知标题 '${dto.title}' 已存在`, 409, 409);
     }
     return dto;
   }
@@ -100,7 +100,7 @@ export default class NoticeController extends BaseController<
         this.repository as NoticeRepository
       ).findDetailWithTargetUserIds(noticeId, tenantId);
       if (!detail) {
-        throw new AppError(404, "通知不存在", 404);
+        throw new AppError("通知不存在", 404, 404);
       }
       // 转换字段名为驼峰（如果 repository 返回 snake_case）
       const result = keysToCamelCase(detail);
@@ -200,11 +200,11 @@ export default class NoticeController extends BaseController<
       });
 
       if (!notice) {
-        throw new AppError(404, "通知不存在或未发布", 404);
+        throw new AppError("通知不存在或未发布", 404, 404);
       }
 
       if (!notice.target_users || notice.target_users.length === 0) {
-        throw new AppError(400, "该通知没有指定目标用户，无法发送", 400);
+        throw new AppError("该通知没有指定目标用户，无法发送", 400, 400);
       }
 
       // 调用推送逻辑

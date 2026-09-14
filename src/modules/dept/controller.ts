@@ -54,7 +54,7 @@ export default class DeptController extends BaseController<any, any, any, any> {
     const repo = this.repository as DeptRepository;
     const exist = await repo.findByDeptCode(dto.deptCode, req.tenantId!);
     if (exist)
-      throw new AppError(409, `部门编码 '${dto.deptCode}' 已存在`, 409);
+      throw new AppError(`部门编码 '${dto.deptCode}' 已存在`, 409, 409);
     return dto;
   }
 
@@ -65,19 +65,28 @@ export default class DeptController extends BaseController<any, any, any, any> {
     if (dto.deptCode) {
       const exist = await repo.findByDeptCode(dto.deptCode, req.tenantId!, id);
       if (exist)
-        throw new AppError(409, `部门编码 '${dto.deptCode}' 已存在`, 409);
+        throw new AppError(`部门编码 '${dto.deptCode}' 已存在`, 409, 409);
     }
     return dto;
   }
 
   // 树查询
   @Get("/tree")
+  @ApiQuery(
+    z.object({
+      onlyEnabled: z.string().optional().openapi({
+        description: "为 '1' 时只返回 status='1' 的部门",
+      }),
+    }),
+  )
   @ApiOperation("获取部门树", "返回树形结构部门")
   @ApiResponse(200, "查询成功")
   async tree(@Req() req: Request, @Res() res: Response) {
     try {
+      const onlyEnabled = req.query.onlyEnabled === "1";
       const data = await (this.repository as DeptRepository).findTree(
         req.tenantId!,
+        { onlyEnabled },
       );
       success(res, data, "获取部门树成功");
     } catch (err) {

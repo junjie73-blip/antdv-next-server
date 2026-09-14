@@ -1,8 +1,8 @@
 import { BaseRepository } from "@/core/base-repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { AppError } from "@/middleware/error-handler.js";
-import { deleteFile } from "@/config/blob.js"; // 已是本地实现
+import { AppError } from "@/core/errors.js";
+import { deleteFile } from "@/config/blob.js";
 
 export class FileRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_file;
@@ -18,14 +18,10 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
       tenant_id: query.tenantId,
       is_deleted: 0,
     };
-    if (query.keyword) {
-      finalWhere.filename = { contains: query.keyword };
-    }
-    if (query.mimeType) {
-      finalWhere.mime_type = { contains: query.mimeType };
-    }
+    if (query.keyword) finalWhere.filename = { contains: query.keyword };
+    if (query.mimeType) finalWhere.mime_type = { contains: query.mimeType };
 
-    const [list, total] = await Promise.all([
+    const [rawList, total] = await Promise.all([
       this.model.findMany({
         where: finalWhere,
         skip,
@@ -34,6 +30,41 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
       }),
       this.model.count({ where: finalWhere }),
     ]);
+
+    // ========== 批量解析 uploader → username ==========
+    const uploaderIds = [
+      ...new Set(rawList.map((f: any) => f.uploader).filter(Boolean)),
+    ];
+    let userMap = new Map<
+      string,
+      { username: string; realName: string | null }
+    >();
+    if (uploaderIds.length > 0) {
+      const users = await prisma.sys_user.findMany({
+        where: {
+          user_id: { in: uploaderIds as string[] },
+          tenant_id: query.tenantId,
+        },
+        select: { user_id: true, username: true, real_name: true },
+      });
+      userMap = new Map(
+        users.map((u) => [
+          u.user_id,
+          { username: u.username, realName: u.real_name },
+        ]),
+      );
+    }
+
+    const list = rawList.map((f: any) => {
+      const uploader = userMap.get(f.uploader);
+      return {
+        ...f,
+        // 覆盖 uploader 字段为用户名；同时保留原始 id
+        uploader: uploader?.username ?? null,
+        uploaderId: f.uploader ?? null,
+        uploaderRealName: uploader?.realName ?? null,
+      };
+    });
 
     return {
       list,
@@ -44,9 +75,6 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
     };
   }
 
-  /**
-   * 上传后写入文件表
-   */
   async createFromUpload(data: {
     filename: string;
     url: string;
@@ -69,10 +97,6 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
     });
   }
 
-  /**
-   * 删除文件（软删除 + 物理删除）
-   * 已移除所有 Vercel / 环境分支，统一走本地删除
-   */
   async softDelete(
     id: string,
     tenantId: string,
@@ -81,9 +105,8 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
     const file = await this.model.findFirst({
       where: { file_id: id, tenant_id: tenantId, is_deleted: 0 },
     });
-    if (!file) throw new AppError(404, "文件不存在", 404);
+    if (!file) throw new AppError("文件不存在", 404001, 404);
 
-    // 尝试删除物理文件（失败不影响软删除）
     if (file.url) {
       try {
         await deleteFile(file.url);

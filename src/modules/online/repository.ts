@@ -10,7 +10,7 @@ export class OnlineRepository {
       const [next, batch] = await redis.scan(
         cursor,
         "MATCH",
-        "access:*",
+        "access:*:*:*",
         "COUNT",
         100,
       );
@@ -21,7 +21,11 @@ export class OnlineRepository {
     if (keys.length === 0) return [];
 
     // 从 key 里解析 userId
-    const userIds = keys.map((k) => k.replace("access:", "")).filter(Boolean);
+    const parsed = keys.map((k) => {
+      const parts = k.split(":"); // ["access", tenantId, userId, deviceId]
+      return { tenantId: parts[1], userId: parts[2], deviceId: parts[3] };
+    });
+    const userIds = [...new Set(parsed.map((p) => p.userId))];
 
     // 批量查用户信息
     const users = await prisma.sys_user.findMany({
@@ -40,7 +44,7 @@ export class OnlineRepository {
     // TTL 作为会话剩余时间参考
     const result = await Promise.all(
       userIds.map(async (uid) => {
-        const u = userMap.get(uid);
+        const u: any = userMap.get(uid);
         if (!u) return null;
         const ttl = await redis.ttl(`access:${uid}`);
         return {
@@ -63,8 +67,9 @@ export class OnlineRepository {
       where: { tenant_id: tenantId, is_deleted: 0 },
       select: { user_id: true },
     });
-    const keys = users.map((u) => `access:${u.user_id}`);
-    if (keys.length > 0) await redis.del(...keys);
-    await Promise.all(users.map((u) => redis.del(`refresh:${u.user_id}`)));
+    const accessKeys = await scanAll(`access:${tenantId}:*`);
+    const refreshKeys = await scanAll(`refresh:${tenantId}:*`);
+    if (accessKeys.length) await redis.del(...accessKeys);
+    if (refreshKeys.length) await redis.del(...refreshKeys);
   }
 }

@@ -11,7 +11,7 @@ import { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate as isUuid } from "uuid";
 import { deleteFile } from "@/config/blob.js"; // 本地存储工具（已移除 Vercel）
 import { FileRepository } from "@/modules/file/repository.js";
 import { success, error } from "@/common/utils/response.js";
@@ -31,15 +31,17 @@ const chunkStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadId = req.body.uploadId;
     if (!uploadId) return cb(new Error("uploadId is required"), "");
+    if (!isUuid(uploadId)) return cb(new Error("uploadId must be uuid"), "");
     const dir = path.join(TEMP_DIR, uploadId);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
   filename: (req, file, cb) => {
     const chunkIndex = req.body.chunkIndex;
-    if (chunkIndex === undefined)
-      return cb(new Error("chunkIndex is required"), "");
-    cb(null, `chunk-${chunkIndex}`);
+    const idx = Number(chunkIndex);
+    if (!Number.isInteger(idx) || idx < 0 || idx > 100000)
+      return cb(new Error("chunkIndex invalid"), "");
+    cb(null, `chunk-${idx}`);
   },
 });
 const chunkUpload = multer({
@@ -121,6 +123,7 @@ export default class UploadController {
     try {
       const uploadId = req.query.uploadId as string;
       if (!uploadId) return error(res, "缺少uploadId参数", 400, 400);
+      if (!isUuid(uploadId)) return error(res, "uploadId 非法", 400, 400);
       const dir = path.join(TEMP_DIR, uploadId);
       if (!fs.existsSync(dir)) return success(res, { uploaded: [] });
       const files = fs.readdirSync(dir);
@@ -160,6 +163,11 @@ export default class UploadController {
       if (!uploadId || !fileName || !totalChunks) {
         return error(res, "缺少uploadId、fileName或totalChunks", 400, 400);
       }
+      if (!isUuid(uploadId)) return error(res, "uploadId 非法", 400, 400);
+      const tc = Number(totalChunks);
+      if (!Number.isInteger(tc) || tc <= 0 || tc > 100000) {
+        return error(res, "totalChunks 非法", 400, 400);
+      }
       const tempDir = path.join(TEMP_DIR, uploadId);
       if (!fs.existsSync(tempDir)) {
         return error(res, "上传临时目录不存在", 404, 404);
@@ -171,7 +179,7 @@ export default class UploadController {
 
       // 合并分片
       const writeStream = fs.createWriteStream(mergedPath);
-      for (let i = 0; i < totalChunks; i++) {
+      for (let i = 0; i < tc; i++) {
         const chunkPath = path.join(tempDir, `chunk-${i}`);
         if (!fs.existsSync(chunkPath)) {
           writeStream.destroy();

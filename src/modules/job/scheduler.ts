@@ -1,6 +1,7 @@
 import cron, { ScheduledTask } from "node-cron";
 import { prisma } from "@/config/database.js";
 import { logger } from "@/core/logger/index.js";
+import { withLock } from "@/core/scheduler/lock.js";
 
 const running = new Map<string, ScheduledTask>();
 
@@ -18,9 +19,25 @@ export function startJob(job: any) {
     logger.warn(`Invalid cron: ${job.job_name} -> ${job.cron_expression}`);
     return;
   }
-  const task = cron.schedule(job.cron_expression, () => runJob(job), {
-    timezone: "Asia/Shanghai",
-  });
+
+  const task = cron.schedule(
+    job.cron_expression,
+    async () => {
+      // 锁 key 带 tenant，避免不同租户同名任务互踩
+      const lockKey = `job:lock:${job.tenant_id}:${job.job_id}`;
+      // 锁 TTL：假设单次执行不会超过 10 分钟
+      const LOCK_TTL = 10 * 60;
+
+      const result = await withLock(lockKey, LOCK_TTL, () => runJob(job));
+      if (result === null) {
+        logger.debug(
+          { jobId: job.job_id, name: job.job_name },
+          "[job] skipped (lock held by another instance)",
+        );
+      }
+    },
+    { timezone: "Asia/Shanghai" },
+  );
   running.set(job.job_id, task);
 }
 
@@ -32,12 +49,19 @@ export function stopJob(id: string) {
   }
 }
 
+/** 手动立即执行：也走锁 */
 export async function runJobOnce(id: string) {
   const job = await prisma.sys_job.findUnique({ where: { job_id: id } });
-  if (job) await runJob(job);
+  if (!job) return;
+  const lockKey = `job:lock:${job.tenant_id}:${job.job_id}`;
+  const result = await withLock(lockKey, 10 * 60, () => runJob(job));
+  if (result === null) {
+    logger.warn({ jobId: id }, "[job] manual run skipped, lock held");
+  }
 }
 
 async function runJob(job: any) {
+  const start = Date.now();
   try {
     await execute(job.invoke_target, job.tenant_id);
     await prisma.sys_job_log.create({
@@ -49,6 +73,10 @@ async function runJob(job: any) {
         status: "1",
       },
     });
+    logger.info(
+      { jobId: job.job_id, name: job.job_name, ms: Date.now() - start },
+      "[job] success",
+    );
   } catch (e: any) {
     await prisma.sys_job_log.create({
       data: {
@@ -60,7 +88,7 @@ async function runJob(job: any) {
         exception_info: String(e?.stack || e?.message || e),
       },
     });
-    logger.error({ err: e, job: job.job_name }, "job failed");
+    logger.error({ err: e, job: job.job_name }, "[job] failed");
   }
 }
 
@@ -90,10 +118,8 @@ async function execute(target: string, tenantId: string) {
       });
       break;
     }
-    case "todo:overdue-notify": {
-      // 可发通知提醒逾期待办
+    case "todo:overdue-notify":
       break;
-    }
     default:
       logger.warn(`Unknown invoke_target: ${target}`);
   }

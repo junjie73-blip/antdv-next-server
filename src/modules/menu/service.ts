@@ -1,5 +1,5 @@
+import { Prisma, sys_menu } from "@/generated/prisma/client.js";
 import { randomUUID } from "node:crypto";
-import type { Prisma, sys_menu } from "@/generated/prisma/client.js";
 
 type Tx = Prisma.TransactionClient;
 
@@ -106,7 +106,7 @@ export async function getUserMenus(
 
   // 2) 用户角色
   const userRoles = await tx.sys_user_role.findMany({
-    where: { user_id: userId },
+    where: { user_id: userId, tenant_id: tenantId },
     select: { role_id: true },
   });
   const roleIds = userRoles.map((r) => r.role_id);

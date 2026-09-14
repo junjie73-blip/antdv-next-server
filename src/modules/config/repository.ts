@@ -1,7 +1,6 @@
 import { BaseRepository } from "@/core/base-repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { AppError } from "@/middleware/error-handler.js";
 
 export class ConfigRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_config;
@@ -26,14 +25,16 @@ export class ConfigRepository extends BaseRepository<any, any, any, any> {
       ];
     }
 
+    const scopedWhere = this.mergeDataScope(finalWhere);
+
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { config_key: "asc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
 
     return {

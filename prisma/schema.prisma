@@ -1,6 +1,9 @@
 generator client {
   provider               = "prisma-client"
   output                 = "../src/generated/prisma"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "js"
 }
 
 datasource db {
@@ -501,8 +504,8 @@ model sys_todo {
   content    String?   @db.Text
   priority   Int       @default(0) @db.SmallInt
   due_time   DateTime? @db.Timestamptz(6)
-  created_by      String?  @db.Uuid
-  updated_by      String?  @db.Uuid
+  created_by String?   @db.Uuid
+  updated_by String?   @db.Uuid
   status     String    @default("0") @db.VarChar(10)
   created_at DateTime  @default(now()) @db.Timestamptz(6)
   updated_at DateTime  @updatedAt @db.Timestamptz(6)
@@ -528,4 +531,40 @@ model sys_ip_rule {
 
   @@index([tenant_id, rule_type])
   @@map("sys_ip_rule")
+}
+
+/// 通知渠道配置（每租户一份）
+model sys_notice_channel {
+  channel_id   String   @id @default(uuid()) @db.Uuid
+  tenant_id    String   @db.Uuid
+  channel_type String   @db.VarChar(32) /// email | sms | webhook | wechat_work | dingtalk
+  enabled      Int      @default(0) @db.SmallInt
+  config       String?  @db.Text /// JSON 配置（SMTP/SMS 签名/Webhook URL 等）
+  remark       String?  @db.VarChar(256)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+  created_by   String?  @db.Uuid
+  updated_by   String?  @db.Uuid
+  is_deleted   Int      @default(0) @db.SmallInt
+
+  @@unique([tenant_id, channel_type])
+  @@index([tenant_id])
+  @@map("sys_notice_channel")
+}
+
+/// 通知发送日志
+model sys_notice_send_log {
+  log_id       String   @id @default(uuid()) @db.Uuid
+  tenant_id    String   @db.Uuid
+  notice_id    String?  @db.Uuid
+  channel_type String   @db.VarChar(32)
+  receiver     String   @db.VarChar(256) /// 邮箱/手机号/URL
+  status       String   @default("1") @db.VarChar(10)
+  error_msg    String?  @db.Text
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([tenant_id, channel_type])
+  @@index([notice_id])
+  @@index([created_at])
+  @@map("sys_notice_send_log")
 }

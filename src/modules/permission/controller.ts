@@ -60,7 +60,7 @@ export default class PermissionController extends BaseController<
       is_deleted: 0,
     });
     if (exist)
-      throw new AppError(409, `权限编码 '${dto.permCode}' 已存在`, 409);
+      throw new AppError(`权限编码 '${dto.permCode}' 已存在`, 409, 409);
     return dto;
   }
 
@@ -77,7 +77,7 @@ export default class PermissionController extends BaseController<
         },
       });
       if (exist)
-        throw new AppError(409, `权限编码 '${dto.permCode}' 已存在`, 409);
+        throw new AppError(`权限编码 '${dto.permCode}' 已存在`, 409, 409);
     }
     return dto;
   }

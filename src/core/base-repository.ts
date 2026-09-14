@@ -5,9 +5,9 @@ import {
   PageResult,
   QueryOptions,
   SOFT_DELETE_FLAG,
+  PageOptions,
 } from "@/types/base-repository.js";
-import { AppError } from "@/middleware/error-handler.js";
-import { Prisma } from "@/generated/prisma/index.js";
+import { AppError } from "@/core/errors.js";
 
 /**
  * 通用基础仓库类
@@ -48,20 +48,117 @@ export abstract class BaseRepository<
   /** 更新人字段名 */
   protected readonly updatedByField: string = "updated_by";
 
+  // ============================================================
+  // 数据权限
+  // ============================================================
+
+  /** 当前生效的数据权限 where 片段（由中间件注入） */
+  protected dataScopeWhere: Record<string, any> = {};
+
   /**
-   * 根据 ID 查询（自动附加租户和软删除过滤）
+   * 设置数据权限条件
+   * 由 Controller 在请求开始前调用，通常来自 req.dataScopeWhere
+   */
+  setDataScope(where: Record<string, any> | undefined | null): void {
+    this.dataScopeWhere = where ?? {};
+  }
+
+  /** 清空数据权限 */
+  clearDataScope(): void {
+    this.dataScopeWhere = {};
+  }
+  protected useTenantFilter(): boolean {
+    return true;
+  }
+  /**
+   * 合并业务条件与数据权限条件
+   * - 当 dataScopeWhere 有内容时，与传入的 where 做浅合并
+   * - 数据权限条件优先级更高（会覆盖同名 key）
+   */
+  protected mergeDataScope<W extends Record<string, any>>(where: W): W {
+    if (!this.dataScopeWhere || Object.keys(this.dataScopeWhere).length === 0) {
+      return where;
+    }
+    return { ...where, ...this.dataScopeWhere };
+  }
+
+  // ============================================================
+  // 查询方法
+  // ============================================================
+  /**
+   * 统一分页方法
+   * 子类无需重写，只通过 options 描述差异
+   */
+  protected async paginate(
+    query: BaseQuery & Record<string, any>,
+    where: Record<string, any> = {},
+    options: PageOptions = {},
+  ): Promise<PageResult<T>> {
+    const pageNum = Math.max(1, query.pageNum || 1);
+    const pageSize = Math.min(
+      query.maxPageSize ?? 100,
+      Math.max(1, query.pageSize || 10),
+    );
+    const skip = (pageNum - 1) * pageSize;
+
+    // 1) 基础 where
+    const base: Record<string, any> = {
+      ...where,
+      [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
+    };
+    if (this.useTenantFilter()) {
+      base[this.tenantField] = query.tenantId;
+    }
+    let finalWhere = base;
+
+    // 2) 子类扩展
+    if (options.extendWhere) {
+      finalWhere = {
+        ...finalWhere,
+        ...options.extendWhere({ finalWhere, query }),
+      };
+    }
+
+    // 3) 数据权限
+    finalWhere = this.mergeDataScope(finalWhere);
+
+    // 4) 排序
+    const orderBy = options.defaultOrderBy ?? {
+      [this.createdAtField]: "desc" as const,
+    };
+
+    const findArgs: any = {
+      where: finalWhere,
+      skip,
+      take: pageSize,
+      orderBy,
+    };
+    if (options.include) findArgs.include = options.include;
+    if (options.select) findArgs.select = options.select;
+
+    const [list, total] = await Promise.all([
+      this.model.findMany(findArgs),
+      this.model.count({ where: finalWhere }),
+    ]);
+
+    return {
+      list,
+      total,
+      pageNum,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  }
+  /**
+   * 根据 ID 查询（自动附加租户、软删除、数据权限）
    */
   async findById(id: string, tenantId: string): Promise<T | null> {
-    const where = this.buildWhereWithTenant(
+    const base = this.buildWhereWithTenant(
       { [this.primaryKey]: id } as WhereInput,
       tenantId,
     );
-
     return this.model.findFirst({
-      where: {
-        ...where,
-        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
-      },
+      where: this.mergeDataScope(base),
     });
   }
 
@@ -69,13 +166,9 @@ export abstract class BaseRepository<
    * 根据条件查询单条
    */
   async findOne(where: WhereInput, tenantId: string): Promise<T | null> {
-    const finalWhere = this.buildWhereWithTenant(where, tenantId);
-
+    const base = this.buildWhereWithTenant(where, tenantId);
     return this.model.findFirst({
-      where: {
-        ...finalWhere,
-        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
-      },
+      where: this.mergeDataScope(base),
     });
   }
 
@@ -84,13 +177,12 @@ export abstract class BaseRepository<
    */
   async findMany(where: WhereInput, options: QueryOptions = {}): Promise<T[]> {
     const { skip, take, orderBy, include } = options;
-    const finalWhere = {
+    const base = {
       ...where,
       [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
     };
-
     return this.model.findMany({
-      where: finalWhere,
+      where: this.mergeDataScope(base),
       skip,
       take,
       orderBy,
@@ -126,18 +218,16 @@ export abstract class BaseRepository<
       }
     }
 
-    const finalWhere = this.buildWhereWithTenant(where, query.tenantId);
+    const baseWhere = this.buildWhereWithTenant(where, query.tenantId);
+    const finalWhere = this.mergeDataScope(baseWhere);
+
     const findManyArgs: any = {
       where: finalWhere,
       skip,
       take: pageSize,
       orderBy: this.buildOrderBy(query.sort),
     };
-
-    // 如果有 select，则添加
-    if (select) {
-      findManyArgs.select = select;
-    }
+    if (select) findManyArgs.select = select;
 
     const [list, total] = await Promise.all([
       this.model.findMany(findManyArgs),
@@ -145,14 +235,12 @@ export abstract class BaseRepository<
     ]);
     const totalPages = Math.ceil(total / pageSize);
 
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages,
-    };
+    return { list, total, pageNum, pageSize, totalPages };
   }
+
+  // ============================================================
+  // 写方法
+  // ============================================================
 
   /**
    * 创建记录
@@ -171,12 +259,12 @@ export abstract class BaseRepository<
       [this.updatedAtField]: new Date(),
       [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
     };
-
     return this.model.create({ data: createData });
   }
 
   /**
    * 更新记录
+   * - 主键 + 租户双重定位，避免跨租户误更新
    */
   async update(
     id: string,
@@ -185,9 +273,7 @@ export abstract class BaseRepository<
     userId?: string,
   ): Promise<T> {
     const exists = await this.findById(id, tenantId);
-    if (!exists) {
-      throw new AppError(404, "记录不存在", 404);
-    }
+    if (!exists) throw new AppError("记录不存在", 404001, 404);
 
     const updateData = {
       ...data,
@@ -196,7 +282,10 @@ export abstract class BaseRepository<
     };
 
     return this.model.update({
-      where: { [this.primaryKey]: id },
+      where: {
+        [this.primaryKey]: id,
+        [this.tenantField]: tenantId,
+      },
       data: updateData,
     });
   }
@@ -206,12 +295,13 @@ export abstract class BaseRepository<
    */
   async softDelete(id: string, tenantId: string, userId?: string): Promise<T> {
     const exists = await this.findById(id, tenantId);
-    if (!exists) {
-      throw new AppError(404, "记录不存在", 404);
-    }
+    if (!exists) throw new AppError("记录不存在", 404001, 404);
 
     return this.model.update({
-      where: { [this.primaryKey]: id },
+      where: {
+        [this.primaryKey]: id,
+        [this.tenantField]: tenantId,
+      },
       data: {
         [this.softDeleteField]: SOFT_DELETE_FLAG.DELETED,
         [this.updatedByField]: userId || null,
@@ -221,16 +311,17 @@ export abstract class BaseRepository<
   }
 
   /**
-   * 物理删除（谨慎使用）
+   * 物理删除
    */
   async hardDelete(id: string, tenantId: string): Promise<T> {
     const exists = await this.findById(id, tenantId);
-    if (!exists) {
-      throw new AppError(404, "记录不存在", 404);
-    }
+    if (!exists) throw new AppError("记录不存在", 404001, 404);
 
     return this.model.delete({
-      where: { [this.primaryKey]: id },
+      where: {
+        [this.primaryKey]: id,
+        [this.tenantField]: tenantId,
+      },
     });
   }
 
@@ -238,12 +329,9 @@ export abstract class BaseRepository<
    * 检查记录是否存在
    */
   async exists(where: WhereInput, tenantId: string): Promise<boolean> {
-    const finalWhere = this.buildWhereWithTenant(where, tenantId);
+    const base = this.buildWhereWithTenant(where, tenantId);
     const count = await this.model.count({
-      where: {
-        ...finalWhere,
-        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
-      },
+      where: this.mergeDataScope(base),
     });
     return count > 0;
   }
@@ -252,27 +340,20 @@ export abstract class BaseRepository<
    * 统计记录数
    */
   async count(where: WhereInput, tenantId: string): Promise<number> {
-    const finalWhere = this.buildWhereWithTenant(where, tenantId);
+    const base = this.buildWhereWithTenant(where, tenantId);
     return this.model.count({
-      where: {
-        ...finalWhere,
-        [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
-      },
+      where: this.mergeDataScope(base),
     });
   }
 
-  /**
-   * 事务处理
-   */
+  // ============================================================
+  // 事务 / 批量
+  // ============================================================
+
   async transaction<R>(callback: (tx: any) => Promise<R>): Promise<R> {
-    return prisma.$transaction(async (tx) => {
-      return callback(tx);
-    });
+    return prisma.$transaction(async (tx) => callback(tx));
   }
 
-  /**
-   * 批量创建
-   */
   async createMany(
     data: CreateInput[],
     tenantId: string,
@@ -287,31 +368,23 @@ export abstract class BaseRepository<
       [this.updatedAtField]: new Date(),
       [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
     }));
-
-    return this.model.createMany({ data: createData });
+    return this.model.createMany({ data: createData, skipDuplicates: true });
   }
 
-  /**
-   * 批量软删除
-   */
   async softDeleteMany(
     ids: string[],
     tenantId: string,
     userId?: string,
   ): Promise<{ count: number }> {
-    console.log(this.primaryKey, "this.primaryKey", ids);
-    // 校验 ids 必须是非空数组
     if (!Array.isArray(ids) || ids.length === 0) {
-      throw new AppError(400, "ids 参数必须是非空数组", 400);
+      throw new AppError("ids 参数必须是非空数组", 400001, 400);
     }
 
     const where: any = {
       [this.primaryKey]: { in: ids },
       [this.softDeleteField]: SOFT_DELETE_FLAG.NORMAL,
     };
-    if (this.tenantField) {
-      where[this.tenantField] = tenantId;
-    }
+    if (this.tenantField) where[this.tenantField] = tenantId;
 
     const result = await this.model.updateMany({
       where,
@@ -325,10 +398,10 @@ export abstract class BaseRepository<
     return { count: result.count };
   }
 
-  /**
-   * 构建带租户的查询条件
-   * @protected
-   */
+  // ============================================================
+  // 内部工具
+  // ============================================================
+
   protected buildWhereWithTenant(where: WhereInput, tenantId: string): any {
     return {
       ...where,
@@ -337,10 +410,6 @@ export abstract class BaseRepository<
     };
   }
 
-  /**
-   * 构建排序条件
-   * @protected
-   */
   protected buildOrderBy(
     sort?: Array<{ field: string; direction: "asc" | "desc" }>,
   ): any {

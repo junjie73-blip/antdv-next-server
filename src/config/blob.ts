@@ -1,5 +1,5 @@
 import { mkdir, writeFile, unlink } from "fs/promises";
-import { join } from "path";
+import path, { join } from "path";
 import { v4 as uuidv4 } from "uuid";
 
 const UPLOAD_DIR =
@@ -30,8 +30,12 @@ export async function uploadFile(
 export async function deleteFile(url: string) {
   // 仅删除本地文件，注意防止路径穿越
   if (!url.startsWith("/uploads/")) return;
-  const fileName = url.replace("/uploads/files/", "");
+  const fileName = path.basename(url.replace("/uploads/files/", ""));
   const filePath = join(UPLOAD_DIR, fileName);
+  if (!path.resolve(filePath).startsWith(path.resolve(UPLOAD_DIR))) {
+    console.warn("[blob] path traversal blocked:", url);
+    return;
+  }
   try {
     await unlink(filePath);
   } catch (e) {

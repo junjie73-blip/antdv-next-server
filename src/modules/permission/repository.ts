@@ -27,14 +27,15 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
     if (!query.isPlatformAdmin) {
       finalWhere.perm_code = { not: { startsWith: "platform:" } };
     }
+    const scopedWhere = this.mergeDataScope(finalWhere);
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { created_at: "desc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
 
     return {
@@ -54,7 +55,7 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
       where: { perm_code: data.permCode, tenant_id: tenantId, is_deleted: 0 },
     });
     if (exist) {
-      throw new AppError(409, `权限编码 '${data.permCode}' 已存在`, 409);
+      throw new AppError(`权限编码 '${data.permCode}' 已存在`, 409, 409);
     }
     return data;
   }
@@ -73,7 +74,7 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
         },
       });
       if (exist) {
-        throw new AppError(409, `权限编码 '${data.permCode}' 已存在`, 409);
+        throw new AppError(`权限编码 '${data.permCode}' 已存在`, 409, 409);
       }
     }
     return data;

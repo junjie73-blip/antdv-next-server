@@ -5,12 +5,10 @@ import {
   keysToSnakeCase,
   keysToCamelCase,
 } from "@/common/utils/case-convert.js";
-import bcrypt from "bcryptjs";
 import * as XLSX from "xlsx";
 import { AppError } from "@/middleware/error-handler.js";
 import { UserCreateDto, UserImportRowSchema } from "./schema.js";
-import { Prisma } from "@/generated/prisma/index.js";
-import { encrypt } from "@/common/utils/crypto.js";
+import { verifyPassword, hashPassword } from "@/common/utils/crypto.js";
 import { v4 as uuidv4 } from "uuid";
 import { copyMenusFromTemplate } from "../menu/service.js";
 const TEMPLATE_TENANT_CODE = "__TEMPLATE__";
@@ -54,9 +52,11 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       };
     }
 
+    const scopedWhere = this.mergeDataScope(finalWhere);
+
     const [rawList, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { created_at: "desc" },
@@ -65,7 +65,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           sys_user_role: { include: { role: true } },
         },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
 
     // 转换数据结构（扁平化 role 和 dept）
@@ -114,7 +114,6 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
   async findUserDetail(id: string, tenantId: string) {
     return this.model.findFirst({
       where: { user_id: id, tenant_id: tenantId, is_deleted: 0 },
-      // @ts-ignore
       include: {
         sys_user_role: {
           include: { role: { select: { role_id: true, role_name: true } } },
@@ -144,7 +143,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
   ): Promise<any> {
     const existing = await this.findUserDetail(id, tenantId);
     if (!existing) {
-      throw new AppError(404, "用户不存在", 404);
+      throw new AppError("用户不存在", 404, 404);
     }
 
     if (data.username) {
@@ -154,7 +153,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
         id,
       );
       if (duplicate) {
-        throw new AppError(409, "用户名已存在", 409);
+        throw new AppError("用户名已存在", 409, 409);
       }
     }
 
@@ -162,7 +161,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     //  密码字段若存在，需要哈希（通常更新密码会走专门接口，此处可忽略或处理）
     let hashedPassword: string | undefined;
     if (password) {
-      hashedPassword = encrypt(password);
+      hashedPassword = await hashPassword(password);
     }
 
     return prisma.$transaction(async (tx) => {
@@ -238,10 +237,10 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     userId?: string,
   ): Promise<any[]> {
     return prisma.$transaction(async (tx) => {
-      const created = [];
+      const created: any[] = [];
       for (const u of users) {
         const { roleIds, deptIds, password, ...rest } = u;
-        const user = await tx.sys_user.create({
+        const user: any = await tx.sys_user.create({
           data: {
             // @ts-ignore
             ...keysToSnakeCase(rest),
@@ -272,7 +271,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
             })),
           });
         }
-        created.push(user);
+        created.push(user as any);
       }
       return created;
     });
@@ -287,7 +286,6 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     const finalWhere = { ...where, tenant_id: tenantId, is_deleted: 0 };
     const users = await this.model.findMany({
       where: finalWhere,
-      // @ts-ignore
       include: {
         sys_user_role: { include: { role: true } },
         sys_user_dept: { include: { dept: true } },
@@ -303,10 +301,12 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       性别: u.gender === 1 ? "男" : u.gender === 2 ? "女" : "未知",
       状态: u.status === "1" ? "启用" : "禁用",
       角色: (u.sys_user_role as any[])
-        .map((ur) => ur.sys_role?.role_name)
+        .map((ur) => ur.role?.role_name)
+        .filter(Boolean)
         .join(","),
       部门: (u.sys_user_dept as any[])
-        .map((ud) => ud.sys_dept?.dept_name)
+        .map((ud) => ud.dept?.dept_name)
+        .filter(Boolean)
         .join(","),
       创建时间: u.created_at.toISOString(),
     }));
@@ -332,10 +332,10 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     // 1. 解析 Excel
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
-    if (!sheetName) throw new AppError(400, "Excel文件为空", 400);
+    if (!sheetName) throw new AppError("Excel文件为空", 400, 400);
     const sheet = workbook.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" }) as any[];
-    if (rows.length === 0) throw new AppError(400, "Excel中没有数据", 400);
+    if (rows.length === 0) throw new AppError("Excel中没有数据", 400, 400);
 
     // 2. 逐行校验并转换
     const successList: any[] = [];
@@ -398,7 +398,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
         }
 
         // 默认密码：123456
-        const hashedPassword = await bcrypt.hash("123456", 10);
+        const hashedPassword = await hashPassword("123456");
         successList.push({
           username: parsedRow.username,
           password: hashedPassword,
@@ -431,6 +431,14 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     return { successCount, failCount: errors.length, errors };
   }
   async updateUserRoles(userId: string, roleIds: string[], tenantId: string) {
+    if (roleIds.length > 0) {
+      const validCount = await prisma.sys_role.count({
+        where: { role_id: { in: roleIds }, tenant_id: tenantId, is_deleted: 0 },
+      });
+      if (validCount !== roleIds.length) {
+        throw new AppError("存在无效的角色ID", 400, 400);
+      }
+    }
     await prisma.$transaction([
       prisma.sys_user_role.deleteMany({
         where: { user_id: userId, tenant_id: tenantId },
@@ -453,6 +461,14 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     return roles.map((r) => r.role);
   }
   async updateUserDepts(userId: string, deptIds: string[], tenantId: string) {
+    if (deptIds.length > 0) {
+      const validCount = await prisma.sys_dept.count({
+        where: { dept_id: { in: deptIds }, tenant_id: tenantId, is_deleted: 0 },
+      });
+      if (validCount !== deptIds.length) {
+        throw new AppError("存在无效的部门ID", 400, 400);
+      }
+    }
     await prisma.$transaction([
       prisma.sys_user_dept.deleteMany({
         where: { user_id: userId, tenant_id: tenantId },
@@ -487,7 +503,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       ...userData
     } = data;
     // 密码哈希提前进行
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
 
     return prisma.$transaction(async (tx) => {
       // 1. 创建用户主体
@@ -584,7 +600,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
   }) {
     const { tenantId, tenantName, username, password, email, phone, realName } =
       data;
-    const hashedPassword = encrypt(password);
+    const hashedPassword = await hashPassword(password);
 
     const TEMPLATE_TENANT_ID = process.env.TEMPLATE_TENANT_ID;
     if (!TEMPLATE_TENANT_ID) {
@@ -598,7 +614,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           where: { tenant_id: tenantId, username, is_deleted: 0 },
         });
         if (existUser) {
-          throw new AppError(409, `用户名 '${username}' 在租户下已存在`, 409);
+          throw new AppError(`用户名 '${username}' 在租户下已存在`, 409, 409);
         }
 
         // 2) 【关键】判断该租户是否已经初始化过菜单

@@ -21,6 +21,7 @@ import {
   RoleAssignMenusSchema,
   RoleAssignPermissionsSchema,
   RoleAssignUsersSchema,
+  RoleAssignDeptsSchema,
 } from "./schema.js";
 import { AppError } from "@/middleware/error-handler.js";
 import { z } from "zod";
@@ -54,7 +55,7 @@ export default class RoleController extends BaseController<any, any, any, any> {
     const repo = this.repository as RoleRepository;
     const exist = await repo.findByRoleCode(dto.roleCode, req.tenantId!);
     if (exist)
-      throw new AppError(409, `角色编码 '${dto.roleCode}' 已存在`, 409);
+      throw new AppError(`角色编码 '${dto.roleCode}' 已存在`, 409, 409);
     return dto;
   }
 
@@ -64,7 +65,7 @@ export default class RoleController extends BaseController<any, any, any, any> {
     if (dto.roleCode) {
       const exist = await repo.findByRoleCode(dto.roleCode, req.tenantId!, id);
       if (exist)
-        throw new AppError(409, `角色编码 '${dto.roleCode}' 已存在`, 409);
+        throw new AppError(`角色编码 '${dto.roleCode}' 已存在`, 409, 409);
     }
     return dto;
   }
@@ -97,7 +98,20 @@ export default class RoleController extends BaseController<any, any, any, any> {
   @ApiResponse(200, "查询成功")
   @ApiResponse(404, "角色不存在")
   async getDetailRole(@Req() req: Request, @Res() res: Response) {
-    return this.detail(req, res);
+    try {
+      const role = await (this.repository as RoleRepository).findRoleDetail(
+        req.params.id,
+        req.tenantId!,
+      );
+      if (!role) throw new AppError("角色不存在", 404, 404);
+      const menuIds = role.sys_role_menu.map((m: any) => m.menu_id);
+      const permIds = role.sys_role_permission.map((p: any) => p.perm_id);
+      const { sys_role_menu, sys_role_permission, ...rest } = role;
+      // @ts-ignore
+      success(res, { ...keysToCamelCase(rest), menuIds, permIds });
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 
   @Post("/")
@@ -129,7 +143,7 @@ export default class RoleController extends BaseController<any, any, any, any> {
         where: { role_id: req.params.id, tenant_id: req.tenantId! },
       });
       if (userCount > 0) {
-        throw new AppError(400, "该角色已分配给用户，无法删除", 400);
+        throw new AppError("该角色已分配给用户，无法删除", 400, 400);
       }
       return super.remove(req, res);
     } catch (err) {
@@ -176,7 +190,45 @@ export default class RoleController extends BaseController<any, any, any, any> {
       this.handleError(res, err);
     }
   }
+  /** 分配数据权限部门（仅 data_scope = "2" 时生效） */
+  @Put("/:id/depts")
+  @ApiOperation(
+    "分配数据权限部门",
+    "更新角色关联的部门列表，仅当角色 data_scope = '2'（自定义）时生效",
+  )
+  @ApiBody(RoleAssignDeptsSchema)
+  @ApiResponse(200, "分配成功")
+  @ApiResponse(400, "部门ID非法")
+  @ApiResponse(404, "角色不存在")
+  async assignDepts(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { deptIds } = RoleAssignDeptsSchema.parse(req.body);
+      await (this.repository as RoleRepository).updateRoleDepts(
+        req.params.id,
+        deptIds,
+        req.tenantId!,
+      );
+      success(res, null, "分配成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
 
+  /** 获取角色已分配的数据权限部门 ID */
+  @Get("/:id/depts")
+  @ApiOperation("获取角色数据权限部门", "返回角色关联的部门ID数组")
+  @ApiResponse(200, "查询成功")
+  async getRoleDepts(@Req() req: Request, @Res() res: Response) {
+    try {
+      const deptIds = await (this.repository as RoleRepository).findRoleDeptIds(
+        req.params.id,
+        req.tenantId!,
+      );
+      success(res, deptIds, "查询成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
   // 分配用户
   @Put("/:id/users")
   @ApiOperation("分配用户", "更新角色关联的用户列表")
@@ -271,9 +323,9 @@ export default class RoleController extends BaseController<any, any, any, any> {
   async import(@Req() req: Request, @Res() res: Response) {
     upload.single("file")(req, res, async (err) => {
       if (err)
-        return this.handleError(res, new AppError(400, "文件上传失败", 400));
+        return this.handleError(res, new AppError("文件上传失败", 400, 400));
       if (!req.file)
-        return this.handleError(res, new AppError(400, "请上传Excel文件", 400));
+        return this.handleError(res, new AppError("请上传Excel文件", 400, 400));
       try {
         const result = await (
           this.repository as RoleRepository

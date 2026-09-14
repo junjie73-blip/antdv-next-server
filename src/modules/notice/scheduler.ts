@@ -29,11 +29,6 @@ export function startNoticeScheduler() {
         where: { notice_id: { in: ids } },
         data: { status: "1" },
       });
-      // 在更新状态为已发布后，对每个通知推送
-      await prisma.sys_notice.updateMany({
-        where: { notice_id: { in: ids } },
-        data: { status: "1" },
-      });
 
       // 推送 WebSocket 通知
       dueNotices.forEach((n) => pushNotice(n.notice_id));

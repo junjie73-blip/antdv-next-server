@@ -11,22 +11,22 @@ export async function publishNoticePush(noticeId: string) {
 
 export async function startNoticeSubscriber() {
   try {
-    const subscriber = (await subRedis.subscribe(NOTICE_CHANNEL)) as any;
+    // 1) 订阅频道（返回值是 number，忽略）
+    await subRedis.subscribe(NOTICE_CHANNEL);
 
-    // 使用 any 类型接收消息，避免类型不匹配
-    subscriber.on("message", (message: any) => {
+    // 2) 监听事件挂在 subRedis 实例上
+    subRedis.on("message", (channel: string, message: string) => {
+      if (channel !== NOTICE_CHANNEL) return;
       try {
-        // 兼容不同的消息格式：可能是字符串，也可能是对象
-        const raw =
-          typeof message === "string" ? message : JSON.stringify(message);
-        const { noticeId } = JSON.parse(raw);
-        handleNoticePush(noticeId);
+        const { noticeId } = JSON.parse(message);
+        if (!noticeId) return;
+        void handleNoticePush(noticeId);
       } catch (err) {
-        logger.error({ err, message }, "Failed to handle Redis notice message");
+        logger.error({ err, message }, "Failed to parse notice message");
       }
     });
 
-    subscriber.on("error", (err: any) => {
+    subRedis.on("error", (err) => {
       logger.error({ err }, "Redis subscriber error");
     });
 
@@ -64,6 +64,6 @@ async function handleNoticePush(noticeId: string) {
       "Notice pushed to local WebSocket clients",
     );
   } catch (err) {
-    logger.error({ err, noticeId }, "Failed to handle notice push from Redis");
+    logger.error({ err, noticeId }, "Failed to handle notice push");
   }
 }

@@ -75,14 +75,14 @@ export default class MenuController extends BaseController<any, any, any, any> {
       tenantId,
     );
     if (nameExist) {
-      throw new AppError(409, `菜单名称 '${dto.menuName}' 已存在`, 409);
+      throw new AppError(`菜单名称 '${dto.menuName}' 已存在`, 409, 409);
     }
 
     // 如果提供了权限标识，检查是否重复
     if (dto.permission) {
       const permExist = await repo.findByPermission(dto.permission, tenantId);
       if (permExist) {
-        throw new AppError(409, `权限标识 '${dto.permission}' 已存在`, 409);
+        throw new AppError(`权限标识 '${dto.permission}' 已存在`, 409, 409);
       }
     }
 
@@ -110,7 +110,7 @@ export default class MenuController extends BaseController<any, any, any, any> {
     try {
       const parentId = req.query.parentId as string;
       if (!parentId) {
-        throw new AppError(400, "缺少 parentId 参数", 400);
+        throw new AppError("缺少 parentId 参数", 400, 400);
       }
       const data = await (
         this.repository as MenuRepository

@@ -5,6 +5,9 @@ import { BaseQuery, PageResult } from "@/types/base-repository.js";
 export class TenantRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_tenant;
   protected readonly primaryKey = "tenant_id";
+  protected useTenantFilter(): boolean {
+    return false;
+  }
   async codeExists(
     tenantCode: string,
     tenantId: string,
@@ -51,15 +54,15 @@ export class TenantRepository extends BaseRepository<any, any, any, any> {
     if (query.status !== undefined && query.status !== "") {
       finalWhere.status = query.status;
     }
-
+    const scopedWhere = this.mergeDataScope(finalWhere);
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { created_at: "desc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
 
     return {

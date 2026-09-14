@@ -420,7 +420,9 @@ export const ModelName = {
   sys_job: 'sys_job',
   sys_job_log: 'sys_job_log',
   sys_todo: 'sys_todo',
-  sys_ip_rule: 'sys_ip_rule'
+  sys_ip_rule: 'sys_ip_rule',
+  sys_notice_channel: 'sys_notice_channel',
+  sys_notice_send_log: 'sys_notice_send_log'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -436,7 +438,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule"
+    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2216,6 +2218,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    sys_notice_channel: {
+      payload: Prisma.$sys_notice_channelPayload<ExtArgs>
+      fields: Prisma.sys_notice_channelFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_notice_channelFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_notice_channelFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_notice_channelFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_notice_channelFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>
+        }
+        findMany: {
+          args: Prisma.sys_notice_channelFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>[]
+        }
+        create: {
+          args: Prisma.sys_notice_channelCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>
+        }
+        createMany: {
+          args: Prisma.sys_notice_channelCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_notice_channelCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_notice_channelDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>
+        }
+        update: {
+          args: Prisma.sys_notice_channelUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_notice_channelDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_notice_channelUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_notice_channelUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_notice_channelUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_channelPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_notice_channelAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_notice_channel>
+        }
+        groupBy: {
+          args: Prisma.sys_notice_channelGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_notice_channelGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_notice_channelCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_notice_channelCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_notice_send_log: {
+      payload: Prisma.$sys_notice_send_logPayload<ExtArgs>
+      fields: Prisma.sys_notice_send_logFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_notice_send_logFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_notice_send_logFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_notice_send_logFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_notice_send_logFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>
+        }
+        findMany: {
+          args: Prisma.sys_notice_send_logFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>[]
+        }
+        create: {
+          args: Prisma.sys_notice_send_logCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>
+        }
+        createMany: {
+          args: Prisma.sys_notice_send_logCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_notice_send_logCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_notice_send_logDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>
+        }
+        update: {
+          args: Prisma.sys_notice_send_logUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_notice_send_logDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_notice_send_logUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_notice_send_logUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_notice_send_logUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_send_logPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_notice_send_logAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_notice_send_log>
+        }
+        groupBy: {
+          args: Prisma.sys_notice_send_logGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_notice_send_logGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_notice_send_logCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_notice_send_logCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2654,6 +2804,37 @@ export const Sys_ip_ruleScalarFieldEnum = {
 export type Sys_ip_ruleScalarFieldEnum = (typeof Sys_ip_ruleScalarFieldEnum)[keyof typeof Sys_ip_ruleScalarFieldEnum]
 
 
+export const Sys_notice_channelScalarFieldEnum = {
+  channel_id: 'channel_id',
+  tenant_id: 'tenant_id',
+  channel_type: 'channel_type',
+  enabled: 'enabled',
+  config: 'config',
+  remark: 'remark',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_notice_channelScalarFieldEnum = (typeof Sys_notice_channelScalarFieldEnum)[keyof typeof Sys_notice_channelScalarFieldEnum]
+
+
+export const Sys_notice_send_logScalarFieldEnum = {
+  log_id: 'log_id',
+  tenant_id: 'tenant_id',
+  notice_id: 'notice_id',
+  channel_type: 'channel_type',
+  receiver: 'receiver',
+  status: 'status',
+  error_msg: 'error_msg',
+  created_at: 'created_at'
+} as const
+
+export type Sys_notice_send_logScalarFieldEnum = (typeof Sys_notice_send_logScalarFieldEnum)[keyof typeof Sys_notice_send_logScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2914,6 +3095,8 @@ export type GlobalOmitConfig = {
   sys_job_log?: Prisma.sys_job_logOmit
   sys_todo?: Prisma.sys_todoOmit
   sys_ip_rule?: Prisma.sys_ip_ruleOmit
+  sys_notice_channel?: Prisma.sys_notice_channelOmit
+  sys_notice_send_log?: Prisma.sys_notice_send_logOmit
 }
 
 /* Types for Logging */

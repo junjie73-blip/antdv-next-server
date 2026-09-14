@@ -10,11 +10,9 @@ export async function getUserRoles(
 ): Promise<string[]> {
   const userRoles = await prisma.sys_user_role.findMany({
     where: { user_id: userId, tenant_id: tenantId },
-    // @ts-ignore
-    include: { sys_role: { select: { role_code: true } } },
+    include: { role: { select: { role_code: true } } },
   });
-  // @ts-ignore
-  return userRoles.map((ur) => ur.sys_role.role_code);
+  return userRoles.map((ur) => ur.role.role_code);
 }
 
 export async function getUserPermissions(

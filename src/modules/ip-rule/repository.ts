@@ -18,15 +18,15 @@ export class IpRuleRepository extends BaseRepository<any, any, any, any> {
     if (query.ruleType) finalWhere.rule_type = query.ruleType;
     if (query.ipPattern) finalWhere.ip_pattern = { contains: query.ipPattern };
     if (query.status) finalWhere.status = query.status;
-
+    const scopedWhere = this.mergeDataScope(finalWhere);
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { created_at: "desc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
     return {
       list,

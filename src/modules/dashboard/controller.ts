@@ -52,7 +52,6 @@ export default class DashboardController {
       const data = await this.repository.getTrafficDistribution(req.tenantId!);
       success(res, data);
     } catch (err) {
-      console.error(err);
       error(res, "获取流量分布失败", 500, 500);
     }
   }
@@ -65,7 +64,6 @@ export default class DashboardController {
       const data = await this.repository.getSystemHealth(req.tenantId!);
       success(res, data);
     } catch (err) {
-      console.error(err);
       error(res, "获取系统健康度失败", 500, 500);
     }
   }

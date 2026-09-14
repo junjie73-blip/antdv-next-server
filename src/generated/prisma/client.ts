@@ -161,3 +161,13 @@ export type sys_todo = Prisma.sys_todoModel
  * 
  */
 export type sys_ip_rule = Prisma.sys_ip_ruleModel
+/**
+ * Model sys_notice_channel
+ * 通知渠道配置（每租户一份）
+ */
+export type sys_notice_channel = Prisma.sys_notice_channelModel
+/**
+ * Model sys_notice_send_log
+ * 通知发送日志
+ */
+export type sys_notice_send_log = Prisma.sys_notice_send_logModel

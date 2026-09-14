@@ -2,6 +2,7 @@ import { wsManager } from "@/core/ws/manager.js";
 import { prisma } from "@/config/database.js";
 import { logger } from "@/core/logger/index.js";
 import { publishNoticePush } from "@/core/redis/pubsub.js";
+import { dispatchNotice } from "./channels/index.js";
 
 /**
  * 通知发布后推送 WebSocket 消息
@@ -9,34 +10,28 @@ import { publishNoticePush } from "@/core/redis/pubsub.js";
  */
 export async function pushNotice(noticeId: string) {
   try {
+    const { prisma } = await import("@/config/database.js");
     const notice = await prisma.sys_notice.findUnique({
       where: { notice_id: noticeId },
-      include: {
-        target_users: {
-          select: { user_id: true },
-        },
+      select: {
+        notice_id: true,
+        tenant_id: true,
+        title: true,
+        content: true,
+        status: true,
+        notice_type: true,
+        publish_time: true,
       },
     });
-
     if (!notice || notice.status !== "1") return;
 
-    const targetUserIds = notice.target_users.map((tu) => tu.user_id);
-    if (targetUserIds.length === 0) return; // 如果没有指定用户，则不发（或按业务规则处理）
-
-    const message = {
-      type: "notice",
-      data: {
-        noticeId: notice.notice_id,
-        title: notice.title,
-        content: notice.content,
-        noticeType: notice.notice_type,
-        publishTime: notice.publish_time,
-      },
-    };
-
-    // 精确推送
-    wsManager.sendToUsers(targetUserIds, message);
-  } catch (error) {
-    console.error("Failed to push notice:", error);
+    await dispatchNotice({
+      tenantId: notice.tenant_id,
+      noticeId: notice.notice_id,
+      title: notice.title,
+      content: notice.content ?? undefined,
+    });
+  } catch (err) {
+    logger.error({ err, noticeId }, "[pusher] pushNotice failed");
   }
 }

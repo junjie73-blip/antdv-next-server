@@ -46,15 +46,15 @@ export class DictDataRepository extends BaseRepository<any, any, any, any> {
     if (query.status !== undefined) {
       finalWhere.status = query.status;
     }
-
+    const scopedWhere = this.mergeDataScope(finalWhere);
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { sort_order: "asc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
 
     return {

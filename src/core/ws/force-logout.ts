@@ -27,7 +27,10 @@ export async function kickUser(
   const { reason = "您已被管理员强制下线", operatorId } = options;
 
   // 1. 清掉该用户所有 session
-  const sessionKeys = await scanAll(`session:${userId}:*`);
+  const sessionKeys = [
+    ...(await scanAll(`access:*:${userId}:*`)),
+    ...(await scanAll(`refresh:*:${userId}:*`)),
+  ];
   if (sessionKeys.length) {
     await redis.del(...sessionKeys);
     logger.info(
@@ -76,28 +79,26 @@ export async function getKickedFlag(
 /** 订阅频道，收到消息后通过 wsManager 推给本进程持有的连接 */
 export async function startForceLogoutSubscriber() {
   try {
-    const subscriber = (await subRedis.subscribe(FORCE_LOGOUT_CHANNEL)) as any;
+    // 1) 订阅（返回值忽略）
+    await subRedis.subscribe(FORCE_LOGOUT_CHANNEL);
 
-    subscriber.on("message", (channel: string, message: any) => {
+    // 2) 监听挂在 subRedis 上
+    subRedis.on("message", (channel: string, message: string) => {
       if (channel !== FORCE_LOGOUT_CHANNEL) return;
       try {
-        const raw =
-          typeof message === "string" ? message : JSON.stringify(message);
-        const data = JSON.parse(raw) as ForceLogoutPayload;
-
+        const data = JSON.parse(message) as ForceLogoutPayload;
         wsManager.sendToUsers([data.userId], {
           type: "force-logout",
           data: { reason: data.reason, at: data.at },
           timestamp: Date.now(),
         });
-
         logger.info({ userId: data.userId }, "[kick] pushed to WS");
       } catch (err) {
         logger.error({ err, message }, "Failed to handle force-logout message");
       }
     });
 
-    subscriber.on("error", (err: any) => {
+    subRedis.on("error", (err) => {
       logger.error({ err }, "Force-logout subscriber error");
     });
 

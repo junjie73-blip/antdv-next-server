@@ -48,7 +48,7 @@ export default class DictTypeController extends BaseController<
     if (dto.dictCode) {
       const exist = await repo.findByDictCode(dto.dictCode, req.tenantId!, id);
       if (exist) {
-        throw new AppError(409, `字典编码 '${dto.dictCode}' 已存在`, 409);
+        throw new AppError(`字典编码 ' ${dto.dictCode}' 已存在`, 409, 409);
       }
     }
     return dto;
@@ -60,7 +60,7 @@ export default class DictTypeController extends BaseController<
       this.repository as DictTypeRepository
     ).findByDictCode(dto.dictCode, tenantId);
     if (existing) {
-      throw new AppError(409, `字典编码 '${dto.dictCode}' 已存在`, 409);
+      throw new AppError(`字典编码 ' ${dto.dictCode}' 已存在`, 409, 409);
     }
     return dto;
   }

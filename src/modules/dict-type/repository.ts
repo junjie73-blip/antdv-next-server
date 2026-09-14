@@ -39,15 +39,16 @@ export class DictTypeRepository extends BaseRepository<any, any, any, any> {
     if (query.status !== undefined) {
       finalWhere.status = query.status;
     }
+    const scopedWhere = this.mergeDataScope(finalWhere);
 
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { created_at: "desc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
 
     return {
@@ -75,7 +76,7 @@ export class DictTypeRepository extends BaseRepository<any, any, any, any> {
       },
     });
     if (count > 0) {
-      throw new AppError(400, "该字典类型下存在字典数据，无法删除", 400);
+      throw new AppError("该字典类型下存在字典数据，无法删除", 400, 400);
     }
     return super.softDelete(id, tenantId, userId);
   }

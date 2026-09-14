@@ -8,9 +8,13 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_dept;
   protected readonly primaryKey = "dept_id";
 
-  async findTree(tenantId: string): Promise<any[]> {
+  async findTree(tenantId: string, options: any = {}): Promise<any[]> {
     const depts = await this.model.findMany({
-      where: { tenant_id: tenantId, is_deleted: 0 },
+      where: {
+        tenant_id: tenantId,
+        is_deleted: 0,
+        ...(options.onlyEnabled ? { status: "1" } : {}),
+      },
       orderBy: { sort_order: "asc" },
     });
     return this.buildTree(depts, null);
@@ -31,14 +35,15 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
     if (query.parentId) {
       finalWhere.parent_id = query.parentId;
     }
+    const scopedWhere = this.mergeDataScope(finalWhere);
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { sort_order: "asc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
     return {
       list,
@@ -58,14 +63,14 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
     const children = await this.model.count({
       where: { parent_id: id, tenant_id: tenantId, is_deleted: 0 },
     });
-    if (children > 0) throw new AppError(400, "存在子部门，无法删除", 400);
+    if (children > 0) throw new AppError("存在子部门，无法删除", 400, 400);
 
     // 检查关联用户
     const userCount = await prisma.sys_user_dept.count({
       where: { dept_id: id, tenant_id: tenantId },
     });
     if (userCount > 0)
-      throw new AppError(400, "该部门下存在用户，无法删除", 400);
+      throw new AppError("该部门下存在用户，无法删除", 400, 400);
 
     return super.softDelete(id, tenantId, userId);
   }
@@ -110,6 +115,14 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
       });
   }
   async updateDeptUsers(deptId: string, userIds: string[], tenantId: string) {
+    if (userIds.length > 0) {
+      const validCount = await prisma.sys_user.count({
+        where: { user_id: { in: userIds }, tenant_id: tenantId, is_deleted: 0 },
+      });
+      if (validCount !== userIds.length) {
+        throw new AppError("存在无效的用户ID", 400, 400);
+      }
+    }
     await prisma.$transaction([
       prisma.sys_user_dept.deleteMany({
         where: { dept_id: deptId, tenant_id: tenantId },
@@ -128,7 +141,6 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
   async findDeptUsers(deptId: string, tenantId: string) {
     const users = await prisma.sys_user_dept.findMany({
       where: { dept_id: deptId, tenant_id: tenantId },
-      //   @ts-ignore
       include: {
         user: {
           select: { user_id: true, username: true, real_name: true },

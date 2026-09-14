@@ -13,16 +13,17 @@ import Controller_10 from './job/controller.js';
 import Controller_11 from './login-log/controller.js';
 import Controller_12 from './menu/controller.js';
 import Controller_13 from './mfa/controller.js';
-import Controller_14 from './notice/controller.js';
-import Controller_15 from './online/controller.js';
-import Controller_16 from './permission/controller.js';
-import Controller_17 from './role/controller.js';
-import Controller_18 from './server/controller.js';
-import Controller_19 from './tenant/controller.js';
-import Controller_20 from './todo/controller.js';
-import Controller_21 from './upload/controller.js';
-import Controller_22 from './user/controller.js';
-import Controller_23 from './workbench/controller.js';
+import Controller_14 from './notice/channel.controller.js';
+import Controller_15 from './notice/controller.js';
+import Controller_16 from './online/controller.js';
+import Controller_17 from './permission/controller.js';
+import Controller_18 from './role/controller.js';
+import Controller_19 from './server/controller.js';
+import Controller_20 from './tenant/controller.js';
+import Controller_21 from './todo/controller.js';
+import Controller_22 from './upload/controller.js';
+import Controller_23 from './user/controller.js';
+import Controller_24 from './workbench/controller.js';
 
 export const controllers = [
   Controller_0,
@@ -49,4 +50,5 @@ export const controllers = [
   Controller_21,
   Controller_22,
   Controller_23,
+  Controller_24,
 ];

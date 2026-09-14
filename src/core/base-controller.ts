@@ -150,11 +150,10 @@ export abstract class BaseController<
   async list(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const tenantId = req?.tenantId;
-
+      this.repository.setDataScope((req as any).dataScopeWhere ?? {});
       // 解析并验证查询参数
       let query = this.parseQueryParams(req.query) as QueryDto;
       query.tenantId = tenantId!;
-      console.log(query, "query");
       // 执行查询前钩子
       query = await this.beforeList(query, req);
 
@@ -186,12 +185,12 @@ export abstract class BaseController<
     try {
       const { id } = req.params;
       const tenantId = req.tenantId!;
-
+      this.repository.setDataScope((req as any).dataScopeWhere ?? {});
       await this.beforeDetail(id, req);
 
       const data = await this.repository.findById(id, tenantId);
       if (!data) {
-        throw new AppError(404, "记录不存在", 404);
+        throw new AppError("记录不存在", 404, 404);
       }
 
       const transformedData = await this.afterDetail(data, req);
@@ -269,7 +268,7 @@ export abstract class BaseController<
       // 执行删除前钩子
       const canDelete = await this.beforeDelete(id, req);
       if (!canDelete) {
-        throw new AppError(400, "不满足删除条件", 400);
+        throw new AppError("不满足删除条件", 400, 400);
       }
 
       // 执行软删除
@@ -294,7 +293,7 @@ export abstract class BaseController<
       const userId = req.user?.userId;
 
       if (!Array.isArray(ids) || ids.length === 0) {
-        throw new AppError(400, "请选择要删除的记录", 400);
+        throw new AppError("请选择要删除的记录", 400, 400);
       }
 
       const result = await this.repository.softDeleteMany(

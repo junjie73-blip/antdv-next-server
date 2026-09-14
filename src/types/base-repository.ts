@@ -1,4 +1,4 @@
-import { Prisma } from "@/generated/prisma/index.js";
+import { Prisma } from "@prisma/client/extension";
 
 /**
  * 软删除标志常量
@@ -97,4 +97,22 @@ export interface QueryOptions {
   take?: number;
   orderBy?: Record<string, SortDirection>;
   include?: Record<string, boolean>;
+}
+
+export interface PageBuildContext {
+  /** 已合并的 where（业务条件 + 租户 + 软删除 + 数据权限） */
+  finalWhere: Record<string, any>;
+  /** 原始 query（含 pageNum / pageSize / keyword / 各业务字段） */
+  query: BaseQuery & Record<string, any>;
+}
+
+export interface PageOptions {
+  /** 默认排序，不传则按 createdAtField desc */
+  defaultOrderBy?: Record<string, "asc" | "desc">;
+  /** 覆盖默认 include */
+  include?: Record<string, any>;
+  /** 子类自定义 where 增强（keyword、时间范围等） */
+  extendWhere?: (ctx: PageBuildContext) => Record<string, any>;
+  /** 子类自定义 select */
+  select?: Record<string, boolean>;
 }

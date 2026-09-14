@@ -1,14 +1,12 @@
-import { PrismaClient } from "@/generated/prisma/client.js";
-import ws from "ws";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@/generated/prisma/client.js";
+import { logger } from "@/core/logger/logger.js";
+
 const globalForPrisma = global as unknown as {
   prisma: PrismaClient | undefined;
 };
 function createPrismaClient() {
-  // 判断是否为生产环境（或自定义 USE_NEON 变量）
-  const isProduction = process.env.NODE_ENV === "production";
   const connectionString = process.env.DATABASE_URL;
-  console.log("NODE_ENV:", isProduction);
 
   const adapter = new PrismaPg({ connectionString });
   // 本地开发：使用标准 Prisma Client（依赖 pg）
@@ -36,8 +34,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 prisma.$on("query", (e) => {
-  console.log(
-    `Query: ${e.query} | Params: ${e.params} | Duration: ${e.duration}ms`,
-  );
+  if (process.env.NODE_ENV !== "production") {
+    logger.debug({ duration: e.duration, query: e.query }, "prisma query");
+  }
 });
 export { prisma };

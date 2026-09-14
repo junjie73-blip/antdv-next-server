@@ -27,6 +27,9 @@ import { env } from "./config/env.js";
 import { loadJobs } from "./modules/job/scheduler.js";
 import { ipRuleMiddleware } from "./middleware/ip-rule.js";
 import { startForceLogoutSubscriber } from "./core/ws/force-logout.js";
+import { dataScopeMiddleware } from "./middleware/data-scope.js";
+import { tenantResolver } from "./middleware/tenant-resolver.js";
+import { drainAuditQueue } from "./core/audit/queue.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -58,12 +61,14 @@ app.use(auditMiddleware);
 app.use(globalRateLimit);
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(bodyParser.json({ limit: "10mb" }));
-app.use(authMiddleware);
-app.use(ipRuleMiddleware);
-app.use(timingMiddleware);
 // Swagger UI
 app.use("/api", swaggerRouter);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use(authMiddleware);
+app.use(ipRuleMiddleware);
+app.use(timingMiddleware);
+app.use(tenantResolver);
+app.use(dataScopeMiddleware());
 // Decorator-based routes
 const scanner = new ControllerScanner();
 scanner.register(...controllers);
@@ -109,6 +114,11 @@ app.use(notFoundHandler);
 // Error handler
 app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
+async function shutdown(signal: string) {
+  console.log(`[shutdown] ${signal}`);
+  await drainAuditQueue();
+  process.exit(0);
+}
 const server = _server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📚 API Docs: http://localhost:${PORT}/docs`);
@@ -116,9 +126,10 @@ const server = _server.listen(PORT, () => {
 
 // 优雅关闭
 process.on("SIGTERM", () => {
+  shutdown("SIGTERM");
   _server.close(() => process.exit(0));
 });
-console.log("NODE_ENV:", process.env.NODE_ENV);
+process.on("SIGINT", () => shutdown("SIGINT"));
 const handler =
   process.env.NODE_ENV !== "production"
     ? app

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "./error-handler.js";
 import { prisma } from "@/config/database.js";
+import { isWhitelisted } from "./auth.js";
 
 /**
  * 租户解析中间件
@@ -13,14 +14,16 @@ export async function tenantResolver(
 ): Promise<void> {
   try {
     let tenantId = req.headers["x-tenant-id"] as string;
-
+    if (isWhitelisted(req.path)) {
+      return next();
+    }
     // 如果请求头中没有，尝试从已认证用户信息中获取
     if (!tenantId && req.user) {
       tenantId = req.user.tenantId;
     }
 
     if (!tenantId) {
-      next(new AppError(400, "缺少租户标识", 400));
+      next(new AppError("缺少租户标识", 400, 400));
       return;
     }
 
@@ -34,13 +37,13 @@ export async function tenantResolver(
     });
 
     if (!tenant) {
-      next(new AppError(403, "租户不存在或已禁用", 403));
+      next(new AppError("租户不存在或已禁用", 403, 403));
       return;
     }
 
     // 检查租户是否过期
     if (tenant.expire_time && new Date(tenant.expire_time) < new Date()) {
-      next(new AppError(403, "租户已过期", 403));
+      next(new AppError("租户已过期", 403, 403));
       return;
     }
 

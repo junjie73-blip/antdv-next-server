@@ -74,7 +74,9 @@ export const ModelName = {
   sys_job: 'sys_job',
   sys_job_log: 'sys_job_log',
   sys_todo: 'sys_todo',
-  sys_ip_rule: 'sys_ip_rule'
+  sys_ip_rule: 'sys_ip_rule',
+  sys_notice_channel: 'sys_notice_channel',
+  sys_notice_send_log: 'sys_notice_send_log'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -490,6 +492,37 @@ export const Sys_ip_ruleScalarFieldEnum = {
 } as const
 
 export type Sys_ip_ruleScalarFieldEnum = (typeof Sys_ip_ruleScalarFieldEnum)[keyof typeof Sys_ip_ruleScalarFieldEnum]
+
+
+export const Sys_notice_channelScalarFieldEnum = {
+  channel_id: 'channel_id',
+  tenant_id: 'tenant_id',
+  channel_type: 'channel_type',
+  enabled: 'enabled',
+  config: 'config',
+  remark: 'remark',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_notice_channelScalarFieldEnum = (typeof Sys_notice_channelScalarFieldEnum)[keyof typeof Sys_notice_channelScalarFieldEnum]
+
+
+export const Sys_notice_send_logScalarFieldEnum = {
+  log_id: 'log_id',
+  tenant_id: 'tenant_id',
+  notice_id: 'notice_id',
+  channel_type: 'channel_type',
+  receiver: 'receiver',
+  status: 'status',
+  error_msg: 'error_msg',
+  created_at: 'created_at'
+} as const
+
+export type Sys_notice_send_logScalarFieldEnum = (typeof Sys_notice_send_logScalarFieldEnum)[keyof typeof Sys_notice_send_logScalarFieldEnum]
 
 
 export const SortOrder = {

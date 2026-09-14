@@ -1,16 +1,16 @@
 import { BaseRepository } from "@/core/base-repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
-import { AppError } from "@/middleware/error-handler.js";
-import XLSX from "xlsx";
+import { AppError } from "@/core/errors.js";
+import * as XLSX from "xlsx";
+
 export class RoleRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_role;
   protected readonly primaryKey = "role_id";
 
-  /**
-   * 分页查询角色
-   */
+  // ============================================================
+  // 分页
+  // ============================================================
   async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
     const pageNum = Math.max(1, query.pageNum || 1);
     const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
@@ -32,14 +32,17 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
       finalWhere.status = query.status;
     }
 
+    // 数据权限合并
+    const scopedWhere = this.mergeDataScope(finalWhere);
+
     const [list, total] = await Promise.all([
       this.model.findMany({
-        where: finalWhere,
+        where: scopedWhere,
         skip,
         take: pageSize,
         orderBy: { sort_order: "asc" },
       }),
-      this.model.count({ where: finalWhere }),
+      this.model.count({ where: scopedWhere }),
     ]);
 
     return {
@@ -51,9 +54,9 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
     };
   }
 
-  /**
-   * 获取角色详情（含关联的菜单ID、权限ID）
-   */
+  // ============================================================
+  // 详情（含菜单 / 权限 ID）
+  // ============================================================
   async findRoleDetail(roleId: string, tenantId: string) {
     return this.model.findFirst({
       where: { role_id: roleId, tenant_id: tenantId, is_deleted: 0 },
@@ -64,9 +67,9 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
     });
   }
 
-  /**
-   * 检查角色编码唯一性（供 beforeCreate/beforeUpdate 调用）
-   */
+  // ============================================================
+  // 唯一性检查
+  // ============================================================
   async findByRoleCode(code: string, tenantId: string, excludeId?: string) {
     const where: any = {
       tenant_id: tenantId,
@@ -77,69 +80,119 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
     return this.model.findFirst({ where });
   }
 
-  /**
-   * 更新角色关联的菜单
-   */
+  // ============================================================
+  // 关联更新（含 ID 归属校验）
+  // ============================================================
+
+  private async assertRoleExists(roleId: string, tenantId: string) {
+    const role = await this.model.findFirst({
+      where: { role_id: roleId, tenant_id: tenantId, is_deleted: 0 },
+      select: { role_id: true },
+    });
+    if (!role) throw new AppError("角色不存在", 404001, 404);
+  }
+
+  /** 校验一批 ID 是否全部属于本租户（用于 menu/perm/user） */
+  private async assertOwnership(
+    table: "sys_menu" | "sys_permission" | "sys_user" | "sys_dept",
+    idField: "menu_id" | "perm_id" | "user_id" | "dept_id",
+    ids: string[],
+    tenantId: string,
+  ) {
+    if (ids.length === 0) return;
+    // 用唯一性去重后再比对数量
+    const uniqueIds = [...new Set(ids)];
+    const rows = await (prisma as any)[table].findMany({
+      where: {
+        [idField]: { in: uniqueIds },
+        tenant_id: tenantId,
+        is_deleted: 0,
+      },
+      select: { [idField]: true },
+    });
+    if (rows.length !== uniqueIds.length) {
+      throw new AppError(`存在无效的 ${idField}`, 400001, 400);
+    }
+  }
+
   async updateRoleMenus(roleId: string, menuIds: string[], tenantId: string) {
+    await this.assertRoleExists(roleId, tenantId);
+    await this.assertOwnership("sys_menu", "menu_id", menuIds, tenantId);
+
     await prisma.$transaction([
       prisma.sys_role_menu.deleteMany({
         where: { role_id: roleId, tenant_id: tenantId },
       }),
-      prisma.sys_role_menu.createMany({
-        data: menuIds.map((menuId) => ({
-          role_id: roleId,
-          menu_id: menuId,
-          tenant_id: tenantId,
-        })),
-      }),
+      ...(menuIds.length > 0
+        ? [
+            prisma.sys_role_menu.createMany({
+              data: menuIds.map((menuId) => ({
+                role_id: roleId,
+                menu_id: menuId,
+                tenant_id: tenantId,
+              })),
+              skipDuplicates: true,
+            }),
+          ]
+        : []),
     ]);
   }
 
-  /**
-   * 更新角色关联的权限
-   */
   async updateRolePermissions(
     roleId: string,
     permIds: string[],
     tenantId: string,
   ) {
+    await this.assertRoleExists(roleId, tenantId);
+    await this.assertOwnership("sys_permission", "perm_id", permIds, tenantId);
+
     await prisma.$transaction([
       prisma.sys_role_permission.deleteMany({
         where: { role_id: roleId, tenant_id: tenantId },
       }),
-      prisma.sys_role_permission.createMany({
-        data: permIds.map((permId) => ({
-          role_id: roleId,
-          perm_id: permId,
-          tenant_id: tenantId,
-        })),
-      }),
+      ...(permIds.length > 0
+        ? [
+            prisma.sys_role_permission.createMany({
+              data: permIds.map((permId) => ({
+                role_id: roleId,
+                perm_id: permId,
+                tenant_id: tenantId,
+              })),
+              skipDuplicates: true,
+            }),
+          ]
+        : []),
     ]);
   }
 
-  /**
-   * 更新角色关联的用户
-   */
   async updateRoleUsers(roleId: string, userIds: string[], tenantId: string) {
+    await this.assertRoleExists(roleId, tenantId);
+    await this.assertOwnership("sys_user", "user_id", userIds, tenantId);
+
     await prisma.$transaction([
       prisma.sys_user_role.deleteMany({
         where: { role_id: roleId, tenant_id: tenantId },
       }),
-      prisma.sys_user_role.createMany({
-        data: userIds.map((userId) => ({
-          user_id: userId,
-          role_id: roleId,
-          tenant_id: tenantId,
-        })),
-      }),
+      ...(userIds.length > 0
+        ? [
+            prisma.sys_user_role.createMany({
+              data: userIds.map((userId) => ({
+                user_id: userId,
+                role_id: roleId,
+                tenant_id: tenantId,
+              })),
+              skipDuplicates: true,
+            }),
+          ]
+        : []),
     ]);
   }
 
-  /**
-   * 获取角色关联的用户列表
-   */
+  // ============================================================
+  // 查询关联
+  // ============================================================
   async findRoleUsers(roleId: string, tenantId: string) {
-    const users = await prisma.sys_user_role.findMany({
+    const rows = await prisma.sys_user_role.findMany({
       where: { role_id: roleId, tenant_id: tenantId },
       include: {
         user: {
@@ -147,8 +200,18 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
         },
       },
     });
-    return users.map((u) => u.user);
+    return rows.map((r) => r.user).filter(Boolean);
   }
+
+  /** 角色已关联的菜单 ID 列表（唯一实现） */
+  async findRoleMenuIds(roleId: string, tenantId: string): Promise<string[]> {
+    const rows = await prisma.sys_role_menu.findMany({
+      where: { role_id: roleId, tenant_id: tenantId },
+      select: { menu_id: true },
+    });
+    return rows.map((r) => r.menu_id);
+  }
+
   async findAllMenus(tenantId: string) {
     return prisma.sys_menu.findMany({
       where: { tenant_id: tenantId, is_deleted: 0 },
@@ -156,13 +219,9 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
     });
   }
 
-  async getRoleMenuIds(roleId: string, tenantId: string) {
-    const roleMenus = await prisma.sys_role_menu.findMany({
-      where: { role_id: roleId, tenant_id: tenantId },
-      select: { menu_id: true },
-    });
-    return roleMenus.map((rm) => rm.menu_id);
-  }
+  // ============================================================
+  // 导出
+  // ============================================================
   async exportRoles(where: any, tenantId: string): Promise<Buffer> {
     const finalWhere = { ...where, tenant_id: tenantId, is_deleted: 0 };
     const roles = await this.model.findMany({
@@ -175,22 +234,29 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
       角色名称: r.role_name,
       描述: r.description || "",
       排序: r.sort_order,
-      状态: r.status === 1 ? "启用" : "禁用",
+      状态: r.status === "1" ? "启用" : "禁用",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "角色数据");
-    return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+    return XLSX.write(workbook, {
+      type: "buffer",
+      bookType: "xlsx",
+    }) as Buffer;
   }
+
+  // ============================================================
+  // 导入
+  // ============================================================
   async importRolesFromExcel(
     fileBuffer: Buffer,
     tenantId: string,
     userId?: string,
   ) {
-    // 解析 Excel
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
+    if (!sheetName) throw new AppError("Excel 文件为空", 400001, 400);
     const sheet = workbook.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" }) as any[];
 
@@ -205,11 +271,10 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
         const roleName = String(row["角色名称"] || "").trim();
         const description = String(row["描述"] || "").trim() || undefined;
         const sortOrder = Number(row["排序"] || 0);
-        const status = row["状态"] === "禁用" ? 0 : 1;
+        const status = row["状态"] === "禁用" ? "0" : "1";
 
         if (!roleCode || !roleName) throw new Error("角色编码和名称不能为空");
 
-        // 检查唯一性
         const exist = await this.findByRoleCode(roleCode, tenantId);
         if (exist) throw new Error(`角色编码 '${roleCode}' 已存在`);
 
@@ -243,11 +308,40 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
 
     return { successCount, failCount: errors.length, errors };
   }
-  async findRoleMenuIds(roleId: string, tenantId: string): Promise<string[]> {
-    const roleMenus = await prisma.sys_role_menu.findMany({
+  /**
+   * 更新角色的数据权限部门
+   * 注意：只改 sys_role_dept 关联，不改 data_scope。
+   *       data_scope 由 RoleController.update 通过 dataScope 字段处理。
+   */
+  async updateRoleDepts(roleId: string, deptIds: string[], tenantId: string) {
+    await this.assertRoleExists(roleId, tenantId);
+    await this.assertOwnership("sys_dept", "dept_id", deptIds, tenantId);
+
+    await prisma.$transaction([
+      prisma.sys_role_dept.deleteMany({
+        where: { role_id: roleId, tenant_id: tenantId },
+      }),
+      ...(deptIds.length > 0
+        ? [
+            prisma.sys_role_dept.createMany({
+              data: deptIds.map((deptId) => ({
+                role_id: roleId,
+                dept_id: deptId,
+                tenant_id: tenantId,
+              })),
+              skipDuplicates: true,
+            }),
+          ]
+        : []),
+    ]);
+  }
+
+  /** 角色已关联的数据权限部门 ID 列表 */
+  async findRoleDeptIds(roleId: string, tenantId: string): Promise<string[]> {
+    const rows = await prisma.sys_role_dept.findMany({
       where: { role_id: roleId, tenant_id: tenantId },
-      select: { menu_id: true },
+      select: { dept_id: true },
     });
-    return roleMenus.map((rm) => rm.menu_id);
+    return rows.map((r) => r.dept_id);
   }
 }

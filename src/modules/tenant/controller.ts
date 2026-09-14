@@ -74,7 +74,7 @@ export default class TenantController extends BaseController<
       _req.tenantId!,
     );
     if (bool) {
-      throw new AppError(409, `租户编码 '${dto.tenantCode}' 已存在`, 409);
+      throw new AppError(`租户编码 '${dto.tenantCode}' 已存在`, 409, 409);
     }
     if (dto.expireTime !== undefined) {
       dto.expireTime = dto.expireTime ? new Date(dto.expireTime) : null;
@@ -92,7 +92,7 @@ export default class TenantController extends BaseController<
         id,
       );
       if (exist) {
-        throw new AppError(409, `租户编码 '${dto.tenantCode}' 已存在`, 409);
+        throw new AppError(`租户编码 '${dto.tenantCode}' 已存在`, 409, 409);
       }
     }
     return dto;

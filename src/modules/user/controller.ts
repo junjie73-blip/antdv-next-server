@@ -61,7 +61,7 @@ export default class UserController extends BaseController<any, any, any, any> {
         id,
       );
       if (exist) {
-        throw new AppError(409, `用户名 '${dto.username}' 已存在`, 409);
+        throw new AppError(`用户名 '${dto.username}' 已存在`, 409, 409);
       }
     }
     return dto;
@@ -91,7 +91,7 @@ export default class UserController extends BaseController<any, any, any, any> {
       this.repository as UserRepository
     ).findUserByUsername(dto.username, tenantId);
     if (existing) {
-      throw new AppError(409, `用户名 '${dto.username}' 已存在`, 409);
+      throw new AppError(`用户名 '${dto.username}' 已存在`, 409, 409);
     }
 
     return dto;
@@ -184,11 +184,11 @@ export default class UserController extends BaseController<any, any, any, any> {
       if (err) {
         return this.handleError(
           res,
-          new AppError(400, "文件上传失败：仅支持 .xlsx 且 ≤5MB", 400),
+          new AppError("文件上传失败：仅支持 .xlsx 且 ≤5MB", 400, 400),
         );
       }
       try {
-        if (!req.file) throw new AppError(400, "请上传Excel文件", 400);
+        if (!req.file) throw new AppError("请上传Excel文件", 400, 400);
         const result = await (
           this.repository as UserRepository
         ).importUsersFromExcel(

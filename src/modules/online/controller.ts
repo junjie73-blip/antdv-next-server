@@ -35,7 +35,7 @@ export default class OnlineController {
     const operatorId = req.user!.userId;
 
     if (userId === operatorId) {
-      throw new AppError(400, "不能踢自己下线", 400);
+      throw new AppError("不能踢自己下线", 400, 400);
     }
 
     await kickUser(userId, {

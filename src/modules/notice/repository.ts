@@ -17,7 +17,9 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
     const { target_user_ids: targetUserIds, publishTime, ...noticeData } = data;
     const publishTimeDate = publishTime ? new Date(publishTime) : null;
     const status =
-      publishTimeDate && publishTimeDate > new Date() ? "0" : data.status;
+      publishTimeDate && publishTimeDate > new Date()
+        ? "0"
+        : String(data.status ?? "1");
 
     return prisma.$transaction(async (tx) => {
       const notice = await tx.sys_notice.create({

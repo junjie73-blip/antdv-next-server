@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 extendZodWithOpenApi(z);
+/**
++ * 数据范围枚举
++ */
+export const RoleDataScopeEnum = z.enum(["1", "2", "3", "4", "5"]).openapi({
+  description: "数据范围：1-全部 2-自定义 3-本部门 4-本部门及以下 5-仅本人",
+});
 
 export const RoleCreateSchema = z
   .object({
@@ -19,6 +25,9 @@ export const RoleCreateSchema = z
       .max(1)
       .default(1)
       .openapi({ description: "状态：0-禁用，1-启用" }),
+    dataScope: RoleDataScopeEnum.default("1").openapi({
+      description: "数据范围：1-全部 2-自定义 3-本部门 4-本部门及以下 5-仅本人",
+    }),
   })
   .openapi("RoleCreate");
 
@@ -66,3 +75,8 @@ export const RoleAssignUsersSchema = z
     userIds: z.array(z.string().uuid()).openapi({ description: "用户ID数组" }),
   })
   .openapi("RoleAssignUsers");
+export const RoleAssignDeptsSchema = z
+  .object({
+    deptIds: z.array(z.string().uuid()).openapi({ description: "部门ID数组" }),
+  })
+  .openapi("RoleAssignDepts");

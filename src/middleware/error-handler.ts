@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { logger } from "@core/logger/index.js";
-
+import { AppError } from "@/core/errors.js";
 export function errorHandler(
   err: Error,
   _req: Request,
@@ -47,13 +47,4 @@ export function notFoundHandler(req: Request, res: Response): void {
   });
 }
 
-export class AppError extends Error {
-  constructor(
-    public code: number,
-    message: string,
-    public statusCode: number = 500,
-  ) {
-    super(message);
-    this.name = "AppError";
-  }
-}
+export { AppError } from "@/core/errors.js";

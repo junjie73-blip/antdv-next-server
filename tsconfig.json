@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target":  "ESNext",
     "paths": {
       "@/*": ["./src/*"],
       "@config/*": ["./src/config/*"],
@@ -21,7 +21,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "noEmitOnError": false
+    "noEmitOnError": false,
+    "noImplicitAny": false
   },
   "include": ["./src/**/*", "./src/config"],
   "exclude": ["node_modules", "dist"]

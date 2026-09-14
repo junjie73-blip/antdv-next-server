@@ -11,7 +11,7 @@ export class TodoRepository extends BaseRepository<any, any, any, any> {
     const todo = await this.model.findFirst({
       where: { todo_id: id, tenant_id: tenantId, is_deleted: 0 },
     });
-    if (!todo) throw new AppError(404, "待办不存在", 404);
+    if (!todo) throw new AppError("待办不存在", 404, 404);
     return this.model.update({ where: { todo_id: id }, data: { status: "1" } });
   }
 
