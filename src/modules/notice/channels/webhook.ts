@@ -7,6 +7,8 @@ export const webhookChannel: NoticeChannel = {
   async send(ctx: SendContext): Promise<SendResult> {
     const errors: SendResult["errors"] = [];
     let success = 0;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10_000);
     for (const url of ctx.receivers) {
       try {
         const res = await fetch(url, {
@@ -17,11 +19,14 @@ export const webhookChannel: NoticeChannel = {
             content: ctx.content,
             noticeId: ctx.noticeId,
           }),
+          signal: controller.signal,
         });
         if (res.ok) success++;
         else errors.push({ receiver: url, reason: `HTTP ${res.status}` });
       } catch (e: any) {
         errors.push({ receiver: url, reason: String(e?.message ?? e) });
+      } finally {
+        clearTimeout(timer);
       }
     }
     return {

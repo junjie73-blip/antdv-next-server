@@ -2,6 +2,7 @@ import cron from "node-cron";
 import { prisma } from "@/config/database.js";
 import { logger } from "@/core/logger/index.js";
 import { pushNotice } from "./pusher.js";
+import { withLock } from "@/core/scheduler/lock.js";
 
 /**
  * 定时检查并发布到期通知
@@ -10,35 +11,32 @@ import { pushNotice } from "./pusher.js";
 export function startNoticeScheduler() {
   // 每 30 秒检查一次（可根据需要调整）
   cron.schedule("*/30 * * * * *", async () => {
-    try {
-      const now = new Date();
+    const result = await withLock("job:lock:notice-publish", 25, async () => {
       const dueNotices = await prisma.sys_notice.findMany({
         where: {
-          status: "0", // 草稿
+          status: "0",
           is_deleted: 0,
-          publish_time: { lte: now },
+          publish_time: { lte: new Date() },
         },
         select: { notice_id: true, tenant_id: true },
       });
+      if (dueNotices.length === 0) return 0;
 
-      if (dueNotices.length === 0) return;
-
-      // 批量更新为已发布
       const ids = dueNotices.map((n) => n.notice_id);
       await prisma.sys_notice.updateMany({
         where: { notice_id: { in: ids } },
         data: { status: "1" },
       });
 
-      // 推送 WebSocket 通知
-      dueNotices.forEach((n) => pushNotice(n.notice_id));
-      // 此处可以触发实际发送逻辑（WebSocket推送、邮件等）
-      logger.info(
-        { noticeIds: ids },
-        `Published ${ids.length} scheduled notices`,
+      await Promise.all(
+        dueNotices.map((n) => pushNotice(n.notice_id, n.tenant_id)),
       );
-    } catch (error) {
-      logger.error({ error }, "Error in notice scheduler");
+
+      return ids.length;
+    });
+
+    if (result !== null) {
+      logger.info({ count: result }, "Published scheduled notices");
     }
   });
 }

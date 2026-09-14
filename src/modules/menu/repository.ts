@@ -122,7 +122,7 @@ export class MenuRepository extends BaseRepository<any, any, any, any> {
     const where: any = {
       tenant_id: tenantId,
       menu_name: name,
-      parent_id: parentId,
+      parent_id: parentId ?? null, // ← 显式 null
       is_deleted: 0,
     };
     if (excludeId) {

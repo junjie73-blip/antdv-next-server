@@ -208,7 +208,7 @@ export default class NoticeController extends BaseController<
       }
 
       // 调用推送逻辑
-      await pushNotice(noticeId);
+      await pushNotice(noticeId, tenantId);
       success(res, null, "发送成功");
     } catch (err) {
       this.handleError(res, err);
@@ -219,6 +219,9 @@ export default class NoticeController extends BaseController<
   @ApiResponse(200, "操作成功")
   async markAllRead(@Req() req: Request, @Res() res: Response) {
     const { noticeIds } = req.body;
+    if (!Array.isArray(noticeIds) || noticeIds.length === 0) {
+      return success(res, null, "无需标记");
+    }
     await prisma.sys_notice_user.updateMany({
       where: {
         notice_id: { in: noticeIds },

@@ -224,8 +224,9 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
   // ============================================================
   async exportRoles(where: any, tenantId: string): Promise<Buffer> {
     const finalWhere = { ...where, tenant_id: tenantId, is_deleted: 0 };
+    const scopedWhere = this.mergeDataScope(finalWhere);
     const roles = await this.model.findMany({
-      where: finalWhere,
+      where: scopedWhere,
       orderBy: { sort_order: "asc" },
     });
 

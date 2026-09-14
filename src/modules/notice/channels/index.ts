@@ -38,12 +38,20 @@ export async function dispatchNotice(
     where: { tenant_id: tenantId, enabled: 1, is_deleted: 0 },
   });
 
-  const selected = input.channels
-    ? enabled.filter((c) => input.channels!.includes(c.channel_type))
-    : enabled;
-
+  const selected = [
+    // 站内信强制加入（除非被显式禁用）
+    { channel_type: "in_app", config: null } as any,
+    ...(input.channels
+      ? enabled.filter((c) => input.channels!.includes(c.channel_type))
+      : enabled.filter((c) => c.channel_type !== "in_app")),
+  ];
   if (selected.length === 0) return [];
-
+  const seen = new Set<string>();
+  const deduped = selected.filter((c) => {
+    if (seen.has(c.channel_type)) return false;
+    seen.add(c.channel_type);
+    return true;
+  });
   // 2) 若未指定各渠道收件人，从 notice 目标用户推导
   let fallbackReceivers: Record<string, string[]> = {};
   if (!input.receiversByChannel && noticeId) {
@@ -65,7 +73,7 @@ export async function dispatchNotice(
   }
 
   const results: SendResult[] = [];
-  for (const ch of selected) {
+  for (const ch of deduped) {
     const impl = getChannel(ch.channel_type);
     if (!impl) {
       logger.warn({ type: ch.channel_type }, "[notice] channel not registered");
@@ -96,27 +104,31 @@ export async function dispatchNotice(
 
     // 写发送日志
     try {
-      await prisma.sys_notice_send_log.createMany({
-        data:
-          result.errors.length > 0
-            ? result.errors.map((e) => ({
-                tenant_id: tenantId,
-                notice_id: noticeId ?? null,
-                channel_type: ch.channel_type,
-                receiver: e.receiver,
-                status: "0",
-                error_msg: e.reason,
-              }))
-            : [
-                {
-                  tenant_id: tenantId,
-                  notice_id: noticeId ?? null,
-                  channel_type: ch.channel_type,
-                  receiver: "*",
-                  status: "1",
-                },
-              ],
-      });
+      const logs: any[] = [];
+      if (result.errors.length > 0) {
+        result.errors.forEach((e) => {
+          logs.push({
+            tenant_id: tenantId,
+            notice_id: noticeId ?? null,
+            channel_type: ch.channel_type,
+            receiver: e.receiver,
+            status: "0",
+            error_msg: e.reason,
+          });
+        });
+      }
+      if (result.success > 0) {
+        logs.push({
+          tenant_id: tenantId,
+          notice_id: noticeId ?? null,
+          channel_type: ch.channel_type,
+          receiver: "*",
+          status: "1",
+        });
+      }
+      if (logs.length > 0) {
+        await prisma.sys_notice_send_log.createMany({ data: logs });
+      }
     } catch (err) {
       logger.error({ err }, "[notice] write send-log failed");
     }

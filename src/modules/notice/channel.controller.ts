@@ -40,6 +40,7 @@ export default class NoticeChannelController {
   async upsert(@Req() req: Request, @Res() res: Response) {
     const dto = ChannelUpsertSchema.parse(req.body);
     const tenantId = req.tenantId!;
+    if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
     const existing = await prisma.sys_notice_channel.findFirst({
       where: { tenant_id: tenantId, channel_type: dto.channelType },
     });
@@ -50,27 +51,31 @@ export default class NoticeChannelController {
       updated_by: req.user?.userId,
       updated_at: new Date(),
     };
-    if (existing) {
-      await prisma.sys_notice_channel.update({
-        where: { channel_id: existing.channel_id },
-        data,
-      });
-    } else {
-      await prisma.sys_notice_channel.create({
-        data: {
+    await prisma.sys_notice_channel.upsert({
+      where: {
+        tenant_id_channel_type: {
           tenant_id: tenantId,
           channel_type: dto.channelType,
-          created_by: req.user?.userId,
-          ...data,
         },
-      });
-    }
+      },
+      update: data,
+      create: {
+        tenant_id: tenantId,
+        channel_type: dto.channelType,
+        created_by: req.user?.userId,
+        ...data,
+      },
+    });
     success(res, null, "保存成功");
   }
 
   @Delete("/:type")
   @ApiOperation("删除渠道配置")
   async remove(@Req() req: Request, @Res() res: Response) {
+    const allowed = ["in_app", "email", "sms", "webhook"];
+    if (!allowed.includes(req.params.type)) {
+      throw new AppError("无效的渠道类型", 400001, 400);
+    }
     await prisma.sys_notice_channel.updateMany({
       where: {
         tenant_id: req.tenantId!,

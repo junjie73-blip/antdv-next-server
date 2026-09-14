@@ -83,7 +83,53 @@ export default class RoleController extends BaseController<any, any, any, any> {
     }
     return where;
   }
-
+  @Get("/export")
+  @ApiOperation("导出角色", "根据筛选条件导出角色为Excel")
+  @ApiQuery(RoleListSchema)
+  @ApiResponse(200, "Excel文件")
+  async export(@Req() req: Request, @Res() res: Response) {
+    try {
+      const where = this.buildListWhere(req.query);
+      const buffer = await (this.repository as RoleRepository).exportRoles(
+        where,
+        req.tenantId!,
+      );
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=roles_${Date.now()}.xlsx`,
+      );
+      res.send(buffer);
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+  @Post("/import")
+  @ApiOperation("导入角色", "上传Excel批量导入角色")
+  @ApiResponse(200, "导入结果")
+  async import(@Req() req: Request, @Res() res: Response) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError("文件上传失败", 400, 400));
+      if (!req.file)
+        return this.handleError(res, new AppError("请上传Excel文件", 400, 400));
+      try {
+        const result = await (
+          this.repository as RoleRepository
+        ).importRolesFromExcel(
+          req.file.buffer,
+          req.tenantId!,
+          req.user?.userId,
+        );
+        success(res, result, "导入完成");
+      } catch (err) {
+        this.handleError(res, err);
+      }
+    });
+  }
   // ============ 基础 CRUD 路由 ============
   @Get("/list")
   @ApiOperation("获取角色分页列表")
@@ -292,52 +338,5 @@ export default class RoleController extends BaseController<any, any, any, any> {
         checked: checkedSet.has(item.menu_id),
         children: this.buildTreeWithChecked(items, item.menu_id, checkedSet),
       }));
-  }
-  @Get("/export")
-  @ApiOperation("导出角色", "根据筛选条件导出角色为Excel")
-  @ApiQuery(RoleListSchema)
-  @ApiResponse(200, "Excel文件")
-  async export(@Req() req: Request, @Res() res: Response) {
-    try {
-      const where = this.buildListWhere(req.query);
-      const buffer = await (this.repository as RoleRepository).exportRoles(
-        where,
-        req.tenantId!,
-      );
-      res.setHeader(
-        "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      );
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename=roles_${Date.now()}.xlsx`,
-      );
-      res.send(buffer);
-    } catch (err) {
-      this.handleError(res, err);
-    }
-  }
-  @Post("/import")
-  @ApiOperation("导入角色", "上传Excel批量导入角色")
-  @ApiResponse(200, "导入结果")
-  async import(@Req() req: Request, @Res() res: Response) {
-    upload.single("file")(req, res, async (err) => {
-      if (err)
-        return this.handleError(res, new AppError("文件上传失败", 400, 400));
-      if (!req.file)
-        return this.handleError(res, new AppError("请上传Excel文件", 400, 400));
-      try {
-        const result = await (
-          this.repository as RoleRepository
-        ).importRolesFromExcel(
-          req.file.buffer,
-          req.tenantId!,
-          req.user?.userId,
-        );
-        success(res, result, "导入完成");
-      } catch (err) {
-        this.handleError(res, err);
-      }
-    });
   }
 }

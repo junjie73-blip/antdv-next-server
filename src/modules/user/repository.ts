@@ -874,7 +874,15 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           tenant_id: tenantId,
         },
       });
-
+      await tx.sys_notice_channel.create({
+        data: {
+          tenant_id: tenantId,
+          channel_type: "in_app",
+          enabled: 1,
+          config: null,
+          remark: "系统默认渠道",
+        },
+      });
       return {
         roleId: superRole.role_id,
         menuCount: menuIdMap.size,

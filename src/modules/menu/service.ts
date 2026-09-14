@@ -73,7 +73,7 @@ export async function copyMenusFromTemplate(
   // 父先子后
   const sorted = sortByTreeDepth(newMenus as sys_menu[]);
 
-  await tx.sys_menu.createMany({ data: sorted });
+  await tx.sys_menu.createMany({ data: sorted, skipDuplicates: true });
 
   return sorted.map((m) => m.menu_id);
 }
@@ -115,7 +115,7 @@ export async function getUserMenus(
   let tenantMenus: sys_menu[] = [];
   if (roleIds.length > 0) {
     const roleMenus = await tx.sys_role_menu.findMany({
-      where: { role_id: { in: roleIds } },
+      where: { role_id: { in: roleIds }, tenant_id: tenantId },
       select: { menu_id: true },
     });
     const menuIds = [...new Set(roleMenus.map((r) => r.menu_id))];

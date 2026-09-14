@@ -11,16 +11,13 @@ export const emailChannel: NoticeChannel = {
     let success = 0;
 
     for (const to of ctx.receivers) {
-      try {
-        await sendMail({
-          to,
-          subject: ctx.title,
-          html: ctx.content ?? ctx.title,
-        });
-        success++;
-      } catch (e: any) {
-        errors.push({ receiver: to, reason: String(e?.message ?? e) });
-      }
+      const ok = await sendMail({
+        to,
+        subject: ctx.title,
+        html: ctx.content ?? ctx.title,
+      });
+      if (ok) success++;
+      else errors.push({ receiver: to, reason: "SMTP send failed" });
     }
 
     return {

@@ -6,6 +6,7 @@ import {
   keysToSnakeCase,
 } from "@/common/utils/case-convert.js";
 import { pushNotice } from "./pusher.js";
+import { AppError } from "@/core/errors.js";
 
 export class NoticeRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_notice;
@@ -38,12 +39,26 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       });
 
       if (targetUserIds?.length) {
+        if (targetUserIds?.length) {
+          // ⭐ 归属校验
+          const validCount = await tx.sys_user.count({
+            where: {
+              user_id: { in: targetUserIds },
+              tenant_id: tenantId,
+              is_deleted: 0,
+            },
+          });
+          if (validCount !== targetUserIds.length) {
+            throw new AppError("存在无效的接收人", 400001, 400);
+          }
+        }
         await tx.sys_notice_user.createMany({
           data: targetUserIds.map((uid: string) => ({
             notice_id: notice.notice_id,
             user_id: uid,
             tenant_id: tenantId,
           })),
+          skipDuplicates: true,
         });
       }
 
@@ -140,7 +155,11 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
     if (publishTimeDate && publishTimeDate > new Date()) {
       status = "0";
     }
-
+    const exists = await prisma.sys_notice.findFirst({
+      where: { notice_id: id, tenant_id: tenantId, is_deleted: 0 },
+      select: { notice_id: true },
+    });
+    if (!exists) throw new AppError("通知不存在", 404001, 404);
     return prisma.$transaction(async (tx) => {
       // 更新通知主记录
       await tx.sys_notice.update({
@@ -168,6 +187,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
               user_id: uid,
               tenant_id: tenantId,
             })),
+            skipDuplicates: true,
           });
         }
       } else {
@@ -189,6 +209,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
                 user_id: u.user_id,
                 tenant_id: tenantId,
               })),
+              skipDuplicates: true,
             });
           }
         }

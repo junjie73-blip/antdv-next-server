@@ -56,15 +56,15 @@ app.use(cors({ origin: process.env.FRONTEND_URL || "*", credentials: true }));
 app.use(compression());
 // 2. DDoS 防护（最外层）
 app.use(ddosProtection);
-app.use(auditMiddleware);
 // 3. 频率限制
 app.use(globalRateLimit);
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(bodyParser.json({ limit: "10mb" }));
+app.use(auditMiddleware);
 // Swagger UI
 app.use("/api", swaggerRouter);
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(authMiddleware);
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(ipRuleMiddleware);
 app.use(timingMiddleware);
 app.use(tenantResolver);
@@ -77,33 +77,40 @@ const decoratorRouter = new DecoratorRouter(scanner);
 app.use("/api/v1", decoratorRouter.build());
 
 // 启动时验证连接
-async function healthCheck() {
-  console.log("DATABASE_URL:", process.env.DATABASE_URL);
+async function bootstrap() {
+  // 1) 验证连接
   try {
     await prisma.$queryRaw`SELECT 1`;
-    await loadJobs();
-    startNoticeScheduler();
-    initWebSocketServer(_server);
-    // 启动 Redis 订阅（用于多实例通知广播）
-    await startNoticeSubscriber();
-    await startForceLogoutSubscriber();
-    console.log("✅ Neon PostgreSQL connected");
+    console.log("✅ Database connected");
   } catch (e) {
-    console.error("❌ Neon PostgreSQL failed");
+    console.error("❌ Database failed", e);
+    process.exit(1);
   }
 
   try {
     await redis.ping();
-    console.log("✅ Upstash Redis connected");
+    console.log("✅ Redis connected");
   } catch (e) {
-    console.error("❌ Upstash Redis failed", e);
+    console.error("⚠️ Redis failed", e);
   }
+
+  // 2) 启动后台任务（只在启动时执行一次）
+  await loadJobs();
+  startNoticeScheduler();
+  initWebSocketServer(_server);
+  await startNoticeSubscriber();
+  await startForceLogoutSubscriber();
 }
 
-healthCheck();
 // 健康检查
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+app.get("/health", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    await redis.ping();
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  } catch {
+    res.status(503).json({ status: "degraded" });
+  }
 });
 
 // 全局错误处理
@@ -119,11 +126,12 @@ async function shutdown(signal: string) {
   await drainAuditQueue();
   process.exit(0);
 }
-const server = _server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📚 API Docs: http://localhost:${PORT}/docs`);
+bootstrap().then(() => {
+  _server.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📚 API Docs: http://localhost:${PORT}/docs`);
+  });
 });
-
 // 优雅关闭
 process.on("SIGTERM", () => {
   shutdown("SIGTERM");

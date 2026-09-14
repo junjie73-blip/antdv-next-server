@@ -8,11 +8,15 @@ import { dispatchNotice } from "./channels/index.js";
  * 通知发布后推送 WebSocket 消息
  * @param noticeId 通知ID
  */
-export async function pushNotice(noticeId: string) {
+export async function pushNotice(noticeId: string, tenantId: string) {
   try {
     const { prisma } = await import("@/config/database.js");
     const notice = await prisma.sys_notice.findUnique({
-      where: { notice_id: noticeId },
+      where: {
+        notice_id: noticeId,
+        ...(tenantId ? { tenant_id: tenantId } : {}),
+        is_deleted: 0,
+      },
       select: {
         notice_id: true,
         tenant_id: true,

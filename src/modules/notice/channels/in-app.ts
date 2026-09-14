@@ -1,8 +1,7 @@
 import { prisma } from "@/config/database.js";
-import { wsManager } from "@/core/ws/manager.js";
+import { publishNoticePush } from "@/core/redis/pubsub.js";
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
 
-/** 站内信：给 sys_notice_user 里的每个用户推 WS */
 export const inAppChannel: NoticeChannel = {
   type: "in_app",
   isReady: () => true,
@@ -18,31 +17,17 @@ export const inAppChannel: NoticeChannel = {
       };
     }
 
-    const targets = await prisma.sys_notice_user.findMany({
-      where: { notice_id: ctx.noticeId, tenant_id: ctx.tenantId },
-      select: { user_id: true },
-    });
-    const userIds = targets.map((t) => t.user_id);
-    if (userIds.length === 0) {
-      return {
-        channel: this.type,
-        total: 0,
-        success: 0,
-        failed: 0,
-        errors: [],
-      };
-    }
+    // ⭐ 改为走 Redis pub/sub
+    await publishNoticePush(ctx.noticeId);
 
-    wsManager.sendToUsers(userIds, {
-      type: "notice",
-      data: { noticeId: ctx.noticeId, title: ctx.title, content: ctx.content },
-      timestamp: Date.now(),
+    const count = await prisma.sys_notice_user.count({
+      where: { notice_id: ctx.noticeId, tenant_id: ctx.tenantId },
     });
 
     return {
       channel: this.type,
-      total: userIds.length,
-      success: userIds.length,
+      total: count,
+      success: count,
       failed: 0,
       errors: [],
     };

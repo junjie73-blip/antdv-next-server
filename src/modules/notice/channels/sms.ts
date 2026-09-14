@@ -3,7 +3,12 @@ import { logger } from "@core/logger/index.js";
 
 export const smsChannel: NoticeChannel = {
   type: "sms",
-  isReady: (cfg) => !!(cfg.provider && cfg.accessKey && cfg.secretKey),
+  isReady: (cfg) =>
+    !!(
+      cfg.provider &&
+      (cfg.accessKey || cfg.accessKeyId) &&
+      (cfg.secretKey || cfg.accessKeySecret)
+    ),
   async send(ctx: SendContext): Promise<SendResult> {
     logger.info(
       { receivers: ctx.receivers, len: ctx.receivers.length },
