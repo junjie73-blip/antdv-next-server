@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { AppError } from "@/core/errors.js";
@@ -337,5 +337,10 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
       select: { dept_id: true },
     });
     return rows.map((r) => r.dept_id);
+  }
+  async countUsersByRole(roleId: string, tenantId: string): Promise<number> {
+    return prisma.sys_user_role.count({
+      where: { role_id: roleId, tenant_id: tenantId },
+    });
   }
 }

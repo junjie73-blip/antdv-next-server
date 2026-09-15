@@ -11,25 +11,30 @@ import {
   ApiResponse,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { IpRuleRepository } from "./repository.js";
 import { success } from "@/common/utils/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { z } from "zod";
+import { IpRuleService } from "./service.js";
 
 // ========== 把 schema 提到模块级 ==========
-const IpRuleCreateSchema = z.object({
-  ruleType: z.enum(["white", "black"]),
-  ipPattern: z.string().min(1).max(64),
-  remark: z.string().max(256).optional(),
-  status: z.string().default("1"),
-});
+const IpRuleCreateSchema = z
+  .object({
+    ruleType: z.enum(["white", "black"]),
+    ipPattern: z.string().min(1).max(64),
+    remark: z.string().max(256).optional(),
+    status: z.string().default("1"),
+  })
+  .openapi("IpRuleCreate");
 
-const IpRuleUpdateSchema = IpRuleCreateSchema.partial();
+const IpRuleUpdateSchema = IpRuleCreateSchema.partial().openapi("IpRuleUpdate");
 
-const IpRuleCheckSchema = z.object({
-  ip: z.string(),
-});
+const IpRuleCheckSchema = z
+  .object({
+    ip: z.string(),
+  })
+  .openapi("IpRuleCheck");
 
 @Controller("/ip-rule", { tags: ["IP 白黑名单"] })
 export default class IpRuleController extends BaseController<
@@ -47,9 +52,10 @@ export default class IpRuleController extends BaseController<
     defaultPageSize: 10,
     maxPageSize: 100,
   };
+  protected readonly service = new IpRuleService(this.repository);
   protected readonly createSchema = IpRuleCreateSchema;
   protected readonly updateSchema = IpRuleUpdateSchema;
-  protected readonly querySchema = z.object({});
+  protected readonly querySchema = null;
 
   protected buildListWhere() {
     return {};
@@ -83,12 +89,13 @@ export default class IpRuleController extends BaseController<
 
   @Post("/check")
   @ApiOperation("检查 IP 是否允许")
-  @ApiBody(IpRuleCheckSchema) // ✅
+  @ApiBody(IpRuleCheckSchema)
   async ipCheck(@Req() req: Request, @Res() res: Response) {
-    const result = await (this.repository as IpRuleRepository).checkIp(
-      req.body.ip,
-      req.tenantId!,
-    );
-    success(res, result);
+    try {
+      const result = await this.service.checkIp(req.body.ip, req.tenantId!);
+      success(res, result);
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 }

@@ -76,7 +76,10 @@ export const ModelName = {
   sys_todo: 'sys_todo',
   sys_ip_rule: 'sys_ip_rule',
   sys_notice_channel: 'sys_notice_channel',
-  sys_notice_send_log: 'sys_notice_send_log'
+  sys_notice_send_log: 'sys_notice_send_log',
+  sys_password_history: 'sys_password_history',
+  sys_todo_group: 'sys_todo_group',
+  sys_user_tenant: 'sys_user_tenant'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -132,7 +135,14 @@ export const Sys_userScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  password_changed_at: 'password_changed_at',
+  must_change_password: 'must_change_password',
+  is_deleted: 'is_deleted',
+  id_card: 'id_card',
+  phone_enc: 'phone_enc',
+  phone_hash: 'phone_hash',
+  id_card_enc: 'id_card_enc',
+  id_card_hash: 'id_card_hash'
 } as const
 
 export type Sys_userScalarFieldEnum = (typeof Sys_userScalarFieldEnum)[keyof typeof Sys_userScalarFieldEnum]
@@ -268,7 +278,11 @@ export const Sys_noticeScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  priority: 'priority',
+  is_top: 'is_top',
+  revoked_at: 'revoked_at',
+  revoked_by: 'revoked_by'
 } as const
 
 export type Sys_noticeScalarFieldEnum = (typeof Sys_noticeScalarFieldEnum)[keyof typeof Sys_noticeScalarFieldEnum]
@@ -281,7 +295,8 @@ export const Sys_notice_userScalarFieldEnum = {
   tenant_id: 'tenant_id',
   is_read: 'is_read',
   read_time: 'read_time',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  is_deleted: 'is_deleted'
 } as const
 
 export type Sys_notice_userScalarFieldEnum = (typeof Sys_notice_userScalarFieldEnum)[keyof typeof Sys_notice_userScalarFieldEnum]
@@ -438,7 +453,13 @@ export const Sys_jobScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  retry_count: 'retry_count',
+  retry_interval: 'retry_interval',
+  timeout_seconds: 'timeout_seconds',
+  is_paused: 'is_paused',
+  last_run_at: 'last_run_at',
+  next_run_at: 'next_run_at'
 } as const
 
 export type Sys_jobScalarFieldEnum = (typeof Sys_jobScalarFieldEnum)[keyof typeof Sys_jobScalarFieldEnum]
@@ -452,7 +473,9 @@ export const Sys_job_logScalarFieldEnum = {
   job_message: 'job_message',
   status: 'status',
   exception_info: 'exception_info',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  retry_attempt: 'retry_attempt',
+  duration_ms: 'duration_ms'
 } as const
 
 export type Sys_job_logScalarFieldEnum = (typeof Sys_job_logScalarFieldEnum)[keyof typeof Sys_job_logScalarFieldEnum]
@@ -471,7 +494,11 @@ export const Sys_todoScalarFieldEnum = {
   status: 'status',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  group_id: 'group_id',
+  remind_at: 'remind_at',
+  reminded: 'reminded',
+  tags: 'tags'
 } as const
 
 export type Sys_todoScalarFieldEnum = (typeof Sys_todoScalarFieldEnum)[keyof typeof Sys_todoScalarFieldEnum]
@@ -523,6 +550,45 @@ export const Sys_notice_send_logScalarFieldEnum = {
 } as const
 
 export type Sys_notice_send_logScalarFieldEnum = (typeof Sys_notice_send_logScalarFieldEnum)[keyof typeof Sys_notice_send_logScalarFieldEnum]
+
+
+export const Sys_password_historyScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  password: 'password',
+  created_at: 'created_at'
+} as const
+
+export type Sys_password_historyScalarFieldEnum = (typeof Sys_password_historyScalarFieldEnum)[keyof typeof Sys_password_historyScalarFieldEnum]
+
+
+export const Sys_todo_groupScalarFieldEnum = {
+  group_id: 'group_id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  name: 'name',
+  color: 'color',
+  sort_order: 'sort_order',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
+} as const
+
+export type Sys_todo_groupScalarFieldEnum = (typeof Sys_todo_groupScalarFieldEnum)[keyof typeof Sys_todo_groupScalarFieldEnum]
+
+
+export const Sys_user_tenantScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  tenant_id: 'tenant_id',
+  is_default: 'is_default',
+  joined_at: 'joined_at'
+} as const
+
+export type Sys_user_tenantScalarFieldEnum = (typeof Sys_user_tenantScalarFieldEnum)[keyof typeof Sys_user_tenantScalarFieldEnum]
 
 
 export const SortOrder = {

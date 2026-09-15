@@ -1,5 +1,6 @@
 import { prisma } from "@/config/database.js";
 import { logger } from "@core/logger/index.js";
+import { sendAlert } from "../alert/index.js";
 
 interface AuditItem {
   tenantId: string;
@@ -27,6 +28,7 @@ let flushing = false;
 
 /** 敏感字段黑名单 */
 const SENSITIVE_KEYS = [
+  // 现有
   "password",
   "oldPassword",
   "newPassword",
@@ -35,6 +37,18 @@ const SENSITIVE_KEYS = [
   "refreshToken",
   "secret",
   "authorization",
+  // 新增
+  "phone",
+  "idCard",
+  "id_card",
+  "email",
+  "address",
+  "cardNo",
+  "card_no",
+  "bankAccount",
+  "bank_account",
+  "captchaCode",
+  "captcha_code",
 ];
 
 /** 递归脱敏 */
@@ -123,6 +137,30 @@ async function flush(): Promise<void> {
         { size: batch.length },
         "[audit] batch dropped after retries",
       );
+
+      // ⭐ 告警
+      void sendAlert({
+        level: "warning",
+        title: "audit_queue_dropped",
+        message: `审计日志批次丢失 ${batch.length} 条`,
+        source: "audit",
+        data: { count: batch.length },
+      });
+
+      // ⭐ 兜底写文件
+      try {
+        const { appendFile } = await import("fs/promises");
+        const path = await import("path");
+        const fallbackFile = path.join(
+          process.cwd(),
+          "logs",
+          "audit-fallback.log",
+        );
+        const lines = batch.map((it) => JSON.stringify(it)).join("\n") + "\n";
+        await appendFile(fallbackFile, lines, "utf8");
+      } catch (writeErr) {
+        logger.error({ err: writeErr }, "[audit] fallback write failed");
+      }
     }
   }
 }

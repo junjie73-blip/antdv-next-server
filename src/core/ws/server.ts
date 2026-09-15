@@ -3,10 +3,12 @@ import { WebSocketServer } from "ws";
 import { jwtVerify } from "jose";
 import { wsManager } from "./manager.js";
 import { logger } from "@/core/logger/index.js";
+import { env } from "@/config/env.js";
+import { activeWsConnections } from "@/core/metrics/index.js";
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-secret",
-);
+const secret = new TextEncoder().encode(env.JWT_SECRET);
+
+const HEARTBEAT_INTERVAL = 30000;
 
 export function initWebSocketServer(server: HttpServer) {
   const wss = new WebSocketServer({ server, path: "/ws" });
@@ -15,48 +17,77 @@ export function initWebSocketServer(server: HttpServer) {
     try {
       const url = new URL(req.url!, `http://${req.headers.host}`);
       const token = url.searchParams.get("token");
-      const type = (url.searchParams.get("type") || "notice") as any; // 默认 notice
+      const type = (url.searchParams.get("type") || "notice") as any;
 
       if (!token) {
         ws.close(1008, "Missing token");
         return;
       }
 
-      // 验证 JWT
-      const { payload } = await jwtVerify(token, secret);
+      const { payload } = await jwtVerify(token, secret, {
+        clockTolerance: 60,
+      });
+      if (payload.type !== "access") {
+        ws.close(1008, "Invalid token type");
+        return;
+      }
+
       const userId = payload.userId as string;
       const tenantId = payload.tenantId as string;
+      const deviceId = payload.deviceId as string;
+      if (!userId || !tenantId) {
+        ws.close(1008, "Invalid token payload");
+        return;
+      }
 
-      // 注册连接
       wsManager.addConnection({ userId, tenantId, type }, ws);
 
-      // 可选：发送连接确认
+      // 更新指标
+      try {
+        activeWsConnections.inc();
+      } catch {}
+
       ws.send(JSON.stringify({ type: "connected", data: { userId } }));
 
-      // 心跳处理
-      const pingInterval = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.ping();
-        }
-      }, 30000);
-
+      // ⭐ 心跳：收到 pong 标记存活
       ws.on("pong", () => {
-        /* 连接存活 */
+        wsManager.markAlive(ws);
       });
 
       ws.on("close", () => {
-        clearInterval(pingInterval);
         wsManager.removeConnection(ws);
+        try {
+          activeWsConnections.dec();
+        } catch {}
       });
 
-      ws.on("error", (error) => {
-        logger.error({ error }, "WebSocket error");
-        clearInterval(pingInterval);
+      ws.on("error", (err) => {
+        logger.error({ err, userId }, "WebSocket error");
         wsManager.removeConnection(ws);
+        try {
+          activeWsConnections.dec();
+        } catch {}
       });
     } catch (err) {
+      logger.warn({ err }, "WebSocket auth failed");
       ws.close(1008, "Invalid token");
     }
+  });
+
+  // ⭐ 全局心跳（不再每个连接一个 setInterval）
+  const heartbeatTimer = setInterval(() => {
+    const timeout = wsManager.tickHeartbeat();
+    for (const ws of timeout) {
+      logger.warn("[ws] heartbeat timeout, terminating");
+      try {
+        ws.terminate();
+      } catch {}
+      wsManager.removeConnection(ws);
+    }
+  }, HEARTBEAT_INTERVAL);
+
+  wss.on("close", () => {
+    clearInterval(heartbeatTimer);
   });
 
   return wss;

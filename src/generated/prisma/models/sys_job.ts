@@ -30,12 +30,20 @@ export type Sys_jobAvgAggregateOutputType = {
   misfire_policy: number | null
   concurrent: number | null
   is_deleted: number | null
+  retry_count: number | null
+  retry_interval: number | null
+  timeout_seconds: number | null
+  is_paused: number | null
 }
 
 export type Sys_jobSumAggregateOutputType = {
   misfire_policy: number | null
   concurrent: number | null
   is_deleted: number | null
+  retry_count: number | null
+  retry_interval: number | null
+  timeout_seconds: number | null
+  is_paused: number | null
 }
 
 export type Sys_jobMinAggregateOutputType = {
@@ -54,6 +62,12 @@ export type Sys_jobMinAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  retry_count: number | null
+  retry_interval: number | null
+  timeout_seconds: number | null
+  is_paused: number | null
+  last_run_at: Date | null
+  next_run_at: Date | null
 }
 
 export type Sys_jobMaxAggregateOutputType = {
@@ -72,6 +86,12 @@ export type Sys_jobMaxAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  retry_count: number | null
+  retry_interval: number | null
+  timeout_seconds: number | null
+  is_paused: number | null
+  last_run_at: Date | null
+  next_run_at: Date | null
 }
 
 export type Sys_jobCountAggregateOutputType = {
@@ -90,6 +110,12 @@ export type Sys_jobCountAggregateOutputType = {
   created_by: number
   updated_by: number
   is_deleted: number
+  retry_count: number
+  retry_interval: number
+  timeout_seconds: number
+  is_paused: number
+  last_run_at: number
+  next_run_at: number
   _all: number
 }
 
@@ -98,12 +124,20 @@ export type Sys_jobAvgAggregateInputType = {
   misfire_policy?: true
   concurrent?: true
   is_deleted?: true
+  retry_count?: true
+  retry_interval?: true
+  timeout_seconds?: true
+  is_paused?: true
 }
 
 export type Sys_jobSumAggregateInputType = {
   misfire_policy?: true
   concurrent?: true
   is_deleted?: true
+  retry_count?: true
+  retry_interval?: true
+  timeout_seconds?: true
+  is_paused?: true
 }
 
 export type Sys_jobMinAggregateInputType = {
@@ -122,6 +156,12 @@ export type Sys_jobMinAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  retry_count?: true
+  retry_interval?: true
+  timeout_seconds?: true
+  is_paused?: true
+  last_run_at?: true
+  next_run_at?: true
 }
 
 export type Sys_jobMaxAggregateInputType = {
@@ -140,6 +180,12 @@ export type Sys_jobMaxAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  retry_count?: true
+  retry_interval?: true
+  timeout_seconds?: true
+  is_paused?: true
+  last_run_at?: true
+  next_run_at?: true
 }
 
 export type Sys_jobCountAggregateInputType = {
@@ -158,6 +204,12 @@ export type Sys_jobCountAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  retry_count?: true
+  retry_interval?: true
+  timeout_seconds?: true
+  is_paused?: true
+  last_run_at?: true
+  next_run_at?: true
   _all?: true
 }
 
@@ -263,6 +315,12 @@ export type Sys_jobGroupByOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number
+  retry_count: number
+  retry_interval: number
+  timeout_seconds: number
+  is_paused: number
+  last_run_at: Date | null
+  next_run_at: Date | null
   _count: Sys_jobCountAggregateOutputType | null
   _avg: Sys_jobAvgAggregateOutputType | null
   _sum: Sys_jobSumAggregateOutputType | null
@@ -304,6 +362,12 @@ export type sys_jobWhereInput = {
   created_by?: Prisma.UuidNullableFilter<"sys_job"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_job"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_job"> | number
+  retry_count?: Prisma.IntFilter<"sys_job"> | number
+  retry_interval?: Prisma.IntFilter<"sys_job"> | number
+  timeout_seconds?: Prisma.IntFilter<"sys_job"> | number
+  is_paused?: Prisma.IntFilter<"sys_job"> | number
+  last_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
+  next_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
 }
 
 export type sys_jobOrderByWithRelationInput = {
@@ -322,6 +386,12 @@ export type sys_jobOrderByWithRelationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  retry_count?: Prisma.SortOrder
+  retry_interval?: Prisma.SortOrder
+  timeout_seconds?: Prisma.SortOrder
+  is_paused?: Prisma.SortOrder
+  last_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  next_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_jobWhereUniqueInput = Prisma.AtLeast<{
@@ -343,6 +413,12 @@ export type sys_jobWhereUniqueInput = Prisma.AtLeast<{
   created_by?: Prisma.UuidNullableFilter<"sys_job"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_job"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_job"> | number
+  retry_count?: Prisma.IntFilter<"sys_job"> | number
+  retry_interval?: Prisma.IntFilter<"sys_job"> | number
+  timeout_seconds?: Prisma.IntFilter<"sys_job"> | number
+  is_paused?: Prisma.IntFilter<"sys_job"> | number
+  last_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
+  next_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
 }, "job_id">
 
 export type sys_jobOrderByWithAggregationInput = {
@@ -361,6 +437,12 @@ export type sys_jobOrderByWithAggregationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  retry_count?: Prisma.SortOrder
+  retry_interval?: Prisma.SortOrder
+  timeout_seconds?: Prisma.SortOrder
+  is_paused?: Prisma.SortOrder
+  last_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  next_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_jobCountOrderByAggregateInput
   _avg?: Prisma.sys_jobAvgOrderByAggregateInput
   _max?: Prisma.sys_jobMaxOrderByAggregateInput
@@ -387,6 +469,12 @@ export type sys_jobScalarWhereWithAggregatesInput = {
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_job"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_job"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  retry_count?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  retry_interval?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  timeout_seconds?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  is_paused?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  last_run_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_job"> | Date | string | null
+  next_run_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_job"> | Date | string | null
 }
 
 export type sys_jobCreateInput = {
@@ -405,6 +493,12 @@ export type sys_jobCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  retry_count?: number
+  retry_interval?: number
+  timeout_seconds?: number
+  is_paused?: number
+  last_run_at?: Date | string | null
+  next_run_at?: Date | string | null
 }
 
 export type sys_jobUncheckedCreateInput = {
@@ -423,6 +517,12 @@ export type sys_jobUncheckedCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  retry_count?: number
+  retry_interval?: number
+  timeout_seconds?: number
+  is_paused?: number
+  last_run_at?: Date | string | null
+  next_run_at?: Date | string | null
 }
 
 export type sys_jobUpdateInput = {
@@ -441,6 +541,12 @@ export type sys_jobUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_count?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_interval?: Prisma.IntFieldUpdateOperationsInput | number
+  timeout_seconds?: Prisma.IntFieldUpdateOperationsInput | number
+  is_paused?: Prisma.IntFieldUpdateOperationsInput | number
+  last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_jobUncheckedUpdateInput = {
@@ -459,6 +565,12 @@ export type sys_jobUncheckedUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_count?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_interval?: Prisma.IntFieldUpdateOperationsInput | number
+  timeout_seconds?: Prisma.IntFieldUpdateOperationsInput | number
+  is_paused?: Prisma.IntFieldUpdateOperationsInput | number
+  last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_jobCreateManyInput = {
@@ -477,6 +589,12 @@ export type sys_jobCreateManyInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  retry_count?: number
+  retry_interval?: number
+  timeout_seconds?: number
+  is_paused?: number
+  last_run_at?: Date | string | null
+  next_run_at?: Date | string | null
 }
 
 export type sys_jobUpdateManyMutationInput = {
@@ -495,6 +613,12 @@ export type sys_jobUpdateManyMutationInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_count?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_interval?: Prisma.IntFieldUpdateOperationsInput | number
+  timeout_seconds?: Prisma.IntFieldUpdateOperationsInput | number
+  is_paused?: Prisma.IntFieldUpdateOperationsInput | number
+  last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_jobUncheckedUpdateManyInput = {
@@ -513,6 +637,12 @@ export type sys_jobUncheckedUpdateManyInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_count?: Prisma.IntFieldUpdateOperationsInput | number
+  retry_interval?: Prisma.IntFieldUpdateOperationsInput | number
+  timeout_seconds?: Prisma.IntFieldUpdateOperationsInput | number
+  is_paused?: Prisma.IntFieldUpdateOperationsInput | number
+  last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_jobCountOrderByAggregateInput = {
@@ -531,12 +661,22 @@ export type sys_jobCountOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  retry_count?: Prisma.SortOrder
+  retry_interval?: Prisma.SortOrder
+  timeout_seconds?: Prisma.SortOrder
+  is_paused?: Prisma.SortOrder
+  last_run_at?: Prisma.SortOrder
+  next_run_at?: Prisma.SortOrder
 }
 
 export type sys_jobAvgOrderByAggregateInput = {
   misfire_policy?: Prisma.SortOrder
   concurrent?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  retry_count?: Prisma.SortOrder
+  retry_interval?: Prisma.SortOrder
+  timeout_seconds?: Prisma.SortOrder
+  is_paused?: Prisma.SortOrder
 }
 
 export type sys_jobMaxOrderByAggregateInput = {
@@ -555,6 +695,12 @@ export type sys_jobMaxOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  retry_count?: Prisma.SortOrder
+  retry_interval?: Prisma.SortOrder
+  timeout_seconds?: Prisma.SortOrder
+  is_paused?: Prisma.SortOrder
+  last_run_at?: Prisma.SortOrder
+  next_run_at?: Prisma.SortOrder
 }
 
 export type sys_jobMinOrderByAggregateInput = {
@@ -573,12 +719,22 @@ export type sys_jobMinOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  retry_count?: Prisma.SortOrder
+  retry_interval?: Prisma.SortOrder
+  timeout_seconds?: Prisma.SortOrder
+  is_paused?: Prisma.SortOrder
+  last_run_at?: Prisma.SortOrder
+  next_run_at?: Prisma.SortOrder
 }
 
 export type sys_jobSumOrderByAggregateInput = {
   misfire_policy?: Prisma.SortOrder
   concurrent?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  retry_count?: Prisma.SortOrder
+  retry_interval?: Prisma.SortOrder
+  timeout_seconds?: Prisma.SortOrder
+  is_paused?: Prisma.SortOrder
 }
 
 
@@ -599,6 +755,12 @@ export type sys_jobSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  retry_count?: boolean
+  retry_interval?: boolean
+  timeout_seconds?: boolean
+  is_paused?: boolean
+  last_run_at?: boolean
+  next_run_at?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -617,6 +779,12 @@ export type sys_jobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  retry_count?: boolean
+  retry_interval?: boolean
+  timeout_seconds?: boolean
+  is_paused?: boolean
+  last_run_at?: boolean
+  next_run_at?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -635,6 +803,12 @@ export type sys_jobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  retry_count?: boolean
+  retry_interval?: boolean
+  timeout_seconds?: boolean
+  is_paused?: boolean
+  last_run_at?: boolean
+  next_run_at?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectScalar = {
@@ -653,9 +827,15 @@ export type sys_jobSelectScalar = {
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  retry_count?: boolean
+  retry_interval?: boolean
+  timeout_seconds?: boolean
+  is_paused?: boolean
+  last_run_at?: boolean
+  next_run_at?: boolean
 }
 
-export type sys_jobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"job_id" | "tenant_id" | "job_name" | "job_group" | "invoke_target" | "cron_expression" | "misfire_policy" | "concurrent" | "status" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_job"]>
+export type sys_jobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"job_id" | "tenant_id" | "job_name" | "job_group" | "invoke_target" | "cron_expression" | "misfire_policy" | "concurrent" | "status" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "retry_count" | "retry_interval" | "timeout_seconds" | "is_paused" | "last_run_at" | "next_run_at", ExtArgs["result"]["sys_job"]>
 
 export type $sys_jobPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_job"
@@ -676,6 +856,12 @@ export type $sys_jobPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     created_by: string | null
     updated_by: string | null
     is_deleted: number
+    retry_count: number
+    retry_interval: number
+    timeout_seconds: number
+    is_paused: number
+    last_run_at: Date | null
+    next_run_at: Date | null
   }, ExtArgs["result"]["sys_job"]>
   composites: {}
 }
@@ -1114,6 +1300,12 @@ export interface sys_jobFieldRefs {
   readonly created_by: Prisma.FieldRef<"sys_job", 'String'>
   readonly updated_by: Prisma.FieldRef<"sys_job", 'String'>
   readonly is_deleted: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly retry_count: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly retry_interval: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly timeout_seconds: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly is_paused: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly last_run_at: Prisma.FieldRef<"sys_job", 'DateTime'>
+  readonly next_run_at: Prisma.FieldRef<"sys_job", 'DateTime'>
 }
     
 

@@ -64,7 +64,7 @@ export type sys_dict_data = Prisma.sys_dict_dataModel
 export type sys_notice = Prisma.sys_noticeModel
 /**
  * Model sys_notice_user
- * 通知与用户关联表
+ * 
  */
 export type sys_notice_user = Prisma.sys_notice_userModel
 /**
@@ -147,3 +147,18 @@ export type sys_notice_channel = Prisma.sys_notice_channelModel
  * 通知发送日志
  */
 export type sys_notice_send_log = Prisma.sys_notice_send_logModel
+/**
+ * Model sys_password_history
+ * 
+ */
+export type sys_password_history = Prisma.sys_password_historyModel
+/**
+ * Model sys_todo_group
+ * 
+ */
+export type sys_todo_group = Prisma.sys_todo_groupModel
+/**
+ * Model sys_user_tenant
+ * 
+ */
+export type sys_user_tenant = Prisma.sys_user_tenantModel

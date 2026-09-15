@@ -1,13 +1,28 @@
+import { MenuRepository } from "./repository.js";
+import { MenuImportRowSchema, MenuExportColumns } from "./schema.js";
+import {
+  parseExcel,
+  generateExcel,
+  importTreeData,
+} from "@/core/excel/excel.service.js";
+import { AppError } from "@/core/errors.js";
+import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import type { MenuImportRow, MenuEntity, MenuNode } from "./types.js";
+import { randomUUID } from "crypto";
 import { Prisma, sys_menu } from "@/generated/prisma/client.js";
-import { randomUUID } from "node:crypto";
+import { BaseService } from "@/core/base/service.js";
 
 type Tx = Prisma.TransactionClient;
 
-// ---------------------------------------------------------------
-// 按树深度排序：父节点先于子节点
-// 防止未来加了自引用外键后插入顺序出问题
-// ---------------------------------------------------------------
-function sortByTreeDepth<
+// ============================================================
+// 模块级无状态函数（不依赖 this）
+// ============================================================
+
+/**
+ * 按树深度排序：父节点先于子节点
+ * 用于 copyMenusFromTemplate 保证插入顺序
+ */
+export function sortByTreeDepth<
   T extends { menu_id: string; parent_id: string | null },
 >(nodes: T[]): T[] {
   const byId = new Map(nodes.map((n) => [n.menu_id, n]));
@@ -27,10 +42,9 @@ function sortByTreeDepth<
   return result;
 }
 
-// ---------------------------------------------------------------
-// 复制模板租户菜单到目标租户
-// 返回：新生成的全部 menu_id
-// ---------------------------------------------------------------
+/**
+ * 复制模板租户菜单到目标租户
+ */
 export async function copyMenusFromTemplate(
   tx: Tx,
   templateTenantId: string,
@@ -40,20 +54,18 @@ export async function copyMenusFromTemplate(
     where: {
       tenant_id: templateTenantId,
       is_deleted: 0,
-      is_platform: 0, // 平台级菜单不复制，所有租户共享
+      is_platform: 0,
     },
     orderBy: { sort_order: "asc" },
   });
 
   if (sourceMenus.length === 0) return [];
 
-  // oldId -> newId
   const idMap = new Map<string, string>();
   for (const m of sourceMenus) {
     idMap.set(m.menu_id, randomUUID());
   }
 
-  // 构造新记录；父节点不在本批次的，parent_id 置 null
   const newMenus: Prisma.sys_menuCreateManyInput[] = sourceMenus.map((m) => ({
     menu_id: idMap.get(m.menu_id)!,
     tenant_id: targetTenantId,
@@ -70,7 +82,7 @@ export async function copyMenusFromTemplate(
     is_deleted: 0,
   }));
 
-  // 父先子后
+  // ⭐ 直接调用模块级函数，不通过 this
   const sorted = sortByTreeDepth(newMenus as sys_menu[]);
 
   await tx.sys_menu.createMany({ data: sorted, skipDuplicates: true });
@@ -78,102 +90,197 @@ export async function copyMenusFromTemplate(
   return sorted.map((m) => m.menu_id);
 }
 
-// ---------------------------------------------------------------
-// 用户可见菜单 = 平台菜单 ∪ 用户角色授权的租户菜单
-// ---------------------------------------------------------------
-export interface MenuNode {
-  id: string;
-  parentId: string | null;
-  name: string;
-  type: number;
-  icon: string | null;
-  path: string | null;
-  component: string | null;
-  permission: string | null;
-  sortOrder: number;
-  children: MenuNode[];
-}
+// ============================================================
+// Service
+// ============================================================
 
-export async function getUserMenus(
-  tx: Tx,
-  userId: string,
-  tenantId: string,
-): Promise<MenuNode[]> {
-  // 1) 平台菜单
-  const platformMenus = await tx.sys_menu.findMany({
-    where: { is_platform: 1, is_deleted: 0, status: "1" },
-  });
+export class MenuService extends BaseService<MenuRepository> {
+  constructor(repository: MenuRepository) {
+    super(repository);
+  }
 
-  // 2) 用户角色
-  const userRoles = await tx.sys_user_role.findMany({
-    where: { user_id: userId, tenant_id: tenantId },
-    select: { role_id: true },
-  });
-  const roleIds = userRoles.map((r) => r.role_id);
+  // ============================================================
+  // 树 / 按钮（从 Repository 移过来的无状态逻辑）
+  // ============================================================
 
-  // 3) 角色绑定的菜单
-  let tenantMenus: sys_menu[] = [];
-  if (roleIds.length > 0) {
-    const roleMenus = await tx.sys_role_menu.findMany({
-      where: { role_id: { in: roleIds }, tenant_id: tenantId },
-      select: { menu_id: true },
-    });
-    const menuIds = [...new Set(roleMenus.map((r) => r.menu_id))];
-
-    if (menuIds.length > 0) {
-      tenantMenus = await tx.sys_menu.findMany({
-        where: {
-          menu_id: { in: menuIds },
-          tenant_id: tenantId,
-          is_deleted: 0,
-          status: "1",
-        },
+  /**
+   * ⭐ 构建菜单树（无状态算法，从 Repository 移过来）
+   */
+  buildTree(items: MenuEntity[], parentId: string | null = null): MenuNode[] {
+    return items
+      .filter((item) => {
+        if (parentId === null) {
+          return (
+            item.parent_id === null ||
+            item.parent_id === undefined ||
+            (item.parent_id as any) === "" ||
+            item.parent_id === "00000000-0000-0000-0000-000000000000"
+          );
+        }
+        return item.parent_id === parentId;
+      })
+      .map((item) => {
+        const children = this.buildTree(items, item.menu_id);
+        const node: MenuNode = {
+          ...keysToCamelCase<any>(item),
+          children: children.length > 0 ? children : undefined,
+        } as any;
+        if (node.children === undefined) delete (node as any).children;
+        return node;
       });
+  }
+
+  /**
+   * ⭐ 获取菜单树
+   */
+  async getTree(tenantId: string): Promise<MenuNode[]> {
+    const menus = await this.repository.findAllByTenant(tenantId);
+    return this.buildTree(menus, null);
+  }
+
+  /**
+   * ⭐ 获取菜单下的按钮列表
+   */
+  async getButtons(parentId: string, tenantId: string): Promise<any[]> {
+    if (!parentId) throw new AppError("缺少 parentId 参数", 400001, 400);
+    return this.repository.findButtonsByParent(parentId, tenantId);
+  }
+
+  // ============================================================
+  // 校验
+  // ============================================================
+
+  /**
+   * ⭐ 创建前唯一性校验
+   */
+  async checkBeforeCreate(dto: any, tenantId: string): Promise<void> {
+    // 同一父级下菜单名唯一
+    await this.assertUnique(
+      () =>
+        this.repository.findByNameAndParent(
+          dto.menuName,
+          dto.parentId ?? null,
+          tenantId,
+        ),
+      "菜单名称",
+      dto.menuName,
+    );
+
+    // 权限标识唯一（如果提供）
+    if (dto.permission) {
+      await this.assertUnique(
+        () => this.repository.findByPermission(dto.permission, tenantId),
+        "权限标识",
+        dto.permission,
+      );
     }
   }
 
-  // 4) 按 menu_id 去重合并（平台优先/或覆盖，效果一样）
-  const merged = new Map<string, sys_menu>();
-  for (const m of platformMenus) merged.set(m.menu_id, m);
-  for (const m of tenantMenus) merged.set(m.menu_id, m);
-
-  return buildMenuTree([...merged.values()]);
-}
-
-// ---------------------------------------------------------------
-// 构建菜单树
-// ---------------------------------------------------------------
-function buildMenuTree(menus: sys_menu[]): MenuNode[] {
-  const map = new Map<string, MenuNode>();
-  for (const m of menus) {
-    map.set(m.menu_id, {
-      id: m.menu_id,
-      parentId: m.parent_id,
-      name: m.menu_name,
-      type: m.menu_type,
-      icon: m.icon,
-      path: m.path,
-      component: m.component,
-      permission: m.permission,
-      sortOrder: m.sort_order,
-      children: [],
-    });
-  }
-
-  const roots: MenuNode[] = [];
-  for (const node of map.values()) {
-    if (node.parentId && map.has(node.parentId)) {
-      map.get(node.parentId)!.children.push(node);
-    } else {
-      roots.push(node);
+  /**
+   * 更新前唯一性校验
+   */
+  async checkBeforeUpdate(
+    id: string,
+    dto: any,
+    tenantId: string,
+  ): Promise<void> {
+    if (dto.menuName && dto.parentId !== undefined) {
+      const existing = await this.repository.findByNameAndParent(
+        dto.menuName,
+        dto.parentId ?? null,
+        tenantId,
+      );
+      if (existing && existing.menu_id !== id) {
+        throw new AppError(`菜单名称 '${dto.menuName}' 已存在`, 409001, 409);
+      }
+    }
+    if (dto.permission) {
+      const existing = await this.repository.findByPermission(
+        dto.permission,
+        tenantId,
+        id,
+      );
+      if (existing) {
+        throw new AppError(`权限标识 '${dto.permission}' 已存在`, 409001, 409);
+      }
     }
   }
 
-  const sortRec = (list: MenuNode[]) => {
-    list.sort((a, b) => a.sortOrder - b.sortOrder);
-    list.forEach((n) => sortRec(n.children));
-  };
-  sortRec(roots);
+  // ============================================================
+  // 导入导出
+  // ============================================================
 
-  return roots;
+  async exportToExcel(tenantId: string): Promise<Buffer> {
+    const menus = await this.repository.findAllForExport(tenantId);
+    return generateExcel(menus, [...MenuExportColumns], "菜单数据");
+  }
+
+  async importFromExcel(
+    buffer: Buffer,
+    tenantId: string,
+    userId?: string,
+  ): Promise<{ successCount: number; failCount: number; errors: string[] }> {
+    const { rows, errors: parseErrors } = parseExcel<Record<string, any>>(
+      buffer,
+      MenuImportRowSchema,
+    );
+
+    if (rows.length === 0) {
+      return {
+        successCount: 0,
+        failCount: parseErrors.length,
+        errors: parseErrors.map((e) => `第 ${e.rowNum} 行：${e.message}`),
+      };
+    }
+
+    const existingMap = await this.repository.getNameToIdMap(tenantId);
+    const errors: string[] = parseErrors.map(
+      (e) => `第 ${e.rowNum} 行：${e.message}`,
+    );
+    let successCount = 0;
+
+    const rowsToInsert = rows.map((raw) => ({
+      menuName: raw["菜单名称"] as string,
+      menuType: raw["类型"] === "目录" ? 1 : raw["类型"] === "菜单" ? 2 : 3,
+      parentName: (raw["上级菜单"] || "").trim(),
+      icon: raw["图标"] || "",
+      path: raw["路由地址"] || "",
+      component: raw["组件路径"] || "",
+      permission: raw["权限标识"] || "",
+      sortOrder: raw["排序"] ?? 0,
+      status: raw["状态"] === "禁用" ? "0" : "1",
+    })) as MenuImportRow[];
+
+    const { successCount: inserted, errors: insertErrors } =
+      await importTreeData(
+        rowsToInsert,
+        (r) => r.menuName,
+        (r) => r.parentName,
+        async (row, parentId) => {
+          if (parentId === null && existingMap.has(row.menuName)) {
+            throw new AppError(`菜单「${row.menuName}」已存在`, 409001, 409);
+          }
+          return this.repository.insertMenu({
+            tenantId,
+            parentId,
+            menuName: row.menuName,
+            menuType: row.menuType,
+            icon: row.icon,
+            path: row.path,
+            component: row.component,
+            permission: row.permission,
+            sortOrder: row.sortOrder,
+            status: row.status,
+            userId,
+          });
+        },
+      );
+
+    successCount += inserted;
+    insertErrors.forEach((e) =>
+      errors.push(`菜单「${e.row.menuName}」：${e.message}`),
+    );
+
+    return { successCount, failCount: errors.length, errors };
+  }
 }

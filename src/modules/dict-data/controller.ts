@@ -12,7 +12,7 @@ import {
   ApiResponse,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { DictDataRepository } from "./repository.js";
 import {
   DictDataCreateSchema,
@@ -21,8 +21,11 @@ import {
   DictTreeQuerySchema,
 } from "./schema.js";
 import { AppError } from "@/middleware/error-handler.js";
-import z from "zod";
+import { z } from "zod";
 import { success } from "@/common/utils/response.js";
+import { DictService } from "@/core/excel/dict.service.js";
+import { DictTypeRepository } from "../dict-type/repository.js";
+import { upload } from "../user/controller.js";
 
 @Controller("/dict-data", { tags: ["字典数据"] })
 export default class DictDataController extends BaseController<
@@ -43,22 +46,13 @@ export default class DictDataController extends BaseController<
   protected readonly createSchema = DictDataCreateSchema;
   protected readonly updateSchema = DictDataUpdateSchema;
   protected readonly querySchema = DictDataListSchema;
+  protected readonly service = new DictService(
+    new DictTypeRepository(),
+    this.repository,
+  );
   async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
     dto = await super.beforeUpdate(id, dto, req);
-    const repo = this.repository as DictDataRepository;
-
-    // 仅当 dictTypeId 和 dictLabel 同时存在时才检查（如果只更新一个字段，需要先获取原记录）
-    if (dto.dictTypeId && dto.dictLabel) {
-      const exist = await repo.findByLabel(
-        dto.dictTypeId,
-        dto.dictLabel,
-        req.tenantId!,
-        id,
-      );
-      if (exist) {
-        throw new AppError(`字典标签 '${dto.dictLabel}' 已存在`, 409, 409);
-      }
-    }
+    await this.service.checkDataBeforeUpdate(id, dto, req.tenantId!);
     return dto;
   }
   // 重写列表查询条件构建
@@ -78,17 +72,9 @@ export default class DictDataController extends BaseController<
     }
     return where;
   }
-  async beforeCreate(dto: any, req: Request): Promise<any> {
+  async beforeCreate(dto: any, req: Request) {
     dto = await super.beforeCreate(dto, req);
-    const tenantId = req.tenantId!;
-    const existing = await (this.repository as DictDataRepository).findByLabel(
-      dto.dictTypeId,
-      dto.dictLabel,
-      tenantId,
-    );
-    if (existing) {
-      throw new AppError(`字典标签 '${dto.dictLabel}' 已存在`, 409, 409);
-    }
+    await this.service.checkDataBeforeCreate(dto, req.tenantId!);
     return dto;
   }
   // ============ CRUD 路由 ============
@@ -131,10 +117,11 @@ export default class DictDataController extends BaseController<
   @ApiResponse(200, "查询成功")
   async getByCode(@Req() req: Request, @Res() res: Response) {
     try {
-      const dictTypeId = req.query.dictTypeId as string | undefined;
-      const data = await (
-        this.repository as DictDataRepository
-      ).findByDictCodeAndType(req.params.code, req.tenantId!, dictTypeId);
+      const data = await this.service.getDataByCode(
+        req.params.code,
+        req.tenantId!,
+        req.query.dictTypeId as string | undefined,
+      );
       success(res, data);
     } catch (err) {
       this.handleError(res, err);
@@ -149,10 +136,9 @@ export default class DictDataController extends BaseController<
   @ApiResponse(200, "查询成功")
   async dictTree(@Req() req: Request, @Res() res: Response) {
     try {
-      const { dictTypeId, dictCode } = req.query;
-      const tree = await this.repository.findTree(req.tenantId!, {
-        dictTypeId: dictTypeId as string | undefined,
-        dictCode: dictCode as string | undefined,
+      const tree = await this.service.getTree(req.tenantId!, {
+        dictTypeId: req.query.dictTypeId as string,
+        dictCode: req.query.dictCode as string,
       });
       success(res, tree);
     } catch (err) {
@@ -173,5 +159,34 @@ export default class DictDataController extends BaseController<
   @ApiResponse(200, "删除成功")
   async batchRemoveDictData(@Req() req: Request, @Res() res: Response) {
     return this.batchRemove(req, res);
+  }
+  @Get("/export")
+  async export(@Req() req, @Res() res) {
+    const buffer = await this.service.exportToExcel(req.tenantId!);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=dict_${Date.now()}.xlsx`,
+    );
+    res.send(buffer);
+  }
+
+  @Post("/import")
+  async import(@Req() req, @Res() res) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
+      if (!req.file)
+        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
+      const result = await this.service.importFromExcel(
+        req.file.buffer,
+        req.tenantId!,
+        req.user?.userId,
+      );
+      success(res, result, "导入完成");
+    });
   }
 }

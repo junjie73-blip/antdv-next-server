@@ -6,45 +6,42 @@ import {
   Res,
   ApiOperation,
   ApiQuery,
-  ApiResponse,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { FileRepository } from "./repository.js";
+import { FileService } from "./service.js";
 import { FileListSchema } from "./schema.js";
-import { error, success } from "@/common/utils/response.js";
-import { RequirePermission } from "@/core/decorator/permission.js";
-import { AppError } from "@/core/errors.js";
+import { success } from "@/common/utils/response.js";
+import { BaseController } from "@/core/base/controller.js";
 
 @Controller("/file", { tags: ["文件管理"] })
-export default class FileController {
-  private repository = new FileRepository();
+export default class FileController extends BaseController<any, any, any, any> {
+  protected readonly repository = new FileRepository();
+  protected readonly service = new FileService(this.repository);
+  protected readonly config = {
+    routePrefix: "/api/v1/file",
+    tags: ["文件管理"],
+    permissionPrefix: "file",
+    enableAudit: true,
+    defaultPageSize: 10,
+    maxPageSize: 100,
+  };
+  protected readonly createSchema = undefined;
+  protected readonly updateSchema = undefined;
+  protected readonly querySchema = FileListSchema;
 
   @Get("/list")
   @ApiOperation("获取文件列表")
   @ApiQuery(FileListSchema)
-  @ApiResponse(200, "查询成功")
   async listFile(@Req() req: Request, @Res() res: Response) {
-    try {
-      const query = {
-        pageNum: Number(req.query.pageNum) || 1,
-        pageSize: Number(req.query.pageSize) || 10,
-        tenantId: req.tenantId!,
-        keyword: req.query.keyword as string,
-        mimeType: req.query.mimeType as string,
-      };
-      const data = await this.repository.findPage(query, {});
-      success(res, data, "查询文件列表成功");
-    } catch (err) {
-      this.handleError(res, err);
-    }
+    return super.list(req, res);
   }
 
   @Delete("/:id")
   @ApiOperation("删除文件")
-  @ApiResponse(200, "删除成功")
   async removeFile(@Req() req: Request, @Res() res: Response) {
     try {
-      await this.repository.softDelete(
+      await this.service.removeFile(
         req.params.id,
         req.tenantId!,
         req.user?.userId,
@@ -53,14 +50,5 @@ export default class FileController {
     } catch (err) {
       this.handleError(res, err);
     }
-  }
-
-  private handleError(res: Response, err: any) {
-    if (err instanceof AppError) {
-      error(res, err.message, err.code, err.statusCode);
-      return;
-    }
-    console.error("Controller error:", err);
-    error(res, "操作失败", 500, 500);
   }
 }

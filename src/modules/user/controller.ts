@@ -12,7 +12,7 @@ import {
   Delete,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { UserRepository } from "./repository.js";
 import {
   UserCreateSchema,
@@ -26,10 +26,19 @@ import { AppError } from "@/middleware/error-handler.js";
 import { success } from "@/common/utils/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { prisma } from "@/config/database.js";
-import { signAccessToken } from "@/common/security/jwt.js";
 import { encrypt } from "@/common/utils/crypto.js";
+import {
+  decryptField,
+  hashField,
+  maskEmail,
+  maskPhone,
+} from "@/common/utils/field-encrypt.js";
+import { getClientIp } from "@/common/utils/ip.js";
+import { writeAuditLog } from "@/core/logger/audit-logger.js";
+import { logger } from "@/core/logger/logger.js";
+import { UserService } from "./service.js";
 
-const upload = multer({
+export const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
@@ -37,6 +46,7 @@ const upload = multer({
 @Controller("/user", { tags: ["用户管理"] })
 export default class UserController extends BaseController<any, any, any, any> {
   protected readonly repository = new UserRepository();
+  protected readonly service = new UserService(this.repository);
   protected readonly config = {
     routePrefix: "/api/v1/user",
     tags: ["用户管理"],
@@ -69,17 +79,31 @@ export default class UserController extends BaseController<any, any, any, any> {
   protected buildListWhere(query: any): any {
     const where: any = {};
     if (query.keyword) {
+      const hash = hashField(query.keyword);
       where.OR = [
         { username: { contains: query.keyword } },
         { real_name: { contains: query.keyword } },
-        { phone: { contains: query.keyword } },
-        { email: { contains: query.keyword } },
+        { phone: { contains: hash } },
+        { email: { contains: hash } },
       ];
     }
     if (query.status !== undefined) {
       where.status = query.status;
     }
     return where;
+  }
+  async afterDetail(data, req) {
+    const result = await super.afterDetail(data, req);
+    if (result.phone) result.phone = maskPhone(result.phone);
+    if (result.email) result.email = maskEmail(result.email);
+    return result;
+  }
+  async afterList(data: any[], _req: Request): Promise<any[]> {
+    return data.map((item) => ({
+      ...item,
+      phone: maskPhone(item.phone),
+      email: maskEmail(item.email),
+    }));
   }
   async beforeCreate(dto: UserCreateDto, req: Request): Promise<UserCreateDto> {
     // 调用父类方法（通常直接返回 dto，可不调用）
@@ -202,23 +226,6 @@ export default class UserController extends BaseController<any, any, any, any> {
       }
     });
   }
-  @Put("/:id/roles")
-  @ApiOperation("更新用户角色", "批量设置用户的角色列表")
-  @ApiBody(z.object({ roleIds: z.array(z.string().uuid()) }))
-  @ApiResponse(200, "更新成功")
-  async updateUserRoles(@Req() req: Request, @Res() res: Response) {
-    try {
-      const { roleIds } = req.body;
-      await (this.repository as UserRepository).updateUserRoles(
-        req.params.id,
-        roleIds,
-        req.tenantId!,
-      );
-      success(res, null, "更新成功");
-    } catch (err) {
-      this.handleError(res, err);
-    }
-  }
 
   @Get("/:id/roles")
   @ApiOperation("获取用户角色", "获取用户关联的角色列表")
@@ -269,19 +276,28 @@ export default class UserController extends BaseController<any, any, any, any> {
   @Put("/:id/password")
   @ApiOperation("重置用户密码")
   @ApiBody(z.object({ password: z.string().min(6).max(64) }))
-  @ApiResponse(200, "重置成功")
   async resetPassword(@Req() req: Request, @Res() res: Response) {
     try {
       const { password } = req.body;
-      const hashed = await encrypt(password);
-      await prisma.sys_user.update({
-        where: { user_id: req.params.id },
-        data: { password: hashed, updated_at: new Date() },
-      });
+      await this.service.resetPassword(
+        req.params.id,
+        req.body.password,
+        req.tenantId!,
+      );
       success(res, null, "密码重置成功");
     } catch (err) {
       this.handleError(res, err);
     }
+  }
+
+  @Put("/:id/roles")
+  async updateUserRoles(@Req() req, @Res() res) {
+    await this.service.updateRoles(
+      req.params.id,
+      req.body.roleIds,
+      req.tenantId!,
+    );
+    success(res, null, "更新成功");
   }
   @Get("/options")
   @ApiOperation("获取角色选项", "返回启用状态的角色列表")
@@ -328,5 +344,106 @@ export default class UserController extends BaseController<any, any, any, any> {
     }));
 
     success(res, options);
+  }
+  @Get("/:id/sensitive")
+  @ApiOperation(
+    "查看用户敏感信息",
+    "返回解密后的手机号、身份证号等敏感字段。需要 user:view-sensitive 权限，且每次调用都会记录审计日志",
+  )
+  @ApiResponse(200, "查询成功")
+  @ApiResponse(403, "无权限")
+  @ApiResponse(404, "用户不存在")
+  async getSensitive(@Req() req, @Res() res) {
+    try {
+      const targetUserId = req.params.id;
+      const tenantId = req.tenantId!;
+      const operatorId = req.user!.userId;
+      const operatorName = req.user!.username;
+      const startAt = Date.now();
+
+      // 1) 校验目标用户归属当前租户
+      const user = await prisma.sys_user.findFirst({
+        where: {
+          user_id: targetUserId,
+          tenant_id: tenantId,
+          is_deleted: 0,
+        },
+        select: {
+          user_id: true,
+          username: true,
+          real_name: true,
+          phone: true,
+          phone_enc: true,
+          email: true,
+          id_card_enc: true,
+        },
+      });
+      if (!user) {
+        throw new AppError("用户不存在", 404001, 404);
+      }
+
+      // 2) 解密敏感字段
+      let plainPhone: string | null = null;
+      try {
+        if (user.phone_enc) {
+          plainPhone = decryptField(user.phone_enc);
+        } else if (user.phone) {
+          // 兼容尚未迁移的历史数据（明文存储）
+          plainPhone = user.phone;
+        }
+      } catch (err) {
+        logger.error(
+          { err, userId: targetUserId },
+          "[getSensitive] decrypt phone failed",
+        );
+        throw new AppError("敏感数据解密失败", 500001, 500);
+      }
+
+      let plainIdCard: string | null = null;
+      if (user.id_card_enc) {
+        try {
+          plainIdCard = decryptField(user.id_card_enc);
+        } catch (err) {
+          logger.error(
+            { err, userId: targetUserId },
+            "[getSensitive] decrypt id_card failed",
+          );
+          // 身份证解密失败不阻断，返回 null 由前端展示
+          plainIdCard = null;
+        }
+      }
+
+      const result = {
+        userId: user.user_id,
+        username: user.username,
+        realName: user.real_name,
+        phone: plainPhone,
+        idCard: plainIdCard,
+        email: user.email,
+      };
+
+      // 3) 写审计日志（异步队列，不阻塞响应）
+      await writeAuditLog({
+        tenantId,
+        userId: operatorId,
+        username: operatorName,
+        operation: "view_sensitive_user_data",
+        method: req.method,
+        requestUrl: req.originalUrl,
+        requestParams: { targetUserId },
+        responseData: {
+          // 审计里也不存明文，只标记查了哪些字段
+          queriedFields: ["phone", "idCard", "email"],
+        },
+        ipAddress: getClientIp(req) || "unknown",
+        userAgent: req.headers["user-agent"] || "",
+        executeTime: Date.now() - startAt,
+        status: "1",
+      });
+
+      success(res, result, "查询成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 }

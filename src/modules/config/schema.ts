@@ -35,3 +35,14 @@ export const ConfigListSchema = z
     keyword: z.string().optional().openapi({ description: "配置键或描述" }),
   })
   .openapi("ConfigList");
+export const ConfigImportRowSchema = z.object({
+  配置键: z.string().min(1).max(128),
+  配置值: z.string().optional().default(""),
+  描述: z.string().max(512).optional().default(""),
+});
+
+export const ConfigExportColumns = [
+  { header: "配置键", key: "config_key", width: 30 },
+  { header: "配置值", key: "config_value", width: 40 },
+  { header: "描述", key: "description", width: 40 },
+] as const;

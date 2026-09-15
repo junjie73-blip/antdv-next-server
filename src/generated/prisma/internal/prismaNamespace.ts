@@ -422,7 +422,10 @@ export const ModelName = {
   sys_todo: 'sys_todo',
   sys_ip_rule: 'sys_ip_rule',
   sys_notice_channel: 'sys_notice_channel',
-  sys_notice_send_log: 'sys_notice_send_log'
+  sys_notice_send_log: 'sys_notice_send_log',
+  sys_password_history: 'sys_password_history',
+  sys_todo_group: 'sys_todo_group',
+  sys_user_tenant: 'sys_user_tenant'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -438,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log"
+    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2366,6 +2369,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    sys_password_history: {
+      payload: Prisma.$sys_password_historyPayload<ExtArgs>
+      fields: Prisma.sys_password_historyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_password_historyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_password_historyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_password_historyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_password_historyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>
+        }
+        findMany: {
+          args: Prisma.sys_password_historyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>[]
+        }
+        create: {
+          args: Prisma.sys_password_historyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>
+        }
+        createMany: {
+          args: Prisma.sys_password_historyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_password_historyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_password_historyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>
+        }
+        update: {
+          args: Prisma.sys_password_historyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_password_historyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_password_historyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_password_historyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_password_historyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_password_historyPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_password_historyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_password_history>
+        }
+        groupBy: {
+          args: Prisma.sys_password_historyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_password_historyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_password_historyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_password_historyCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_todo_group: {
+      payload: Prisma.$sys_todo_groupPayload<ExtArgs>
+      fields: Prisma.sys_todo_groupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_todo_groupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_todo_groupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_todo_groupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_todo_groupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>
+        }
+        findMany: {
+          args: Prisma.sys_todo_groupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>[]
+        }
+        create: {
+          args: Prisma.sys_todo_groupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>
+        }
+        createMany: {
+          args: Prisma.sys_todo_groupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_todo_groupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_todo_groupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>
+        }
+        update: {
+          args: Prisma.sys_todo_groupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_todo_groupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_todo_groupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_todo_groupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_todo_groupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_todo_groupPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_todo_groupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_todo_group>
+        }
+        groupBy: {
+          args: Prisma.sys_todo_groupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_todo_groupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_todo_groupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_todo_groupCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_user_tenant: {
+      payload: Prisma.$sys_user_tenantPayload<ExtArgs>
+      fields: Prisma.sys_user_tenantFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_user_tenantFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_user_tenantFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_user_tenantFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_user_tenantFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>
+        }
+        findMany: {
+          args: Prisma.sys_user_tenantFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>[]
+        }
+        create: {
+          args: Prisma.sys_user_tenantCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>
+        }
+        createMany: {
+          args: Prisma.sys_user_tenantCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_user_tenantCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_user_tenantDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>
+        }
+        update: {
+          args: Prisma.sys_user_tenantUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_user_tenantDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_user_tenantUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_user_tenantUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_user_tenantUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_user_tenantPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_user_tenantAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_user_tenant>
+        }
+        groupBy: {
+          args: Prisma.sys_user_tenantGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_user_tenantGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_user_tenantCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_user_tenantCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2442,7 +2667,14 @@ export const Sys_userScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  password_changed_at: 'password_changed_at',
+  must_change_password: 'must_change_password',
+  is_deleted: 'is_deleted',
+  id_card: 'id_card',
+  phone_enc: 'phone_enc',
+  phone_hash: 'phone_hash',
+  id_card_enc: 'id_card_enc',
+  id_card_hash: 'id_card_hash'
 } as const
 
 export type Sys_userScalarFieldEnum = (typeof Sys_userScalarFieldEnum)[keyof typeof Sys_userScalarFieldEnum]
@@ -2578,7 +2810,11 @@ export const Sys_noticeScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  priority: 'priority',
+  is_top: 'is_top',
+  revoked_at: 'revoked_at',
+  revoked_by: 'revoked_by'
 } as const
 
 export type Sys_noticeScalarFieldEnum = (typeof Sys_noticeScalarFieldEnum)[keyof typeof Sys_noticeScalarFieldEnum]
@@ -2591,7 +2827,8 @@ export const Sys_notice_userScalarFieldEnum = {
   tenant_id: 'tenant_id',
   is_read: 'is_read',
   read_time: 'read_time',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  is_deleted: 'is_deleted'
 } as const
 
 export type Sys_notice_userScalarFieldEnum = (typeof Sys_notice_userScalarFieldEnum)[keyof typeof Sys_notice_userScalarFieldEnum]
@@ -2748,7 +2985,13 @@ export const Sys_jobScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  retry_count: 'retry_count',
+  retry_interval: 'retry_interval',
+  timeout_seconds: 'timeout_seconds',
+  is_paused: 'is_paused',
+  last_run_at: 'last_run_at',
+  next_run_at: 'next_run_at'
 } as const
 
 export type Sys_jobScalarFieldEnum = (typeof Sys_jobScalarFieldEnum)[keyof typeof Sys_jobScalarFieldEnum]
@@ -2762,7 +3005,9 @@ export const Sys_job_logScalarFieldEnum = {
   job_message: 'job_message',
   status: 'status',
   exception_info: 'exception_info',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  retry_attempt: 'retry_attempt',
+  duration_ms: 'duration_ms'
 } as const
 
 export type Sys_job_logScalarFieldEnum = (typeof Sys_job_logScalarFieldEnum)[keyof typeof Sys_job_logScalarFieldEnum]
@@ -2781,7 +3026,11 @@ export const Sys_todoScalarFieldEnum = {
   status: 'status',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  group_id: 'group_id',
+  remind_at: 'remind_at',
+  reminded: 'reminded',
+  tags: 'tags'
 } as const
 
 export type Sys_todoScalarFieldEnum = (typeof Sys_todoScalarFieldEnum)[keyof typeof Sys_todoScalarFieldEnum]
@@ -2833,6 +3082,45 @@ export const Sys_notice_send_logScalarFieldEnum = {
 } as const
 
 export type Sys_notice_send_logScalarFieldEnum = (typeof Sys_notice_send_logScalarFieldEnum)[keyof typeof Sys_notice_send_logScalarFieldEnum]
+
+
+export const Sys_password_historyScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  password: 'password',
+  created_at: 'created_at'
+} as const
+
+export type Sys_password_historyScalarFieldEnum = (typeof Sys_password_historyScalarFieldEnum)[keyof typeof Sys_password_historyScalarFieldEnum]
+
+
+export const Sys_todo_groupScalarFieldEnum = {
+  group_id: 'group_id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  name: 'name',
+  color: 'color',
+  sort_order: 'sort_order',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
+} as const
+
+export type Sys_todo_groupScalarFieldEnum = (typeof Sys_todo_groupScalarFieldEnum)[keyof typeof Sys_todo_groupScalarFieldEnum]
+
+
+export const Sys_user_tenantScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  tenant_id: 'tenant_id',
+  is_default: 'is_default',
+  joined_at: 'joined_at'
+} as const
+
+export type Sys_user_tenantScalarFieldEnum = (typeof Sys_user_tenantScalarFieldEnum)[keyof typeof Sys_user_tenantScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -3097,6 +3385,9 @@ export type GlobalOmitConfig = {
   sys_ip_rule?: Prisma.sys_ip_ruleOmit
   sys_notice_channel?: Prisma.sys_notice_channelOmit
   sys_notice_send_log?: Prisma.sys_notice_send_logOmit
+  sys_password_history?: Prisma.sys_password_historyOmit
+  sys_todo_group?: Prisma.sys_todo_groupOmit
+  sys_user_tenant?: Prisma.sys_user_tenantOmit
 }
 
 /* Types for Logging */

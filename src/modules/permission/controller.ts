@@ -12,7 +12,7 @@ import {
   ApiResponse,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { PermissionRepository } from "./repository.js";
 import {
   PermissionCreateSchema,
@@ -20,6 +20,9 @@ import {
   PermissionListSchema,
 } from "./schema.js";
 import { AppError } from "@/middleware/error-handler.js";
+import { PermissionService } from "./service.js";
+import { upload } from "../user/controller.js";
+import { success } from "@/common/utils/response.js";
 
 @Controller("/permission", { tags: ["权限管理"] })
 export default class PermissionController extends BaseController<
@@ -40,7 +43,7 @@ export default class PermissionController extends BaseController<
   protected readonly createSchema = PermissionCreateSchema;
   protected readonly updateSchema = PermissionUpdateSchema;
   protected readonly querySchema = PermissionListSchema;
-
+  protected readonly service = new PermissionService(this.repository);
   // 重写查询条件
   protected buildListWhere(query: any): any {
     const where: any = {};
@@ -54,31 +57,14 @@ export default class PermissionController extends BaseController<
   // 创建前唯一性校验
   async beforeCreate(dto: any, req: Request): Promise<any> {
     dto = await super.beforeCreate(dto, req);
-    const exist = await (this.repository as PermissionRepository).findFirst({
-      perm_code: dto.permCode,
-      tenant_id: req.tenantId!,
-      is_deleted: 0,
-    });
-    if (exist)
-      throw new AppError(`权限编码 '${dto.permCode}' 已存在`, 409, 409);
+    await this.service.checkBeforeCreate(dto, req.tenantId!);
     return dto;
   }
 
   // 更新前唯一性校验
   async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
     dto = await super.beforeUpdate(id, dto, req);
-    if (dto.permCode) {
-      const exist = await (this.repository as PermissionRepository).findFirst({
-        where: {
-          perm_code: dto.permCode,
-          tenant_id: req.tenantId!,
-          is_deleted: 0,
-          perm_id: { not: id },
-        },
-      });
-      if (exist)
-        throw new AppError(`权限编码 '${dto.permCode}' 已存在`, 409, 409);
-    }
+    await this.service.checkBeforeUpdate(id, dto, req.tenantId!);
     return dto;
   }
 
@@ -119,5 +105,36 @@ export default class PermissionController extends BaseController<
   @ApiResponse(200, "删除成功")
   async removePermission(@Req() req: Request, @Res() res: Response) {
     return super.remove(req, res);
+  }
+  @Get("/export")
+  @ApiOperation("导出权限")
+  async export(@Req() req: Request, @Res() res: Response) {
+    const buffer = await this.service.exportToExcel(req.tenantId!);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=permissions_${Date.now()}.xlsx`,
+    );
+    res.send(buffer);
+  }
+
+  @Post("/import")
+  @ApiOperation("导入权限")
+  async import(@Req() req: Request, @Res() res: Response) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
+      if (!req.file)
+        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
+      const result = await this.service.importFromExcel(
+        req.file.buffer,
+        req.tenantId!,
+        req.user?.userId,
+      );
+      success(res, result, "导入完成");
+    });
   }
 }

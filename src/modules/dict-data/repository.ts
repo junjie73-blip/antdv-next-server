@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 
@@ -152,5 +152,57 @@ export class DictDataRepository extends BaseRepository<any, any, any, any> {
     }));
 
     return tree;
+  }
+  async findAllForExport(tenantId: string) {
+    const rows = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: [{ dict_type_id: "asc" }, { sort_order: "asc" }],
+    });
+
+    // 补 dict_code
+    const typeIds = [...new Set(rows.map((r: any) => r.dict_type_id))];
+    const types = await prisma.sys_dict_type.findMany({
+      where: { dict_type_id: { in: typeIds } },
+      select: { dict_type_id: true, dict_code: true },
+    });
+    const idToCode = new Map(
+      types.map((t: any) => [t.dict_type_id, t.dict_code]),
+    );
+
+    return rows.map((r: any) => ({
+      ...r,
+      dict_code: idToCode.get(r.dict_type_id) || "",
+    }));
+  }
+
+  async insertData(data: any): Promise<string> {
+    const record = await this.model.create({
+      data: {
+        tenant_id: data.tenantId,
+        dict_type_id: data.dictTypeId,
+        dict_label: data.dictLabel,
+        dict_value: data.dictValue,
+        sort_order: data.sortOrder,
+        status: data.status,
+        remark: data.remark || null,
+        created_by: data.userId,
+        updated_by: data.userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_deleted: 0,
+      },
+    });
+    return (record as any).dict_data_id;
+  }
+  async findAllEnabledByTypeIds(typeIds: string[], tenantId: string) {
+    return this.model.findMany({
+      where: {
+        tenant_id: tenantId,
+        dict_type_id: { in: typeIds },
+        status: "1",
+        is_deleted: 0,
+      },
+      orderBy: { sort_order: "asc" },
+    });
   }
 }

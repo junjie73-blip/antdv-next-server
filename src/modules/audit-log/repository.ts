@@ -1,11 +1,11 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToCamelCase } from "@/common/utils/case-convert.js";
 
 export class AuditLogRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_audit_log;
-  protected readonly primaryKey = "audit_log_id";
+  protected readonly primaryKey = "log_id";
   async findPage(
     query: BaseQuery & {
       username?: string;
@@ -65,6 +65,11 @@ export class AuditLogRepository extends BaseRepository<any, any, any, any> {
     return this.model.findMany({
       where,
       orderBy: { created_at: "desc" },
+    });
+  }
+  async findDetailById(id: string, tenantId: string) {
+    return this.model.findFirst({
+      where: { log_id: id, tenant_id: tenantId },
     });
   }
 }

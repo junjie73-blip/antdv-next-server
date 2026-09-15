@@ -27,3 +27,4 @@ export type {
   ValidationSchema,
   ExpressMiddleware,
 } from "./types.js";
+export { RequireMFA } from "./require-mfa.js";

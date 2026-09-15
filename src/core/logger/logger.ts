@@ -3,10 +3,6 @@ import { env as config } from "@config/env.js";
 import { combinedStream, errorStream, consoleTransport } from "./transports.js";
 import { baseFormatter, redactPaths } from "./formatters.js";
 
-const transports: pino.TransportMultiOptions | undefined = consoleTransport
-  ? { targets: [{ ...consoleTransport, level: "debug" }] }
-  : undefined;
-
 export const logger = pino(
   {
     level: config.LOG_LEVEL,

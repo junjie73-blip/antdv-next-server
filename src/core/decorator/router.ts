@@ -10,7 +10,8 @@ import { registry } from "@core/swagger/registry.js";
 import { validateRequest } from "./validator.js";
 import { logger } from "@core/logger/index.js";
 import { checkUserPermissions } from "@/common/utils/permission.js";
-
+import { requireMfaMiddleware } from "@/middleware/require-mfa.js";
+import { MFA_METADATA_KEY } from "./require-mfa.js";
 export class DecoratorRouter {
   private router = Router();
   private scanner: ControllerScanner;
@@ -91,6 +92,21 @@ export class DecoratorRouter {
               timestamp: Date.now(),
             });
           }
+        }
+        const requireMfa =
+          Reflect.getMetadata(
+            MFA_METADATA_KEY,
+            instance.constructor,
+            propertyKey,
+          ) === true;
+        if (requireMfa) {
+          // 走 MFA 校验
+          await new Promise<void>((resolve, reject) => {
+            requireMfaMiddleware(req, res, (err?: any) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          });
         }
         const args = paramMetadata
           .sort((a: any, b: any) => a.index - b.index)

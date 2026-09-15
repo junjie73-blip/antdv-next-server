@@ -17,15 +17,17 @@ import {
   NoticeListSchema,
   NoticeCreateSchema,
 } from "./schema.js";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { NoticeRepository } from "./repository.js";
-import z from "zod";
+import { z } from "zod";
 import { success } from "@/common/utils/response.js";
 import { AppError } from "@/middleware/error-handler.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { prisma } from "@/config/database.js";
 import { pushNotice } from "./pusher.js";
 import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { NoticeService } from "./service.js";
+import { upload } from "../user/controller.js";
 
 @Controller("/notice", { tags: ["通知公告"] })
 export default class NoticeController extends BaseController<
@@ -35,6 +37,7 @@ export default class NoticeController extends BaseController<
   any
 > {
   protected readonly repository = new NoticeRepository();
+  protected readonly service = new NoticeService(this.repository);
   protected readonly config = {
     routePrefix: "/api/v1/notice",
     tags: ["通知公告"],
@@ -48,14 +51,7 @@ export default class NoticeController extends BaseController<
   protected readonly querySchema = NoticeListSchema;
   async beforeCreate(dto: any, req: Request): Promise<any> {
     dto = await super.beforeCreate(dto, req);
-    const tenantId = req.tenantId!;
-    const exist = await (this.repository as NoticeRepository).findOne(
-      { title: dto.title },
-      tenantId,
-    );
-    if (exist) {
-      throw new AppError(`通知标题 '${dto.title}' 已存在`, 409, 409);
-    }
+    await this.service.checkBeforeCreate(dto, req.tenantId!);
     return dto;
   }
   @Get("/list")
@@ -121,17 +117,12 @@ export default class NoticeController extends BaseController<
   @ApiResponse(200, "查询成功")
   async myNotices(@Req() req: Request, @Res() res: Response) {
     try {
-      const pageNum = Number(req.query.pageNum) || 1;
-      const pageSize = Number(req.query.pageSize) || 10;
-      const where = {};
-      const data = await (
-        this.repository as NoticeRepository
-      ).findNoticesForUser(
-        req.user.userId,
+      const data = await this.service.myNotices(
         req.tenantId!,
-        pageNum,
-        pageSize,
-        Number(req.query.isRead!),
+        req.user!.userId,
+        req.query.pageNum.toString(),
+        req.query.pageSize.toString(),
+        req.query.isRead?.toString() || "0",
       );
       success(res, data);
     } catch (err) {
@@ -175,30 +166,7 @@ export default class NoticeController extends BaseController<
   @ApiResponse(200, "发送成功")
   async sendNotice(@Req() req: Request, @Res() res: Response) {
     try {
-      const noticeId = req.params.id;
-      const tenantId = req.tenantId!;
-
-      // 检查通知是否存在且已发布
-      const notice = await prisma.sys_notice.findFirst({
-        where: {
-          notice_id: noticeId,
-          tenant_id: tenantId,
-          is_deleted: 0,
-          status: "1",
-        },
-        include: { target_users: { select: { user_id: true } } },
-      });
-
-      if (!notice) {
-        throw new AppError("通知不存在或未发布", 404, 404);
-      }
-
-      if (!notice.target_users || notice.target_users.length === 0) {
-        throw new AppError("该通知没有指定目标用户，无法发送", 400, 400);
-      }
-
-      // 调用推送逻辑
-      await pushNotice(noticeId, tenantId);
+      await this.service.sendNotice(req.params.id, req.tenantId!); // ⭐
       success(res, null, "发送成功");
     } catch (err) {
       this.handleError(res, err);
@@ -209,17 +177,56 @@ export default class NoticeController extends BaseController<
   @ApiResponse(200, "操作成功")
   async markAllRead(@Req() req: Request, @Res() res: Response) {
     const { noticeIds } = req.body;
-    if (!Array.isArray(noticeIds) || noticeIds.length === 0) {
-      return success(res, null, "无需标记");
-    }
-    await prisma.sys_notice_user.updateMany({
-      where: {
-        notice_id: { in: noticeIds },
-        user_id: req.user!.userId,
-        tenant_id: req.tenantId!,
-      },
-      data: { is_read: 1, read_time: new Date() },
-    });
+    await this.service.markManyAsRead(
+      noticeIds,
+      req.user!.userId,
+      req.tenantId!,
+    ); // ⭐
     success(res, null, "已标记为已读");
+  }
+  @Post("/:id/revoke")
+  @ApiOperation("撤回通知", "已发布的通知可以撤回，撤回后用户不可见")
+  async revoke(@Req() req, @Res() res) {
+    try {
+      await this.service.revokeNotice(
+        req.params.id,
+        req.tenantId!,
+        req.user!.userId,
+      );
+      success(res, null, "已撤回");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+  @Get("/export")
+  @ApiOperation("导出通知")
+  async export(@Req() req: Request, @Res() res: Response) {
+    const buffer = await this.service.exportToExcel(req.tenantId!);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=notices_${Date.now()}.xlsx`,
+    );
+    res.send(buffer);
+  }
+
+  @Post("/import")
+  @ApiOperation("导入通知")
+  async import(@Req() req: Request, @Res() res: Response) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
+      if (!req.file)
+        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
+      const result = await this.service.importFromExcel(
+        req.file.buffer,
+        req.tenantId!,
+        req.user?.userId,
+      );
+      success(res, result, "导入完成");
+    });
   }
 }

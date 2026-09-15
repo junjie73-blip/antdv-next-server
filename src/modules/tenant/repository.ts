@@ -1,5 +1,5 @@
 import { prisma } from "@/config/database.js";
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 
 export class TenantRepository extends BaseRepository<any, any, any, any> {

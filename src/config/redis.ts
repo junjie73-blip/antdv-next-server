@@ -1,6 +1,8 @@
 import { Redis } from "ioredis";
 // 先加载 env，确保 dotenv 已执行
 import "@/config/env.js";
+import { logger } from "@/core/logger/logger.js";
+import { sendAlert } from "@/core/alert/index.js";
 
 const redisUrl = process.env.REDIS_URL || "";
 
@@ -28,7 +30,19 @@ const baseOptions = {
 export const redis = redisUrl
   ? new Redis(redisUrl, baseOptions)
   : new Redis({ lazyConnect: true, retryStrategy: () => null });
-
+redis.on("error", (err) => {
+  logger.error({ err }, "[redis] connection error");
+  void sendAlert({
+    level: "warning",
+    title: "redis_error",
+    message: "Redis 连接异常",
+    source: "redis",
+    data: { error: String(err?.message) },
+  });
+});
+redis.on("ready", () => {
+  logger.info("[redis] ready");
+});
 // 订阅需要独立连接（订阅会阻塞该连接）
 export const subRedis = redisUrl
   ? new Redis(redisUrl, baseOptions)

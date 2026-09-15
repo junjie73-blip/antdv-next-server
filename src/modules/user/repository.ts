@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import {
@@ -11,6 +11,11 @@ import { UserCreateDto, UserImportRowSchema } from "./schema.js";
 import { verifyPassword, hashPassword } from "@/common/utils/crypto.js";
 import { v4 as uuidv4 } from "uuid";
 import { copyMenusFromTemplate } from "../menu/service.js";
+import {
+  decryptField,
+  encryptField,
+  hashField,
+} from "@/common/utils/field-encrypt.js";
 const TEMPLATE_TENANT_CODE = "__TEMPLATE__";
 export class UserRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "user_id";
@@ -112,17 +117,15 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
    * 获取用户详情（含角色、部门）
    */
   async findUserDetail(id: string, tenantId: string) {
-    return this.model.findFirst({
+    const user = await this.model.findFirst({
       where: { user_id: id, tenant_id: tenantId, is_deleted: 0 },
-      include: {
-        sys_user_role: {
-          include: { role: { select: { role_id: true, role_name: true } } },
-        },
-        sys_user_dept: {
-          include: { dept: { select: { dept_id: true, dept_name: true } } },
-        },
-      },
     });
+    if (!user) return null;
+    return {
+      ...user,
+      phone: user.phone_enc ? decryptField(user.phone_enc) : user.phone,
+      idCard: user.id_card_enc ? decryptField(user.id_card_enc) : null,
+    };
   }
 
   /**
@@ -497,6 +500,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
   async createWithRelations(data: any, tenantId: string, userId?: string) {
     // 从 data 中解构出 deptIds 和 roleIds，剩余部分才是用户表字段
     const {
+      phone,
       dept_ids: deptIds,
       role_ids: roleIds,
       password,
@@ -504,6 +508,9 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     } = data;
     // 密码哈希提前进行
     const hashedPassword = await hashPassword(password);
+    const encrypted = phone
+      ? { phone_enc: encryptField(phone), phone_hash: hashField(phone) }
+      : {};
 
     return prisma.$transaction(async (tx) => {
       // 1. 创建用户主体
@@ -518,6 +525,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           created_at: new Date(),
           updated_at: new Date(),
           is_deleted: 0,
+          ...encrypted,
         },
       });
 
@@ -912,6 +920,37 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
         updated_at: new Date(),
         is_deleted: 0,
       },
+    });
+  }
+  async updatePassword(userId: string, hashedPassword: string) {
+    await this.model.update({
+      where: { user_id: userId },
+      data: { password: hashedPassword, updated_at: new Date() },
+    });
+  }
+
+  async findAllForExport(where: any, tenantId: string) {
+    return this.model.findMany({
+      where: { ...where, tenant_id: tenantId, is_deleted: 0 },
+      include: {
+        sys_user_role: { include: { role: true } },
+        sys_user_dept: { include: { dept: true } },
+      },
+      orderBy: { created_at: "asc" },
+    });
+  }
+
+  async findRolesByCodes(codes: string[], tenantId: string) {
+    return prisma.sys_role.findMany({
+      where: { tenant_id: tenantId, role_code: { in: codes }, is_deleted: 0 },
+      select: { role_id: true },
+    });
+  }
+
+  async findDeptsByCodes(codes: string[], tenantId: string) {
+    return prisma.sys_dept.findMany({
+      where: { tenant_id: tenantId, dept_code: { in: codes }, is_deleted: 0 },
+      select: { dept_id: true },
     });
   }
 }

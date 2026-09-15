@@ -12,19 +12,21 @@ import {
   ApiQuery,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { TodoRepository } from "./repository.js";
 import { success } from "@/common/utils/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { z } from "zod";
 
 // 模块级 Schema
-const TodoCreateSchema = z.object({
-  title: z.string().min(1).max(256),
-  content: z.string().optional(),
-  priority: z.number().int().min(0).max(2).default(0),
-  dueTime: z.string().datetime().nullable().optional(),
-});
+const TodoCreateSchema = z
+  .object({
+    title: z.string().min(1).max(256),
+    content: z.string().optional(),
+    priority: z.number().int().min(0).max(2).default(0),
+    dueTime: z.string().datetime().nullable().optional(),
+  })
+  .openapi("TodoCreate");
 const TodoUpdateSchema = TodoCreateSchema.partial();
 
 @Controller("/todo", { tags: ["待办事项"] })
@@ -40,7 +42,7 @@ export default class TodoController extends BaseController<any, any, any, any> {
   };
   protected readonly createSchema = TodoCreateSchema;
   protected readonly updateSchema = TodoUpdateSchema;
-  protected readonly querySchema = z.object({});
+  protected readonly querySchema = null;
 
   protected buildListWhere() {
     return {};

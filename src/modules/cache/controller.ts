@@ -26,7 +26,6 @@ export default class CacheController {
 
   @Get("/keys")
   @ApiOperation("Key 列表")
-  @ApiQuery({ name: "pattern", required: false })
   async keys(@Req() req: Request, @Res() res: Response) {
     const pattern = (req.query.pattern as string) || "*";
     success(res, await this.repository.keys(pattern));

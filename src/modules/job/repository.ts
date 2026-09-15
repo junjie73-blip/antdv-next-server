@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 
 export class JobRepository extends BaseRepository<any, any, any, any> {
@@ -33,6 +33,61 @@ export class JobRepository extends BaseRepository<any, any, any, any> {
   async clearLogs(jobId?: string) {
     await prisma.sys_job_log.deleteMany({
       where: jobId ? { job_id: jobId } : {},
+    });
+  }
+  async updateStatus(
+    jobId: string,
+    status: string,
+    tenantId: string,
+  ): Promise<void> {
+    await this.model.updateMany({
+      where: { job_id: jobId, tenant_id: tenantId },
+      data: { status, updated_at: new Date() },
+    });
+  }
+
+  async findAllForExport(tenantId: string) {
+    return this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: { created_at: "desc" },
+    });
+  }
+
+  async getExistingNames(tenantId: string): Promise<Set<string>> {
+    const rows = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      select: { job_name: true },
+    });
+    return new Set(rows.map((r: any) => r.job_name));
+  }
+
+  async insertJob(data: any): Promise<string> {
+    const record = await this.model.create({
+      data: {
+        tenant_id: data.tenantId,
+        job_name: data.jobName,
+        job_group: data.jobGroup,
+        invoke_target: data.invokeTarget,
+        cron_expression: data.cronExpression,
+        status: data.status,
+        remark: data.remark || null,
+        created_by: data.userId,
+        updated_by: data.userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_deleted: 0,
+      },
+    });
+    return (record as any).job_id;
+  }
+  async setPaused(
+    jobId: string,
+    tenantId: string,
+    paused: boolean,
+  ): Promise<void> {
+    await this.model.updateMany({
+      where: { job_id: jobId, tenant_id: tenantId },
+      data: { is_paused: paused ? 1 : 0, updated_at: new Date() },
     });
   }
 }

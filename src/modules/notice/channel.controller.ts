@@ -17,12 +17,14 @@ import { z } from "zod";
 
 const CHANNEL_TYPES = ["in_app", "email", "sms", "webhook"] as const;
 
-const ChannelUpsertSchema = z.object({
-  channelType: z.enum(CHANNEL_TYPES),
-  enabled: z.number().int().min(0).max(1).default(0),
-  config: z.record(z.string(), z.any()).optional(),
-  remark: z.string().max(256).optional(),
-});
+const ChannelUpsertSchema = z
+  .object({
+    channelType: z.enum(CHANNEL_TYPES),
+    enabled: z.number().int().min(0).max(1).default(0),
+    config: z.record(z.string(), z.any()).optional(),
+    remark: z.string().max(256).optional(),
+  })
+  .openapi("NoticeChannelUpsert");
 
 function requireTenant(req: Request): string {
   const tenantId = req.tenantId;

@@ -12,7 +12,7 @@ import {
   ApiResponse,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { RoleRepository } from "./repository.js";
 import {
   RoleCreateSchema,
@@ -30,6 +30,7 @@ import { keysToCamelCase } from "@/common/utils/case-convert.js";
 import { success } from "@/common/utils/response.js";
 import multer from "multer";
 import { simpleStorage } from "../upload/controller.js";
+import { RoleService } from "./service.js";
 const upload = multer({
   storage: simpleStorage,
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -48,25 +49,18 @@ export default class RoleController extends BaseController<any, any, any, any> {
   protected readonly createSchema = RoleCreateSchema;
   protected readonly updateSchema = RoleUpdateSchema;
   protected readonly querySchema = RoleListSchema;
+  protected readonly service = new RoleService(this.repository);
 
   // ============ 钩子：唯一性校验 ============
   async beforeCreate(dto: any, req: Request): Promise<any> {
     dto = await super.beforeCreate(dto, req);
-    const repo = this.repository as RoleRepository;
-    const exist = await repo.findByRoleCode(dto.roleCode, req.tenantId!);
-    if (exist)
-      throw new AppError(`角色编码 '${dto.roleCode}' 已存在`, 409, 409);
+    await this.service.checkBeforeCreate(dto, req.tenantId!);
     return dto;
   }
 
   async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
     dto = await super.beforeUpdate(id, dto, req);
-    const repo = this.repository as RoleRepository;
-    if (dto.roleCode) {
-      const exist = await repo.findByRoleCode(dto.roleCode, req.tenantId!, id);
-      if (exist)
-        throw new AppError(`角色编码 '${dto.roleCode}' 已存在`, 409, 409);
-    }
+    await this.service.checkBeforeUpdate(id, dto, req.tenantId!);
     return dto;
   }
 
@@ -189,13 +183,7 @@ export default class RoleController extends BaseController<any, any, any, any> {
   @ApiResponse(400, "角色已分配用户")
   async removeRole(@Req() req: Request, @Res() res: Response) {
     try {
-      // 检查是否有关联用户
-      const userCount = await prisma.sys_user_role.count({
-        where: { role_id: req.params.id, tenant_id: req.tenantId! },
-      });
-      if (userCount > 0) {
-        throw new AppError("该角色已分配给用户，无法删除", 400, 400);
-      }
+      await this.service.checkBeforeDelete(req.params.id, req.tenantId!); // ⭐
       return super.remove(req, res);
     } catch (err) {
       this.handleError(res, err);

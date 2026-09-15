@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { AppError } from "@/middleware/error-handler.js";
 

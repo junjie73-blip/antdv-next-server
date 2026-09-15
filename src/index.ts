@@ -32,6 +32,11 @@ import { startForceLogoutSubscriber } from "@/core/ws/force-logout.js";
 import { dataScopeMiddleware } from "./middleware/data-scope.js";
 import { tenantResolver } from "./middleware/tenant-resolver.js";
 import { drainAuditQueue } from "@/core/audit/queue.js";
+import { metricsMiddleware, metricsRouter } from "@/core/metrics/index.js";
+import { traceMiddleware } from "./middleware/trace.js";
+import { wsManager } from "./core/ws/manager.js";
+import { getClientIp } from "./common/utils/ip.js";
+import { sendAlert } from "./core/alert/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,8 +45,7 @@ const app = express();
 const httpServer = createServer(app);
 
 // ==================== CORS ====================
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:9080")
-  .split(",")
+const allowedOrigins = env.FRONTEND_URL.split(",")
   .map((s) => s.trim())
   .filter(Boolean);
 
@@ -83,14 +87,25 @@ app.use(ddosProtection);
 app.use(globalRateLimit);
 
 // ==================== Body Parser（必须在 audit 之前）====================
-app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
-app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: env.BODY_LIMIT }));
+app.use(bodyParser.json({ limit: env.BODY_LIMIT }));
 
 // ==================== 审计（body 解析后）====================
 app.use(auditMiddleware);
-
+app.use(traceMiddleware);
+app.use(metricsMiddleware);
+app.get("/metrics", (req, res, next) => {
+  const ip = getClientIp(req);
+  const allowed = (process.env.METRICS_WHITELIST || "127.0.0.1").split(",");
+  if (!allowed.includes(ip)) {
+    return res.status(403).end();
+  }
+  metricsRouter()(req, res, next);
+});
 // ==================== 静态 / 文档 ====================
-app.use("/api", swaggerRouter);
+if (env.NODE_ENV !== "production" || env.ENABLE_DOCS === "1") {
+  app.use("/api", swaggerRouter);
+}
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // ==================== 业务中间件链 ====================
@@ -106,17 +121,19 @@ scanner.register(...controllers);
 app.use("/api/v1", new DecoratorRouter(scanner).build());
 
 // ==================== 健康检查 ====================
-app.get("/health", async (_req: Request, res: Response) => {
+app.get("/health/live", (_req, res) => {
+  res.json({ status: "ok" }); // 进程存活
+});
+
+app.get("/health/ready", async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     await redis.ping();
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
-  } catch (err) {
-    logger.error({ err }, "health check failed");
-    res.status(503).json({ status: "degraded" });
+    res.json({ status: "ready" });
+  } catch {
+    res.status(503).json({ status: "not-ready" });
   }
 });
-
 // ==================== 404 / 错误处理 ====================
 app.use(notFoundHandler);
 app.use(errorHandler);
@@ -128,20 +145,35 @@ async function bootstrap(): Promise<void> {
     await prisma.$queryRaw`SELECT 1`;
     logger.info("✅ Database connected");
   } catch (err) {
-    logger.error({ err }, "❌ Database connection failed");
+    await sendAlert({
+      level: "critical",
+      title: "database_connection_failed",
+      message: "数据库连接失败，服务无法启动",
+      source: "database",
+      data: { error: String((err as Error)?.message) },
+    });
     process.exit(1);
   }
 
+  let redisOk = false;
   try {
     await redis.ping();
+    redisOk = true;
     logger.info("✅ Redis connected");
   } catch (err) {
-    logger.warn({ err }, "⚠️ Redis unavailable, some features degraded");
+    await sendAlert({
+      level: "warning",
+      title: "redis_connection_failed",
+      message: "Redis 连接失败，缓存/会话/限流功能降级",
+      source: "redis",
+      data: { error: String((err as Error)?.message) },
+    });
   }
 
   // 2) 后台任务（仅启动一次）
+  let jobCount = 0;
   try {
-    await loadJobs();
+    jobCount = await loadJobs(); // ⭐ 接收返回值
     startNoticeScheduler();
     initWebSocketServer(httpServer);
     await startNoticeSubscriber();
@@ -149,6 +181,20 @@ async function bootstrap(): Promise<void> {
   } catch (err) {
     logger.error({ err }, "background init failed");
   }
+
+  // 3) 启动完成横幅
+  logger.info(
+    {
+      env: env.NODE_ENV,
+      port: env.PORT,
+      node: process.version,
+      pid: process.pid,
+      redis: redisOk ? "connected" : "unavailable",
+      jobs: jobCount, // ⭐ 现在有值了
+      subscribers: ["notice", "force-logout"],
+    },
+    "🚀 Bootstrap complete",
+  );
 }
 
 // ==================== 优雅退出 ====================
@@ -157,7 +203,17 @@ async function shutdown(signal: string): Promise<void> {
   if (shuttingDown) return;
   shuttingDown = true;
   logger.info({ signal }, "shutting down...");
+  wsManager.sendToType("notice", {
+    type: "server-shutdown",
+    data: { message: "服务即将重启，请稍后重连" },
+    timestamp: Date.now(),
+  });
 
+  // 等 1 秒让消息送达
+  await new Promise((r) => setTimeout(r, 1000));
+
+  // 关闭所有 WS
+  wsManager.closeAll("server shutdown");
   // 1) 停止接收新请求
   await new Promise<void>((resolve) => httpServer.close(() => resolve()));
 
@@ -194,7 +250,26 @@ if (env.SERVERLESS === "1") {
   bootstrap()
     .then(() => {
       httpServer.listen(PORT, () => {
-        logger.info(`🚀 Server running on http://localhost:${PORT}`);
+        logger.info(
+          {
+            env: env.NODE_ENV,
+            port: env.PORT,
+            node: process.version,
+            pid: process.pid,
+          },
+          "🚀 Server starting",
+        );
+
+        logger.info(
+          {
+            database: "connected",
+            redis: "connected",
+            jobs: loadJobs(),
+            subscribers: ["notice", "force-logout"],
+          },
+          "✅ Bootstrap complete",
+        );
+
         logger.info(`📚 API Docs: http://localhost:${PORT}/api/docs`);
       });
     })
@@ -203,5 +278,27 @@ if (env.SERVERLESS === "1") {
       process.exit(1);
     });
 }
+process.on("uncaughtException", (err) => {
+  logger.fatal({ err }, "uncaughtException");
+  void sendAlert({
+    level: "critical",
+    title: "uncaught_exception",
+    message: `未捕获异常：${err.message}`,
+    source: "process",
+    data: { stack: err.stack?.slice(0, 1000) },
+  });
 
+  // 给告警发出去的时间，然后退出
+  setTimeout(() => process.exit(1), 2000);
+});
+
+process.on("unhandledRejection", (reason) => {
+  logger.error({ reason }, "unhandledRejection");
+  void sendAlert({
+    level: "error",
+    title: "unhandled_rejection",
+    message: `未处理的 Promise 拒绝：${String(reason).slice(0, 200)}`,
+    source: "process",
+  });
+});
 export default app;

@@ -12,7 +12,7 @@ import {
   ApiResponse,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { DictTypeRepository } from "./repository.js";
 import {
   DictTypeCreateSchema,
@@ -20,7 +20,11 @@ import {
   DictTypeListSchema,
 } from "./schema.js";
 import { AppError } from "@/middleware/error-handler.js";
-import z from "zod";
+import { z } from "zod";
+import { upload } from "../user/controller.js";
+import { DictService } from "@/core/excel/dict.service.js";
+import { DictDataRepository } from "../dict-data/repository.js";
+import { success } from "@/common/utils/response.js";
 
 @Controller("/dict-type", { tags: ["字典类型"] })
 export default class DictTypeController extends BaseController<
@@ -41,27 +45,19 @@ export default class DictTypeController extends BaseController<
   protected readonly createSchema = DictTypeCreateSchema;
   protected readonly updateSchema = DictTypeUpdateSchema;
   protected readonly querySchema = DictTypeListSchema;
-  async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
-    dto = await super.beforeUpdate(id, dto, req);
-    const repo = this.repository as DictTypeRepository;
-
-    if (dto.dictCode) {
-      const exist = await repo.findByDictCode(dto.dictCode, req.tenantId!, id);
-      if (exist) {
-        throw new AppError(`字典编码 ' ${dto.dictCode}' 已存在`, 409, 409);
-      }
-    }
+  protected readonly service = new DictService(
+    this.repository,
+    new DictDataRepository(),
+  );
+  async beforeCreate(dto: any, req: Request) {
+    dto = await super.beforeCreate(dto, req);
+    await this.service.checkTypeBeforeCreate(dto, req.tenantId!);
     return dto;
   }
-  async beforeCreate(dto: any, req: Request): Promise<any> {
-    dto = await super.beforeCreate(dto, req);
-    const tenantId = req.tenantId!;
-    const existing = await (
-      this.repository as DictTypeRepository
-    ).findByDictCode(dto.dictCode, tenantId);
-    if (existing) {
-      throw new AppError(`字典编码 ' ${dto.dictCode}' 已存在`, 409, 409);
-    }
+
+  async beforeUpdate(id: string, dto: any, req: Request) {
+    dto = await super.beforeUpdate(id, dto, req);
+    await this.service.checkTypeBeforeUpdate(id, dto, req.tenantId!);
     return dto;
   }
   // 重写列表查询条件构建（由基类调用）
@@ -124,5 +120,34 @@ export default class DictTypeController extends BaseController<
   @ApiResponse(200, "删除成功")
   async batchRemoveDictType(@Req() req: Request, @Res() res: Response) {
     return this.batchRemove(req, res);
+  }
+  @Get("/export")
+  async export(@Req() req, @Res() res) {
+    const buffer = await this.service.exportToExcel(req.tenantId!);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=dict_${Date.now()}.xlsx`,
+    );
+    res.send(buffer);
+  }
+
+  @Post("/import")
+  async import(@Req() req, @Res() res) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
+      if (!req.file)
+        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
+      const result = await this.service.importFromExcel(
+        req.file.buffer,
+        req.tenantId!,
+        req.user?.userId,
+      );
+      success(res, result, "导入完成");
+    });
   }
 }

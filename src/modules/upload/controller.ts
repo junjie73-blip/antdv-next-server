@@ -15,8 +15,9 @@ import { v4 as uuidv4, validate as isUuid } from "uuid";
 import { deleteFile } from "@/config/blob.js"; // 本地存储工具（已移除 Vercel）
 import { FileRepository } from "@/modules/file/repository.js";
 import { success, error } from "@/common/utils/response.js";
+import { UploadService } from "./service.js";
 
-const UPLOAD_ROOT =
+export const UPLOAD_ROOT =
   process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
 const TEMP_DIR = path.join(UPLOAD_ROOT, "temp");
 const FINAL_DIR = path.join(UPLOAD_ROOT, "files");
@@ -67,6 +68,7 @@ export const simpleUpload = multer({
 @Controller("/upload", { tags: ["文件上传"] })
 export default class UploadController {
   private fileRepository = new FileRepository();
+  private service = new UploadService(this.fileRepository);
 
   /**
    * 简单上传（小文件）
@@ -79,38 +81,17 @@ export default class UploadController {
     simpleUpload.single("file")(req, res, async (err) => {
       if (err) return error(res, "上传失败：" + err.message, 400, 400);
       if (!req.file) return error(res, "请选择文件", 400, 400);
-
       try {
-        const filename = req.file.originalname;
-        const serverFilename = req.file.filename;
-        const url = `/uploads/files/${serverFilename}`;
-        const size = req.file.size;
-        const mimeType = req.file.mimetype;
-        const tenantId = (req as any).tenantId as string;
-        const userId = (req as any).user?.userId as string | undefined;
-
-        // 写入数据库
-        const fileRecord = await this.fileRepository.createFromUpload({
-          filename,
-          url,
-          size,
-          mimeType,
-          uploader: userId,
-          tenantId,
+        const result = await this.service.saveSimpleFile({
+          originalName: req.file.originalname,
+          buffer: req.file.buffer,
+          mimeType: req.file.mimetype,
+          size: req.file.size,
+          tenantId: (req as any).tenantId,
+          userId: (req as any).user?.userId,
         });
-
-        success(
-          res,
-          {
-            fileId: fileRecord.file_id,
-            filename: fileRecord.filename,
-            url: fileRecord.url,
-            size: fileRecord.size,
-          },
-          "上传成功",
-        );
+        success(res, result, "上传成功");
       } catch (e: any) {
-        console.error("上传写库失败:", e);
         error(res, e?.message || "上传失败", 500, 500);
       }
     });
@@ -123,16 +104,8 @@ export default class UploadController {
     try {
       const uploadId = req.query.uploadId as string;
       if (!uploadId) return error(res, "缺少uploadId参数", 400, 400);
-      if (!isUuid(uploadId)) return error(res, "uploadId 非法", 400, 400);
-      const dir = path.join(TEMP_DIR, uploadId);
-      if (!fs.existsSync(dir)) return success(res, { uploaded: [] });
-      const files = fs.readdirSync(dir);
-      const uploaded = files
-        .filter((f) => f.startsWith("chunk-"))
-        .map((f) => parseInt(f.replace("chunk-", "")));
-      success(res, { uploaded });
+      success(res, await this.service.checkChunks(uploadId));
     } catch (err) {
-      console.error(err);
       error(res, "检查分片失败", 500, 500);
     }
   }
@@ -161,70 +134,17 @@ export default class UploadController {
     try {
       const { uploadId, fileName, totalChunks } = req.body;
       if (!uploadId || !fileName || !totalChunks) {
-        return error(res, "缺少uploadId、fileName或totalChunks", 400, 400);
+        return error(res, "缺少参数", 400, 400);
       }
-      if (!isUuid(uploadId)) return error(res, "uploadId 非法", 400, 400);
-      const tc = Number(totalChunks);
-      if (!Number.isInteger(tc) || tc <= 0 || tc > 100000) {
-        return error(res, "totalChunks 非法", 400, 400);
-      }
-      const tempDir = path.join(TEMP_DIR, uploadId);
-      if (!fs.existsSync(tempDir)) {
-        return error(res, "上传临时目录不存在", 404, 404);
-      }
-
-      const ext = path.extname(fileName);
-      const mergedFileName = `${uuidv4()}${ext}`;
-      const mergedPath = path.join(FINAL_DIR, mergedFileName);
-
-      // 合并分片
-      const writeStream = fs.createWriteStream(mergedPath);
-      for (let i = 0; i < tc; i++) {
-        const chunkPath = path.join(tempDir, `chunk-${i}`);
-        if (!fs.existsSync(chunkPath)) {
-          writeStream.destroy();
-          return error(res, `缺失分片 ${i}`, 400, 400);
-        }
-        const data = fs.readFileSync(chunkPath);
-        writeStream.write(data);
-      }
-      writeStream.end();
-
-      // 等待写入完成
-      await new Promise<void>((resolve) =>
-        writeStream.on("finish", () => resolve()),
-      );
-
-      // 清理临时分片目录
-      fs.rmSync(tempDir, { recursive: true, force: true });
-
-      const stat = fs.statSync(mergedPath);
-      const url = `/uploads/files/${mergedFileName}`;
-      const tenantId = (req as any).tenantId as string;
-      const userId = (req as any).user?.userId as string | undefined;
-
-      // 写入数据库
-      const fileRecord = await this.fileRepository.createFromUpload({
-        filename: fileName,
-        url,
-        size: stat.size,
-        mimeType: undefined,
-        uploader: userId,
-        tenantId,
+      const result = await this.service.mergeChunks({
+        uploadId,
+        fileName,
+        totalChunks: Number(totalChunks),
+        tenantId: (req as any).tenantId,
+        userId: (req as any).user?.userId,
       });
-
-      success(
-        res,
-        {
-          fileId: fileRecord.file_id,
-          filename: fileRecord.filename,
-          url: fileRecord.url,
-          size: fileRecord.size,
-        },
-        "合并成功",
-      );
+      success(res, result, "合并成功");
     } catch (err: any) {
-      console.error(err);
       error(res, err?.message || "合并失败", 500, 500);
     }
   }
@@ -242,7 +162,6 @@ export default class UploadController {
       await deleteFile(url);
       success(res, null, "删除成功");
     } catch (err) {
-      console.error(err);
       error(res, "删除失败", 500, 500);
     }
   }

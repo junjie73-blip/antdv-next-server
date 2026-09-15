@@ -60,3 +60,25 @@ export const PermissionListSchema = z
     status: z.string().optional().openapi({ description: "状态过滤" }),
   })
   .openapi("PermissionList");
+export const PermissionImportRowSchema = z.object({
+  权限编码: z.string().min(2).max(128),
+  权限名称: z.string().min(2).max(128),
+  资源类型: z.string().max(32).default("api"),
+  动作: z.string().max(32).optional().default(""),
+  描述: z.string().max(512).optional().default(""),
+  状态: z.enum(["启用", "禁用"]).default("启用"),
+});
+
+export const PermissionExportColumns = [
+  { header: "权限编码", key: "perm_code", width: 30 },
+  { header: "权限名称", key: "perm_name", width: 24 },
+  { header: "资源类型", key: "resource_type", width: 16 },
+  { header: "动作", key: "action", width: 12 },
+  { header: "描述", key: "description", width: 40 },
+  {
+    header: "状态",
+    key: "status",
+    width: 8,
+    formatter: (v: string) => (v === "1" ? "启用" : "禁用"),
+  },
+] as const;

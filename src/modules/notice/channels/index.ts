@@ -5,7 +5,9 @@ import { smsChannel } from "./sms.js";
 import { webhookChannel } from "./webhook.js";
 import { prisma } from "@/config/database.js";
 import { logger } from "@core/logger/index.js";
+import { sendAlert } from "@/core/alert/index.js";
 
+const channelFailureCounter = new Map<string, number>();
 const REGISTRY: Record<string, NoticeChannel> = {
   in_app: inAppChannel,
   email: emailChannel,
@@ -139,6 +141,29 @@ export async function dispatchNotice(
       } catch (err) {
         logger.error({ err }, "[notice] write send-log failed");
       }
+    }
+    if (result.failed > 0) {
+      const key = `${tenantId}:${ch.channel_type}`;
+      const count = (channelFailureCounter.get(key) || 0) + 1;
+      channelFailureCounter.set(key, count);
+
+      if (count >= 5) {
+        void sendAlert({
+          level: "warning",
+          title: `notice_channel_failure:${key}`,
+          message: `通知渠道「${ch.channel_type}」连续失败 ${count} 次`,
+          source: "notice",
+          data: {
+            tenantId,
+            channel: ch.channel_type,
+            failed: result.failed,
+            errors: result.errors.slice(0, 3),
+          },
+        });
+        channelFailureCounter.set(key, 0); // 重置
+      }
+    } else if (result.success > 0) {
+      channelFailureCounter.delete(`${tenantId}:${ch.channel_type}`);
     }
   }
 

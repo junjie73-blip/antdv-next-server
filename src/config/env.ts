@@ -82,8 +82,10 @@ const envSchema = z.object({
   OAUTH_GITHUB_CLIENT_SECRET: z.string().optional(),
   ENCRYPTION_KEY: z.string().min(32, "ENCRYPTION_KEY 至少32位"),
   BCRYPT_SALT_ROUNDS: z.string().default("12"),
-  FRONTEND_URL: z.string().default("http://localhost:9080"),
+  FRONTEND_URL: z.string().default("http://localhost:5680"),
   SERVERLESS: z.string().default("0"),
+  ENABLE_DOCS: z.string().default("0"),
+  BODY_LIMIT: z.string().default("10mb"),
 });
 
 export const env = envSchema.parse(process.env);

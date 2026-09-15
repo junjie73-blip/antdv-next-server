@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToSnakeCase } from "@/common/utils/case-convert.js";
@@ -79,5 +79,58 @@ export class DictTypeRepository extends BaseRepository<any, any, any, any> {
       throw new AppError("该字典类型下存在字典数据，无法删除", 400, 400);
     }
     return super.softDelete(id, tenantId, userId);
+  }
+  async findAllForExport(tenantId: string) {
+    return this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: { created_at: "asc" },
+    });
+  }
+
+  async getExistingCodes(tenantId: string): Promise<Set<string>> {
+    const rows = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      select: { dict_code: true },
+    });
+    return new Set(rows.map((r: any) => r.dict_code));
+  }
+
+  async getCodeToIdMap(tenantId: string): Promise<Map<string, string>> {
+    const rows = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      select: { dict_type_id: true, dict_code: true },
+    });
+    return new Map(rows.map((r: any) => [r.dict_code, r.dict_type_id]));
+  }
+
+  async insertType(data: any): Promise<string> {
+    const record = await this.model.create({
+      data: {
+        tenant_id: data.tenantId,
+        dict_code: data.dictCode,
+        dict_name: data.dictName,
+        description: data.description || null,
+        status: data.status,
+        created_by: data.userId,
+        updated_by: data.userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_deleted: 0,
+      },
+    });
+    return (record as any).dict_type_id;
+  }
+  async findAllEnabled(tenantId: string, filter?: any) {
+    return this.model.findMany({
+      where: {
+        tenant_id: tenantId,
+        status: "1",
+        is_deleted: 0,
+        ...(filter?.dictTypeId ? { dict_type_id: filter.dictTypeId } : {}),
+        ...(filter?.dictCode ? { dict_code: filter.dictCode } : {}),
+      },
+      orderBy: { created_at: "asc" },
+      select: { dict_type_id: true, dict_code: true, dict_name: true },
+    });
   }
 }

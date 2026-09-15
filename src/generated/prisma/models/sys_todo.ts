@@ -29,11 +29,13 @@ export type AggregateSys_todo = {
 export type Sys_todoAvgAggregateOutputType = {
   priority: number | null
   is_deleted: number | null
+  reminded: number | null
 }
 
 export type Sys_todoSumAggregateOutputType = {
   priority: number | null
   is_deleted: number | null
+  reminded: number | null
 }
 
 export type Sys_todoMinAggregateOutputType = {
@@ -50,6 +52,10 @@ export type Sys_todoMinAggregateOutputType = {
   created_at: Date | null
   updated_at: Date | null
   is_deleted: number | null
+  group_id: string | null
+  remind_at: Date | null
+  reminded: number | null
+  tags: string | null
 }
 
 export type Sys_todoMaxAggregateOutputType = {
@@ -66,6 +72,10 @@ export type Sys_todoMaxAggregateOutputType = {
   created_at: Date | null
   updated_at: Date | null
   is_deleted: number | null
+  group_id: string | null
+  remind_at: Date | null
+  reminded: number | null
+  tags: string | null
 }
 
 export type Sys_todoCountAggregateOutputType = {
@@ -82,6 +92,10 @@ export type Sys_todoCountAggregateOutputType = {
   created_at: number
   updated_at: number
   is_deleted: number
+  group_id: number
+  remind_at: number
+  reminded: number
+  tags: number
   _all: number
 }
 
@@ -89,11 +103,13 @@ export type Sys_todoCountAggregateOutputType = {
 export type Sys_todoAvgAggregateInputType = {
   priority?: true
   is_deleted?: true
+  reminded?: true
 }
 
 export type Sys_todoSumAggregateInputType = {
   priority?: true
   is_deleted?: true
+  reminded?: true
 }
 
 export type Sys_todoMinAggregateInputType = {
@@ -110,6 +126,10 @@ export type Sys_todoMinAggregateInputType = {
   created_at?: true
   updated_at?: true
   is_deleted?: true
+  group_id?: true
+  remind_at?: true
+  reminded?: true
+  tags?: true
 }
 
 export type Sys_todoMaxAggregateInputType = {
@@ -126,6 +146,10 @@ export type Sys_todoMaxAggregateInputType = {
   created_at?: true
   updated_at?: true
   is_deleted?: true
+  group_id?: true
+  remind_at?: true
+  reminded?: true
+  tags?: true
 }
 
 export type Sys_todoCountAggregateInputType = {
@@ -142,6 +166,10 @@ export type Sys_todoCountAggregateInputType = {
   created_at?: true
   updated_at?: true
   is_deleted?: true
+  group_id?: true
+  remind_at?: true
+  reminded?: true
+  tags?: true
   _all?: true
 }
 
@@ -245,6 +273,10 @@ export type Sys_todoGroupByOutputType = {
   created_at: Date
   updated_at: Date
   is_deleted: number
+  group_id: string | null
+  remind_at: Date | null
+  reminded: number
+  tags: string | null
   _count: Sys_todoCountAggregateOutputType | null
   _avg: Sys_todoAvgAggregateOutputType | null
   _sum: Sys_todoSumAggregateOutputType | null
@@ -284,6 +316,10 @@ export type sys_todoWhereInput = {
   created_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
   is_deleted?: Prisma.IntFilter<"sys_todo"> | number
+  group_id?: Prisma.UuidNullableFilter<"sys_todo"> | string | null
+  remind_at?: Prisma.DateTimeNullableFilter<"sys_todo"> | Date | string | null
+  reminded?: Prisma.IntFilter<"sys_todo"> | number
+  tags?: Prisma.StringNullableFilter<"sys_todo"> | string | null
 }
 
 export type sys_todoOrderByWithRelationInput = {
@@ -300,6 +336,10 @@ export type sys_todoOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  group_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  remind_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  reminded?: Prisma.SortOrder
+  tags?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_todoWhereUniqueInput = Prisma.AtLeast<{
@@ -319,6 +359,10 @@ export type sys_todoWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_todo"> | Date | string
   is_deleted?: Prisma.IntFilter<"sys_todo"> | number
+  group_id?: Prisma.UuidNullableFilter<"sys_todo"> | string | null
+  remind_at?: Prisma.DateTimeNullableFilter<"sys_todo"> | Date | string | null
+  reminded?: Prisma.IntFilter<"sys_todo"> | number
+  tags?: Prisma.StringNullableFilter<"sys_todo"> | string | null
 }, "todo_id">
 
 export type sys_todoOrderByWithAggregationInput = {
@@ -335,6 +379,10 @@ export type sys_todoOrderByWithAggregationInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  group_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  remind_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  reminded?: Prisma.SortOrder
+  tags?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_todoCountOrderByAggregateInput
   _avg?: Prisma.sys_todoAvgOrderByAggregateInput
   _max?: Prisma.sys_todoMaxOrderByAggregateInput
@@ -359,6 +407,10 @@ export type sys_todoScalarWhereWithAggregatesInput = {
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_todo"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_todo"> | Date | string
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_todo"> | number
+  group_id?: Prisma.UuidNullableWithAggregatesFilter<"sys_todo"> | string | null
+  remind_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_todo"> | Date | string | null
+  reminded?: Prisma.IntWithAggregatesFilter<"sys_todo"> | number
+  tags?: Prisma.StringNullableWithAggregatesFilter<"sys_todo"> | string | null
 }
 
 export type sys_todoCreateInput = {
@@ -375,6 +427,10 @@ export type sys_todoCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   is_deleted?: number
+  group_id?: string | null
+  remind_at?: Date | string | null
+  reminded?: number
+  tags?: string | null
 }
 
 export type sys_todoUncheckedCreateInput = {
@@ -391,6 +447,10 @@ export type sys_todoUncheckedCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   is_deleted?: number
+  group_id?: string | null
+  remind_at?: Date | string | null
+  reminded?: number
+  tags?: string | null
 }
 
 export type sys_todoUpdateInput = {
@@ -407,6 +467,10 @@ export type sys_todoUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  group_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remind_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminded?: Prisma.IntFieldUpdateOperationsInput | number
+  tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_todoUncheckedUpdateInput = {
@@ -423,6 +487,10 @@ export type sys_todoUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  group_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remind_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminded?: Prisma.IntFieldUpdateOperationsInput | number
+  tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_todoCreateManyInput = {
@@ -439,6 +507,10 @@ export type sys_todoCreateManyInput = {
   created_at?: Date | string
   updated_at?: Date | string
   is_deleted?: number
+  group_id?: string | null
+  remind_at?: Date | string | null
+  reminded?: number
+  tags?: string | null
 }
 
 export type sys_todoUpdateManyMutationInput = {
@@ -455,6 +527,10 @@ export type sys_todoUpdateManyMutationInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  group_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remind_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminded?: Prisma.IntFieldUpdateOperationsInput | number
+  tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_todoUncheckedUpdateManyInput = {
@@ -471,6 +547,10 @@ export type sys_todoUncheckedUpdateManyInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  group_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remind_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminded?: Prisma.IntFieldUpdateOperationsInput | number
+  tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_todoCountOrderByAggregateInput = {
@@ -487,11 +567,16 @@ export type sys_todoCountOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  group_id?: Prisma.SortOrder
+  remind_at?: Prisma.SortOrder
+  reminded?: Prisma.SortOrder
+  tags?: Prisma.SortOrder
 }
 
 export type sys_todoAvgOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  reminded?: Prisma.SortOrder
 }
 
 export type sys_todoMaxOrderByAggregateInput = {
@@ -508,6 +593,10 @@ export type sys_todoMaxOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  group_id?: Prisma.SortOrder
+  remind_at?: Prisma.SortOrder
+  reminded?: Prisma.SortOrder
+  tags?: Prisma.SortOrder
 }
 
 export type sys_todoMinOrderByAggregateInput = {
@@ -524,11 +613,16 @@ export type sys_todoMinOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  group_id?: Prisma.SortOrder
+  remind_at?: Prisma.SortOrder
+  reminded?: Prisma.SortOrder
+  tags?: Prisma.SortOrder
 }
 
 export type sys_todoSumOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  reminded?: Prisma.SortOrder
 }
 
 
@@ -547,6 +641,10 @@ export type sys_todoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  group_id?: boolean
+  remind_at?: boolean
+  reminded?: boolean
+  tags?: boolean
 }, ExtArgs["result"]["sys_todo"]>
 
 export type sys_todoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -563,6 +661,10 @@ export type sys_todoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  group_id?: boolean
+  remind_at?: boolean
+  reminded?: boolean
+  tags?: boolean
 }, ExtArgs["result"]["sys_todo"]>
 
 export type sys_todoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -579,6 +681,10 @@ export type sys_todoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  group_id?: boolean
+  remind_at?: boolean
+  reminded?: boolean
+  tags?: boolean
 }, ExtArgs["result"]["sys_todo"]>
 
 export type sys_todoSelectScalar = {
@@ -595,9 +701,13 @@ export type sys_todoSelectScalar = {
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  group_id?: boolean
+  remind_at?: boolean
+  reminded?: boolean
+  tags?: boolean
 }
 
-export type sys_todoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"todo_id" | "tenant_id" | "user_id" | "title" | "content" | "priority" | "due_time" | "created_by" | "updated_by" | "status" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["sys_todo"]>
+export type sys_todoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"todo_id" | "tenant_id" | "user_id" | "title" | "content" | "priority" | "due_time" | "created_by" | "updated_by" | "status" | "created_at" | "updated_at" | "is_deleted" | "group_id" | "remind_at" | "reminded" | "tags", ExtArgs["result"]["sys_todo"]>
 
 export type $sys_todoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_todo"
@@ -616,6 +726,10 @@ export type $sys_todoPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     created_at: Date
     updated_at: Date
     is_deleted: number
+    group_id: string | null
+    remind_at: Date | null
+    reminded: number
+    tags: string | null
   }, ExtArgs["result"]["sys_todo"]>
   composites: {}
 }
@@ -1052,6 +1166,10 @@ export interface sys_todoFieldRefs {
   readonly created_at: Prisma.FieldRef<"sys_todo", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"sys_todo", 'DateTime'>
   readonly is_deleted: Prisma.FieldRef<"sys_todo", 'Int'>
+  readonly group_id: Prisma.FieldRef<"sys_todo", 'String'>
+  readonly remind_at: Prisma.FieldRef<"sys_todo", 'DateTime'>
+  readonly reminded: Prisma.FieldRef<"sys_todo", 'Int'>
+  readonly tags: Prisma.FieldRef<"sys_todo", 'String'>
 }
     
 

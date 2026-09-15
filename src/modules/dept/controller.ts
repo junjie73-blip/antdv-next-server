@@ -12,7 +12,7 @@ import {
   ApiResponse,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import { DeptRepository } from "./repository.js";
 import {
   DeptCreateSchema,
@@ -21,7 +21,9 @@ import {
 } from "./schema.js";
 import { AppError } from "@/middleware/error-handler.js";
 import { success } from "@/common/utils/response.js";
-import z from "zod";
+import { z } from "zod";
+import { upload } from "../user/controller.js";
+import { DeptService } from "./service.js";
 
 @Controller("/dept", { tags: ["部门管理"] })
 export default class DeptController extends BaseController<any, any, any, any> {
@@ -37,6 +39,7 @@ export default class DeptController extends BaseController<any, any, any, any> {
   protected readonly createSchema = DeptCreateSchema;
   protected readonly updateSchema = DeptUpdateSchema;
   protected readonly querySchema = DeptListSchema;
+  protected readonly service = new DeptService(this.repository);
 
   protected buildListWhere(query: any) {
     const where: any = {};
@@ -49,24 +52,15 @@ export default class DeptController extends BaseController<any, any, any, any> {
   }
 
   // 创建前唯一性检查
-  async beforeCreate(dto: any, req: Request): Promise<any> {
+  async beforeCreate(dto: any, req: Request) {
     dto = await super.beforeCreate(dto, req);
-    const repo = this.repository as DeptRepository;
-    const exist = await repo.findByDeptCode(dto.deptCode, req.tenantId!);
-    if (exist)
-      throw new AppError(`部门编码 '${dto.deptCode}' 已存在`, 409, 409);
+    await this.service.checkBeforeCreate(dto, req.tenantId!); // ⭐
     return dto;
   }
 
-  // 更新前唯一性检查
-  async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
+  async beforeUpdate(id: string, dto: any, req: Request) {
     dto = await super.beforeUpdate(id, dto, req);
-    const repo = this.repository as DeptRepository;
-    if (dto.deptCode) {
-      const exist = await repo.findByDeptCode(dto.deptCode, req.tenantId!, id);
-      if (exist)
-        throw new AppError(`部门编码 '${dto.deptCode}' 已存在`, 409, 409);
-    }
+    await this.service.checkBeforeUpdate(id, dto, req.tenantId!); // ⭐
     return dto;
   }
 
@@ -84,10 +78,7 @@ export default class DeptController extends BaseController<any, any, any, any> {
   async tree(@Req() req: Request, @Res() res: Response) {
     try {
       const onlyEnabled = req.query.onlyEnabled === "1";
-      const data = await (this.repository as DeptRepository).findTree(
-        req.tenantId!,
-        { onlyEnabled },
-      );
+      const data = await this.service.getTree(req.tenantId!, { onlyEnabled }); // ⭐
       success(res, data, "获取部门树成功");
     } catch (err) {
       this.handleError(res, err);
@@ -139,11 +130,7 @@ export default class DeptController extends BaseController<any, any, any, any> {
   async updateDeptUsers(@Req() req: Request, @Res() res: Response) {
     try {
       const { userIds } = req.body;
-      await (this.repository as DeptRepository).updateDeptUsers(
-        req.params.id,
-        userIds,
-        req.tenantId!,
-      );
+      await this.service.updateDeptUsers(req.params.id, userIds, req.tenantId!); // ⭐
       success(res, null, "更新成功");
     } catch (err) {
       this.handleError(res, err);
@@ -155,13 +142,42 @@ export default class DeptController extends BaseController<any, any, any, any> {
   @ApiResponse(200, "查询成功")
   async getDeptUsers(@Req() req: Request, @Res() res: Response) {
     try {
-      const users = await (this.repository as DeptRepository).findDeptUsers(
+      const users = await this.service.getDeptUsers(
         req.params.id,
         req.tenantId!,
-      );
+      ); // ⭐
       success(res, users, "查询成功");
     } catch (err) {
       this.handleError(res, err);
     }
+  }
+  @Get("/export")
+  async exportDepts(@Req() req, @Res() res) {
+    const buffer = await this.service.exportToExcel(req.tenantId!);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=depts_${Date.now()}.xlsx`,
+    );
+    res.send(buffer);
+  }
+
+  @Post("/import")
+  async importDepts(@Req() req, @Res() res) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
+      if (!req.file)
+        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
+      const result = await this.service.importFromExcel(
+        req.file.buffer,
+        req.tenantId!,
+        req.user?.userId,
+      );
+      success(res, result, "导入完成");
+    });
   }
 }

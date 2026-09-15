@@ -21,9 +21,10 @@ import Controller_18 from './role/controller.js';
 import Controller_19 from './server/controller.js';
 import Controller_20 from './tenant/controller.js';
 import Controller_21 from './todo/controller.js';
-import Controller_22 from './upload/controller.js';
-import Controller_23 from './user/controller.js';
-import Controller_24 from './workbench/controller.js';
+import Controller_22 from './todo-group/controller.js';
+import Controller_23 from './upload/controller.js';
+import Controller_24 from './user/controller.js';
+import Controller_25 from './workbench/controller.js';
 
 export const controllers = [
   Controller_0,
@@ -51,4 +52,5 @@ export const controllers = [
   Controller_22,
   Controller_23,
   Controller_24,
+  Controller_25,
 ];

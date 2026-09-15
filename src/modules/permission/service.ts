@@ -1,0 +1,75 @@
+import { PermissionRepository } from "./repository.js";
+import {
+  PermissionImportRowSchema,
+  PermissionExportColumns,
+} from "./schema.js";
+import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
+import { AppError } from "@/core/errors.js";
+import { BaseService } from "@/core/base/service.js";
+
+export class PermissionService extends BaseService<PermissionRepository> {
+  constructor(repository: PermissionRepository) {
+    super(repository);
+  }
+
+  async checkBeforeCreate(dto: any, tenantId: string) {
+    await this.assertUnique(
+      () => this.repository.findByPermCode(dto.permCode, tenantId),
+      "权限编码",
+      dto.permCode,
+    );
+  }
+
+  async checkBeforeUpdate(id: string, dto: any, tenantId: string) {
+    if (!dto.permCode) return;
+    const existing = await this.repository.findByPermCode(
+      dto.permCode,
+      tenantId,
+      id,
+    );
+    if (existing)
+      throw new AppError(`权限编码 '${dto.permCode}' 已存在`, 409001, 409);
+  }
+
+  async exportToExcel(tenantId: string): Promise<Buffer> {
+    const perms = await this.repository.findAllForExport(tenantId);
+    return generateExcel(perms, [...PermissionExportColumns], "权限数据");
+  }
+
+  async importFromExcel(buffer: Buffer, tenantId: string, userId?: string) {
+    const { rows, errors: parseErrors } = parseExcel<Record<string, any>>(
+      buffer,
+      PermissionImportRowSchema,
+    );
+    const existing = await this.repository.getExistingCodes(tenantId);
+    const errors = parseErrors.map((e) => `第 ${e.rowNum} 行：${e.message}`);
+    let successCount = 0;
+
+    for (const row of rows) {
+      const code = String(row["权限编码"] || "").trim();
+      const name = String(row["权限名称"] || "").trim();
+      if (!code || !name) continue;
+      if (existing.has(code)) {
+        errors.push(`权限「${code}」：已存在`);
+        continue;
+      }
+      try {
+        await this.repository.insertPermission({
+          tenantId,
+          permCode: code,
+          permName: name,
+          resourceType: String(row["资源类型"] || "api"),
+          action: String(row["动作"] || "") || null,
+          description: String(row["描述"] || ""),
+          status: row["状态"] === "禁用" ? "0" : "1",
+          userId,
+        });
+        existing.add(code);
+        successCount++;
+      } catch (e: any) {
+        errors.push(`权限「${code}」：${e.message}`);
+      }
+    }
+    return { successCount, failCount: errors.length, errors };
+  }
+}

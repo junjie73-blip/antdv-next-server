@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { AppError } from "@/middleware/error-handler.js";
@@ -95,5 +95,39 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
   }
   async findFirst(where: any) {
     return this.model.findFirst({ where });
+  }
+  async findAllForExport(tenantId: string) {
+    return this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: { created_at: "desc" },
+    });
+  }
+
+  async getExistingCodes(tenantId: string): Promise<Set<string>> {
+    const rows = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      select: { perm_code: true },
+    });
+    return new Set(rows.map((r: any) => r.perm_code));
+  }
+
+  async insertPermission(data: any): Promise<string> {
+    const record = await this.model.create({
+      data: {
+        tenant_id: data.tenantId,
+        perm_code: data.permCode,
+        perm_name: data.permName,
+        resource_type: data.resourceType,
+        action: data.action,
+        description: data.description || null,
+        status: data.status,
+        created_by: data.userId,
+        updated_by: data.userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_deleted: 0,
+      },
+    });
+    return (record as any).perm_id;
   }
 }

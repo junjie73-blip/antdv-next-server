@@ -29,12 +29,14 @@ export type AggregateSys_user = {
 export type Sys_userAvgAggregateOutputType = {
   gender: number | null
   sort_order: number | null
+  must_change_password: number | null
   is_deleted: number | null
 }
 
 export type Sys_userSumAggregateOutputType = {
   gender: number | null
   sort_order: number | null
+  must_change_password: number | null
   is_deleted: number | null
 }
 
@@ -56,7 +58,14 @@ export type Sys_userMinAggregateOutputType = {
   updated_at: Date | null
   created_by: string | null
   updated_by: string | null
+  password_changed_at: Date | null
+  must_change_password: number | null
   is_deleted: number | null
+  id_card: string | null
+  phone_enc: string | null
+  phone_hash: string | null
+  id_card_enc: string | null
+  id_card_hash: string | null
 }
 
 export type Sys_userMaxAggregateOutputType = {
@@ -77,7 +86,14 @@ export type Sys_userMaxAggregateOutputType = {
   updated_at: Date | null
   created_by: string | null
   updated_by: string | null
+  password_changed_at: Date | null
+  must_change_password: number | null
   is_deleted: number | null
+  id_card: string | null
+  phone_enc: string | null
+  phone_hash: string | null
+  id_card_enc: string | null
+  id_card_hash: string | null
 }
 
 export type Sys_userCountAggregateOutputType = {
@@ -98,7 +114,14 @@ export type Sys_userCountAggregateOutputType = {
   updated_at: number
   created_by: number
   updated_by: number
+  password_changed_at: number
+  must_change_password: number
   is_deleted: number
+  id_card: number
+  phone_enc: number
+  phone_hash: number
+  id_card_enc: number
+  id_card_hash: number
   _all: number
 }
 
@@ -106,12 +129,14 @@ export type Sys_userCountAggregateOutputType = {
 export type Sys_userAvgAggregateInputType = {
   gender?: true
   sort_order?: true
+  must_change_password?: true
   is_deleted?: true
 }
 
 export type Sys_userSumAggregateInputType = {
   gender?: true
   sort_order?: true
+  must_change_password?: true
   is_deleted?: true
 }
 
@@ -133,7 +158,14 @@ export type Sys_userMinAggregateInputType = {
   updated_at?: true
   created_by?: true
   updated_by?: true
+  password_changed_at?: true
+  must_change_password?: true
   is_deleted?: true
+  id_card?: true
+  phone_enc?: true
+  phone_hash?: true
+  id_card_enc?: true
+  id_card_hash?: true
 }
 
 export type Sys_userMaxAggregateInputType = {
@@ -154,7 +186,14 @@ export type Sys_userMaxAggregateInputType = {
   updated_at?: true
   created_by?: true
   updated_by?: true
+  password_changed_at?: true
+  must_change_password?: true
   is_deleted?: true
+  id_card?: true
+  phone_enc?: true
+  phone_hash?: true
+  id_card_enc?: true
+  id_card_hash?: true
 }
 
 export type Sys_userCountAggregateInputType = {
@@ -175,7 +214,14 @@ export type Sys_userCountAggregateInputType = {
   updated_at?: true
   created_by?: true
   updated_by?: true
+  password_changed_at?: true
+  must_change_password?: true
   is_deleted?: true
+  id_card?: true
+  phone_enc?: true
+  phone_hash?: true
+  id_card_enc?: true
+  id_card_hash?: true
   _all?: true
 }
 
@@ -283,7 +329,14 @@ export type Sys_userGroupByOutputType = {
   updated_at: Date
   created_by: string | null
   updated_by: string | null
+  password_changed_at: Date | null
+  must_change_password: number
   is_deleted: number
+  id_card: string | null
+  phone_enc: string | null
+  phone_hash: string | null
+  id_card_enc: string | null
+  id_card_hash: string | null
   _count: Sys_userCountAggregateOutputType | null
   _avg: Sys_userAvgAggregateOutputType | null
   _sum: Sys_userSumAggregateOutputType | null
@@ -327,7 +380,14 @@ export type sys_userWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"sys_user"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_user"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_user"> | string | null
+  password_changed_at?: Prisma.DateTimeNullableFilter<"sys_user"> | Date | string | null
+  must_change_password?: Prisma.IntFilter<"sys_user"> | number
   is_deleted?: Prisma.IntFilter<"sys_user"> | number
+  id_card?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  phone_enc?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  phone_hash?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  id_card_enc?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  id_card_hash?: Prisma.StringNullableFilter<"sys_user"> | string | null
   sys_user_role?: Prisma.Sys_user_roleListRelationFilter
   sys_user_dept?: Prisma.Sys_user_deptListRelationFilter
 }
@@ -350,7 +410,14 @@ export type sys_userOrderByWithRelationInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  password_changed_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  must_change_password?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  id_card?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone_enc?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone_hash?: Prisma.SortOrderInput | Prisma.SortOrder
+  id_card_enc?: Prisma.SortOrderInput | Prisma.SortOrder
+  id_card_hash?: Prisma.SortOrderInput | Prisma.SortOrder
   sys_user_role?: Prisma.sys_user_roleOrderByRelationAggregateInput
   sys_user_dept?: Prisma.sys_user_deptOrderByRelationAggregateInput
 }
@@ -377,7 +444,14 @@ export type sys_userWhereUniqueInput = Prisma.AtLeast<{
   updated_at?: Prisma.DateTimeFilter<"sys_user"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_user"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_user"> | string | null
+  password_changed_at?: Prisma.DateTimeNullableFilter<"sys_user"> | Date | string | null
+  must_change_password?: Prisma.IntFilter<"sys_user"> | number
   is_deleted?: Prisma.IntFilter<"sys_user"> | number
+  id_card?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  phone_enc?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  phone_hash?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  id_card_enc?: Prisma.StringNullableFilter<"sys_user"> | string | null
+  id_card_hash?: Prisma.StringNullableFilter<"sys_user"> | string | null
   sys_user_role?: Prisma.Sys_user_roleListRelationFilter
   sys_user_dept?: Prisma.Sys_user_deptListRelationFilter
 }, "user_id" | "tenant_id_username">
@@ -400,7 +474,14 @@ export type sys_userOrderByWithAggregationInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  password_changed_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  must_change_password?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  id_card?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone_enc?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone_hash?: Prisma.SortOrderInput | Prisma.SortOrder
+  id_card_enc?: Prisma.SortOrderInput | Prisma.SortOrder
+  id_card_hash?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_userCountOrderByAggregateInput
   _avg?: Prisma.sys_userAvgOrderByAggregateInput
   _max?: Prisma.sys_userMaxOrderByAggregateInput
@@ -429,7 +510,14 @@ export type sys_userScalarWhereWithAggregatesInput = {
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_user"> | Date | string
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_user"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_user"> | string | null
+  password_changed_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_user"> | Date | string | null
+  must_change_password?: Prisma.IntWithAggregatesFilter<"sys_user"> | number
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_user"> | number
+  id_card?: Prisma.StringNullableWithAggregatesFilter<"sys_user"> | string | null
+  phone_enc?: Prisma.StringNullableWithAggregatesFilter<"sys_user"> | string | null
+  phone_hash?: Prisma.StringNullableWithAggregatesFilter<"sys_user"> | string | null
+  id_card_enc?: Prisma.StringNullableWithAggregatesFilter<"sys_user"> | string | null
+  id_card_hash?: Prisma.StringNullableWithAggregatesFilter<"sys_user"> | string | null
 }
 
 export type sys_userCreateInput = {
@@ -450,7 +538,14 @@ export type sys_userCreateInput = {
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
+  password_changed_at?: Date | string | null
+  must_change_password?: number
   is_deleted?: number
+  id_card?: string | null
+  phone_enc?: string | null
+  phone_hash?: string | null
+  id_card_enc?: string | null
+  id_card_hash?: string | null
   sys_user_role?: Prisma.sys_user_roleCreateNestedManyWithoutUserInput
   sys_user_dept?: Prisma.sys_user_deptCreateNestedManyWithoutUserInput
 }
@@ -473,7 +568,14 @@ export type sys_userUncheckedCreateInput = {
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
+  password_changed_at?: Date | string | null
+  must_change_password?: number
   is_deleted?: number
+  id_card?: string | null
+  phone_enc?: string | null
+  phone_hash?: string | null
+  id_card_enc?: string | null
+  id_card_hash?: string | null
   sys_user_role?: Prisma.sys_user_roleUncheckedCreateNestedManyWithoutUserInput
   sys_user_dept?: Prisma.sys_user_deptUncheckedCreateNestedManyWithoutUserInput
 }
@@ -496,7 +598,14 @@ export type sys_userUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sys_user_role?: Prisma.sys_user_roleUpdateManyWithoutUserNestedInput
   sys_user_dept?: Prisma.sys_user_deptUpdateManyWithoutUserNestedInput
 }
@@ -519,7 +628,14 @@ export type sys_userUncheckedUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sys_user_role?: Prisma.sys_user_roleUncheckedUpdateManyWithoutUserNestedInput
   sys_user_dept?: Prisma.sys_user_deptUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -542,7 +658,14 @@ export type sys_userCreateManyInput = {
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
+  password_changed_at?: Date | string | null
+  must_change_password?: number
   is_deleted?: number
+  id_card?: string | null
+  phone_enc?: string | null
+  phone_hash?: string | null
+  id_card_enc?: string | null
+  id_card_hash?: string | null
 }
 
 export type sys_userUpdateManyMutationInput = {
@@ -563,7 +686,14 @@ export type sys_userUpdateManyMutationInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_userUncheckedUpdateManyInput = {
@@ -584,7 +714,14 @@ export type sys_userUncheckedUpdateManyInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_userTenant_idUsernameCompoundUniqueInput = {
@@ -610,12 +747,20 @@ export type sys_userCountOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
+  password_changed_at?: Prisma.SortOrder
+  must_change_password?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  id_card?: Prisma.SortOrder
+  phone_enc?: Prisma.SortOrder
+  phone_hash?: Prisma.SortOrder
+  id_card_enc?: Prisma.SortOrder
+  id_card_hash?: Prisma.SortOrder
 }
 
 export type sys_userAvgOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   sort_order?: Prisma.SortOrder
+  must_change_password?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
 }
 
@@ -637,7 +782,14 @@ export type sys_userMaxOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
+  password_changed_at?: Prisma.SortOrder
+  must_change_password?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  id_card?: Prisma.SortOrder
+  phone_enc?: Prisma.SortOrder
+  phone_hash?: Prisma.SortOrder
+  id_card_enc?: Prisma.SortOrder
+  id_card_hash?: Prisma.SortOrder
 }
 
 export type sys_userMinOrderByAggregateInput = {
@@ -658,12 +810,20 @@ export type sys_userMinOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
+  password_changed_at?: Prisma.SortOrder
+  must_change_password?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  id_card?: Prisma.SortOrder
+  phone_enc?: Prisma.SortOrder
+  phone_hash?: Prisma.SortOrder
+  id_card_enc?: Prisma.SortOrder
+  id_card_hash?: Prisma.SortOrder
 }
 
 export type sys_userSumOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   sort_order?: Prisma.SortOrder
+  must_change_password?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
 }
 
@@ -726,7 +886,14 @@ export type sys_userCreateWithoutSys_user_roleInput = {
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
+  password_changed_at?: Date | string | null
+  must_change_password?: number
   is_deleted?: number
+  id_card?: string | null
+  phone_enc?: string | null
+  phone_hash?: string | null
+  id_card_enc?: string | null
+  id_card_hash?: string | null
   sys_user_dept?: Prisma.sys_user_deptCreateNestedManyWithoutUserInput
 }
 
@@ -748,7 +915,14 @@ export type sys_userUncheckedCreateWithoutSys_user_roleInput = {
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
+  password_changed_at?: Date | string | null
+  must_change_password?: number
   is_deleted?: number
+  id_card?: string | null
+  phone_enc?: string | null
+  phone_hash?: string | null
+  id_card_enc?: string | null
+  id_card_hash?: string | null
   sys_user_dept?: Prisma.sys_user_deptUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -786,7 +960,14 @@ export type sys_userUpdateWithoutSys_user_roleInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sys_user_dept?: Prisma.sys_user_deptUpdateManyWithoutUserNestedInput
 }
 
@@ -808,7 +989,14 @@ export type sys_userUncheckedUpdateWithoutSys_user_roleInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sys_user_dept?: Prisma.sys_user_deptUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -830,7 +1018,14 @@ export type sys_userCreateWithoutSys_user_deptInput = {
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
+  password_changed_at?: Date | string | null
+  must_change_password?: number
   is_deleted?: number
+  id_card?: string | null
+  phone_enc?: string | null
+  phone_hash?: string | null
+  id_card_enc?: string | null
+  id_card_hash?: string | null
   sys_user_role?: Prisma.sys_user_roleCreateNestedManyWithoutUserInput
 }
 
@@ -852,7 +1047,14 @@ export type sys_userUncheckedCreateWithoutSys_user_deptInput = {
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
+  password_changed_at?: Date | string | null
+  must_change_password?: number
   is_deleted?: number
+  id_card?: string | null
+  phone_enc?: string | null
+  phone_hash?: string | null
+  id_card_enc?: string | null
+  id_card_hash?: string | null
   sys_user_role?: Prisma.sys_user_roleUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -890,7 +1092,14 @@ export type sys_userUpdateWithoutSys_user_deptInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sys_user_role?: Prisma.sys_user_roleUpdateManyWithoutUserNestedInput
 }
 
@@ -912,7 +1121,14 @@ export type sys_userUncheckedUpdateWithoutSys_user_deptInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_changed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  must_change_password?: Prisma.IntFieldUpdateOperationsInput | number
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  id_card?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_enc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  id_card_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sys_user_role?: Prisma.sys_user_roleUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -974,7 +1190,14 @@ export type sys_userSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
+  password_changed_at?: boolean
+  must_change_password?: boolean
   is_deleted?: boolean
+  id_card?: boolean
+  phone_enc?: boolean
+  phone_hash?: boolean
+  id_card_enc?: boolean
+  id_card_hash?: boolean
   sys_user_role?: boolean | Prisma.sys_user$sys_user_roleArgs<ExtArgs>
   sys_user_dept?: boolean | Prisma.sys_user$sys_user_deptArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_userCountOutputTypeDefaultArgs<ExtArgs>
@@ -998,7 +1221,14 @@ export type sys_userSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
+  password_changed_at?: boolean
+  must_change_password?: boolean
   is_deleted?: boolean
+  id_card?: boolean
+  phone_enc?: boolean
+  phone_hash?: boolean
+  id_card_enc?: boolean
+  id_card_hash?: boolean
 }, ExtArgs["result"]["sys_user"]>
 
 export type sys_userSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1019,7 +1249,14 @@ export type sys_userSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
+  password_changed_at?: boolean
+  must_change_password?: boolean
   is_deleted?: boolean
+  id_card?: boolean
+  phone_enc?: boolean
+  phone_hash?: boolean
+  id_card_enc?: boolean
+  id_card_hash?: boolean
 }, ExtArgs["result"]["sys_user"]>
 
 export type sys_userSelectScalar = {
@@ -1040,10 +1277,17 @@ export type sys_userSelectScalar = {
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
+  password_changed_at?: boolean
+  must_change_password?: boolean
   is_deleted?: boolean
+  id_card?: boolean
+  phone_enc?: boolean
+  phone_hash?: boolean
+  id_card_enc?: boolean
+  id_card_hash?: boolean
 }
 
-export type sys_userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "tenant_id" | "username" | "password" | "real_name" | "phone" | "email" | "avatar" | "gender" | "status" | "sort_order" | "last_login_ip" | "last_login_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_user"]>
+export type sys_userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "tenant_id" | "username" | "password" | "real_name" | "phone" | "email" | "avatar" | "gender" | "status" | "sort_order" | "last_login_ip" | "last_login_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "password_changed_at" | "must_change_password" | "is_deleted" | "id_card" | "phone_enc" | "phone_hash" | "id_card_enc" | "id_card_hash", ExtArgs["result"]["sys_user"]>
 export type sys_userInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sys_user_role?: boolean | Prisma.sys_user$sys_user_roleArgs<ExtArgs>
   sys_user_dept?: boolean | Prisma.sys_user$sys_user_deptArgs<ExtArgs>
@@ -1076,7 +1320,14 @@ export type $sys_userPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     updated_at: Date
     created_by: string | null
     updated_by: string | null
+    password_changed_at: Date | null
+    must_change_password: number
     is_deleted: number
+    id_card: string | null
+    phone_enc: string | null
+    phone_hash: string | null
+    id_card_enc: string | null
+    id_card_hash: string | null
   }, ExtArgs["result"]["sys_user"]>
   composites: {}
 }
@@ -1519,7 +1770,14 @@ export interface sys_userFieldRefs {
   readonly updated_at: Prisma.FieldRef<"sys_user", 'DateTime'>
   readonly created_by: Prisma.FieldRef<"sys_user", 'String'>
   readonly updated_by: Prisma.FieldRef<"sys_user", 'String'>
+  readonly password_changed_at: Prisma.FieldRef<"sys_user", 'DateTime'>
+  readonly must_change_password: Prisma.FieldRef<"sys_user", 'Int'>
   readonly is_deleted: Prisma.FieldRef<"sys_user", 'Int'>
+  readonly id_card: Prisma.FieldRef<"sys_user", 'String'>
+  readonly phone_enc: Prisma.FieldRef<"sys_user", 'String'>
+  readonly phone_hash: Prisma.FieldRef<"sys_user", 'String'>
+  readonly id_card_enc: Prisma.FieldRef<"sys_user", 'String'>
+  readonly id_card_hash: Prisma.FieldRef<"sys_user", 'String'>
 }
     
 

@@ -1,7 +1,9 @@
 import { prisma } from "@/config/database.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import dayjs from "dayjs";
 
-export class DashboardRepository {
+export class DashboardRepository extends BaseRepository<any, any, any, any> {
+  protected model: any;
   /**
    * KPI 统计
    */

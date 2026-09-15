@@ -29,6 +29,7 @@ export function errorHandler(
   }
 
   logger.error({ err }, "Unhandled error");
+  console.log(err, "error message");
   res.status(500).json({
     code: 500000,
     message:

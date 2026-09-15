@@ -36,24 +36,32 @@ model sys_tenant {
 // ==================== 用户表 ====================
 /// 用户表，存储系统用户信息
 model sys_user {
-  user_id         String    @id @default(uuid()) @db.Uuid
-  tenant_id       String    @db.Uuid
-  username        String    @db.VarChar(64)
-  password        String    @db.VarChar(256)
-  real_name       String?   @db.VarChar(64)
-  phone           String?   @db.VarChar(32)
-  email           String?   @db.VarChar(128)
-  avatar          String?   @db.VarChar(512)
-  gender          Int?      @db.SmallInt
-  status          String    @default("1") @db.VarChar(10)
-  sort_order      Int       @default(0) @db.SmallInt
-  last_login_ip   String?   @db.VarChar(64)
-  last_login_time DateTime? @db.Timestamptz(6)
-  created_at      DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime  @updatedAt @db.Timestamptz(6)
-  created_by      String?   @db.Uuid
-  updated_by      String?   @db.Uuid
-  is_deleted      Int       @default(0) @db.SmallInt
+  user_id              String    @id @default(uuid()) @db.Uuid
+  tenant_id            String    @db.Uuid
+  username             String    @db.VarChar(64)
+  password             String    @db.VarChar(256)
+  real_name            String?   @db.VarChar(64)
+  phone                String?   @db.VarChar(32)
+  email                String?   @db.VarChar(128)
+  avatar               String?   @db.VarChar(512)
+  gender               Int?      @db.SmallInt
+  status               String    @default("1") @db.VarChar(10)
+  sort_order           Int       @default(0) @db.SmallInt
+  last_login_ip        String?   @db.VarChar(64)
+  last_login_time      DateTime? @db.Timestamptz(6)
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime  @updatedAt @db.Timestamptz(6)
+  created_by           String?   @db.Uuid
+  updated_by           String?   @db.Uuid
+  password_changed_at  DateTime? @db.Timestamptz(6)
+  must_change_password Int       @default(0) @db.SmallInt
+  is_deleted           Int       @default(0) @db.SmallInt
+  id_card              String?   @db.VarChar(18) // 身份证号
+  phone_enc            String?   @db.Text // 加密后的手机号
+  phone_hash           String?   @db.VarChar(64) // 用于查找
+
+  id_card_enc  String? @db.Text // 加密后的身份证号
+  id_card_hash String? @db.VarChar(64) // 用于查找
 
   sys_user_role sys_user_role[]
   sys_user_dept sys_user_dept[]
@@ -242,6 +250,10 @@ model sys_notice {
   created_by   String?   @db.Uuid
   updated_by   String?   @db.Uuid
   is_deleted   Int       @default(0) @db.SmallInt
+  priority     Int       @default(0) @db.SmallInt // 0-普通 1-重要 2-紧急
+  is_top       Int       @default(0) @db.SmallInt // 是否置顶
+  revoked_at   DateTime? @db.Timestamptz(6)
+  revoked_by   String?   @db.Uuid
 
   target_users sys_notice_user[]
 
@@ -252,7 +264,6 @@ model sys_notice {
 }
 
 // ==================== 通知用户关联表 ====================
-/// 通知与用户关联表
 model sys_notice_user {
   id         String    @id @default(uuid()) @db.Uuid
   notice_id  String    @db.Uuid
@@ -261,6 +272,7 @@ model sys_notice_user {
   is_read    Int       @default(0) @db.SmallInt
   read_time  DateTime? @db.Timestamptz(6)
   created_at DateTime  @default(now()) @db.Timestamptz(6)
+  is_deleted Int       @default(0) @db.SmallInt // 撤回后标记删除
 
   notice sys_notice @relation(fields: [notice_id], references: [notice_id], onDelete: Cascade)
 
@@ -292,6 +304,9 @@ model sys_audit_log {
   @@index([user_id])
   @@index([created_at])
   @@index([operation])
+  @@index([tenant_id, created_at(sort: Desc)]) // 列表按时间倒序
+  @@index([tenant_id, user_id, created_at]) // 按用户查
+  @@index([tenant_id, operation]) // 按操作类型
   @@map("sys_audit_log")
 }
 
@@ -461,21 +476,27 @@ model sys_config {
 
 // ==================== 定时任务 ====================
 model sys_job {
-  job_id          String   @id @default(uuid()) @db.Uuid
-  tenant_id       String   @db.Uuid
-  job_name        String   @db.VarChar(128)
-  job_group       String   @default("DEFAULT") @db.VarChar(64)
-  invoke_target   String   @db.VarChar(256)
-  cron_expression String   @db.VarChar(64)
-  misfire_policy  Int      @default(3) @db.SmallInt
-  concurrent      Int      @default(1) @db.SmallInt
-  status          String   @default("1") @db.VarChar(10)
-  remark          String?  @db.VarChar(512)
-  created_at      DateTime @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime @updatedAt @db.Timestamptz(6)
-  created_by      String?  @db.Uuid
-  updated_by      String?  @db.Uuid
-  is_deleted      Int      @default(0) @db.SmallInt
+  job_id          String    @id @default(uuid()) @db.Uuid
+  tenant_id       String    @db.Uuid
+  job_name        String    @db.VarChar(128)
+  job_group       String    @default("DEFAULT") @db.VarChar(64)
+  invoke_target   String    @db.VarChar(256)
+  cron_expression String    @db.VarChar(64)
+  misfire_policy  Int       @default(3) @db.SmallInt
+  concurrent      Int       @default(1) @db.SmallInt
+  status          String    @default("1") @db.VarChar(10)
+  remark          String?   @db.VarChar(512)
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(6)
+  created_by      String?   @db.Uuid
+  updated_by      String?   @db.Uuid
+  is_deleted      Int       @default(0) @db.SmallInt
+  retry_count     Int       @default(0) @db.SmallInt // 失败重试次数
+  retry_interval  Int       @default(60) @db.Integer // 重试间隔（秒）
+  timeout_seconds Int       @default(300) @db.Integer // 超时
+  is_paused       Int       @default(0) @db.SmallInt // 暂停
+  last_run_at     DateTime? @db.Timestamptz(6)
+  next_run_at     DateTime? @db.Timestamptz(6)
 
   @@index([tenant_id])
   @@map("sys_job")
@@ -490,6 +511,8 @@ model sys_job_log {
   status         String   @default("1") @db.VarChar(10)
   exception_info String?  @db.Text
   created_at     DateTime @default(now()) @db.Timestamptz(6)
+  retry_attempt  Int      @default(0) @db.SmallInt
+  duration_ms    Int      @default(0) @db.Integer
 
   @@index([job_id])
   @@index([created_at])
@@ -510,6 +533,10 @@ model sys_todo {
   created_at DateTime  @default(now()) @db.Timestamptz(6)
   updated_at DateTime  @updatedAt @db.Timestamptz(6)
   is_deleted Int       @default(0) @db.SmallInt
+  group_id   String?   @db.Uuid
+  remind_at  DateTime? @db.Timestamptz(6)
+  reminded   Int       @default(0) @db.SmallInt // 是否已提醒
+  tags       String?   @db.VarChar(256) // 逗号分隔
 
   @@index([tenant_id, user_id])
   @@index([status])
@@ -567,4 +594,45 @@ model sys_notice_send_log {
   @@index([notice_id])
   @@index([created_at])
   @@map("sys_notice_send_log")
+}
+
+model sys_password_history {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenant_id  String   @db.Uuid
+  user_id    String   @db.Uuid
+  password   String   @db.VarChar(256)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([tenant_id, user_id, created_at])
+  @@map("sys_password_history")
+}
+
+model sys_todo_group {
+  group_id   String   @id @default(uuid()) @db.Uuid
+  tenant_id  String   @db.Uuid
+  user_id    String   @db.Uuid
+  name       String   @db.VarChar(64)
+  color      String?  @db.VarChar(16)
+  sort_order Int      @default(0)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+  is_deleted Int      @default(0) @db.SmallInt
+  created_by String?  @db.Uuid
+  updated_by String?  @db.Uuid
+
+  @@index([tenant_id, user_id])
+  @@map("sys_todo_group")
+}
+
+model sys_user_tenant {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  tenant_id  String   @db.Uuid
+  is_default Int      @default(0) @db.SmallInt
+  joined_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([user_id, tenant_id])
+  @@index([user_id])
+  @@index([tenant_id])
+  @@map("sys_user_tenant")
 }

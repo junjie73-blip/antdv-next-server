@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToCamelCase } from "@/common/utils/case-convert.js";
@@ -8,50 +8,17 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_dept;
   protected readonly primaryKey = "dept_id";
 
-  async findTree(tenantId: string, options: any = {}): Promise<any[]> {
-    const depts = await this.model.findMany({
-      where: {
-        tenant_id: tenantId,
-        is_deleted: 0,
-        ...(options.onlyEnabled ? { status: "1" } : {}),
-      },
-      orderBy: { sort_order: "asc" },
-    });
-    return this.buildTree(depts, null);
-  }
-
   async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
-    const pageNum = Math.max(1, query.pageNum || 1);
-    const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
-    const skip = (pageNum - 1) * pageSize;
-
-    const finalWhere: any = {
-      ...where,
-      tenant_id: query.tenantId,
-      is_deleted: 0,
-    };
-    if (query.keyword) finalWhere.dept_name = { contains: query.keyword };
-    if (query.status !== undefined) finalWhere.status = query.status;
-    if (query.parentId) {
-      finalWhere.parent_id = query.parentId;
-    }
-    const scopedWhere = this.mergeDataScope(finalWhere);
-    const [list, total] = await Promise.all([
-      this.model.findMany({
-        where: scopedWhere,
-        skip,
-        take: pageSize,
-        orderBy: { sort_order: "asc" },
-      }),
-      this.model.count({ where: scopedWhere }),
-    ]);
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
+    return this.paginate({ ...query, maxPageSize: 100 }, where, {
+      defaultOrderBy: { sort_order: "asc" },
+      extendWhere: ({ query }) => {
+        const extra: Record<string, any> = {};
+        if (query.deptName) extra.dept_name = { contains: query.deptName };
+        if (query.status !== undefined) extra.status = query.status;
+        if (query.parentId) extra.parent_id = query.parentId;
+        return extra;
+      },
+    });
   }
 
   async softDelete(
@@ -88,32 +55,6 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
     return this.model.findFirst({ where });
   }
 
-  private buildTree(items: any[], parentId: string | null): any[] {
-    return items
-      .filter((item) => {
-        if (parentId === null) {
-          // 根节点：parent_id 为 null、undefined、空字符串或全零 UUID
-          return (
-            item.parent_id === null ||
-            item.parent_id === undefined ||
-            item.parent_id === "" ||
-            item.parent_id === "00000000-0000-0000-0000-000000000000"
-          );
-        }
-        return item.parent_id === parentId;
-      })
-      .map((item) => {
-        const children = this.buildTree(items, item.dept_id);
-        const node = {
-          // @ts-ignore
-          ...keysToCamelCase(item),
-        };
-        if (children.length > 0) {
-          node.children = children;
-        }
-        return node;
-      });
-  }
   async updateDeptUsers(deptId: string, userIds: string[], tenantId: string) {
     if (userIds.length > 0) {
       const validCount = await prisma.sys_user.count({
@@ -148,5 +89,63 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
       },
     });
     return users.map((u) => u.user);
+  }
+  async findAllForExport(tenantId: string) {
+    const depts = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: [{ parent_id: "asc" }, { sort_order: "asc" }],
+    });
+
+    const idToCode = new Map<string, string>(
+      depts.map((d: any) => [d.dept_id, d.dept_code]),
+    );
+
+    return depts.map((d: any) => ({
+      ...d,
+      parent_code: d.parent_id ? idToCode.get(d.parent_id) || "" : "",
+    }));
+  }
+
+  async getCodeToIdMap(tenantId: string): Promise<Map<string, string>> {
+    const rows = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      select: { dept_id: true, dept_code: true },
+    });
+    return new Map(rows.map((r: any) => [r.dept_code, r.dept_id]));
+  }
+
+  async insertDept(data: any): Promise<string> {
+    const record = await this.model.create({
+      data: {
+        tenant_id: data.tenantId,
+        parent_id: data.parentId,
+        dept_code: data.deptCode,
+        dept_name: data.deptName,
+        leader: data.leader || null,
+        phone: data.phone || null,
+        email: data.email || null,
+        sort_order: data.sortOrder,
+        status: data.status,
+        created_by: data.userId,
+        updated_by: data.userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_deleted: 0,
+      },
+    });
+    return (record as any).dept_id;
+  }
+  async findAllByTenant(
+    tenantId: string,
+    options: { onlyEnabled?: boolean } = {},
+  ) {
+    return this.model.findMany({
+      where: {
+        tenant_id: tenantId,
+        is_deleted: 0,
+        ...(options.onlyEnabled ? { status: "1" } : {}),
+      },
+      orderBy: { sort_order: "asc" },
+    });
   }
 }

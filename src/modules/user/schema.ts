@@ -103,16 +103,18 @@ export const UserListSchema = z
   .openapi("UserList");
 
 // 导入用户时的 Excel 行数据 Schema（用于验证）
-export const UserImportRowSchema = z.object({
-  username: z.string().min(3).max(64),
-  realName: z.string().max(64).optional(),
-  phone: z.string().max(32).optional(),
-  email: z.string().email().optional(),
-  gender: z.string().optional(), // Excel 中可能为文本，需转换
-  status: z.string().optional(), // 0或1
-  roleCodes: z.string().optional(), // 逗号分隔的角色编码
-  deptCodes: z.string().optional(), // 逗号分隔的部门编码
-});
+export const UserImportRowSchema = z
+  .object({
+    username: z.string().min(3).max(64),
+    realName: z.string().max(64).optional(),
+    phone: z.string().max(32).optional(),
+    email: z.string().email().optional(),
+    gender: z.string().optional(), // Excel 中可能为文本，需转换
+    status: z.string().optional(), // 0或1
+    roleCodes: z.string().optional(), // 逗号分隔的角 色编码
+    deptCodes: z.string().optional(), // 逗号分隔的部门编码
+  })
+  .openapi("UserImportRow");
 
 export type UserCreateDto = z.infer<typeof UserCreateSchema>;
 export type UserUpdateDto = z.infer<typeof UserUpdateSchema>;

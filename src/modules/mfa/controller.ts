@@ -16,13 +16,17 @@ import { authMiddleware } from "@middleware/auth.js";
 import * as mfaService from "./service.js";
 import { logger } from "@core/logger/index.js";
 
-const TokenSchema = z.object({
-  token: z.string().length(6).regex(/^\d+$/),
-});
+const TokenSchema = z
+  .object({
+    token: z.string().length(6).regex(/^\d+$/),
+  })
+  .openapi("MFAVerifyToken");
 
-const UserIdParamSchema = z.object({
-  userId: z.string().uuid(),
-});
+const UserIdParamSchema = z
+  .object({
+    userId: z.string().uuid(),
+  })
+  .openapi("MFAUserIdParam");
 
 @Controller("/mfa", { tags: ["MFA"] })
 @UseMiddleware(authMiddleware)

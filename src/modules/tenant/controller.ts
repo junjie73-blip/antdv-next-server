@@ -1,4 +1,4 @@
-import { BaseController } from "@/core/base-controller.js";
+import { BaseController } from "@/core/base/controller.js";
 import {
   TenantCreateSchema,
   TenantUpdateSchema,

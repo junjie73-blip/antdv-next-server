@@ -14,6 +14,8 @@ export const LoginSchema = z
       description: "设备标识（可选，多设备登录用）",
       example: "desktop",
     }),
+    captchaId: z.string().optional(),
+    captchaCode: z.string().optional(),
   })
   .openapi("Login");
 

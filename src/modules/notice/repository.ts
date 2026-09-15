@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import {
@@ -73,7 +73,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
   ) {
     const skip = (page - 1) * pageSize;
 
-    const userFilter: any = { user_id: userId };
+    const userFilter: any = { user_id: userId, is_deleted: 0 };
     if (isRead !== undefined && !isNaN(isRead)) {
       userFilter.is_read = isRead;
     }
@@ -81,6 +81,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       tenant_id: tenantId,
       status: "1",
       is_deleted: 0,
+      revoked_at: null,
       target_users: { some: userFilter },
     };
 
@@ -89,7 +90,11 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
         where,
         skip,
         take: pageSize,
-        orderBy: { publish_time: "desc" },
+        orderBy: [
+          { is_top: "desc" },
+          { priority: "desc" },
+          { publish_time: "desc" },
+        ],
         include: {
           target_users: {
             where: { user_id: userId },
@@ -244,5 +249,51 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       ...notice,
       targetUserIds,
     };
+  }
+  async markManyAsRead(
+    noticeIds: string[],
+    userId: string,
+    tenantId: string,
+  ): Promise<void> {
+    await prisma.sys_notice_user.updateMany({
+      where: {
+        notice_id: { in: noticeIds },
+        user_id: userId,
+        tenant_id: tenantId,
+      },
+      data: { is_read: 1, read_time: new Date() },
+    });
+  }
+
+  async countTargetUsers(noticeId: string, tenantId: string): Promise<number> {
+    return prisma.sys_notice_user.count({
+      where: { notice_id: noticeId, tenant_id: tenantId },
+    });
+  }
+
+  async findAllForExport(tenantId: string) {
+    return this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: { created_at: "desc" },
+    });
+  }
+
+  async insertNotice(data: any): Promise<string> {
+    const record = await this.model.create({
+      data: {
+        tenant_id: data.tenantId,
+        title: data.title,
+        content: data.content || null,
+        notice_type: data.noticeType,
+        status: data.status,
+        publish_time: data.publishTime,
+        created_by: data.userId,
+        updated_by: data.userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+        is_deleted: 0,
+      },
+    });
+    return (record as any).notice_id;
   }
 }

@@ -26,6 +26,8 @@ export const AUTH_WHITELIST = [
   "/uploads/",
   "/favicon.ico",
   "/api/v1/auth/forgot-password",
+  "/api/v1/auth/password-policy",
+  "/api/v1/auth/captcha",
 ];
 
 export function isWhitelisted(path: string): boolean {

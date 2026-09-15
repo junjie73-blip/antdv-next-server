@@ -1,4 +1,4 @@
-import { BaseRepository } from "@/core/base-repository.js";
+import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 
@@ -53,5 +53,53 @@ export class ConfigRepository extends BaseRepository<any, any, any, any> {
     };
     if (excludeId) where.config_id = { not: excludeId };
     return this.model.findFirst({ where });
+  }
+  async findAllForExport(tenantId: string) {
+    return this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: { config_key: "asc" },
+    });
+  }
+
+  async upsertByKey(data: {
+    tenantId: string;
+    configKey: string;
+    configValue: string;
+    description: string;
+    userId?: string;
+  }): Promise<void> {
+    const existing = await this.model.findFirst({
+      where: {
+        tenant_id: data.tenantId,
+        config_key: data.configKey,
+        is_deleted: 0,
+      },
+    });
+
+    if (existing) {
+      await this.model.update({
+        where: { config_id: existing.config_id },
+        data: {
+          config_value: data.configValue,
+          description: data.description || null,
+          updated_by: data.userId,
+          updated_at: new Date(),
+        },
+      });
+    } else {
+      await this.model.create({
+        data: {
+          tenant_id: data.tenantId,
+          config_key: data.configKey,
+          config_value: data.configValue,
+          description: data.description || null,
+          created_by: data.userId,
+          updated_by: data.userId,
+          created_at: new Date(),
+          updated_at: new Date(),
+          is_deleted: 0,
+        },
+      });
+    }
   }
 }
