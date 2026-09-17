@@ -133,11 +133,20 @@ export class MenuService extends BaseService<MenuRepository> {
   /**
    * ⭐ 获取菜单树
    */
-  async getTree(tenantId: string): Promise<MenuNode[]> {
-    const menus = await this.repository.findAllByTenant(tenantId);
+  async getTree(tenantId: string, menuType?: number[]): Promise<MenuNode[]> {
+    const menus = await this.repository.findAllByTenant(tenantId, menuType);
     return this.buildTree(menus, null);
   }
-
+  /**
+   * ⭐ 改变菜单状态
+   */
+  async changeStatus(
+    id: string,
+    status: string,
+    tenantId: string,
+  ): Promise<void> {
+    await this.repository.updateStatus(id, status, tenantId);
+  }
   /**
    * ⭐ 获取菜单下的按钮列表
    */

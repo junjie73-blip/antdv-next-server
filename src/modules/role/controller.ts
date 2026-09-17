@@ -28,13 +28,10 @@ import { z } from "zod";
 import { prisma } from "@/config/database.js";
 import { keysToCamelCase } from "@/common/utils/case-convert.js";
 import { success } from "@/common/utils/response.js";
-import multer from "multer";
 import { simpleStorage } from "../upload/controller.js";
 import { RoleService } from "./service.js";
-const upload = multer({
-  storage: simpleStorage,
-  limits: { fileSize: 10 * 1024 * 1024 },
-});
+import { upload } from "../user/controller.js";
+
 @Controller("/role", { tags: ["角色管理"] })
 export default class RoleController extends BaseController<any, any, any, any> {
   protected readonly repository = new RoleRepository();
@@ -76,6 +73,12 @@ export default class RoleController extends BaseController<any, any, any, any> {
       where.status = query.status;
     }
     return where;
+  }
+  @Get("/options")
+  @ApiOperation("获取角色选项", "用于下拉选择框")
+  @ApiResponse(200, "角色选项列表")
+  async options(@Req() req: Request, @Res() res: Response) {
+    return this.repository.options(req.tenantId!);
   }
   @Get("/export")
   @ApiOperation("导出角色", "根据筛选条件导出角色为Excel")
@@ -210,7 +213,21 @@ export default class RoleController extends BaseController<any, any, any, any> {
       this.handleError(res, err);
     }
   }
-
+  // 获取权限
+  @Get("/:id/permissions")
+  @ApiOperation("获取角色权限", "返回角色关联的权限ID数组")
+  @ApiResponse(200, "查询成功")
+  async getRolePermissions(@Req() req: Request, @Res() res: Response) {
+    try {
+      const permIds = await (this.repository as RoleRepository).findRolePermIds(
+        req.params.id,
+        req.tenantId!,
+      );
+      success(res, permIds, "查询成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
   // 分配权限
   @Put("/:id/permissions")
   @ApiOperation("分配权限", "更新角色关联的权限列表")
@@ -278,8 +295,8 @@ export default class RoleController extends BaseController<any, any, any, any> {
       const { userIds } = req.body;
       await (this.repository as RoleRepository).updateRoleUsers(
         req.params.id,
-        userIds,
         req.tenantId!,
+        userIds,
       );
       success(res, null, "分配成功");
     } catch (err) {

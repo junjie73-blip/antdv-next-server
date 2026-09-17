@@ -18,7 +18,6 @@ export const createRotatingStream = (filename: string): RotatingFileStream => {
 export const errorStream = createRotatingStream("error.log");
 export const combinedStream = createRotatingStream("combined.log");
 export const auditFileStream = createRotatingStream("audit.log");
-
 export const consoleTransport =
   config.NODE_ENV === "development"
     ? {

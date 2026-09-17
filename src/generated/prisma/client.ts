@@ -83,7 +83,7 @@ export type sys_dict_type = Prisma.sys_dict_typeModel
 export type sys_dict_data = Prisma.sys_dict_dataModel
 /**
  * Model sys_notice
- * 通知公告表
+ * 
  */
 export type sys_notice = Prisma.sys_noticeModel
 /**
@@ -93,17 +93,17 @@ export type sys_notice = Prisma.sys_noticeModel
 export type sys_notice_user = Prisma.sys_notice_userModel
 /**
  * Model sys_audit_log
- * 审计日志表
+ * 
  */
 export type sys_audit_log = Prisma.sys_audit_logModel
 /**
  * Model sys_user_role
- * 用户与角色关联表
+ * 
  */
 export type sys_user_role = Prisma.sys_user_roleModel
 /**
  * Model sys_user_dept
- * 用户与部门关联表
+ * 
  */
 export type sys_user_dept = Prisma.sys_user_deptModel
 /**
@@ -123,22 +123,22 @@ export type sys_role_permission = Prisma.sys_role_permissionModel
 export type sys_role_dept = Prisma.sys_role_deptModel
 /**
  * Model sys_mfa_config
- * 用户多因素认证配置表
+ * 
  */
 export type sys_mfa_config = Prisma.sys_mfa_configModel
 /**
  * Model sys_file
- * 文件管理表
+ * 
  */
 export type sys_file = Prisma.sys_fileModel
 /**
  * Model sys_login_log
- * 登录日志表
+ * 
  */
 export type sys_login_log = Prisma.sys_login_logModel
 /**
  * Model sys_config
- * 系统配置表
+ * 
  */
 export type sys_config = Prisma.sys_configModel
 /**

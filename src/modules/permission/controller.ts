@@ -44,15 +44,6 @@ export default class PermissionController extends BaseController<
   protected readonly updateSchema = PermissionUpdateSchema;
   protected readonly querySchema = PermissionListSchema;
   protected readonly service = new PermissionService(this.repository);
-  // 重写查询条件
-  protected buildListWhere(query: any): any {
-    const where: any = {};
-    if (query.permCode) where.perm_code = { contains: query.permCode };
-    if (query.permName) where.perm_name = { contains: query.permName };
-    if (query.resourceType) where.resource_type = query.resourceType;
-    if (query.status !== undefined) where.status = query.status;
-    return where;
-  }
 
   // 创建前唯一性校验
   async beforeCreate(dto: any, req: Request): Promise<any> {

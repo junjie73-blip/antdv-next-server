@@ -22,6 +22,7 @@ export const NoticeListSchema = z
     keyword: z.string().optional().openapi({ description: "标题关键字" }),
     noticeType: z.string().optional(),
     status: z.string().optional(),
+    fields: z.string().optional(),
   })
   .openapi("NoticeList");
 export const NoticeImportRowSchema = z.object({
@@ -49,3 +50,41 @@ export const NoticeExportColumns = [
   },
   { header: "发布时间", key: "publish_time", width: 20 },
 ] as const;
+export const ChannelUpsertSchema = z
+  .object({
+    channelType: z.enum(["email", "sms", "webhook", "wechat_work", "dingtalk"]),
+    enabled: z.number().int().min(0).max(1).default(0),
+    config: z.record(z.string(), z.any()).optional(),
+    remark: z.string().max(256).optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.channelType !== "email") return;
+    if (val.enabled !== 1) return;
+    const c = val.config ?? {};
+    const required = ["host", "user", "pass", "from"] as const;
+    const alt = {
+      host: "smtpHost",
+      user: "smtpUser",
+      pass: "smtpPass",
+      from: "smtpFrom",
+    } as const;
+    for (const k of required) {
+      if (!c[k] && !c[alt[k]]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `email 渠道启用时必须填写 ${k}`,
+          path: ["config", k],
+        });
+      }
+    }
+  })
+  .openapi("NoticeChannelUpsert");
+
+export const SendNoticeSchema = z
+  .object({
+    channels: z.array(z.enum(["in_app", "email", "sms", "webhook"])).optional(),
+    receiversByChannel: z.record(z.string(), z.array(z.string())).optional(),
+    /** 快捷方式：指定邮箱直接发送 */
+    emails: z.array(z.string().email()).optional(),
+  })
+  .openapi("NoticeSend");

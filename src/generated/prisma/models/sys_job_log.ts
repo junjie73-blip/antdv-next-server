@@ -47,6 +47,7 @@ export type Sys_job_logMinAggregateOutputType = {
   created_at: Date | null
   retry_attempt: number | null
   duration_ms: number | null
+  created_by: string | null
 }
 
 export type Sys_job_logMaxAggregateOutputType = {
@@ -60,6 +61,7 @@ export type Sys_job_logMaxAggregateOutputType = {
   created_at: Date | null
   retry_attempt: number | null
   duration_ms: number | null
+  created_by: string | null
 }
 
 export type Sys_job_logCountAggregateOutputType = {
@@ -73,6 +75,7 @@ export type Sys_job_logCountAggregateOutputType = {
   created_at: number
   retry_attempt: number
   duration_ms: number
+  created_by: number
   _all: number
 }
 
@@ -98,6 +101,7 @@ export type Sys_job_logMinAggregateInputType = {
   created_at?: true
   retry_attempt?: true
   duration_ms?: true
+  created_by?: true
 }
 
 export type Sys_job_logMaxAggregateInputType = {
@@ -111,6 +115,7 @@ export type Sys_job_logMaxAggregateInputType = {
   created_at?: true
   retry_attempt?: true
   duration_ms?: true
+  created_by?: true
 }
 
 export type Sys_job_logCountAggregateInputType = {
@@ -124,6 +129,7 @@ export type Sys_job_logCountAggregateInputType = {
   created_at?: true
   retry_attempt?: true
   duration_ms?: true
+  created_by?: true
   _all?: true
 }
 
@@ -224,6 +230,7 @@ export type Sys_job_logGroupByOutputType = {
   created_at: Date
   retry_attempt: number
   duration_ms: number
+  created_by: string | null
   _count: Sys_job_logCountAggregateOutputType | null
   _avg: Sys_job_logAvgAggregateOutputType | null
   _sum: Sys_job_logSumAggregateOutputType | null
@@ -260,6 +267,7 @@ export type sys_job_logWhereInput = {
   created_at?: Prisma.DateTimeFilter<"sys_job_log"> | Date | string
   retry_attempt?: Prisma.IntFilter<"sys_job_log"> | number
   duration_ms?: Prisma.IntFilter<"sys_job_log"> | number
+  created_by?: Prisma.UuidNullableFilter<"sys_job_log"> | string | null
 }
 
 export type sys_job_logOrderByWithRelationInput = {
@@ -273,6 +281,7 @@ export type sys_job_logOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   retry_attempt?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_job_logWhereUniqueInput = Prisma.AtLeast<{
@@ -289,6 +298,7 @@ export type sys_job_logWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"sys_job_log"> | Date | string
   retry_attempt?: Prisma.IntFilter<"sys_job_log"> | number
   duration_ms?: Prisma.IntFilter<"sys_job_log"> | number
+  created_by?: Prisma.UuidNullableFilter<"sys_job_log"> | string | null
 }, "log_id">
 
 export type sys_job_logOrderByWithAggregationInput = {
@@ -302,6 +312,7 @@ export type sys_job_logOrderByWithAggregationInput = {
   created_at?: Prisma.SortOrder
   retry_attempt?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_job_logCountOrderByAggregateInput
   _avg?: Prisma.sys_job_logAvgOrderByAggregateInput
   _max?: Prisma.sys_job_logMaxOrderByAggregateInput
@@ -323,6 +334,7 @@ export type sys_job_logScalarWhereWithAggregatesInput = {
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_job_log"> | Date | string
   retry_attempt?: Prisma.IntWithAggregatesFilter<"sys_job_log"> | number
   duration_ms?: Prisma.IntWithAggregatesFilter<"sys_job_log"> | number
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_job_log"> | string | null
 }
 
 export type sys_job_logCreateInput = {
@@ -336,6 +348,7 @@ export type sys_job_logCreateInput = {
   created_at?: Date | string
   retry_attempt?: number
   duration_ms?: number
+  created_by?: string | null
 }
 
 export type sys_job_logUncheckedCreateInput = {
@@ -349,6 +362,7 @@ export type sys_job_logUncheckedCreateInput = {
   created_at?: Date | string
   retry_attempt?: number
   duration_ms?: number
+  created_by?: string | null
 }
 
 export type sys_job_logUpdateInput = {
@@ -362,6 +376,7 @@ export type sys_job_logUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   retry_attempt?: Prisma.IntFieldUpdateOperationsInput | number
   duration_ms?: Prisma.IntFieldUpdateOperationsInput | number
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_job_logUncheckedUpdateInput = {
@@ -375,6 +390,7 @@ export type sys_job_logUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   retry_attempt?: Prisma.IntFieldUpdateOperationsInput | number
   duration_ms?: Prisma.IntFieldUpdateOperationsInput | number
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_job_logCreateManyInput = {
@@ -388,6 +404,7 @@ export type sys_job_logCreateManyInput = {
   created_at?: Date | string
   retry_attempt?: number
   duration_ms?: number
+  created_by?: string | null
 }
 
 export type sys_job_logUpdateManyMutationInput = {
@@ -401,6 +418,7 @@ export type sys_job_logUpdateManyMutationInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   retry_attempt?: Prisma.IntFieldUpdateOperationsInput | number
   duration_ms?: Prisma.IntFieldUpdateOperationsInput | number
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_job_logUncheckedUpdateManyInput = {
@@ -414,6 +432,7 @@ export type sys_job_logUncheckedUpdateManyInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   retry_attempt?: Prisma.IntFieldUpdateOperationsInput | number
   duration_ms?: Prisma.IntFieldUpdateOperationsInput | number
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_job_logCountOrderByAggregateInput = {
@@ -427,6 +446,7 @@ export type sys_job_logCountOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   retry_attempt?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_job_logAvgOrderByAggregateInput = {
@@ -445,6 +465,7 @@ export type sys_job_logMaxOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   retry_attempt?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_job_logMinOrderByAggregateInput = {
@@ -458,6 +479,7 @@ export type sys_job_logMinOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   retry_attempt?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_job_logSumOrderByAggregateInput = {
@@ -478,6 +500,7 @@ export type sys_job_logSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   created_at?: boolean
   retry_attempt?: boolean
   duration_ms?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_job_log"]>
 
 export type sys_job_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -491,6 +514,7 @@ export type sys_job_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   created_at?: boolean
   retry_attempt?: boolean
   duration_ms?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_job_log"]>
 
 export type sys_job_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -504,6 +528,7 @@ export type sys_job_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   created_at?: boolean
   retry_attempt?: boolean
   duration_ms?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_job_log"]>
 
 export type sys_job_logSelectScalar = {
@@ -517,9 +542,10 @@ export type sys_job_logSelectScalar = {
   created_at?: boolean
   retry_attempt?: boolean
   duration_ms?: boolean
+  created_by?: boolean
 }
 
-export type sys_job_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "job_id" | "job_name" | "invoke_target" | "job_message" | "status" | "exception_info" | "created_at" | "retry_attempt" | "duration_ms", ExtArgs["result"]["sys_job_log"]>
+export type sys_job_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "job_id" | "job_name" | "invoke_target" | "job_message" | "status" | "exception_info" | "created_at" | "retry_attempt" | "duration_ms" | "created_by", ExtArgs["result"]["sys_job_log"]>
 
 export type $sys_job_logPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_job_log"
@@ -534,7 +560,14 @@ export type $sys_job_logPayload<ExtArgs extends runtime.Types.Extensions.Interna
     exception_info: string | null
     created_at: Date
     retry_attempt: number
+    /**
+     * 执行时长（毫秒）
+     */
     duration_ms: number
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_job_log"]>
   composites: {}
 }
@@ -968,6 +1001,7 @@ export interface sys_job_logFieldRefs {
   readonly created_at: Prisma.FieldRef<"sys_job_log", 'DateTime'>
   readonly retry_attempt: Prisma.FieldRef<"sys_job_log", 'Int'>
   readonly duration_ms: Prisma.FieldRef<"sys_job_log", 'Int'>
+  readonly created_by: Prisma.FieldRef<"sys_job_log", 'String'>
 }
     
 

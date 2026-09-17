@@ -30,6 +30,7 @@ export type Sys_password_historyMinAggregateOutputType = {
   user_id: string | null
   password: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_password_historyMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type Sys_password_historyMaxAggregateOutputType = {
   user_id: string | null
   password: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_password_historyCountAggregateOutputType = {
@@ -46,6 +48,7 @@ export type Sys_password_historyCountAggregateOutputType = {
   user_id: number
   password: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -56,6 +59,7 @@ export type Sys_password_historyMinAggregateInputType = {
   user_id?: true
   password?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_password_historyMaxAggregateInputType = {
@@ -64,6 +68,7 @@ export type Sys_password_historyMaxAggregateInputType = {
   user_id?: true
   password?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_password_historyCountAggregateInputType = {
@@ -72,6 +77,7 @@ export type Sys_password_historyCountAggregateInputType = {
   user_id?: true
   password?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -153,6 +159,7 @@ export type Sys_password_historyGroupByOutputType = {
   user_id: string
   password: string
   created_at: Date
+  created_by: string | null
   _count: Sys_password_historyCountAggregateOutputType | null
   _min: Sys_password_historyMinAggregateOutputType | null
   _max: Sys_password_historyMaxAggregateOutputType | null
@@ -182,6 +189,7 @@ export type sys_password_historyWhereInput = {
   user_id?: Prisma.UuidFilter<"sys_password_history"> | string
   password?: Prisma.StringFilter<"sys_password_history"> | string
   created_at?: Prisma.DateTimeFilter<"sys_password_history"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_password_history"> | string | null
 }
 
 export type sys_password_historyOrderByWithRelationInput = {
@@ -190,6 +198,7 @@ export type sys_password_historyOrderByWithRelationInput = {
   user_id?: Prisma.SortOrder
   password?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_password_historyWhereUniqueInput = Prisma.AtLeast<{
@@ -201,6 +210,7 @@ export type sys_password_historyWhereUniqueInput = Prisma.AtLeast<{
   user_id?: Prisma.UuidFilter<"sys_password_history"> | string
   password?: Prisma.StringFilter<"sys_password_history"> | string
   created_at?: Prisma.DateTimeFilter<"sys_password_history"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_password_history"> | string | null
 }, "id">
 
 export type sys_password_historyOrderByWithAggregationInput = {
@@ -209,6 +219,7 @@ export type sys_password_historyOrderByWithAggregationInput = {
   user_id?: Prisma.SortOrder
   password?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_password_historyCountOrderByAggregateInput
   _max?: Prisma.sys_password_historyMaxOrderByAggregateInput
   _min?: Prisma.sys_password_historyMinOrderByAggregateInput
@@ -223,6 +234,7 @@ export type sys_password_historyScalarWhereWithAggregatesInput = {
   user_id?: Prisma.UuidWithAggregatesFilter<"sys_password_history"> | string
   password?: Prisma.StringWithAggregatesFilter<"sys_password_history"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_password_history"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_password_history"> | string | null
 }
 
 export type sys_password_historyCreateInput = {
@@ -231,6 +243,7 @@ export type sys_password_historyCreateInput = {
   user_id: string
   password: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_password_historyUncheckedCreateInput = {
@@ -239,6 +252,7 @@ export type sys_password_historyUncheckedCreateInput = {
   user_id: string
   password: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_password_historyUpdateInput = {
@@ -247,6 +261,7 @@ export type sys_password_historyUpdateInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_password_historyUncheckedUpdateInput = {
@@ -255,6 +270,7 @@ export type sys_password_historyUncheckedUpdateInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_password_historyCreateManyInput = {
@@ -263,6 +279,7 @@ export type sys_password_historyCreateManyInput = {
   user_id: string
   password: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_password_historyUpdateManyMutationInput = {
@@ -271,6 +288,7 @@ export type sys_password_historyUpdateManyMutationInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_password_historyUncheckedUpdateManyInput = {
@@ -279,6 +297,7 @@ export type sys_password_historyUncheckedUpdateManyInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_password_historyCountOrderByAggregateInput = {
@@ -287,6 +306,7 @@ export type sys_password_historyCountOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   password?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_password_historyMaxOrderByAggregateInput = {
@@ -295,6 +315,7 @@ export type sys_password_historyMaxOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   password?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_password_historyMinOrderByAggregateInput = {
@@ -303,6 +324,7 @@ export type sys_password_historyMinOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   password?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 
@@ -313,6 +335,7 @@ export type sys_password_historySelect<ExtArgs extends runtime.Types.Extensions.
   user_id?: boolean
   password?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_password_history"]>
 
 export type sys_password_historySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -321,6 +344,7 @@ export type sys_password_historySelectCreateManyAndReturn<ExtArgs extends runtim
   user_id?: boolean
   password?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_password_history"]>
 
 export type sys_password_historySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -329,6 +353,7 @@ export type sys_password_historySelectUpdateManyAndReturn<ExtArgs extends runtim
   user_id?: boolean
   password?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_password_history"]>
 
 export type sys_password_historySelectScalar = {
@@ -337,9 +362,10 @@ export type sys_password_historySelectScalar = {
   user_id?: boolean
   password?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_password_historyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenant_id" | "user_id" | "password" | "created_at", ExtArgs["result"]["sys_password_history"]>
+export type sys_password_historyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenant_id" | "user_id" | "password" | "created_at" | "created_by", ExtArgs["result"]["sys_password_history"]>
 
 export type $sys_password_historyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_password_history"
@@ -349,7 +375,14 @@ export type $sys_password_historyPayload<ExtArgs extends runtime.Types.Extension
     tenant_id: string
     user_id: string
     password: string
+    /**
+     * 创建时间
+     */
     created_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_password_history"]>
   composites: {}
 }
@@ -778,6 +811,7 @@ export interface sys_password_historyFieldRefs {
   readonly user_id: Prisma.FieldRef<"sys_password_history", 'String'>
   readonly password: Prisma.FieldRef<"sys_password_history", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_password_history", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_password_history", 'String'>
 }
     
 

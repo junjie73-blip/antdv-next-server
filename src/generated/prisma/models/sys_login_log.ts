@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_login_log
- * 登录日志表
+ * 
  */
 export type sys_login_logModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_login_logPayload>
 
@@ -34,6 +34,7 @@ export type Sys_login_logMinAggregateOutputType = {
   status: string | null
   message: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_login_logMaxAggregateOutputType = {
@@ -46,6 +47,7 @@ export type Sys_login_logMaxAggregateOutputType = {
   status: string | null
   message: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_login_logCountAggregateOutputType = {
@@ -58,6 +60,7 @@ export type Sys_login_logCountAggregateOutputType = {
   status: number
   message: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -72,6 +75,7 @@ export type Sys_login_logMinAggregateInputType = {
   status?: true
   message?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_login_logMaxAggregateInputType = {
@@ -84,6 +88,7 @@ export type Sys_login_logMaxAggregateInputType = {
   status?: true
   message?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_login_logCountAggregateInputType = {
@@ -96,6 +101,7 @@ export type Sys_login_logCountAggregateInputType = {
   status?: true
   message?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -181,6 +187,7 @@ export type Sys_login_logGroupByOutputType = {
   status: string
   message: string | null
   created_at: Date
+  created_by: string | null
   _count: Sys_login_logCountAggregateOutputType | null
   _min: Sys_login_logMinAggregateOutputType | null
   _max: Sys_login_logMaxAggregateOutputType | null
@@ -214,6 +221,7 @@ export type sys_login_logWhereInput = {
   status?: Prisma.StringFilter<"sys_login_log"> | string
   message?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_login_log"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_login_log"> | string | null
 }
 
 export type sys_login_logOrderByWithRelationInput = {
@@ -226,6 +234,7 @@ export type sys_login_logOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   message?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_login_logWhereUniqueInput = Prisma.AtLeast<{
@@ -241,6 +250,7 @@ export type sys_login_logWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"sys_login_log"> | string
   message?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_login_log"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_login_log"> | string | null
 }, "log_id">
 
 export type sys_login_logOrderByWithAggregationInput = {
@@ -253,6 +263,7 @@ export type sys_login_logOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   message?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_login_logCountOrderByAggregateInput
   _max?: Prisma.sys_login_logMaxOrderByAggregateInput
   _min?: Prisma.sys_login_logMinOrderByAggregateInput
@@ -271,6 +282,7 @@ export type sys_login_logScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"sys_login_log"> | string
   message?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_login_log"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_login_log"> | string | null
 }
 
 export type sys_login_logCreateInput = {
@@ -283,6 +295,7 @@ export type sys_login_logCreateInput = {
   status?: string
   message?: string | null
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_login_logUncheckedCreateInput = {
@@ -295,6 +308,7 @@ export type sys_login_logUncheckedCreateInput = {
   status?: string
   message?: string | null
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_login_logUpdateInput = {
@@ -307,6 +321,7 @@ export type sys_login_logUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_login_logUncheckedUpdateInput = {
@@ -319,6 +334,7 @@ export type sys_login_logUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_login_logCreateManyInput = {
@@ -331,6 +347,7 @@ export type sys_login_logCreateManyInput = {
   status?: string
   message?: string | null
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_login_logUpdateManyMutationInput = {
@@ -343,6 +360,7 @@ export type sys_login_logUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_login_logUncheckedUpdateManyInput = {
@@ -355,6 +373,7 @@ export type sys_login_logUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_login_logCountOrderByAggregateInput = {
@@ -367,6 +386,7 @@ export type sys_login_logCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   message?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_login_logMaxOrderByAggregateInput = {
@@ -379,6 +399,7 @@ export type sys_login_logMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   message?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_login_logMinOrderByAggregateInput = {
@@ -391,6 +412,7 @@ export type sys_login_logMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   message?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 
@@ -405,6 +427,7 @@ export type sys_login_logSelect<ExtArgs extends runtime.Types.Extensions.Interna
   status?: boolean
   message?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_login_log"]>
 
 export type sys_login_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -417,6 +440,7 @@ export type sys_login_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   status?: boolean
   message?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_login_log"]>
 
 export type sys_login_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -429,6 +453,7 @@ export type sys_login_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   status?: boolean
   message?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_login_log"]>
 
 export type sys_login_logSelectScalar = {
@@ -441,9 +466,10 @@ export type sys_login_logSelectScalar = {
   status?: boolean
   message?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_login_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "user_id" | "username" | "ip_address" | "user_agent" | "status" | "message" | "created_at", ExtArgs["result"]["sys_login_log"]>
+export type sys_login_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "user_id" | "username" | "ip_address" | "user_agent" | "status" | "message" | "created_at" | "created_by", ExtArgs["result"]["sys_login_log"]>
 
 export type $sys_login_logPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_login_log"
@@ -457,7 +483,14 @@ export type $sys_login_logPayload<ExtArgs extends runtime.Types.Extensions.Inter
     user_agent: string | null
     status: string
     message: string | null
+    /**
+     * 创建时间
+     */
     created_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_login_log"]>
   composites: {}
 }
@@ -890,6 +923,7 @@ export interface sys_login_logFieldRefs {
   readonly status: Prisma.FieldRef<"sys_login_log", 'String'>
   readonly message: Prisma.FieldRef<"sys_login_log", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_login_log", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_login_log", 'String'>
 }
     
 

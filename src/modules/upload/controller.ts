@@ -12,7 +12,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { v4 as uuidv4, validate as isUuid } from "uuid";
-import { deleteFile } from "@/config/blob.js"; // 本地存储工具（已移除 Vercel）
 import { FileRepository } from "@/modules/file/repository.js";
 import { success, error } from "@/common/utils/response.js";
 import { UploadService } from "./service.js";
@@ -20,14 +19,13 @@ import { UploadService } from "./service.js";
 export const UPLOAD_ROOT =
   process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
 const TEMP_DIR = path.join(UPLOAD_ROOT, "temp");
-const FINAL_DIR = path.join(UPLOAD_ROOT, "files");
 const CHUNK_SIZE = 5 * 1024 * 1024;
 
-for (const dir of [UPLOAD_ROOT, TEMP_DIR, FINAL_DIR]) {
+for (const dir of [UPLOAD_ROOT, TEMP_DIR]) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-// ============ 分片上传存储 ============
+// ============ 分片上传存储（保留本地临时文件，合并后再上传 COS） ============
 const chunkStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadId = req.body.uploadId;
@@ -50,18 +48,9 @@ const chunkUpload = multer({
   limits: { fileSize: CHUNK_SIZE * 2 },
 });
 
-// ============ 简单上传存储 ============
-export const simpleStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, FINAL_DIR);
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
-  },
-});
+// ============ 简单上传存储（内存存储，直接上传 COS） ============
 export const simpleUpload = multer({
-  storage: simpleStorage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
@@ -72,15 +61,16 @@ export default class UploadController {
 
   /**
    * 简单上传（小文件）
-   * 上传成功后写入 sys_file 表
+   * Buffer → COS → 写入 sys_file 表
    */
   @Post("/file")
-  @ApiOperation("上传小文件", "上传后写入文件表，返回文件ID和URL")
+  @ApiOperation("上传小文件", "上传到 COS 并写入文件表，返回文件ID和URL")
   @ApiResponse(200, "上传成功")
   async uploadFile(@Req() req: Request, @Res() res: Response) {
     simpleUpload.single("file")(req, res, async (err) => {
       if (err) return error(res, "上传失败：" + err.message, 400, 400);
       if (!req.file) return error(res, "请选择文件", 400, 400);
+
       try {
         const result = await this.service.saveSimpleFile({
           originalName: req.file.originalname,
@@ -111,7 +101,10 @@ export default class UploadController {
   }
 
   @Post("/chunk")
-  @ApiOperation("上传分片", "接收文件分片")
+  @ApiOperation(
+    "上传分片",
+    "接收文件分片（先落本地临时目录，merge 时统一上传 COS）",
+  )
   @ApiResponse(200, "分片上传成功")
   async uploadChunk(@Req() req: Request, @Res() res: Response) {
     chunkUpload.single("file")(req, res, (err) => {
@@ -125,10 +118,10 @@ export default class UploadController {
   }
 
   /**
-   * 合并分片，写入文件表，返回文件信息
+   * 合并分片 → COS → 写入文件表
    */
   @Post("/merge")
-  @ApiOperation("合并分片", "合并后写入文件表，返回文件ID和URL")
+  @ApiOperation("合并分片", "合并后上传 COS 并写入文件表，返回文件ID和URL")
   @ApiResponse(200, "合并成功")
   async mergeChunks(@Req() req: Request, @Res() res: Response) {
     try {
@@ -150,19 +143,22 @@ export default class UploadController {
   }
 
   /**
-   * 根据 URL 删除物理文件（仅删文件，不删数据库记录）
+   * 根据 URL 删除 COS 上的对象（仅删文件，不删数据库记录）
    */
   @Post("/delete")
-  @ApiOperation("删除物理文件", "根据URL删除本地文件")
+  @ApiOperation("删除文件", "根据 URL 删除 COS 上的文件")
   @ApiResponse(200, "删除成功")
   async deleteFile(@Req() req: Request, @Res() res: Response) {
     try {
       const { url } = req.body;
       if (!url) return error(res, "缺少url参数", 400, 400);
-      await deleteFile(url);
+      await this.service.removeFile(url);
+      const file = await this.service.findByUrl(url, (req as any).tenantId);
+      if (!file) return error(res, "文件不存在", 400, 400);
+      await this.service.softDelete(file.file_id);
       success(res, null, "删除成功");
-    } catch (err) {
-      error(res, "删除失败", 500, 500);
+    } catch (err: any) {
+      error(res, err?.message || "删除失败", 500, 500);
     }
   }
 }

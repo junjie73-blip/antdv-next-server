@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_mfa_config
- * 用户多因素认证配置表
+ * 
  */
 export type sys_mfa_configModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_mfa_configPayload>
 
@@ -42,6 +42,7 @@ export type Sys_mfa_configMinAggregateOutputType = {
   backup_codes: string | null
   created_at: Date | null
   updated_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_mfa_configMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type Sys_mfa_configMaxAggregateOutputType = {
   backup_codes: string | null
   created_at: Date | null
   updated_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_mfa_configCountAggregateOutputType = {
@@ -62,6 +64,7 @@ export type Sys_mfa_configCountAggregateOutputType = {
   backup_codes: number
   created_at: number
   updated_at: number
+  created_by: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type Sys_mfa_configMinAggregateInputType = {
   backup_codes?: true
   created_at?: true
   updated_at?: true
+  created_by?: true
 }
 
 export type Sys_mfa_configMaxAggregateInputType = {
@@ -92,6 +96,7 @@ export type Sys_mfa_configMaxAggregateInputType = {
   backup_codes?: true
   created_at?: true
   updated_at?: true
+  created_by?: true
 }
 
 export type Sys_mfa_configCountAggregateInputType = {
@@ -102,6 +107,7 @@ export type Sys_mfa_configCountAggregateInputType = {
   backup_codes?: true
   created_at?: true
   updated_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -199,6 +205,7 @@ export type Sys_mfa_configGroupByOutputType = {
   backup_codes: string | null
   created_at: Date
   updated_at: Date
+  created_by: string | null
   _count: Sys_mfa_configCountAggregateOutputType | null
   _avg: Sys_mfa_configAvgAggregateOutputType | null
   _sum: Sys_mfa_configSumAggregateOutputType | null
@@ -232,6 +239,7 @@ export type sys_mfa_configWhereInput = {
   backup_codes?: Prisma.StringNullableFilter<"sys_mfa_config"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_mfa_config"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_mfa_config"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_mfa_config"> | string | null
 }
 
 export type sys_mfa_configOrderByWithRelationInput = {
@@ -242,6 +250,7 @@ export type sys_mfa_configOrderByWithRelationInput = {
   backup_codes?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_mfa_configWhereUniqueInput = Prisma.AtLeast<{
@@ -255,6 +264,7 @@ export type sys_mfa_configWhereUniqueInput = Prisma.AtLeast<{
   backup_codes?: Prisma.StringNullableFilter<"sys_mfa_config"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_mfa_config"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_mfa_config"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_mfa_config"> | string | null
 }, "mfa_id" | "user_id">
 
 export type sys_mfa_configOrderByWithAggregationInput = {
@@ -265,6 +275,7 @@ export type sys_mfa_configOrderByWithAggregationInput = {
   backup_codes?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_mfa_configCountOrderByAggregateInput
   _avg?: Prisma.sys_mfa_configAvgOrderByAggregateInput
   _max?: Prisma.sys_mfa_configMaxOrderByAggregateInput
@@ -283,6 +294,7 @@ export type sys_mfa_configScalarWhereWithAggregatesInput = {
   backup_codes?: Prisma.StringNullableWithAggregatesFilter<"sys_mfa_config"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_mfa_config"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_mfa_config"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_mfa_config"> | string | null
 }
 
 export type sys_mfa_configCreateInput = {
@@ -293,6 +305,7 @@ export type sys_mfa_configCreateInput = {
   backup_codes?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_mfa_configUncheckedCreateInput = {
@@ -303,6 +316,7 @@ export type sys_mfa_configUncheckedCreateInput = {
   backup_codes?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_mfa_configUpdateInput = {
@@ -313,6 +327,7 @@ export type sys_mfa_configUpdateInput = {
   backup_codes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_mfa_configUncheckedUpdateInput = {
@@ -323,6 +338,7 @@ export type sys_mfa_configUncheckedUpdateInput = {
   backup_codes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_mfa_configCreateManyInput = {
@@ -333,6 +349,7 @@ export type sys_mfa_configCreateManyInput = {
   backup_codes?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_mfa_configUpdateManyMutationInput = {
@@ -343,6 +360,7 @@ export type sys_mfa_configUpdateManyMutationInput = {
   backup_codes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_mfa_configUncheckedUpdateManyInput = {
@@ -353,6 +371,7 @@ export type sys_mfa_configUncheckedUpdateManyInput = {
   backup_codes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_mfa_configCountOrderByAggregateInput = {
@@ -363,6 +382,7 @@ export type sys_mfa_configCountOrderByAggregateInput = {
   backup_codes?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_mfa_configAvgOrderByAggregateInput = {
@@ -377,6 +397,7 @@ export type sys_mfa_configMaxOrderByAggregateInput = {
   backup_codes?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_mfa_configMinOrderByAggregateInput = {
@@ -387,6 +408,7 @@ export type sys_mfa_configMinOrderByAggregateInput = {
   backup_codes?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_mfa_configSumOrderByAggregateInput = {
@@ -403,6 +425,7 @@ export type sys_mfa_configSelect<ExtArgs extends runtime.Types.Extensions.Intern
   backup_codes?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_mfa_config"]>
 
 export type sys_mfa_configSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -413,6 +436,7 @@ export type sys_mfa_configSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   backup_codes?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_mfa_config"]>
 
 export type sys_mfa_configSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -423,6 +447,7 @@ export type sys_mfa_configSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   backup_codes?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_mfa_config"]>
 
 export type sys_mfa_configSelectScalar = {
@@ -433,9 +458,10 @@ export type sys_mfa_configSelectScalar = {
   backup_codes?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_mfa_configOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"mfa_id" | "user_id" | "secret" | "enabled" | "backup_codes" | "created_at" | "updated_at", ExtArgs["result"]["sys_mfa_config"]>
+export type sys_mfa_configOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"mfa_id" | "user_id" | "secret" | "enabled" | "backup_codes" | "created_at" | "updated_at" | "created_by", ExtArgs["result"]["sys_mfa_config"]>
 
 export type $sys_mfa_configPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_mfa_config"
@@ -447,7 +473,14 @@ export type $sys_mfa_configPayload<ExtArgs extends runtime.Types.Extensions.Inte
     enabled: number
     backup_codes: string | null
     created_at: Date
+    /**
+     * 更新时间
+     */
     updated_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_mfa_config"]>
   composites: {}
 }
@@ -878,6 +911,7 @@ export interface sys_mfa_configFieldRefs {
   readonly backup_codes: Prisma.FieldRef<"sys_mfa_config", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_mfa_config", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"sys_mfa_config", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_mfa_config", 'String'>
 }
     
 

@@ -86,12 +86,12 @@ export async function dispatchNotice(
   for (const ch of selected) {
     const impl = getChannel(ch.channel_type);
     if (!impl) {
-      logger.warn({ type: ch.channel_type }, "[notice] channel not registered");
+      results.push(skipResult(ch.channel_type, "channel not registered"));
       continue;
     }
     const cfg = ch.config ? safeParse(ch.config) : {};
     if (!impl.isReady(cfg)) {
-      logger.warn({ type: ch.channel_type }, "[notice] channel not ready");
+      results.push(skipResult(ch.channel_type, "channel not ready"));
       continue;
     }
 
@@ -100,7 +100,10 @@ export async function dispatchNotice(
       fallbackReceivers[ch.channel_type] ??
       (ch.channel_type === "webhook" && cfg.url ? [cfg.url] : []);
 
-    if (receivers.length === 0 && ch.channel_type !== "in_app") continue;
+    if (receivers.length === 0 && ch.channel_type !== "in_app") {
+      results.push(skipResult(ch.channel_type, "no receivers"));
+      continue;
+    }
 
     const result = await impl.send({
       tenantId,
@@ -177,4 +180,14 @@ function safeParse(s: string): Record<string, any> {
     logger.warn({ err, raw: s.slice(0, 200) }, "[notice] config parse failed");
     return {};
   }
+}
+function skipResult(channel: string, reason: string): SendResult {
+  return {
+    channel,
+    total: 0,
+    success: 0,
+    failed: 0,
+    skipped: true, // ⭐ 前端可区分“跳过”和“成功 0”
+    errors: [{ receiver: "*", reason }],
+  } as SendResult;
 }

@@ -13,7 +13,6 @@ import {
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { z } from "zod";
-import multer from "multer";
 import { BaseController } from "@/core/base/controller.js";
 import { MenuRepository } from "./repository.js";
 import { MenuService } from "./service.js";
@@ -24,11 +23,7 @@ import {
 } from "./schema.js";
 import { AppError } from "@/core/errors.js";
 import { success } from "@/common/utils/response.js";
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 },
-});
+import { upload } from "../user/controller.js";
 
 @Controller("/menu", { tags: ["菜单管理"] })
 export default class MenuController extends BaseController<any, any, any, any> {
@@ -70,11 +65,19 @@ export default class MenuController extends BaseController<any, any, any, any> {
   // ============ 自定义路由 ============
 
   @Get("/tree")
+  @ApiQuery({
+    menuType: z.string().optional(),
+  })
   @ApiOperation("获取菜单树", "返回树形结构菜单")
   @ApiResponse(200, "查询成功")
   async tree(@Req() req: Request, @Res() res: Response) {
     try {
-      const data = await this.service.getTree(req.tenantId!); // ⭐
+      const data = await this.service.getTree(
+        req.tenantId!,
+        req.query.menuType
+          ? (req.query.menuType as unknown as string).split(",").map(Number)
+          : undefined,
+      ); // ⭐
       success(res, data, "查询成功");
     } catch (err) {
       this.handleError(res, err);
@@ -134,6 +137,25 @@ export default class MenuController extends BaseController<any, any, any, any> {
   @ApiOperation("删除菜单", "存在子菜单时禁止删除")
   async removeMenu(@Req() req: Request, @Res() res: Response) {
     return super.remove(req, res);
+  }
+
+  // 改变菜单状态
+  @Put("/:id/status")
+  @ApiOperation("改变菜单状态")
+  @ApiBody({
+    status: z.string().optional(),
+  })
+  async changeStatus(@Req() req: Request, @Res() res: Response) {
+    try {
+      await this.service.changeStatus(
+        req.params.id,
+        req.body.status,
+        req.tenantId!,
+      );
+      return success(res, null, "状态改变成功");
+    } catch (error) {
+      this.handleError(res, error);
+    }
   }
 
   // ============ 导入导出 ============

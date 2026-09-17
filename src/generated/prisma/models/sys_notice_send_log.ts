@@ -33,6 +33,7 @@ export type Sys_notice_send_logMinAggregateOutputType = {
   status: string | null
   error_msg: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_notice_send_logMaxAggregateOutputType = {
@@ -44,6 +45,7 @@ export type Sys_notice_send_logMaxAggregateOutputType = {
   status: string | null
   error_msg: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_notice_send_logCountAggregateOutputType = {
@@ -55,6 +57,7 @@ export type Sys_notice_send_logCountAggregateOutputType = {
   status: number
   error_msg: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -68,6 +71,7 @@ export type Sys_notice_send_logMinAggregateInputType = {
   status?: true
   error_msg?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_notice_send_logMaxAggregateInputType = {
@@ -79,6 +83,7 @@ export type Sys_notice_send_logMaxAggregateInputType = {
   status?: true
   error_msg?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_notice_send_logCountAggregateInputType = {
@@ -90,6 +95,7 @@ export type Sys_notice_send_logCountAggregateInputType = {
   status?: true
   error_msg?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -174,6 +180,7 @@ export type Sys_notice_send_logGroupByOutputType = {
   status: string
   error_msg: string | null
   created_at: Date
+  created_by: string | null
   _count: Sys_notice_send_logCountAggregateOutputType | null
   _min: Sys_notice_send_logMinAggregateOutputType | null
   _max: Sys_notice_send_logMaxAggregateOutputType | null
@@ -206,6 +213,7 @@ export type sys_notice_send_logWhereInput = {
   status?: Prisma.StringFilter<"sys_notice_send_log"> | string
   error_msg?: Prisma.StringNullableFilter<"sys_notice_send_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_notice_send_log"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_notice_send_log"> | string | null
 }
 
 export type sys_notice_send_logOrderByWithRelationInput = {
@@ -217,6 +225,7 @@ export type sys_notice_send_logOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   error_msg?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_notice_send_logWhereUniqueInput = Prisma.AtLeast<{
@@ -231,6 +240,7 @@ export type sys_notice_send_logWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"sys_notice_send_log"> | string
   error_msg?: Prisma.StringNullableFilter<"sys_notice_send_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_notice_send_log"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_notice_send_log"> | string | null
 }, "log_id">
 
 export type sys_notice_send_logOrderByWithAggregationInput = {
@@ -242,6 +252,7 @@ export type sys_notice_send_logOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   error_msg?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_notice_send_logCountOrderByAggregateInput
   _max?: Prisma.sys_notice_send_logMaxOrderByAggregateInput
   _min?: Prisma.sys_notice_send_logMinOrderByAggregateInput
@@ -259,6 +270,7 @@ export type sys_notice_send_logScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"sys_notice_send_log"> | string
   error_msg?: Prisma.StringNullableWithAggregatesFilter<"sys_notice_send_log"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_notice_send_log"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_notice_send_log"> | string | null
 }
 
 export type sys_notice_send_logCreateInput = {
@@ -270,6 +282,7 @@ export type sys_notice_send_logCreateInput = {
   status?: string
   error_msg?: string | null
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_notice_send_logUncheckedCreateInput = {
@@ -281,6 +294,7 @@ export type sys_notice_send_logUncheckedCreateInput = {
   status?: string
   error_msg?: string | null
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_notice_send_logUpdateInput = {
@@ -292,6 +306,7 @@ export type sys_notice_send_logUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_send_logUncheckedUpdateInput = {
@@ -303,6 +318,7 @@ export type sys_notice_send_logUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_send_logCreateManyInput = {
@@ -314,6 +330,7 @@ export type sys_notice_send_logCreateManyInput = {
   status?: string
   error_msg?: string | null
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_notice_send_logUpdateManyMutationInput = {
@@ -325,6 +342,7 @@ export type sys_notice_send_logUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_send_logUncheckedUpdateManyInput = {
@@ -336,6 +354,7 @@ export type sys_notice_send_logUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_send_logCountOrderByAggregateInput = {
@@ -347,6 +366,7 @@ export type sys_notice_send_logCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   error_msg?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_notice_send_logMaxOrderByAggregateInput = {
@@ -358,6 +378,7 @@ export type sys_notice_send_logMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   error_msg?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_notice_send_logMinOrderByAggregateInput = {
@@ -369,6 +390,7 @@ export type sys_notice_send_logMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   error_msg?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 
@@ -382,6 +404,7 @@ export type sys_notice_send_logSelect<ExtArgs extends runtime.Types.Extensions.I
   status?: boolean
   error_msg?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_notice_send_log"]>
 
 export type sys_notice_send_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -393,6 +416,7 @@ export type sys_notice_send_logSelectCreateManyAndReturn<ExtArgs extends runtime
   status?: boolean
   error_msg?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_notice_send_log"]>
 
 export type sys_notice_send_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -404,6 +428,7 @@ export type sys_notice_send_logSelectUpdateManyAndReturn<ExtArgs extends runtime
   status?: boolean
   error_msg?: boolean
   created_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_notice_send_log"]>
 
 export type sys_notice_send_logSelectScalar = {
@@ -415,9 +440,10 @@ export type sys_notice_send_logSelectScalar = {
   status?: boolean
   error_msg?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_notice_send_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "notice_id" | "channel_type" | "receiver" | "status" | "error_msg" | "created_at", ExtArgs["result"]["sys_notice_send_log"]>
+export type sys_notice_send_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "notice_id" | "channel_type" | "receiver" | "status" | "error_msg" | "created_at" | "created_by", ExtArgs["result"]["sys_notice_send_log"]>
 
 export type $sys_notice_send_logPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_notice_send_log"
@@ -433,7 +459,14 @@ export type $sys_notice_send_logPayload<ExtArgs extends runtime.Types.Extensions
     receiver: string
     status: string
     error_msg: string | null
+    /**
+     * 创建时间
+     */
     created_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_notice_send_log"]>
   composites: {}
 }
@@ -865,6 +898,7 @@ export interface sys_notice_send_logFieldRefs {
   readonly status: Prisma.FieldRef<"sys_notice_send_log", 'String'>
   readonly error_msg: Prisma.FieldRef<"sys_notice_send_log", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_notice_send_log", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_notice_send_log", 'String'>
 }
     
 

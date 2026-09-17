@@ -55,7 +55,7 @@ export default class IpRuleController extends BaseController<
   protected readonly service = new IpRuleService(this.repository);
   protected readonly createSchema = IpRuleCreateSchema;
   protected readonly updateSchema = IpRuleUpdateSchema;
-  protected readonly querySchema = null;
+  protected readonly querySchema = z.object({});
 
   protected buildListWhere() {
     return {};

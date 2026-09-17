@@ -86,6 +86,19 @@ const envSchema = z.object({
   SERVERLESS: z.string().default("0"),
   ENABLE_DOCS: z.string().default("0"),
   BODY_LIMIT: z.string().default("10mb"),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.string().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
+  SYSTEM_NAME: z.string().optional(),
+  SENTRY_DSN: z.string().optional(),
+  METRICS_WHITELIST: z.string().optional(),
+  COS_BUCKET: z.string().optional(),
+  COS_REGION: z.string().optional(),
+  COS_SECRET_ID: z.string().optional(),
+  COS_SECRET_KEY: z.string().optional(),
+  COS_DOMAIN: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

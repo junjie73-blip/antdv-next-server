@@ -171,7 +171,7 @@ model sys_permission {
   perm_code     String   @db.VarChar(128)
   perm_name     String   @db.VarChar(128)
   resource_type String   @db.VarChar(32)
-  action        String?  @db.VarChar(32)
+  perm_action   String?  @db.VarChar(32)
   description   String?  @db.VarChar(512)
   status        String   @default("1") @db.VarChar(10)
   created_at    DateTime @default(now()) @db.Timestamptz(6)
@@ -236,7 +236,6 @@ model sys_dict_data {
 }
 
 // ==================== 通知公告 ====================
-/// 通知公告表
 model sys_notice {
   notice_id    String    @id @default(uuid()) @db.Uuid
   tenant_id    String    @db.Uuid
@@ -252,6 +251,8 @@ model sys_notice {
   is_deleted   Int       @default(0) @db.SmallInt
   priority     Int       @default(0) @db.SmallInt // 0-普通 1-重要 2-紧急
   is_top       Int       @default(0) @db.SmallInt // 是否置顶
+  send_status  String?   @default("0") @db.VarChar(1) // 0未发送 1已发送
+  send_time    DateTime? @db.Timestamptz(6)
   revoked_at   DateTime? @db.Timestamptz(6)
   revoked_by   String?   @db.Uuid
 
@@ -271,18 +272,20 @@ model sys_notice_user {
   tenant_id  String    @db.Uuid
   is_read    Int       @default(0) @db.SmallInt
   read_time  DateTime? @db.Timestamptz(6)
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  created_at DateTime  @default(now()) @db.Timestamptz(6) /// 创建时间
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamptz(6) /// 更新时间
   is_deleted Int       @default(0) @db.SmallInt // 撤回后标记删除
+  created_by String?   @db.Uuid
+  updated_by String?   @db.Uuid
 
   notice sys_notice @relation(fields: [notice_id], references: [notice_id], onDelete: Cascade)
 
-  @@unique([notice_id, user_id])
+  @@unique([notice_id, user_id, is_deleted])
   @@index([tenant_id, user_id, is_read])
   @@map("sys_notice_user")
 }
 
 // ==================== 审计日志 ====================
-/// 审计日志表
 model sys_audit_log {
   log_id         String   @id @default(uuid()) @db.Uuid
   tenant_id      String   @db.Uuid
@@ -299,6 +302,7 @@ model sys_audit_log {
   status         String   @default("1") @db.VarChar(10)
   error_msg      String?  @db.Text
   created_at     DateTime @default(now()) @db.Timestamptz(6)
+  created_by     String?  @db.Uuid
 
   @@index([tenant_id])
   @@index([user_id])
@@ -311,16 +315,15 @@ model sys_audit_log {
 }
 
 // ==================== 用户角色关联表 ====================
-/// 用户与角色关联表
 model sys_user_role {
   id         String   @id @default(uuid()) @db.Uuid
   user_id    String   @db.Uuid
   role_id    String   @db.Uuid
   tenant_id  String   @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
-
-  user sys_user @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  role sys_role @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
+  created_by String?  @db.Uuid
+  user       sys_user @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  role       sys_role @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
 
   @@unique([user_id, role_id])
   @@index([tenant_id])
@@ -330,7 +333,6 @@ model sys_user_role {
 }
 
 // ==================== 用户部门关联表 ====================
-/// 用户与部门关联表
 model sys_user_dept {
   id         String   @id @default(uuid()) @db.Uuid
   user_id    String   @db.Uuid
@@ -338,9 +340,9 @@ model sys_user_dept {
   tenant_id  String   @db.Uuid
   is_primary Int      @default(0) @db.SmallInt
   created_at DateTime @default(now()) @db.Timestamptz(6)
-
-  user sys_user @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  dept sys_dept @relation(fields: [dept_id], references: [dept_id], onDelete: Cascade)
+  created_by String?  @db.Uuid
+  user       sys_user @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  dept       sys_dept @relation(fields: [dept_id], references: [dept_id], onDelete: Cascade)
 
   @@unique([user_id, dept_id])
   @@index([tenant_id])
@@ -356,6 +358,7 @@ model sys_role_menu {
   menu_id    String   @db.Uuid /// 菜单ID
   tenant_id  String   @db.Uuid /// 所属租户ID
   created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  created_by String?  @db.Uuid /// 创建人ID
 
   role sys_role @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
   menu sys_menu @relation(fields: [menu_id], references: [menu_id], onDelete: Cascade)
@@ -373,7 +376,8 @@ model sys_role_permission {
   role_id    String   @db.Uuid
   perm_id    String   @db.Uuid
   tenant_id  String   @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  created_by String?  @db.Uuid /// 创建人ID
 
   role       sys_role       @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
   permission sys_permission @relation(fields: [perm_id], references: [perm_id], onDelete: Cascade)
@@ -391,9 +395,9 @@ model sys_role_dept {
   role_id    String   @db.Uuid
   dept_id    String   @db.Uuid
   tenant_id  String   @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  created_by String?  @db.Uuid /// 创建人ID
 
-  // ⚠️ 关键：补上两个关系定义
   role sys_role @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
   dept sys_dept @relation(fields: [dept_id], references: [dept_id], onDelete: Cascade)
 
@@ -405,7 +409,6 @@ model sys_role_dept {
 }
 
 // ==================== MFA 配置表 ====================
-/// 用户多因素认证配置表
 model sys_mfa_config {
   mfa_id       String   @id @default(uuid()) @db.Uuid
   user_id      String   @unique @db.Uuid
@@ -413,14 +416,14 @@ model sys_mfa_config {
   enabled      Int      @default(0) @db.SmallInt
   backup_codes String?  @db.Text
   created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+  updated_at   DateTime @updatedAt @db.Timestamptz(6) /// 更新时间
+  created_by   String?  @db.Uuid /// 创建人ID
 
   @@index([user_id])
   @@map("sys_mfa_config")
 }
 
 // ==================== 文件表 ====================
-/// 文件管理表
 model sys_file {
   file_id    String   @id @default(uuid()) @db.Uuid
   tenant_id  String   @db.Uuid
@@ -430,6 +433,9 @@ model sys_file {
   mime_type  String?  @db.VarChar(128)
   uploader   String?  @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  created_by String?  @db.Uuid
+  updated_by String?  @db.Uuid
   is_deleted Int      @default(0) @db.SmallInt
 
   @@index([tenant_id])
@@ -437,7 +443,6 @@ model sys_file {
 }
 
 // ==================== 登录日志表 ====================
-/// 登录日志表
 model sys_login_log {
   log_id     String   @id @default(uuid()) @db.Uuid
   tenant_id  String   @db.Uuid
@@ -447,7 +452,8 @@ model sys_login_log {
   user_agent String?  @db.VarChar(512)
   status     String   @default("1") @db.VarChar(10)
   message    String?  @db.VarChar(256)
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  created_by String?  @db.Uuid /// 创建人ID
 
   @@index([tenant_id])
   @@index([user_id])
@@ -456,7 +462,6 @@ model sys_login_log {
 }
 
 // ==================== 系统配置表 ====================
-/// 系统配置表
 model sys_config {
   config_id    String   @id @default(uuid()) @db.Uuid
   tenant_id    String   @db.Uuid
@@ -512,7 +517,8 @@ model sys_job_log {
   exception_info String?  @db.Text
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   retry_attempt  Int      @default(0) @db.SmallInt
-  duration_ms    Int      @default(0) @db.Integer
+  duration_ms    Int      @default(0) @db.Integer /// 执行时长（毫秒）
+  created_by     String?  @db.Uuid /// 创建人ID
 
   @@index([job_id])
   @@index([created_at])
@@ -588,7 +594,8 @@ model sys_notice_send_log {
   receiver     String   @db.VarChar(256) /// 邮箱/手机号/URL
   status       String   @default("1") @db.VarChar(10)
   error_msg    String?  @db.Text
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  created_at   DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  created_by   String?  @db.Uuid /// 创建人ID
 
   @@index([tenant_id, channel_type])
   @@index([notice_id])
@@ -601,7 +608,8 @@ model sys_password_history {
   tenant_id  String   @db.Uuid
   user_id    String   @db.Uuid
   password   String   @db.VarChar(256)
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  created_by String?  @db.Uuid /// 创建人ID
 
   @@index([tenant_id, user_id, created_at])
   @@map("sys_password_history")
@@ -629,7 +637,8 @@ model sys_user_tenant {
   user_id    String   @db.Uuid
   tenant_id  String   @db.Uuid
   is_default Int      @default(0) @db.SmallInt
-  joined_at  DateTime @default(now()) @db.Timestamptz(6)
+  joined_at  DateTime @default(now()) @db.Timestamptz(6) /// 加入时间
+  created_by String?  @db.Uuid /// 创建人ID
 
   @@unique([user_id, tenant_id])
   @@index([user_id])

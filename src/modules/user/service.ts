@@ -5,21 +5,28 @@ import { generateExcel, type ExcelColumn } from "@/core/excel/excel.service.js";
 import * as XLSX from "xlsx";
 import { UserImportRowSchema } from "./schema.js";
 import { BaseService } from "@/core/base/service.js";
+import dayjs from "dayjs";
 
 const EXPORT_COLUMNS: ExcelColumn[] = [
   { header: "用户名", key: "username", width: 16 },
   { header: "真实姓名", key: "real_name", width: 16 },
-  { header: "邮箱", key: "email", width: 24 },
+  { header: "邮箱", key: "email", width: 30 },
   { header: "手机号", key: "phone", width: 16 },
-  { header: "部门", key: "deptName", width: 20 },
-  { header: "角色", key: "roleNames", width: 20 },
+  { header: "部门", key: "deptName", width: 40 },
+  { header: "角色", key: "roleNames", width: 40 },
+  {
+    header: "性别",
+    key: "gender",
+    width: 16,
+    formatter: (v: number) => (v === 0 ? "未知" : v === 1 ? "男" : "女"),
+  },
   {
     header: "状态",
     key: "status",
     width: 8,
     formatter: (v: string) => (v === "1" ? "启用" : "禁用"),
   },
-  { header: "创建时间", key: "created_at", width: 20 },
+  { header: "创建时间", key: "createdAt", width: 40 },
 ];
 
 export class UserService extends BaseService<UserRepository> {
@@ -54,6 +61,7 @@ export class UserService extends BaseService<UserRepository> {
           ?.map((ur: any) => ur.role?.role_name)
           .filter(Boolean)
           .join(",") || "",
+      createdAt: dayjs(u.created_at).format("YYYY-MM-DD HH:mm:ss"),
     }));
     return generateExcel(rows, EXPORT_COLUMNS, "用户数据");
   }

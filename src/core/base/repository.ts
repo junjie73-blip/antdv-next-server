@@ -10,6 +10,8 @@ import {
 import { AppError } from "@/core/errors.js";
 import { redis, scanAll } from "@/config/redis.js";
 import { createHash } from "node:crypto";
+import { isString } from "es-toolkit";
+import { keysToSnakeCase } from "@/common/utils/case-convert.js";
 
 export abstract class BaseRepository<
   T,
@@ -133,7 +135,6 @@ export abstract class BaseRepository<
     if (this.useTenantFilter()) {
       base[this.tenantField] = query.tenantId;
     }
-
     // 2) 子类扩展
     let finalWhere = base;
     if (options.extendWhere) {
@@ -149,10 +150,24 @@ export abstract class BaseRepository<
     // 4) 排序
     const orderBy = options.defaultOrderBy ?? this.defaultOrderBy;
 
-    const findArgs: any = { where: finalWhere, skip, take: pageSize, orderBy };
+    const findArgs: any = {
+      where: finalWhere,
+      skip,
+      take: pageSize,
+      orderBy,
+    };
+    if (query.fields) {
+      const fields = isString(query.fields)
+        ? query.fields.split(",")
+        : query.fields.filter(Boolean);
+      const input = fields.map((item) => ({
+        [item]: true,
+      }));
+      findArgs.select = normalizeSelect(input);
+    }
+
     if (options.include) findArgs.include = options.include;
     if (options.select) findArgs.select = options.select;
-
     const [list, total] = await Promise.all([
       this.model.findMany(findArgs),
       this.countWithCache(finalWhere),
@@ -378,4 +393,25 @@ export abstract class BaseRepository<
     if (!sort || sort.length === 0) return this.defaultOrderBy;
     return sort.map((s) => ({ [s.field]: s.direction }));
   }
+}
+function normalizeSelect(input: unknown): Record<string, boolean> | undefined {
+  if (!input) return undefined;
+
+  let obj: Record<string, any>;
+  if (Array.isArray(input)) {
+    obj = Object.assign({}, ...input);
+  } else if (typeof input === "object") {
+    obj = { ...(input as Record<string, any>) };
+  } else {
+    return undefined;
+  }
+
+  // 只保留值为 true 的字段，避免 {a: false} 触发 Prisma 报错
+  const cleaned: Record<string, boolean> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === true) cleaned[k] = true;
+  }
+  if (Object.keys(cleaned).length === 0) return undefined;
+
+  return keysToSnakeCase(cleaned) as Record<string, boolean>;
 }

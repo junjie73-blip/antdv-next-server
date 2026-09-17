@@ -90,6 +90,9 @@ export default class UserController extends BaseController<any, any, any, any> {
     if (query.status !== undefined) {
       where.status = query.status;
     }
+    if (query.ids) {
+      where.user_id = { in: query.ids.split(",") };
+    }
     return where;
   }
   async afterDetail(data, req) {
@@ -183,9 +186,7 @@ export default class UserController extends BaseController<any, any, any, any> {
   async exportUsers(@Req() req: Request, @Res() res: Response) {
     try {
       const where = this.buildListWhere(req.query);
-      const buffer = await (
-        this.repository as UserRepository
-      ).exportUsersToExcel(where, req.tenantId!);
+      const buffer = await this.service.exportToExcel(where, req.tenantId!);
       res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -213,9 +214,7 @@ export default class UserController extends BaseController<any, any, any, any> {
       }
       try {
         if (!req.file) throw new AppError("请上传Excel文件", 400, 400);
-        const result = await (
-          this.repository as UserRepository
-        ).importUsersFromExcel(
+        const result = await this.service.importFromExcel(
           req.file.buffer,
           req.tenantId!,
           req.user?.userId,

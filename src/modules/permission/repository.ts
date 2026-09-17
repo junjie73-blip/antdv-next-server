@@ -2,55 +2,24 @@ import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { AppError } from "@/middleware/error-handler.js";
+import { PERMISSION_RESOURCE_TYPES } from "./schema.js";
 
+/** 资源类型白名单（防 DTO 被绕过） */
+const VALID_RESOURCE_TYPES = new Set<string>(PERMISSION_RESOURCE_TYPES);
 export class PermissionRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_permission;
   protected readonly primaryKey = "permission_id";
-  /**
-   * 分页查询，支持多条件过滤
-   */
-  async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
-    const pageNum = Math.max(1, query.pageNum || 1);
-    const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
-    const skip = (pageNum - 1) * pageSize;
-
-    const finalWhere: any = {
-      ...where,
-      tenant_id: query.tenantId,
-      is_deleted: 0,
-    };
-
-    if (query.permCode) finalWhere.perm_code = { contains: query.permCode };
-    if (query.permName) finalWhere.perm_name = { contains: query.permName };
-    if (query.resourceType) finalWhere.resource_type = query.resourceType;
-    if (query.status !== undefined) finalWhere.status = query.status;
-    if (!query.isPlatformAdmin) {
-      finalWhere.perm_code = { not: { startsWith: "platform:" } };
-    }
-    const scopedWhere = this.mergeDataScope(finalWhere);
-    const [list, total] = await Promise.all([
-      this.model.findMany({
-        where: scopedWhere,
-        skip,
-        take: pageSize,
-        orderBy: { created_at: "desc" },
-      }),
-      this.model.count({ where: scopedWhere }),
-    ]);
-
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
-  }
-
-  /**
-   * 重写创建前钩子（由 BaseController 调用），检查 perm_code 唯一性
-   */
   async beforeCreate(data: any, tenantId: string): Promise<any> {
+    // ⭐ 资源类型白名单校验
+    if (!VALID_RESOURCE_TYPES.has(data.resourceType)) {
+      throw new AppError(
+        `不支持的资源类型「${data.resourceType}」，仅支持 api / data / other。` +
+          `菜单 / 按钮权限请在「角色管理」中分配`,
+        400,
+        400,
+      );
+    }
+
     const exist = await this.model.findFirst({
       where: { perm_code: data.permCode, tenant_id: tenantId, is_deleted: 0 },
     });
@@ -61,9 +30,17 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
   }
 
   /**
-   * 重写更新前钩子，检查 perm_code 唯一性（排除自身）
+   * 更新前钩子：若改了资源类型则校验 + perm_code 唯一
    */
   async beforeUpdate(id: string, data: any, tenantId: string): Promise<any> {
+    if (data.resourceType && !VALID_RESOURCE_TYPES.has(data.resourceType)) {
+      throw new AppError(
+        `不支持的资源类型「${data.resourceType}」，仅支持 api / data / other`,
+        400,
+        400,
+      );
+    }
+
     if (data.permCode) {
       const exist = await this.model.findFirst({
         where: {
@@ -88,12 +65,7 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
       perm_code: code,
       is_deleted: 0,
     };
-    if (excludeId) {
-      where.perm_id = { not: excludeId };
-    }
-    return this.model.findFirst({ where });
-  }
-  async findFirst(where: any) {
+    if (excludeId) where.perm_id = { not: excludeId };
     return this.model.findFirst({ where });
   }
   async findAllForExport(tenantId: string) {
@@ -118,7 +90,7 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
         perm_code: data.permCode,
         perm_name: data.permName,
         resource_type: data.resourceType,
-        action: data.action,
+        perm_action: data.permAction,
         description: data.description || null,
         status: data.status,
         created_by: data.userId,

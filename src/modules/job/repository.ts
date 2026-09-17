@@ -1,40 +1,32 @@
-import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
+import { BaseQuery, PageResult } from "@/types/base-repository.js";
+import type { JobEntity } from "./types.js";
+import { BaseRepository } from "@/core/base/repository.js";
 
-export class JobRepository extends BaseRepository<any, any, any, any> {
+export class JobRepository extends BaseRepository<JobEntity, any, any, any> {
   protected readonly model = prisma.sys_job;
   protected readonly primaryKey = "job_id";
 
-  async findLogPage(query: any) {
-    const pageNum = Math.max(1, query.pageNum || 1);
-    const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
-    const skip = (pageNum - 1) * pageSize;
-    const where: any = {};
-    if (query.jobId) where.job_id = query.jobId;
-    if (query.status) where.status = query.status;
-    const [list, total] = await Promise.all([
-      prisma.sys_job_log.findMany({
-        where,
-        skip,
-        take: pageSize,
-        orderBy: { created_at: "desc" },
-      }),
-      prisma.sys_job_log.count({ where }),
-    ]);
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
-  }
+  // ============================================================
+  // 分页
+  // ============================================================
 
-  async clearLogs(jobId?: string) {
-    await prisma.sys_job_log.deleteMany({
-      where: jobId ? { job_id: jobId } : {},
+  async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
+    return this.paginate({ ...query, maxPageSize: 100 }, where, {
+      defaultOrderBy: { created_at: "desc" },
+      extendWhere: ({ query }) => {
+        const extra: Record<string, any> = {};
+        if (query.jobName) extra.job_name = { contains: query.jobName };
+        if (query.status) extra.status = query.status;
+        return extra;
+      },
     });
   }
+
+  // ============================================================
+  // 状态切换
+  // ============================================================
+
   async updateStatus(
     jobId: string,
     status: string,
@@ -46,7 +38,22 @@ export class JobRepository extends BaseRepository<any, any, any, any> {
     });
   }
 
-  async findAllForExport(tenantId: string) {
+  async setPaused(
+    jobId: string,
+    tenantId: string,
+    paused: boolean,
+  ): Promise<void> {
+    await this.model.updateMany({
+      where: { job_id: jobId, tenant_id: tenantId },
+      data: { is_paused: paused ? 1 : 0, updated_at: new Date() },
+    });
+  }
+
+  // ============================================================
+  // 导入导出
+  // ============================================================
+
+  async findAllForExport(tenantId: string): Promise<JobEntity[]> {
     return this.model.findMany({
       where: { tenant_id: tenantId, is_deleted: 0 },
       orderBy: { created_at: "desc" },
@@ -61,7 +68,16 @@ export class JobRepository extends BaseRepository<any, any, any, any> {
     return new Set(rows.map((r: any) => r.job_name));
   }
 
-  async insertJob(data: any): Promise<string> {
+  async insertJob(data: {
+    tenantId: string;
+    jobName: string;
+    jobGroup: string;
+    invokeTarget: string;
+    cronExpression: string;
+    status: string;
+    remark?: string;
+    userId?: string;
+  }): Promise<string> {
     const record = await this.model.create({
       data: {
         tenant_id: data.tenantId,
@@ -80,14 +96,17 @@ export class JobRepository extends BaseRepository<any, any, any, any> {
     });
     return (record as any).job_id;
   }
-  async setPaused(
-    jobId: string,
-    tenantId: string,
-    paused: boolean,
-  ): Promise<void> {
-    await this.model.updateMany({
-      where: { job_id: jobId, tenant_id: tenantId },
-      data: { is_paused: paused ? 1 : 0, updated_at: new Date() },
+
+  // ============================================================
+  // 供 JobLogRepository 用：查租户下的所有 jobId
+  // ⭐ sys_job_log 没有 tenant_id，只能通过 job_id 关联过滤
+  // ============================================================
+
+  async findAllJobIdsByTenant(tenantId: string): Promise<string[]> {
+    const rows = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      select: { job_id: true },
     });
+    return rows.map((r: any) => r.job_id);
   }
 }

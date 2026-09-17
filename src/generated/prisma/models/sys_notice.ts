@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_notice
- * 通知公告表
+ * 
  */
 export type sys_noticeModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_noticePayload>
 
@@ -55,6 +55,8 @@ export type Sys_noticeMinAggregateOutputType = {
   is_deleted: number | null
   priority: number | null
   is_top: number | null
+  send_status: string | null
+  send_time: Date | null
   revoked_at: Date | null
   revoked_by: string | null
 }
@@ -74,6 +76,8 @@ export type Sys_noticeMaxAggregateOutputType = {
   is_deleted: number | null
   priority: number | null
   is_top: number | null
+  send_status: string | null
+  send_time: Date | null
   revoked_at: Date | null
   revoked_by: string | null
 }
@@ -93,6 +97,8 @@ export type Sys_noticeCountAggregateOutputType = {
   is_deleted: number
   priority: number
   is_top: number
+  send_status: number
+  send_time: number
   revoked_at: number
   revoked_by: number
   _all: number
@@ -128,6 +134,8 @@ export type Sys_noticeMinAggregateInputType = {
   is_deleted?: true
   priority?: true
   is_top?: true
+  send_status?: true
+  send_time?: true
   revoked_at?: true
   revoked_by?: true
 }
@@ -147,6 +155,8 @@ export type Sys_noticeMaxAggregateInputType = {
   is_deleted?: true
   priority?: true
   is_top?: true
+  send_status?: true
+  send_time?: true
   revoked_at?: true
   revoked_by?: true
 }
@@ -166,6 +176,8 @@ export type Sys_noticeCountAggregateInputType = {
   is_deleted?: true
   priority?: true
   is_top?: true
+  send_status?: true
+  send_time?: true
   revoked_at?: true
   revoked_by?: true
   _all?: true
@@ -272,6 +284,8 @@ export type Sys_noticeGroupByOutputType = {
   is_deleted: number
   priority: number
   is_top: number
+  send_status: string | null
+  send_time: Date | null
   revoked_at: Date | null
   revoked_by: string | null
   _count: Sys_noticeCountAggregateOutputType | null
@@ -314,6 +328,8 @@ export type sys_noticeWhereInput = {
   is_deleted?: Prisma.IntFilter<"sys_notice"> | number
   priority?: Prisma.IntFilter<"sys_notice"> | number
   is_top?: Prisma.IntFilter<"sys_notice"> | number
+  send_status?: Prisma.StringNullableFilter<"sys_notice"> | string | null
+  send_time?: Prisma.DateTimeNullableFilter<"sys_notice"> | Date | string | null
   revoked_at?: Prisma.DateTimeNullableFilter<"sys_notice"> | Date | string | null
   revoked_by?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
   target_users?: Prisma.Sys_notice_userListRelationFilter
@@ -334,6 +350,8 @@ export type sys_noticeOrderByWithRelationInput = {
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   is_top?: Prisma.SortOrder
+  send_status?: Prisma.SortOrderInput | Prisma.SortOrder
+  send_time?: Prisma.SortOrderInput | Prisma.SortOrder
   revoked_at?: Prisma.SortOrderInput | Prisma.SortOrder
   revoked_by?: Prisma.SortOrderInput | Prisma.SortOrder
   target_users?: Prisma.sys_notice_userOrderByRelationAggregateInput
@@ -357,6 +375,8 @@ export type sys_noticeWhereUniqueInput = Prisma.AtLeast<{
   is_deleted?: Prisma.IntFilter<"sys_notice"> | number
   priority?: Prisma.IntFilter<"sys_notice"> | number
   is_top?: Prisma.IntFilter<"sys_notice"> | number
+  send_status?: Prisma.StringNullableFilter<"sys_notice"> | string | null
+  send_time?: Prisma.DateTimeNullableFilter<"sys_notice"> | Date | string | null
   revoked_at?: Prisma.DateTimeNullableFilter<"sys_notice"> | Date | string | null
   revoked_by?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
   target_users?: Prisma.Sys_notice_userListRelationFilter
@@ -377,6 +397,8 @@ export type sys_noticeOrderByWithAggregationInput = {
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   is_top?: Prisma.SortOrder
+  send_status?: Prisma.SortOrderInput | Prisma.SortOrder
+  send_time?: Prisma.SortOrderInput | Prisma.SortOrder
   revoked_at?: Prisma.SortOrderInput | Prisma.SortOrder
   revoked_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_noticeCountOrderByAggregateInput
@@ -404,6 +426,8 @@ export type sys_noticeScalarWhereWithAggregatesInput = {
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_notice"> | number
   priority?: Prisma.IntWithAggregatesFilter<"sys_notice"> | number
   is_top?: Prisma.IntWithAggregatesFilter<"sys_notice"> | number
+  send_status?: Prisma.StringNullableWithAggregatesFilter<"sys_notice"> | string | null
+  send_time?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_notice"> | Date | string | null
   revoked_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_notice"> | Date | string | null
   revoked_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_notice"> | string | null
 }
@@ -423,6 +447,8 @@ export type sys_noticeCreateInput = {
   is_deleted?: number
   priority?: number
   is_top?: number
+  send_status?: string | null
+  send_time?: Date | string | null
   revoked_at?: Date | string | null
   revoked_by?: string | null
   target_users?: Prisma.sys_notice_userCreateNestedManyWithoutNoticeInput
@@ -443,6 +469,8 @@ export type sys_noticeUncheckedCreateInput = {
   is_deleted?: number
   priority?: number
   is_top?: number
+  send_status?: string | null
+  send_time?: Date | string | null
   revoked_at?: Date | string | null
   revoked_by?: string | null
   target_users?: Prisma.sys_notice_userUncheckedCreateNestedManyWithoutNoticeInput
@@ -463,6 +491,8 @@ export type sys_noticeUpdateInput = {
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   is_top?: Prisma.IntFieldUpdateOperationsInput | number
+  send_status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   target_users?: Prisma.sys_notice_userUpdateManyWithoutNoticeNestedInput
@@ -483,6 +513,8 @@ export type sys_noticeUncheckedUpdateInput = {
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   is_top?: Prisma.IntFieldUpdateOperationsInput | number
+  send_status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   target_users?: Prisma.sys_notice_userUncheckedUpdateManyWithoutNoticeNestedInput
@@ -503,6 +535,8 @@ export type sys_noticeCreateManyInput = {
   is_deleted?: number
   priority?: number
   is_top?: number
+  send_status?: string | null
+  send_time?: Date | string | null
   revoked_at?: Date | string | null
   revoked_by?: string | null
 }
@@ -522,6 +556,8 @@ export type sys_noticeUpdateManyMutationInput = {
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   is_top?: Prisma.IntFieldUpdateOperationsInput | number
+  send_status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -541,6 +577,8 @@ export type sys_noticeUncheckedUpdateManyInput = {
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   is_top?: Prisma.IntFieldUpdateOperationsInput | number
+  send_status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -560,6 +598,8 @@ export type sys_noticeCountOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   is_top?: Prisma.SortOrder
+  send_status?: Prisma.SortOrder
+  send_time?: Prisma.SortOrder
   revoked_at?: Prisma.SortOrder
   revoked_by?: Prisma.SortOrder
 }
@@ -586,6 +626,8 @@ export type sys_noticeMaxOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   is_top?: Prisma.SortOrder
+  send_status?: Prisma.SortOrder
+  send_time?: Prisma.SortOrder
   revoked_at?: Prisma.SortOrder
   revoked_by?: Prisma.SortOrder
 }
@@ -605,6 +647,8 @@ export type sys_noticeMinOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   is_top?: Prisma.SortOrder
+  send_status?: Prisma.SortOrder
+  send_time?: Prisma.SortOrder
   revoked_at?: Prisma.SortOrder
   revoked_by?: Prisma.SortOrder
 }
@@ -650,6 +694,8 @@ export type sys_noticeCreateWithoutTarget_usersInput = {
   is_deleted?: number
   priority?: number
   is_top?: number
+  send_status?: string | null
+  send_time?: Date | string | null
   revoked_at?: Date | string | null
   revoked_by?: string | null
 }
@@ -669,6 +715,8 @@ export type sys_noticeUncheckedCreateWithoutTarget_usersInput = {
   is_deleted?: number
   priority?: number
   is_top?: number
+  send_status?: string | null
+  send_time?: Date | string | null
   revoked_at?: Date | string | null
   revoked_by?: string | null
 }
@@ -704,6 +752,8 @@ export type sys_noticeUpdateWithoutTarget_usersInput = {
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   is_top?: Prisma.IntFieldUpdateOperationsInput | number
+  send_status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -723,6 +773,8 @@ export type sys_noticeUncheckedUpdateWithoutTarget_usersInput = {
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   is_top?: Prisma.IntFieldUpdateOperationsInput | number
+  send_status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revoked_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -773,6 +825,8 @@ export type sys_noticeSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   is_deleted?: boolean
   priority?: boolean
   is_top?: boolean
+  send_status?: boolean
+  send_time?: boolean
   revoked_at?: boolean
   revoked_by?: boolean
   target_users?: boolean | Prisma.sys_notice$target_usersArgs<ExtArgs>
@@ -794,6 +848,8 @@ export type sys_noticeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   is_deleted?: boolean
   priority?: boolean
   is_top?: boolean
+  send_status?: boolean
+  send_time?: boolean
   revoked_at?: boolean
   revoked_by?: boolean
 }, ExtArgs["result"]["sys_notice"]>
@@ -813,6 +869,8 @@ export type sys_noticeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   is_deleted?: boolean
   priority?: boolean
   is_top?: boolean
+  send_status?: boolean
+  send_time?: boolean
   revoked_at?: boolean
   revoked_by?: boolean
 }, ExtArgs["result"]["sys_notice"]>
@@ -832,11 +890,13 @@ export type sys_noticeSelectScalar = {
   is_deleted?: boolean
   priority?: boolean
   is_top?: boolean
+  send_status?: boolean
+  send_time?: boolean
   revoked_at?: boolean
   revoked_by?: boolean
 }
 
-export type sys_noticeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "priority" | "is_top" | "revoked_at" | "revoked_by", ExtArgs["result"]["sys_notice"]>
+export type sys_noticeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "priority" | "is_top" | "send_status" | "send_time" | "revoked_at" | "revoked_by", ExtArgs["result"]["sys_notice"]>
 export type sys_noticeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   target_users?: boolean | Prisma.sys_notice$target_usersArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_noticeCountOutputTypeDefaultArgs<ExtArgs>
@@ -864,6 +924,8 @@ export type $sys_noticePayload<ExtArgs extends runtime.Types.Extensions.Internal
     is_deleted: number
     priority: number
     is_top: number
+    send_status: string | null
+    send_time: Date | null
     revoked_at: Date | null
     revoked_by: string | null
   }, ExtArgs["result"]["sys_notice"]>
@@ -1304,6 +1366,8 @@ export interface sys_noticeFieldRefs {
   readonly is_deleted: Prisma.FieldRef<"sys_notice", 'Int'>
   readonly priority: Prisma.FieldRef<"sys_notice", 'Int'>
   readonly is_top: Prisma.FieldRef<"sys_notice", 'Int'>
+  readonly send_status: Prisma.FieldRef<"sys_notice", 'String'>
+  readonly send_time: Prisma.FieldRef<"sys_notice", 'DateTime'>
   readonly revoked_at: Prisma.FieldRef<"sys_notice", 'DateTime'>
   readonly revoked_by: Prisma.FieldRef<"sys_notice", 'String'>
 }

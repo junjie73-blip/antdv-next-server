@@ -9,6 +9,11 @@ const originalError = logger.error.bind(logger);
 
   // 关键错误推送（可加采样）
   if (msg && /critical|fatal|db.*fail|redis.*fail/i.test(msg)) {
-    void sendAlert({ level: "error", message: msg, data: obj });
+    void sendAlert({
+      level: "error",
+      message: msg,
+      data: obj,
+      title: "关键错误",
+    });
   }
 };

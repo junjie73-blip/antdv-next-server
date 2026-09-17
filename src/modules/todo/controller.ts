@@ -25,8 +25,18 @@ const TodoCreateSchema = z
     content: z.string().optional(),
     priority: z.number().int().min(0).max(2).default(0),
     dueTime: z.string().datetime().nullable().optional(),
+    groupId: z.string().optional(),
+    status: z.string().optional(),
+    noticeType: z.number().int().min(0).max(2).default(0),
   })
   .openapi("TodoCreate");
+const TodoListSchema = z
+  .object({
+    groupId: z.string().optional(),
+    status: z.string().optional(),
+    noticeType: z.number().int().min(0).max(2).default(0),
+  })
+  .openapi("TodoList");
 const TodoUpdateSchema = TodoCreateSchema.partial();
 
 @Controller("/todo", { tags: ["待办事项"] })
@@ -42,13 +52,8 @@ export default class TodoController extends BaseController<any, any, any, any> {
   };
   protected readonly createSchema = TodoCreateSchema;
   protected readonly updateSchema = TodoUpdateSchema;
-  protected readonly querySchema = null;
+  protected readonly querySchema = TodoListSchema;
 
-  protected buildListWhere() {
-    return {};
-  }
-
-  // ✅ 重点：装饰器必须写，且 res 参数要带 @Res()
   @Get("/list")
   @ApiOperation("待办列表")
   @ApiResponse(200, "查询成功")

@@ -16,6 +16,7 @@ import { TodoGroupCreateSchema, TodoGroupUpdateSchema } from "./schema.js";
 import { AppError } from "@/core/errors.js";
 import { error, success } from "@/common/utils/response.js";
 import { logger } from "@core/logger/index.js";
+import { keysToCamelCase } from "@/common/utils/case-convert.js";
 
 @Controller("/todo-group", { tags: ["待办分组"] })
 export default class TodoGroupController {
@@ -40,7 +41,7 @@ export default class TodoGroupController {
     try {
       const { userId, tenantId } = this.getUserContext(req);
       const groups = await this.repository.findByUser(userId, tenantId);
-      success(res, groups);
+      success(res, groups.map(keysToCamelCase));
     } catch (err) {
       this.handleError(res, err);
     }

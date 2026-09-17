@@ -40,6 +40,7 @@ export type Sys_user_tenantMinAggregateOutputType = {
   tenant_id: string | null
   is_default: number | null
   joined_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_user_tenantMaxAggregateOutputType = {
@@ -48,6 +49,7 @@ export type Sys_user_tenantMaxAggregateOutputType = {
   tenant_id: string | null
   is_default: number | null
   joined_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_user_tenantCountAggregateOutputType = {
@@ -56,6 +58,7 @@ export type Sys_user_tenantCountAggregateOutputType = {
   tenant_id: number
   is_default: number
   joined_at: number
+  created_by: number
   _all: number
 }
 
@@ -74,6 +77,7 @@ export type Sys_user_tenantMinAggregateInputType = {
   tenant_id?: true
   is_default?: true
   joined_at?: true
+  created_by?: true
 }
 
 export type Sys_user_tenantMaxAggregateInputType = {
@@ -82,6 +86,7 @@ export type Sys_user_tenantMaxAggregateInputType = {
   tenant_id?: true
   is_default?: true
   joined_at?: true
+  created_by?: true
 }
 
 export type Sys_user_tenantCountAggregateInputType = {
@@ -90,6 +95,7 @@ export type Sys_user_tenantCountAggregateInputType = {
   tenant_id?: true
   is_default?: true
   joined_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -185,6 +191,7 @@ export type Sys_user_tenantGroupByOutputType = {
   tenant_id: string
   is_default: number
   joined_at: Date
+  created_by: string | null
   _count: Sys_user_tenantCountAggregateOutputType | null
   _avg: Sys_user_tenantAvgAggregateOutputType | null
   _sum: Sys_user_tenantSumAggregateOutputType | null
@@ -216,6 +223,7 @@ export type sys_user_tenantWhereInput = {
   tenant_id?: Prisma.UuidFilter<"sys_user_tenant"> | string
   is_default?: Prisma.IntFilter<"sys_user_tenant"> | number
   joined_at?: Prisma.DateTimeFilter<"sys_user_tenant"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_tenant"> | string | null
 }
 
 export type sys_user_tenantOrderByWithRelationInput = {
@@ -224,6 +232,7 @@ export type sys_user_tenantOrderByWithRelationInput = {
   tenant_id?: Prisma.SortOrder
   is_default?: Prisma.SortOrder
   joined_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_user_tenantWhereUniqueInput = Prisma.AtLeast<{
@@ -236,6 +245,7 @@ export type sys_user_tenantWhereUniqueInput = Prisma.AtLeast<{
   tenant_id?: Prisma.UuidFilter<"sys_user_tenant"> | string
   is_default?: Prisma.IntFilter<"sys_user_tenant"> | number
   joined_at?: Prisma.DateTimeFilter<"sys_user_tenant"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_tenant"> | string | null
 }, "id" | "user_id_tenant_id">
 
 export type sys_user_tenantOrderByWithAggregationInput = {
@@ -244,6 +254,7 @@ export type sys_user_tenantOrderByWithAggregationInput = {
   tenant_id?: Prisma.SortOrder
   is_default?: Prisma.SortOrder
   joined_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_user_tenantCountOrderByAggregateInput
   _avg?: Prisma.sys_user_tenantAvgOrderByAggregateInput
   _max?: Prisma.sys_user_tenantMaxOrderByAggregateInput
@@ -260,6 +271,7 @@ export type sys_user_tenantScalarWhereWithAggregatesInput = {
   tenant_id?: Prisma.UuidWithAggregatesFilter<"sys_user_tenant"> | string
   is_default?: Prisma.IntWithAggregatesFilter<"sys_user_tenant"> | number
   joined_at?: Prisma.DateTimeWithAggregatesFilter<"sys_user_tenant"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_user_tenant"> | string | null
 }
 
 export type sys_user_tenantCreateInput = {
@@ -268,6 +280,7 @@ export type sys_user_tenantCreateInput = {
   tenant_id: string
   is_default?: number
   joined_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_tenantUncheckedCreateInput = {
@@ -276,6 +289,7 @@ export type sys_user_tenantUncheckedCreateInput = {
   tenant_id: string
   is_default?: number
   joined_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_tenantUpdateInput = {
@@ -284,6 +298,7 @@ export type sys_user_tenantUpdateInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_default?: Prisma.IntFieldUpdateOperationsInput | number
   joined_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_tenantUncheckedUpdateInput = {
@@ -292,6 +307,7 @@ export type sys_user_tenantUncheckedUpdateInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_default?: Prisma.IntFieldUpdateOperationsInput | number
   joined_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_tenantCreateManyInput = {
@@ -300,6 +316,7 @@ export type sys_user_tenantCreateManyInput = {
   tenant_id: string
   is_default?: number
   joined_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_tenantUpdateManyMutationInput = {
@@ -308,6 +325,7 @@ export type sys_user_tenantUpdateManyMutationInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_default?: Prisma.IntFieldUpdateOperationsInput | number
   joined_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_tenantUncheckedUpdateManyInput = {
@@ -316,6 +334,7 @@ export type sys_user_tenantUncheckedUpdateManyInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_default?: Prisma.IntFieldUpdateOperationsInput | number
   joined_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_tenantUser_idTenant_idCompoundUniqueInput = {
@@ -329,6 +348,7 @@ export type sys_user_tenantCountOrderByAggregateInput = {
   tenant_id?: Prisma.SortOrder
   is_default?: Prisma.SortOrder
   joined_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_tenantAvgOrderByAggregateInput = {
@@ -341,6 +361,7 @@ export type sys_user_tenantMaxOrderByAggregateInput = {
   tenant_id?: Prisma.SortOrder
   is_default?: Prisma.SortOrder
   joined_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_tenantMinOrderByAggregateInput = {
@@ -349,6 +370,7 @@ export type sys_user_tenantMinOrderByAggregateInput = {
   tenant_id?: Prisma.SortOrder
   is_default?: Prisma.SortOrder
   joined_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_tenantSumOrderByAggregateInput = {
@@ -363,6 +385,7 @@ export type sys_user_tenantSelect<ExtArgs extends runtime.Types.Extensions.Inter
   tenant_id?: boolean
   is_default?: boolean
   joined_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_user_tenant"]>
 
 export type sys_user_tenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -371,6 +394,7 @@ export type sys_user_tenantSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   tenant_id?: boolean
   is_default?: boolean
   joined_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_user_tenant"]>
 
 export type sys_user_tenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -379,6 +403,7 @@ export type sys_user_tenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   tenant_id?: boolean
   is_default?: boolean
   joined_at?: boolean
+  created_by?: boolean
 }, ExtArgs["result"]["sys_user_tenant"]>
 
 export type sys_user_tenantSelectScalar = {
@@ -387,9 +412,10 @@ export type sys_user_tenantSelectScalar = {
   tenant_id?: boolean
   is_default?: boolean
   joined_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_user_tenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "tenant_id" | "is_default" | "joined_at", ExtArgs["result"]["sys_user_tenant"]>
+export type sys_user_tenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "tenant_id" | "is_default" | "joined_at" | "created_by", ExtArgs["result"]["sys_user_tenant"]>
 
 export type $sys_user_tenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_user_tenant"
@@ -399,7 +425,14 @@ export type $sys_user_tenantPayload<ExtArgs extends runtime.Types.Extensions.Int
     user_id: string
     tenant_id: string
     is_default: number
+    /**
+     * 加入时间
+     */
     joined_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_user_tenant"]>
   composites: {}
 }
@@ -828,6 +861,7 @@ export interface sys_user_tenantFieldRefs {
   readonly tenant_id: Prisma.FieldRef<"sys_user_tenant", 'String'>
   readonly is_default: Prisma.FieldRef<"sys_user_tenant", 'Int'>
   readonly joined_at: Prisma.FieldRef<"sys_user_tenant", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_user_tenant", 'String'>
 }
     
 

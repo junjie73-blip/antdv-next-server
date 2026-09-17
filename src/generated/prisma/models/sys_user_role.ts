@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_user_role
- * 用户与角色关联表
+ * 
  */
 export type sys_user_roleModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_user_rolePayload>
 
@@ -30,6 +30,7 @@ export type Sys_user_roleMinAggregateOutputType = {
   role_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_user_roleMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type Sys_user_roleMaxAggregateOutputType = {
   role_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_user_roleCountAggregateOutputType = {
@@ -46,6 +48,7 @@ export type Sys_user_roleCountAggregateOutputType = {
   role_id: number
   tenant_id: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -56,6 +59,7 @@ export type Sys_user_roleMinAggregateInputType = {
   role_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_user_roleMaxAggregateInputType = {
@@ -64,6 +68,7 @@ export type Sys_user_roleMaxAggregateInputType = {
   role_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_user_roleCountAggregateInputType = {
@@ -72,6 +77,7 @@ export type Sys_user_roleCountAggregateInputType = {
   role_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -153,6 +159,7 @@ export type Sys_user_roleGroupByOutputType = {
   role_id: string
   tenant_id: string
   created_at: Date
+  created_by: string | null
   _count: Sys_user_roleCountAggregateOutputType | null
   _min: Sys_user_roleMinAggregateOutputType | null
   _max: Sys_user_roleMaxAggregateOutputType | null
@@ -182,6 +189,7 @@ export type sys_user_roleWhereInput = {
   role_id?: Prisma.UuidFilter<"sys_user_role"> | string
   tenant_id?: Prisma.UuidFilter<"sys_user_role"> | string
   created_at?: Prisma.DateTimeFilter<"sys_user_role"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_role"> | string | null
   user?: Prisma.XOR<Prisma.Sys_userScalarRelationFilter, Prisma.sys_userWhereInput>
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
 }
@@ -192,6 +200,7 @@ export type sys_user_roleOrderByWithRelationInput = {
   role_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.sys_userOrderByWithRelationInput
   role?: Prisma.sys_roleOrderByWithRelationInput
 }
@@ -206,6 +215,7 @@ export type sys_user_roleWhereUniqueInput = Prisma.AtLeast<{
   role_id?: Prisma.UuidFilter<"sys_user_role"> | string
   tenant_id?: Prisma.UuidFilter<"sys_user_role"> | string
   created_at?: Prisma.DateTimeFilter<"sys_user_role"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_role"> | string | null
   user?: Prisma.XOR<Prisma.Sys_userScalarRelationFilter, Prisma.sys_userWhereInput>
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
 }, "id" | "user_id_role_id">
@@ -216,6 +226,7 @@ export type sys_user_roleOrderByWithAggregationInput = {
   role_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_user_roleCountOrderByAggregateInput
   _max?: Prisma.sys_user_roleMaxOrderByAggregateInput
   _min?: Prisma.sys_user_roleMinOrderByAggregateInput
@@ -230,12 +241,14 @@ export type sys_user_roleScalarWhereWithAggregatesInput = {
   role_id?: Prisma.UuidWithAggregatesFilter<"sys_user_role"> | string
   tenant_id?: Prisma.UuidWithAggregatesFilter<"sys_user_role"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_user_role"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_user_role"> | string | null
 }
 
 export type sys_user_roleCreateInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   user: Prisma.sys_userCreateNestedOneWithoutSys_user_roleInput
   role: Prisma.sys_roleCreateNestedOneWithoutSys_user_roleInput
 }
@@ -246,12 +259,14 @@ export type sys_user_roleUncheckedCreateInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_roleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.sys_userUpdateOneRequiredWithoutSys_user_roleNestedInput
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_user_roleNestedInput
 }
@@ -262,6 +277,7 @@ export type sys_user_roleUncheckedUpdateInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_roleCreateManyInput = {
@@ -270,12 +286,14 @@ export type sys_user_roleCreateManyInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_roleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_roleUncheckedUpdateManyInput = {
@@ -284,6 +302,7 @@ export type sys_user_roleUncheckedUpdateManyInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type Sys_user_roleListRelationFilter = {
@@ -307,6 +326,7 @@ export type sys_user_roleCountOrderByAggregateInput = {
   role_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_roleMaxOrderByAggregateInput = {
@@ -315,6 +335,7 @@ export type sys_user_roleMaxOrderByAggregateInput = {
   role_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_roleMinOrderByAggregateInput = {
@@ -323,6 +344,7 @@ export type sys_user_roleMinOrderByAggregateInput = {
   role_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_roleCreateNestedManyWithoutUserInput = {
@@ -413,6 +435,7 @@ export type sys_user_roleCreateWithoutUserInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   role: Prisma.sys_roleCreateNestedOneWithoutSys_user_roleInput
 }
 
@@ -421,6 +444,7 @@ export type sys_user_roleUncheckedCreateWithoutUserInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_roleCreateOrConnectWithoutUserInput = {
@@ -458,12 +482,14 @@ export type sys_user_roleScalarWhereInput = {
   role_id?: Prisma.UuidFilter<"sys_user_role"> | string
   tenant_id?: Prisma.UuidFilter<"sys_user_role"> | string
   created_at?: Prisma.DateTimeFilter<"sys_user_role"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_role"> | string | null
 }
 
 export type sys_user_roleCreateWithoutRoleInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   user: Prisma.sys_userCreateNestedOneWithoutSys_user_roleInput
 }
 
@@ -472,6 +498,7 @@ export type sys_user_roleUncheckedCreateWithoutRoleInput = {
   user_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_roleCreateOrConnectWithoutRoleInput = {
@@ -505,12 +532,14 @@ export type sys_user_roleCreateManyUserInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_roleUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_user_roleNestedInput
 }
 
@@ -519,6 +548,7 @@ export type sys_user_roleUncheckedUpdateWithoutUserInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_roleUncheckedUpdateManyWithoutUserInput = {
@@ -526,6 +556,7 @@ export type sys_user_roleUncheckedUpdateManyWithoutUserInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_roleCreateManyRoleInput = {
@@ -533,12 +564,14 @@ export type sys_user_roleCreateManyRoleInput = {
   user_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_roleUpdateWithoutRoleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.sys_userUpdateOneRequiredWithoutSys_user_roleNestedInput
 }
 
@@ -547,6 +580,7 @@ export type sys_user_roleUncheckedUpdateWithoutRoleInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_roleUncheckedUpdateManyWithoutRoleInput = {
@@ -554,6 +588,7 @@ export type sys_user_roleUncheckedUpdateManyWithoutRoleInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -564,6 +599,7 @@ export type sys_user_roleSelect<ExtArgs extends runtime.Types.Extensions.Interna
   role_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_user_role"]>
@@ -574,6 +610,7 @@ export type sys_user_roleSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   role_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_user_role"]>
@@ -584,6 +621,7 @@ export type sys_user_roleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   role_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_user_role"]>
@@ -594,9 +632,10 @@ export type sys_user_roleSelectScalar = {
   role_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_user_roleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "role_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_user_role"]>
+export type sys_user_roleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "role_id" | "tenant_id" | "created_at" | "created_by", ExtArgs["result"]["sys_user_role"]>
 export type sys_user_roleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
@@ -622,6 +661,7 @@ export type $sys_user_rolePayload<ExtArgs extends runtime.Types.Extensions.Inter
     role_id: string
     tenant_id: string
     created_at: Date
+    created_by: string | null
   }, ExtArgs["result"]["sys_user_role"]>
   composites: {}
 }
@@ -1052,6 +1092,7 @@ export interface sys_user_roleFieldRefs {
   readonly role_id: Prisma.FieldRef<"sys_user_role", 'String'>
   readonly tenant_id: Prisma.FieldRef<"sys_user_role", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_user_role", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_user_role", 'String'>
 }
     
 

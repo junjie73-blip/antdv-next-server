@@ -40,7 +40,7 @@ export type Sys_permissionMinAggregateOutputType = {
   perm_code: string | null
   perm_name: string | null
   resource_type: string | null
-  action: string | null
+  perm_action: string | null
   description: string | null
   status: string | null
   created_at: Date | null
@@ -56,7 +56,7 @@ export type Sys_permissionMaxAggregateOutputType = {
   perm_code: string | null
   perm_name: string | null
   resource_type: string | null
-  action: string | null
+  perm_action: string | null
   description: string | null
   status: string | null
   created_at: Date | null
@@ -72,7 +72,7 @@ export type Sys_permissionCountAggregateOutputType = {
   perm_code: number
   perm_name: number
   resource_type: number
-  action: number
+  perm_action: number
   description: number
   status: number
   created_at: number
@@ -98,7 +98,7 @@ export type Sys_permissionMinAggregateInputType = {
   perm_code?: true
   perm_name?: true
   resource_type?: true
-  action?: true
+  perm_action?: true
   description?: true
   status?: true
   created_at?: true
@@ -114,7 +114,7 @@ export type Sys_permissionMaxAggregateInputType = {
   perm_code?: true
   perm_name?: true
   resource_type?: true
-  action?: true
+  perm_action?: true
   description?: true
   status?: true
   created_at?: true
@@ -130,7 +130,7 @@ export type Sys_permissionCountAggregateInputType = {
   perm_code?: true
   perm_name?: true
   resource_type?: true
-  action?: true
+  perm_action?: true
   description?: true
   status?: true
   created_at?: true
@@ -233,7 +233,7 @@ export type Sys_permissionGroupByOutputType = {
   perm_code: string
   perm_name: string
   resource_type: string
-  action: string | null
+  perm_action: string | null
   description: string | null
   status: string
   created_at: Date
@@ -272,7 +272,7 @@ export type sys_permissionWhereInput = {
   perm_code?: Prisma.StringFilter<"sys_permission"> | string
   perm_name?: Prisma.StringFilter<"sys_permission"> | string
   resource_type?: Prisma.StringFilter<"sys_permission"> | string
-  action?: Prisma.StringNullableFilter<"sys_permission"> | string | null
+  perm_action?: Prisma.StringNullableFilter<"sys_permission"> | string | null
   description?: Prisma.StringNullableFilter<"sys_permission"> | string | null
   status?: Prisma.StringFilter<"sys_permission"> | string
   created_at?: Prisma.DateTimeFilter<"sys_permission"> | Date | string
@@ -289,7 +289,7 @@ export type sys_permissionOrderByWithRelationInput = {
   perm_code?: Prisma.SortOrder
   perm_name?: Prisma.SortOrder
   resource_type?: Prisma.SortOrder
-  action?: Prisma.SortOrderInput | Prisma.SortOrder
+  perm_action?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -310,7 +310,7 @@ export type sys_permissionWhereUniqueInput = Prisma.AtLeast<{
   perm_code?: Prisma.StringFilter<"sys_permission"> | string
   perm_name?: Prisma.StringFilter<"sys_permission"> | string
   resource_type?: Prisma.StringFilter<"sys_permission"> | string
-  action?: Prisma.StringNullableFilter<"sys_permission"> | string | null
+  perm_action?: Prisma.StringNullableFilter<"sys_permission"> | string | null
   description?: Prisma.StringNullableFilter<"sys_permission"> | string | null
   status?: Prisma.StringFilter<"sys_permission"> | string
   created_at?: Prisma.DateTimeFilter<"sys_permission"> | Date | string
@@ -327,7 +327,7 @@ export type sys_permissionOrderByWithAggregationInput = {
   perm_code?: Prisma.SortOrder
   perm_name?: Prisma.SortOrder
   resource_type?: Prisma.SortOrder
-  action?: Prisma.SortOrderInput | Prisma.SortOrder
+  perm_action?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -351,7 +351,7 @@ export type sys_permissionScalarWhereWithAggregatesInput = {
   perm_code?: Prisma.StringWithAggregatesFilter<"sys_permission"> | string
   perm_name?: Prisma.StringWithAggregatesFilter<"sys_permission"> | string
   resource_type?: Prisma.StringWithAggregatesFilter<"sys_permission"> | string
-  action?: Prisma.StringNullableWithAggregatesFilter<"sys_permission"> | string | null
+  perm_action?: Prisma.StringNullableWithAggregatesFilter<"sys_permission"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"sys_permission"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"sys_permission"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_permission"> | Date | string
@@ -367,7 +367,7 @@ export type sys_permissionCreateInput = {
   perm_code: string
   perm_name: string
   resource_type: string
-  action?: string | null
+  perm_action?: string | null
   description?: string | null
   status?: string
   created_at?: Date | string
@@ -384,7 +384,7 @@ export type sys_permissionUncheckedCreateInput = {
   perm_code: string
   perm_name: string
   resource_type: string
-  action?: string | null
+  perm_action?: string | null
   description?: string | null
   status?: string
   created_at?: Date | string
@@ -401,7 +401,7 @@ export type sys_permissionUpdateInput = {
   perm_code?: Prisma.StringFieldUpdateOperationsInput | string
   perm_name?: Prisma.StringFieldUpdateOperationsInput | string
   resource_type?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  perm_action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -418,7 +418,7 @@ export type sys_permissionUncheckedUpdateInput = {
   perm_code?: Prisma.StringFieldUpdateOperationsInput | string
   perm_name?: Prisma.StringFieldUpdateOperationsInput | string
   resource_type?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  perm_action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -435,7 +435,7 @@ export type sys_permissionCreateManyInput = {
   perm_code: string
   perm_name: string
   resource_type: string
-  action?: string | null
+  perm_action?: string | null
   description?: string | null
   status?: string
   created_at?: Date | string
@@ -451,7 +451,7 @@ export type sys_permissionUpdateManyMutationInput = {
   perm_code?: Prisma.StringFieldUpdateOperationsInput | string
   perm_name?: Prisma.StringFieldUpdateOperationsInput | string
   resource_type?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  perm_action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -467,7 +467,7 @@ export type sys_permissionUncheckedUpdateManyInput = {
   perm_code?: Prisma.StringFieldUpdateOperationsInput | string
   perm_name?: Prisma.StringFieldUpdateOperationsInput | string
   resource_type?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  perm_action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -488,7 +488,7 @@ export type sys_permissionCountOrderByAggregateInput = {
   perm_code?: Prisma.SortOrder
   perm_name?: Prisma.SortOrder
   resource_type?: Prisma.SortOrder
-  action?: Prisma.SortOrder
+  perm_action?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -508,7 +508,7 @@ export type sys_permissionMaxOrderByAggregateInput = {
   perm_code?: Prisma.SortOrder
   perm_name?: Prisma.SortOrder
   resource_type?: Prisma.SortOrder
-  action?: Prisma.SortOrder
+  perm_action?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -524,7 +524,7 @@ export type sys_permissionMinOrderByAggregateInput = {
   perm_code?: Prisma.SortOrder
   perm_name?: Prisma.SortOrder
   resource_type?: Prisma.SortOrder
-  action?: Prisma.SortOrder
+  perm_action?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -563,7 +563,7 @@ export type sys_permissionCreateWithoutSys_role_permissionInput = {
   perm_code: string
   perm_name: string
   resource_type: string
-  action?: string | null
+  perm_action?: string | null
   description?: string | null
   status?: string
   created_at?: Date | string
@@ -579,7 +579,7 @@ export type sys_permissionUncheckedCreateWithoutSys_role_permissionInput = {
   perm_code: string
   perm_name: string
   resource_type: string
-  action?: string | null
+  perm_action?: string | null
   description?: string | null
   status?: string
   created_at?: Date | string
@@ -611,7 +611,7 @@ export type sys_permissionUpdateWithoutSys_role_permissionInput = {
   perm_code?: Prisma.StringFieldUpdateOperationsInput | string
   perm_name?: Prisma.StringFieldUpdateOperationsInput | string
   resource_type?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  perm_action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -627,7 +627,7 @@ export type sys_permissionUncheckedUpdateWithoutSys_role_permissionInput = {
   perm_code?: Prisma.StringFieldUpdateOperationsInput | string
   perm_name?: Prisma.StringFieldUpdateOperationsInput | string
   resource_type?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  perm_action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -674,7 +674,7 @@ export type sys_permissionSelect<ExtArgs extends runtime.Types.Extensions.Intern
   perm_code?: boolean
   perm_name?: boolean
   resource_type?: boolean
-  action?: boolean
+  perm_action?: boolean
   description?: boolean
   status?: boolean
   created_at?: boolean
@@ -692,7 +692,7 @@ export type sys_permissionSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   perm_code?: boolean
   perm_name?: boolean
   resource_type?: boolean
-  action?: boolean
+  perm_action?: boolean
   description?: boolean
   status?: boolean
   created_at?: boolean
@@ -708,7 +708,7 @@ export type sys_permissionSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   perm_code?: boolean
   perm_name?: boolean
   resource_type?: boolean
-  action?: boolean
+  perm_action?: boolean
   description?: boolean
   status?: boolean
   created_at?: boolean
@@ -724,7 +724,7 @@ export type sys_permissionSelectScalar = {
   perm_code?: boolean
   perm_name?: boolean
   resource_type?: boolean
-  action?: boolean
+  perm_action?: boolean
   description?: boolean
   status?: boolean
   created_at?: boolean
@@ -734,7 +734,7 @@ export type sys_permissionSelectScalar = {
   is_deleted?: boolean
 }
 
-export type sys_permissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"perm_id" | "tenant_id" | "perm_code" | "perm_name" | "resource_type" | "action" | "description" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_permission"]>
+export type sys_permissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"perm_id" | "tenant_id" | "perm_code" | "perm_name" | "resource_type" | "perm_action" | "description" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_permission"]>
 export type sys_permissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sys_role_permission?: boolean | Prisma.sys_permission$sys_role_permissionArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_permissionCountOutputTypeDefaultArgs<ExtArgs>
@@ -753,7 +753,7 @@ export type $sys_permissionPayload<ExtArgs extends runtime.Types.Extensions.Inte
     perm_code: string
     perm_name: string
     resource_type: string
-    action: string | null
+    perm_action: string | null
     description: string | null
     status: string
     created_at: Date
@@ -1190,7 +1190,7 @@ export interface sys_permissionFieldRefs {
   readonly perm_code: Prisma.FieldRef<"sys_permission", 'String'>
   readonly perm_name: Prisma.FieldRef<"sys_permission", 'String'>
   readonly resource_type: Prisma.FieldRef<"sys_permission", 'String'>
-  readonly action: Prisma.FieldRef<"sys_permission", 'String'>
+  readonly perm_action: Prisma.FieldRef<"sys_permission", 'String'>
   readonly description: Prisma.FieldRef<"sys_permission", 'String'>
   readonly status: Prisma.FieldRef<"sys_permission", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_permission", 'DateTime'>

@@ -24,6 +24,40 @@ const ChannelUpsertSchema = z
     config: z.record(z.string(), z.any()).optional(),
     remark: z.string().max(256).optional(),
   })
+  .superRefine((val, ctx) => {
+    if (val.channelType !== "email" || val.enabled !== 1) return;
+    const c = val.config ?? {};
+    const get = (...keys: string[]) => keys.map((k) => c[k]).find(Boolean);
+    const host = get("host", "smtpHost");
+    const user = get("user", "smtpUser");
+    const pass = get("pass", "password", "smtpPass");
+    const from = get("from", "smtpFrom") ?? user;
+    const need: [string, any, string][] = [
+      ["host", host, "SMTP 服务器地址"],
+      ["user", user, "SMTP 用户名"],
+      ["pass", pass, "SMTP 密码/授权码"],
+    ];
+    for (const [key, v, label] of need) {
+      if (!v) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${label}不能为空`,
+          path: ["config", key],
+        });
+      }
+    }
+    if (
+      from &&
+      !/^[^<>]+<[^<>@\s]+@[^<>\s]+>$/.test(from) &&
+      !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(from))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "发件人格式不合法，应为 a@b.com 或 名字 <a@b.com>",
+        path: ["config", "from"],
+      });
+    }
+  })
   .openapi("NoticeChannelUpsert");
 
 function requireTenant(req: Request): string {

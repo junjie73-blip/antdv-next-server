@@ -1,13 +1,5 @@
-import { BaseController } from "@/core/base/controller.js";
 import {
-  TenantCreateSchema,
-  TenantUpdateSchema,
-  TenantListSchema,
-} from "./schema.js";
-import { TenantRepository } from "./repository.js";
-import { Controller } from "@/core/decorator/controller.js";
-import { AppError } from "@/middleware/error-handler.js";
-import {
+  Controller,
   Get,
   Post,
   Put,
@@ -21,6 +13,17 @@ import {
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { z } from "zod";
+import { BaseController } from "@/core/base/controller.js";
+import { TenantRepository } from "./repository.js";
+import { TenantService } from "./service.js";
+import {
+  TenantCreateSchema,
+  TenantUpdateSchema,
+  TenantListSchema,
+} from "./schema.js";
+import { AppError } from "@/core/errors.js";
+import { success } from "@/common/utils/response.js";
+import { upload } from "../user/controller.js";
 
 @Controller("/tenant", { tags: ["租户管理"] })
 export default class TenantController extends BaseController<
@@ -30,6 +33,7 @@ export default class TenantController extends BaseController<
   any
 > {
   protected readonly repository = new TenantRepository();
+  protected readonly service = new TenantService(this.repository); // ⭐
   protected readonly config = {
     routePrefix: "/api/v1/tenant",
     tags: ["租户管理"],
@@ -42,9 +46,10 @@ export default class TenantController extends BaseController<
   protected readonly updateSchema = TenantUpdateSchema;
   protected readonly querySchema = TenantListSchema;
 
-  /**
-   * 重写构建查询条件 - 实现租户特有的关键字搜索
-   */
+  // ============================================================
+  // 查询条件
+  // ============================================================
+
   protected buildListWhere(query: any): any {
     const where: any = {};
     if (query.keyword) {
@@ -56,142 +61,142 @@ export default class TenantController extends BaseController<
         { contact_phone: { contains: query.keyword } },
       ];
     }
-    if (query.tenant_code) {
-      where.tenant_code = { contains: query.tenant_code };
-    }
-    if (query.tenant_name) {
-      where.tenant_name = { contains: query.tenant_name };
-    }
-    if (query.status !== undefined) {
+    if (query.status !== undefined && query.status !== "") {
       where.status = query.status;
     }
     return where;
   }
 
-  async beforeCreate(dto: any, _req: Request): Promise<any> {
-    const bool = await this.repository.codeExists(
-      dto.tenantCode,
-      _req.tenantId!,
-    );
-    if (bool) {
-      throw new AppError(`租户编码 '${dto.tenantCode}' 已存在`, 409, 409);
-    }
+  // ============================================================
+  // 钩子
+  // ============================================================
+
+  async beforeCreate(dto: any, req: Request): Promise<any> {
+    dto = await super.beforeCreate(dto, req);
+    await this.service.checkBeforeCreate(dto);
     if (dto.expireTime !== undefined) {
       dto.expireTime = dto.expireTime ? new Date(dto.expireTime) : null;
     }
     return dto;
   }
+
   async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
     dto = await super.beforeUpdate(id, dto, req);
-    const repo = this.repository as TenantRepository;
-
-    if (dto.tenantCode) {
-      const exist = await repo.findByTenantCode(
-        dto.tenantCode,
-        req.tenantId!,
-        id,
-      );
-      if (exist) {
-        throw new AppError(`租户编码 '${dto.tenantCode}' 已存在`, 409, 409);
-      }
-    }
+    await this.service.checkBeforeUpdate(id, dto);
     return dto;
   }
-  /**
-   * GET /tenant/list - 分页列表
-   */
-  @Get("/list")
-  @ApiOperation("获取租户分页列表", "支持关键字搜索、状态过滤和分页")
-  @ApiQuery(TenantListSchema)
-  @ApiResponse(200, "查询成功", {
-    type: "object",
-    properties: {
-      list: { type: "array", items: { $ref: "#/components/schemas/Tenant" } },
-      total: { type: "number" },
-      pageNum: { type: "number" },
-      pageSize: { type: "number" },
-      totalPages: { type: "number" },
-    },
-  })
-  @ApiResponse(400, "参数错误")
-  @ApiResponse(500, "服务器内部错误")
-  async getList(@Req() req: Request, @Res() res: Response) {
-    return this.list(req, res);
-  }
 
-  /**
-   * GET /tenant/:id - 详情
-   */
-  @Get("/:id")
-  @ApiOperation("获取租户详情", "根据租户ID获取详细信息")
-  @ApiResponse(200, "查询成功", { $ref: "#/components/schemas/Tenant" })
-  @ApiResponse(404, "租户不存在")
-  @ApiResponse(400, "参数错误")
-  @ApiResponse(500, "服务器内部错误")
-  async getDetail(@Req() req: Request, @Res() res: Response) {
-    return this.detail(req, res);
-  }
+  // ============================================================
+  // ⭐ 新增：租户下拉选项
+  // ============================================================
 
-  /**
-   * POST /tenant - 创建租户
-   */
-  @Post("/save")
-  @ApiOperation("创建租户", "创建新的租户记录")
-  @ApiBody(TenantCreateSchema)
-  @ApiResponse(200, "创建成功", { $ref: "#/components/schemas/Tenant" })
-  @ApiResponse(400, "参数错误")
-  @ApiResponse(409, "租户编码已存在")
-  @ApiResponse(500, "服务器内部错误")
-  async createTenant(@Req() req: Request, @Res() res: Response) {
-    return this.create(req, res);
-  }
-
-  /**
-   * POST /tenant/:id - 更新租户
-   */
-  @Post("/update/:id")
-  @ApiOperation("更新租户", "根据租户ID更新租户信息")
-  @ApiBody(TenantUpdateSchema)
-  @ApiResponse(200, "更新成功", { $ref: "#/components/schemas/Tenant" })
-  @ApiResponse(404, "租户不存在")
-  @ApiResponse(400, "参数错误")
-  @ApiResponse(500, "服务器内部错误")
-  async updateTenant(@Req() req: Request, @Res() res: Response) {
-    return this.update(req, res);
-  }
-
-  /**
-   * GET /tenant/:id - 删除租户（软删除）
-   */
-  @Get("/remove/:id")
-  @ApiOperation("删除租户", "软删除指定租户")
-  @ApiResponse(200, "删除成功")
-  @ApiResponse(404, "租户不存在")
-  @ApiResponse(400, "参数错误")
-  @ApiResponse(500, "服务器内部错误")
-  async deleteTenant(@Req() req: Request, @Res() res: Response) {
-    return this.remove(req, res);
-  }
-
-  /**
-   * POST /tenant/batch-delete - 批量删除租户
-   */
-  @Post("/batch-delete")
-  @ApiOperation("批量删除租户", "批量软删除租户")
-  @ApiBody(
-    z.object({
-      ids: z.array(z.string().uuid()).min(1),
-    }),
+  @Get("/options")
+  @ApiOperation(
+    "获取租户下拉选项",
+    "返回所有启用租户的 { tenantId, tenantCode, tenantName }，用于前端下拉选择",
   )
-  @ApiResponse(200, "批量删除成功", {
-    type: "object",
-    properties: {
-      deletedCount: { type: "number" },
-    },
-  })
-  @ApiResponse(400, "参数错误")
-  @ApiResponse(500, "服务器内部错误")
+  @ApiResponse(200, "查询成功")
+  async getOptions(@Req() req: Request, @Res() res: Response) {
+    try {
+      const data = await this.service.getOptions();
+      success(res, data, "查询成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  // ============================================================
+  // CRUD
+  // ============================================================
+
+  @Get("/list")
+  @ApiOperation("获取租户分页列表")
+  @ApiQuery(TenantListSchema)
+  @ApiResponse(200, "查询成功")
+  async getList(@Req() req: Request, @Res() res: Response) {
+    return super.list(req, res);
+  }
+
+  @Get("/:id")
+  @ApiOperation("获取租户详情")
+  @ApiResponse(200, "查询成功")
+  async getDetail(@Req() req: Request, @Res() res: Response) {
+    return super.detail(req, res);
+  }
+
+  @Post("/save")
+  @ApiOperation("创建租户")
+  @ApiBody(TenantCreateSchema)
+  @ApiResponse(200, "创建成功")
+  async createTenant(@Req() req: Request, @Res() res: Response) {
+    return super.create(req, res);
+  }
+
+  @Post("/update/:id")
+  @ApiOperation("更新租户")
+  @ApiBody(TenantUpdateSchema)
+  @ApiResponse(200, "更新成功")
+  async updateTenant(@Req() req: Request, @Res() res: Response) {
+    return super.update(req, res);
+  }
+
+  @Delete("/:id")
+  @ApiOperation("删除租户")
+  @ApiResponse(200, "删除成功")
+  async deleteTenant(@Req() req: Request, @Res() res: Response) {
+    return super.remove(req, res);
+  }
+
+  @Post("/batch-delete")
+  @ApiOperation("批量删除租户")
+  @ApiBody(z.object({ ids: z.array(z.string().uuid()).min(1) }))
+  @ApiResponse(200, "批量删除成功")
   async batchDeleteTenants(@Req() req: Request, @Res() res: Response) {
-    return this.batchRemove(req, res);
+    return super.batchRemove(req, res);
+  }
+
+  // ============================================================
+  // 导入导出
+  // ============================================================
+
+  @Get("/export")
+  @ApiOperation("导出租户")
+  @ApiResponse(200, "Excel 文件")
+  async export(@Req() req: Request, @Res() res: Response) {
+    try {
+      const where = this.buildListWhere(req.query);
+      const buffer = await this.service.exportToExcel(where);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=tenants_${Date.now()}.xlsx`,
+      );
+      res.send(buffer);
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  @Post("/import")
+  @ApiOperation("导入租户")
+  @ApiResponse(200, "导入结果")
+  async import(@Req() req: Request, @Res() res: Response) {
+    upload.single("file")(req, res, async (err) => {
+      if (err) {
+        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
+      }
+      if (!req.file) {
+        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
+      }
+      try {
+        const result = await this.service.importFromExcel(req.file.buffer);
+        success(res, result, "导入完成");
+      } catch (err) {
+        this.handleError(res, err);
+      }
+    });
   }
 }

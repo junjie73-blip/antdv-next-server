@@ -39,15 +39,56 @@ export const TenantListSchema = z
   })
   .openapi("TenantList");
 
-// 租户导出 Schema（用于筛选导出条件）
+export type TenantCreateDto = z.infer<typeof TenantCreateSchema>;
+export type TenantUpdateDto = z.infer<typeof TenantUpdateSchema>;
+export type TenantListDto = z.infer<typeof TenantListSchema>;
+export type TenantExportDto = z.infer<typeof TenantExportSchema>;
+
+export const TenantImportRowSchema = z.object({
+  租户编码: z.string().min(2).max(64),
+  租户名称: z.string().min(2).max(128),
+  联系人: z.string().max(64).optional().default(""),
+  联系电话: z.string().max(32).optional().default(""),
+  联系邮箱: z
+    .union([z.string().email(), z.literal("")])
+    .optional()
+    .default(""),
+  状态: z.enum(["启用", "禁用"]).default("启用"),
+  过期时间: z.string().optional().default(""),
+});
+
+export const TenantExportColumns = [
+  { header: "租户编码", key: "tenant_code", width: 20 },
+  { header: "租户名称", key: "tenant_name", width: 30 },
+  { header: "联系人", key: "contact_name", width: 16 },
+  { header: "联系电话", key: "contact_phone", width: 16 },
+  { header: "联系邮箱", key: "contact_email", width: 24 },
+  {
+    header: "状态",
+    key: "status",
+    width: 8,
+    formatter: (v: string) => (v === "1" ? "启用" : "禁用"),
+  },
+  {
+    header: "过期时间",
+    key: "expire_time",
+    width: 20,
+    formatter: (v: any) =>
+      v ? new Date(v).toISOString().slice(0, 19).replace("T", " ") : "永久",
+  },
+  {
+    header: "创建时间",
+    key: "created_at",
+    width: 20,
+    formatter: (v: any) =>
+      v ? new Date(v).toISOString().slice(0, 19).replace("T", " ") : "",
+  },
+] as const;
+
+// 兼容老导出
 export const TenantExportSchema = z
   .object({
     keyword: z.string().optional(),
     status: z.string().optional(),
   })
   .openapi("TenantExport");
-
-export type TenantCreateDto = z.infer<typeof TenantCreateSchema>;
-export type TenantUpdateDto = z.infer<typeof TenantUpdateSchema>;
-export type TenantListDto = z.infer<typeof TenantListSchema>;
-export type TenantExportDto = z.infer<typeof TenantExportSchema>;

@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_config
- * 系统配置表
+ * 
  */
 export type sys_configModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_configPayload>
 

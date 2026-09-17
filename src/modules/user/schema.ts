@@ -99,6 +99,10 @@ export const UserListSchema = z
       .openapi({ description: "状态过滤：'0'或'1'" }),
     roleId: z.string().optional().openapi({ description: "角色ID过滤" }),
     deptId: z.string().optional().openapi({ description: "部门ID过滤" }),
+    ids: z
+      .array(z.string().uuid())
+      .optional()
+      .openapi({ description: "用户ID列表" }),
   })
   .openapi("UserList");
 

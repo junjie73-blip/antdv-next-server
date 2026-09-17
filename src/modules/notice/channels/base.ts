@@ -14,6 +14,7 @@ export interface SendResult {
   total: number;
   success: number;
   failed: number;
+  skipped?: boolean;
   errors: { receiver: string; reason: string }[];
 }
 

@@ -3,6 +3,18 @@ import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { AppError } from "@/core/errors.js";
 import * as XLSX from "xlsx";
+export type RelationDelegate = {
+  findMany: (args: any) => Promise<any[]>;
+  deleteMany: (args: any) => Promise<any>;
+  createMany: (args: any) => Promise<any>;
+};
+
+export interface SyncResult {
+  added: number;
+  removed: number;
+  kept: number;
+  total: number;
+}
 
 export class RoleRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_role;
@@ -115,68 +127,80 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
     }
   }
 
-  async updateRoleMenus(roleId: string, menuIds: string[], tenantId: string) {
+  async updateRoleMenus(
+    roleId: string,
+    menuIds: string[],
+    tenantId: string,
+  ): Promise<SyncResult> {
     await this.assertRoleExists(roleId, tenantId);
-    await this.assertOwnership("sys_menu", "menu_id", menuIds, tenantId);
 
-    await prisma.$transaction([
-      prisma.sys_role_menu.deleteMany({
-        where: { role_id: roleId, tenant_id: tenantId },
-      }),
-      ...(menuIds.length > 0
-        ? [
-            prisma.sys_role_menu.createMany({
-              data: menuIds.map((menuId) => ({
-                role_id: roleId,
-                menu_id: menuId,
-                tenant_id: tenantId,
-              })),
-              skipDuplicates: true,
-            }),
-          ]
-        : []),
-    ]);
+    // ⭐ 去重，避免重复入参导致差异计算错误
+    const uniqueMenuIds = [...new Set(menuIds)];
+    await this.assertOwnership("sys_menu", "menu_id", uniqueMenuIds, tenantId);
+
+    return syncRoleRelation(
+      prisma.sys_role_menu as unknown as RelationDelegate,
+      roleId,
+      tenantId,
+      "menu_id",
+      uniqueMenuIds,
+    );
   }
 
   async updateRolePermissions(
     roleId: string,
     permIds: string[],
     tenantId: string,
-  ) {
+  ): Promise<SyncResult> {
     await this.assertRoleExists(roleId, tenantId);
-    await this.assertOwnership("sys_permission", "perm_id", permIds, tenantId);
 
-    await prisma.$transaction([
-      prisma.sys_role_permission.deleteMany({
-        where: { role_id: roleId, tenant_id: tenantId },
-      }),
-      ...(permIds.length > 0
-        ? [
-            prisma.sys_role_permission.createMany({
-              data: permIds.map((permId) => ({
-                role_id: roleId,
-                perm_id: permId,
-                tenant_id: tenantId,
-              })),
-              skipDuplicates: true,
-            }),
-          ]
-        : []),
-    ]);
+    const uniquePermIds = [...new Set(permIds)];
+    await this.assertOwnership(
+      "sys_permission",
+      "perm_id",
+      uniquePermIds,
+      tenantId,
+    );
+
+    return syncRoleRelation(
+      prisma.sys_role_permission as unknown as RelationDelegate,
+      roleId,
+      tenantId,
+      "perm_id",
+      uniquePermIds,
+    );
   }
 
-  async updateRoleUsers(roleId: string, userIds: string[], tenantId: string) {
+  async updateRoleUsers(roleId: string, tenantId: string, userIds: string[]) {
     await this.assertRoleExists(roleId, tenantId);
     await this.assertOwnership("sys_user", "user_id", userIds, tenantId);
 
+    const current = await prisma.sys_user_role.findMany({
+      where: { role_id: roleId, tenant_id: tenantId },
+      select: { user_id: true },
+    });
+    const currentSet = new Set(current.map((r) => r.user_id));
+    const nextSet = new Set(userIds);
+
+    const toAdd = userIds.filter((id) => !currentSet.has(id));
+    const toRemove = [...currentSet].filter((id) => !nextSet.has(id));
+
     await prisma.$transaction([
-      prisma.sys_user_role.deleteMany({
-        where: { role_id: roleId, tenant_id: tenantId },
-      }),
-      ...(userIds.length > 0
+      ...(toRemove.length > 0
+        ? [
+            prisma.sys_user_role.deleteMany({
+              where: {
+                role_id: roleId,
+                tenant_id: tenantId,
+                user_id: { in: toRemove },
+              },
+            }),
+          ]
+        : []),
+      ...(toAdd.length > 0
         ? [
             prisma.sys_user_role.createMany({
-              data: userIds.map((userId) => ({
+              data: toAdd.map((userId) => ({
                 user_id: userId,
                 role_id: roleId,
                 tenant_id: tenantId,
@@ -187,7 +211,6 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
         : []),
     ]);
   }
-
   // ============================================================
   // 查询关联
   // ============================================================
@@ -200,7 +223,10 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
         },
       },
     });
-    return rows.map((r) => r.user).filter(Boolean);
+    return rows
+      .map((r) => r.user)
+      .filter(Boolean)
+      .map((u) => u.user_id);
   }
 
   /** 角色已关联的菜单 ID 列表（唯一实现） */
@@ -343,4 +369,86 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
       where: { role_id: roleId, tenant_id: tenantId },
     });
   }
+  async options(tenantId: string) {
+    const roles = await this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+      orderBy: { sort_order: "asc" },
+    });
+    return roles.map((r) => ({
+      label: r.role_name,
+      value: r.role_id,
+    }));
+  }
+  /** 角色已关联的权限 ID 列表 */
+  async findRolePermIds(roleId: string, tenantId: string): Promise<string[]> {
+    const rows = await prisma.sys_role_permission.findMany({
+      where: { role_id: roleId, tenant_id: tenantId },
+      select: { perm_id: true },
+    });
+    return rows.map((r) => r.perm_id);
+  }
+}
+/**
+ * 差异同步角色关联表
+ * @param delegate   Prisma 模型委托，如 prisma.sys_role_menu
+ * @param roleId     角色 id
+ * @param tenantId   租户 id
+ * @param idField    关联目标字段名，如 "menu_id" / "perm_id"
+ * @param nextIds    目标关联 id 列表（已去重、已校验归属）
+ */
+async function syncRoleRelation(
+  delegate: RelationDelegate,
+  roleId: string,
+  tenantId: string,
+  idField: string,
+  nextIds: string[],
+): Promise<SyncResult> {
+  // 1) 查当前关联
+  const current = await delegate.findMany({
+    where: { role_id: roleId, tenant_id: tenantId },
+    select: { [idField]: true },
+  });
+  const currentSet = new Set<string>(current.map((r) => r[idField]));
+  const nextSet = new Set(nextIds);
+
+  // 2) 差异计算
+  const toAdd = nextIds.filter((id) => !currentSet.has(id));
+  const toRemove = [...currentSet].filter((id) => !nextSet.has(id));
+  const kept = nextIds.length - toAdd.length;
+
+  // 3) 只写差异部分
+  const ops: any[] = [];
+  if (toRemove.length > 0) {
+    ops.push(
+      delegate.deleteMany({
+        where: {
+          role_id: roleId,
+          tenant_id: tenantId,
+          [idField]: { in: toRemove },
+        },
+      }),
+    );
+  }
+  if (toAdd.length > 0) {
+    ops.push(
+      delegate.createMany({
+        data: toAdd.map((id) => ({
+          role_id: roleId,
+          tenant_id: tenantId,
+          [idField]: id,
+        })),
+        skipDuplicates: true,
+      }),
+    );
+  }
+  if (ops.length > 0) {
+    await prisma.$transaction(ops);
+  }
+
+  return {
+    added: toAdd.length,
+    removed: toRemove.length,
+    kept,
+    total: nextIds.length,
+  };
 }

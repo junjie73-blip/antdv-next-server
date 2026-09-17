@@ -30,7 +30,7 @@ export async function ipRuleMiddleware(
 
     const result = checkIpAgainstRules(clientIp, rules);
     if (!result.allowed) {
-      logger.warn(
+      logger.info(
         { ip: clientIp, tenantId, path: req.path, reason: result.reason },
         "IP blocked",
       );
@@ -56,11 +56,12 @@ function isWhitelistPath(path: string): boolean {
     path.startsWith("/api/v1/health") ||
     path.startsWith("/api/v1/uploads") ||
     path.startsWith("/api/docs") ||
-    path.startsWith("/api/auth/login") ||
+    path.startsWith("/api/v1/auth/login") ||
     path.startsWith("/favicon.ico") ||
     path.startsWith("/api/v1/auth/forgot-password") ||
     path.startsWith("/api/v1/auth/register") ||
     path.startsWith("/api/v1/auth/password-policy") ||
-    path.startsWith("/api/v1/auth/captcha")
+    path.startsWith("/api/v1/auth/captcha") ||
+    path.startsWith("/api/v1/tenant/options")
   );
 }

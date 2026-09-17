@@ -217,7 +217,7 @@ export const Sys_permissionScalarFieldEnum = {
   perm_code: 'perm_code',
   perm_name: 'perm_name',
   resource_type: 'resource_type',
-  action: 'action',
+  perm_action: 'perm_action',
   description: 'description',
   status: 'status',
   created_at: 'created_at',
@@ -281,6 +281,8 @@ export const Sys_noticeScalarFieldEnum = {
   is_deleted: 'is_deleted',
   priority: 'priority',
   is_top: 'is_top',
+  send_status: 'send_status',
+  send_time: 'send_time',
   revoked_at: 'revoked_at',
   revoked_by: 'revoked_by'
 } as const
@@ -296,7 +298,10 @@ export const Sys_notice_userScalarFieldEnum = {
   is_read: 'is_read',
   read_time: 'read_time',
   created_at: 'created_at',
-  is_deleted: 'is_deleted'
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
 } as const
 
 export type Sys_notice_userScalarFieldEnum = (typeof Sys_notice_userScalarFieldEnum)[keyof typeof Sys_notice_userScalarFieldEnum]
@@ -317,7 +322,8 @@ export const Sys_audit_logScalarFieldEnum = {
   execute_time: 'execute_time',
   status: 'status',
   error_msg: 'error_msg',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_audit_logScalarFieldEnum = (typeof Sys_audit_logScalarFieldEnum)[keyof typeof Sys_audit_logScalarFieldEnum]
@@ -328,7 +334,8 @@ export const Sys_user_roleScalarFieldEnum = {
   user_id: 'user_id',
   role_id: 'role_id',
   tenant_id: 'tenant_id',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_user_roleScalarFieldEnum = (typeof Sys_user_roleScalarFieldEnum)[keyof typeof Sys_user_roleScalarFieldEnum]
@@ -340,7 +347,8 @@ export const Sys_user_deptScalarFieldEnum = {
   dept_id: 'dept_id',
   tenant_id: 'tenant_id',
   is_primary: 'is_primary',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_user_deptScalarFieldEnum = (typeof Sys_user_deptScalarFieldEnum)[keyof typeof Sys_user_deptScalarFieldEnum]
@@ -351,7 +359,8 @@ export const Sys_role_menuScalarFieldEnum = {
   role_id: 'role_id',
   menu_id: 'menu_id',
   tenant_id: 'tenant_id',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_role_menuScalarFieldEnum = (typeof Sys_role_menuScalarFieldEnum)[keyof typeof Sys_role_menuScalarFieldEnum]
@@ -362,7 +371,8 @@ export const Sys_role_permissionScalarFieldEnum = {
   role_id: 'role_id',
   perm_id: 'perm_id',
   tenant_id: 'tenant_id',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_role_permissionScalarFieldEnum = (typeof Sys_role_permissionScalarFieldEnum)[keyof typeof Sys_role_permissionScalarFieldEnum]
@@ -373,7 +383,8 @@ export const Sys_role_deptScalarFieldEnum = {
   role_id: 'role_id',
   dept_id: 'dept_id',
   tenant_id: 'tenant_id',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_role_deptScalarFieldEnum = (typeof Sys_role_deptScalarFieldEnum)[keyof typeof Sys_role_deptScalarFieldEnum]
@@ -386,7 +397,8 @@ export const Sys_mfa_configScalarFieldEnum = {
   enabled: 'enabled',
   backup_codes: 'backup_codes',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_mfa_configScalarFieldEnum = (typeof Sys_mfa_configScalarFieldEnum)[keyof typeof Sys_mfa_configScalarFieldEnum]
@@ -401,6 +413,9 @@ export const Sys_fileScalarFieldEnum = {
   mime_type: 'mime_type',
   uploader: 'uploader',
   created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
   is_deleted: 'is_deleted'
 } as const
 
@@ -416,7 +431,8 @@ export const Sys_login_logScalarFieldEnum = {
   user_agent: 'user_agent',
   status: 'status',
   message: 'message',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_login_logScalarFieldEnum = (typeof Sys_login_logScalarFieldEnum)[keyof typeof Sys_login_logScalarFieldEnum]
@@ -475,7 +491,8 @@ export const Sys_job_logScalarFieldEnum = {
   exception_info: 'exception_info',
   created_at: 'created_at',
   retry_attempt: 'retry_attempt',
-  duration_ms: 'duration_ms'
+  duration_ms: 'duration_ms',
+  created_by: 'created_by'
 } as const
 
 export type Sys_job_logScalarFieldEnum = (typeof Sys_job_logScalarFieldEnum)[keyof typeof Sys_job_logScalarFieldEnum]
@@ -546,7 +563,8 @@ export const Sys_notice_send_logScalarFieldEnum = {
   receiver: 'receiver',
   status: 'status',
   error_msg: 'error_msg',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_notice_send_logScalarFieldEnum = (typeof Sys_notice_send_logScalarFieldEnum)[keyof typeof Sys_notice_send_logScalarFieldEnum]
@@ -557,7 +575,8 @@ export const Sys_password_historyScalarFieldEnum = {
   tenant_id: 'tenant_id',
   user_id: 'user_id',
   password: 'password',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_password_historyScalarFieldEnum = (typeof Sys_password_historyScalarFieldEnum)[keyof typeof Sys_password_historyScalarFieldEnum]
@@ -585,7 +604,8 @@ export const Sys_user_tenantScalarFieldEnum = {
   user_id: 'user_id',
   tenant_id: 'tenant_id',
   is_default: 'is_default',
-  joined_at: 'joined_at'
+  joined_at: 'joined_at',
+  created_by: 'created_by'
 } as const
 
 export type Sys_user_tenantScalarFieldEnum = (typeof Sys_user_tenantScalarFieldEnum)[keyof typeof Sys_user_tenantScalarFieldEnum]

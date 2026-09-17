@@ -1,7 +1,8 @@
 import * as XLSX from "xlsx";
 import { ZodTypeAny } from "zod";
 import { AppError } from "@/core/errors.js";
-
+import Cos from "cos-nodejs-sdk-v5";
+import { env } from "@/config/env.js";
 /** Excel 列定义 */
 export interface ExcelColumn {
   /** 中文表头（导出用） */

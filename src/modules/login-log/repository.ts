@@ -7,6 +7,9 @@ import dayjs from "dayjs";
 export class LoginLogRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_login_log;
   protected readonly primaryKey = "log_id";
+  protected isSoftDeleteTable(): boolean {
+    return false;
+  }
   async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
     const finalWhere: any = { ...where, tenant_id: query.tenantId };
     if (query.username) finalWhere.username = { contains: query.username };

@@ -158,7 +158,7 @@ export async function runJobOnce(id: string) {
 async function runJob(job: any) {
   const start = Date.now();
   try {
-    await execute(job.invoke_target, job.tenant_id);
+    await execute(job.invoke_target);
     await prisma.sys_job_log.create({
       data: {
         job_id: job.job_id,

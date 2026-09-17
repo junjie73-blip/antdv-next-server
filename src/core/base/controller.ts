@@ -16,6 +16,7 @@ import { BaseQuery } from "@/types/base-repository.js";
 import { AppError } from "@/core/errors.js";
 import { Req, Res } from "../decorator/index.js";
 import { logger } from "@core/logger/index.js";
+import { forIn } from "es-toolkit/compat";
 
 export abstract class BaseController<
   T,
@@ -108,6 +109,7 @@ export abstract class BaseController<
       this.repository.setDataScope((req as any).dataScopeWhere ?? {});
 
       const where = this.buildListWhere(query);
+
       const result = await this.repository.findPage(query, where);
       result.list = await this.afterList(result.list, req);
 
@@ -154,7 +156,6 @@ export abstract class BaseController<
       // ⭐ 只转顶层 key，避免嵌套对象被误伤
       const dbData = keysToSnakeCase(dto);
       const result = await this.repository.create(dbData, tenantId, userId);
-
       const created = await this.afterCreate(result, req);
       success(res, created, "创建成功");
     } catch (err) {
@@ -253,7 +254,12 @@ export abstract class BaseController<
   protected buildListWhere(query: QueryDto): any {
     const where: any = {};
     if (query.status !== undefined) where.status = query.status;
-    return where;
+    forIn(query, (value, key) => {
+      if (!["pageSize", "pageNum", "fields"].includes(key)) {
+        where[key] = value;
+      }
+    });
+    return keysToSnakeCase(where);
   }
 
   /**

@@ -1,30 +1,36 @@
 // 此文件由 scripts/generate-modules.ts 自动生成，请勿手动修改
 import Controller_0 from './audit-log/controller.js';
 import Controller_1 from './auth/controller.js';
-import Controller_2 from './cache/controller.js';
-import Controller_3 from './config/controller.js';
-import Controller_4 from './dashboard/controller.js';
-import Controller_5 from './dept/controller.js';
-import Controller_6 from './dict-data/controller.js';
-import Controller_7 from './dict-type/controller.js';
-import Controller_8 from './file/controller.js';
-import Controller_9 from './ip-rule/controller.js';
-import Controller_10 from './job/controller.js';
-import Controller_11 from './login-log/controller.js';
-import Controller_12 from './menu/controller.js';
-import Controller_13 from './mfa/controller.js';
-import Controller_14 from './notice/channel.controller.js';
-import Controller_15 from './notice/controller.js';
-import Controller_16 from './online/controller.js';
-import Controller_17 from './permission/controller.js';
-import Controller_18 from './role/controller.js';
-import Controller_19 from './server/controller.js';
-import Controller_20 from './tenant/controller.js';
-import Controller_21 from './todo/controller.js';
-import Controller_22 from './todo-group/controller.js';
-import Controller_23 from './upload/controller.js';
-import Controller_24 from './user/controller.js';
-import Controller_25 from './workbench/controller.js';
+import Controller_2 from './auth/menu.controller.js';
+import Controller_3 from './auth/misc.controller.js';
+import Controller_4 from './auth/profile.controller.js';
+import Controller_5 from './auth/tenant-switch.controller.js';
+import Controller_6 from './cache/controller.js';
+import Controller_7 from './config/controller.js';
+import Controller_8 from './dashboard/controller.js';
+import Controller_9 from './dept/controller.js';
+import Controller_10 from './dict-data/controller.js';
+import Controller_11 from './dict-type/controller.js';
+import Controller_12 from './file/controller.js';
+import Controller_13 from './ip-rule/controller.js';
+import Controller_14 from './job/controller.js';
+import Controller_15 from './job/job-log.controller.js';
+import Controller_16 from './login-log/controller.js';
+import Controller_17 from './menu/controller.js';
+import Controller_18 from './mfa/controller.js';
+import Controller_19 from './notice/channel.controller.js';
+import Controller_20 from './notice/controller.js';
+import Controller_21 from './notice/my-notice.controller.js';
+import Controller_22 from './online/controller.js';
+import Controller_23 from './permission/controller.js';
+import Controller_24 from './role/controller.js';
+import Controller_25 from './server/controller.js';
+import Controller_26 from './tenant/controller.js';
+import Controller_27 from './todo/controller.js';
+import Controller_28 from './todo-group/controller.js';
+import Controller_29 from './upload/controller.js';
+import Controller_30 from './user/controller.js';
+import Controller_31 from './workbench/controller.js';
 
 export const controllers = [
   Controller_0,
@@ -53,4 +59,10 @@ export const controllers = [
   Controller_23,
   Controller_24,
   Controller_25,
+  Controller_26,
+  Controller_27,
+  Controller_28,
+  Controller_29,
+  Controller_30,
+  Controller_31,
 ];

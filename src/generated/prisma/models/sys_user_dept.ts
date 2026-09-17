@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_user_dept
- * 用户与部门关联表
+ * 
  */
 export type sys_user_deptModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_user_deptPayload>
 
@@ -41,6 +41,7 @@ export type Sys_user_deptMinAggregateOutputType = {
   tenant_id: string | null
   is_primary: number | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_user_deptMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type Sys_user_deptMaxAggregateOutputType = {
   tenant_id: string | null
   is_primary: number | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_user_deptCountAggregateOutputType = {
@@ -59,6 +61,7 @@ export type Sys_user_deptCountAggregateOutputType = {
   tenant_id: number
   is_primary: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -78,6 +81,7 @@ export type Sys_user_deptMinAggregateInputType = {
   tenant_id?: true
   is_primary?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_user_deptMaxAggregateInputType = {
@@ -87,6 +91,7 @@ export type Sys_user_deptMaxAggregateInputType = {
   tenant_id?: true
   is_primary?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_user_deptCountAggregateInputType = {
@@ -96,6 +101,7 @@ export type Sys_user_deptCountAggregateInputType = {
   tenant_id?: true
   is_primary?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -192,6 +198,7 @@ export type Sys_user_deptGroupByOutputType = {
   tenant_id: string
   is_primary: number
   created_at: Date
+  created_by: string | null
   _count: Sys_user_deptCountAggregateOutputType | null
   _avg: Sys_user_deptAvgAggregateOutputType | null
   _sum: Sys_user_deptSumAggregateOutputType | null
@@ -224,6 +231,7 @@ export type sys_user_deptWhereInput = {
   tenant_id?: Prisma.UuidFilter<"sys_user_dept"> | string
   is_primary?: Prisma.IntFilter<"sys_user_dept"> | number
   created_at?: Prisma.DateTimeFilter<"sys_user_dept"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_dept"> | string | null
   user?: Prisma.XOR<Prisma.Sys_userScalarRelationFilter, Prisma.sys_userWhereInput>
   dept?: Prisma.XOR<Prisma.Sys_deptScalarRelationFilter, Prisma.sys_deptWhereInput>
 }
@@ -235,6 +243,7 @@ export type sys_user_deptOrderByWithRelationInput = {
   tenant_id?: Prisma.SortOrder
   is_primary?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.sys_userOrderByWithRelationInput
   dept?: Prisma.sys_deptOrderByWithRelationInput
 }
@@ -250,6 +259,7 @@ export type sys_user_deptWhereUniqueInput = Prisma.AtLeast<{
   tenant_id?: Prisma.UuidFilter<"sys_user_dept"> | string
   is_primary?: Prisma.IntFilter<"sys_user_dept"> | number
   created_at?: Prisma.DateTimeFilter<"sys_user_dept"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_dept"> | string | null
   user?: Prisma.XOR<Prisma.Sys_userScalarRelationFilter, Prisma.sys_userWhereInput>
   dept?: Prisma.XOR<Prisma.Sys_deptScalarRelationFilter, Prisma.sys_deptWhereInput>
 }, "id" | "user_id_dept_id">
@@ -261,6 +271,7 @@ export type sys_user_deptOrderByWithAggregationInput = {
   tenant_id?: Prisma.SortOrder
   is_primary?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_user_deptCountOrderByAggregateInput
   _avg?: Prisma.sys_user_deptAvgOrderByAggregateInput
   _max?: Prisma.sys_user_deptMaxOrderByAggregateInput
@@ -278,6 +289,7 @@ export type sys_user_deptScalarWhereWithAggregatesInput = {
   tenant_id?: Prisma.UuidWithAggregatesFilter<"sys_user_dept"> | string
   is_primary?: Prisma.IntWithAggregatesFilter<"sys_user_dept"> | number
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_user_dept"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_user_dept"> | string | null
 }
 
 export type sys_user_deptCreateInput = {
@@ -285,6 +297,7 @@ export type sys_user_deptCreateInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
   user: Prisma.sys_userCreateNestedOneWithoutSys_user_deptInput
   dept: Prisma.sys_deptCreateNestedOneWithoutSys_user_deptInput
 }
@@ -296,6 +309,7 @@ export type sys_user_deptUncheckedCreateInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_deptUpdateInput = {
@@ -303,6 +317,7 @@ export type sys_user_deptUpdateInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.sys_userUpdateOneRequiredWithoutSys_user_deptNestedInput
   dept?: Prisma.sys_deptUpdateOneRequiredWithoutSys_user_deptNestedInput
 }
@@ -314,6 +329,7 @@ export type sys_user_deptUncheckedUpdateInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_deptCreateManyInput = {
@@ -323,6 +339,7 @@ export type sys_user_deptCreateManyInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_deptUpdateManyMutationInput = {
@@ -330,6 +347,7 @@ export type sys_user_deptUpdateManyMutationInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_deptUncheckedUpdateManyInput = {
@@ -339,6 +357,7 @@ export type sys_user_deptUncheckedUpdateManyInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type Sys_user_deptListRelationFilter = {
@@ -363,6 +382,7 @@ export type sys_user_deptCountOrderByAggregateInput = {
   tenant_id?: Prisma.SortOrder
   is_primary?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_deptAvgOrderByAggregateInput = {
@@ -376,6 +396,7 @@ export type sys_user_deptMaxOrderByAggregateInput = {
   tenant_id?: Prisma.SortOrder
   is_primary?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_deptMinOrderByAggregateInput = {
@@ -385,6 +406,7 @@ export type sys_user_deptMinOrderByAggregateInput = {
   tenant_id?: Prisma.SortOrder
   is_primary?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_user_deptSumOrderByAggregateInput = {
@@ -480,6 +502,7 @@ export type sys_user_deptCreateWithoutUserInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
   dept: Prisma.sys_deptCreateNestedOneWithoutSys_user_deptInput
 }
 
@@ -489,6 +512,7 @@ export type sys_user_deptUncheckedCreateWithoutUserInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_deptCreateOrConnectWithoutUserInput = {
@@ -527,6 +551,7 @@ export type sys_user_deptScalarWhereInput = {
   tenant_id?: Prisma.UuidFilter<"sys_user_dept"> | string
   is_primary?: Prisma.IntFilter<"sys_user_dept"> | number
   created_at?: Prisma.DateTimeFilter<"sys_user_dept"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_user_dept"> | string | null
 }
 
 export type sys_user_deptCreateWithoutDeptInput = {
@@ -534,6 +559,7 @@ export type sys_user_deptCreateWithoutDeptInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
   user: Prisma.sys_userCreateNestedOneWithoutSys_user_deptInput
 }
 
@@ -543,6 +569,7 @@ export type sys_user_deptUncheckedCreateWithoutDeptInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_deptCreateOrConnectWithoutDeptInput = {
@@ -577,6 +604,7 @@ export type sys_user_deptCreateManyUserInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_deptUpdateWithoutUserInput = {
@@ -584,6 +612,7 @@ export type sys_user_deptUpdateWithoutUserInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dept?: Prisma.sys_deptUpdateOneRequiredWithoutSys_user_deptNestedInput
 }
 
@@ -593,6 +622,7 @@ export type sys_user_deptUncheckedUpdateWithoutUserInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_deptUncheckedUpdateManyWithoutUserInput = {
@@ -601,6 +631,7 @@ export type sys_user_deptUncheckedUpdateManyWithoutUserInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_deptCreateManyDeptInput = {
@@ -609,6 +640,7 @@ export type sys_user_deptCreateManyDeptInput = {
   tenant_id: string
   is_primary?: number
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_user_deptUpdateWithoutDeptInput = {
@@ -616,6 +648,7 @@ export type sys_user_deptUpdateWithoutDeptInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.sys_userUpdateOneRequiredWithoutSys_user_deptNestedInput
 }
 
@@ -625,6 +658,7 @@ export type sys_user_deptUncheckedUpdateWithoutDeptInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_user_deptUncheckedUpdateManyWithoutDeptInput = {
@@ -633,6 +667,7 @@ export type sys_user_deptUncheckedUpdateManyWithoutDeptInput = {
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   is_primary?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -644,6 +679,7 @@ export type sys_user_deptSelect<ExtArgs extends runtime.Types.Extensions.Interna
   tenant_id?: boolean
   is_primary?: boolean
   created_at?: boolean
+  created_by?: boolean
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_user_dept"]>
@@ -655,6 +691,7 @@ export type sys_user_deptSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   tenant_id?: boolean
   is_primary?: boolean
   created_at?: boolean
+  created_by?: boolean
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_user_dept"]>
@@ -666,6 +703,7 @@ export type sys_user_deptSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   tenant_id?: boolean
   is_primary?: boolean
   created_at?: boolean
+  created_by?: boolean
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_user_dept"]>
@@ -677,9 +715,10 @@ export type sys_user_deptSelectScalar = {
   tenant_id?: boolean
   is_primary?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_user_deptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "dept_id" | "tenant_id" | "is_primary" | "created_at", ExtArgs["result"]["sys_user_dept"]>
+export type sys_user_deptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "dept_id" | "tenant_id" | "is_primary" | "created_at" | "created_by", ExtArgs["result"]["sys_user_dept"]>
 export type sys_user_deptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.sys_userDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
@@ -706,6 +745,7 @@ export type $sys_user_deptPayload<ExtArgs extends runtime.Types.Extensions.Inter
     tenant_id: string
     is_primary: number
     created_at: Date
+    created_by: string | null
   }, ExtArgs["result"]["sys_user_dept"]>
   composites: {}
 }
@@ -1137,6 +1177,7 @@ export interface sys_user_deptFieldRefs {
   readonly tenant_id: Prisma.FieldRef<"sys_user_dept", 'String'>
   readonly is_primary: Prisma.FieldRef<"sys_user_dept", 'Int'>
   readonly created_at: Prisma.FieldRef<"sys_user_dept", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_user_dept", 'String'>
 }
     
 

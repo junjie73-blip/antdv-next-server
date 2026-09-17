@@ -35,7 +35,9 @@ export default class AuditLogController extends BaseController<
   protected readonly createSchema = undefined;
   protected readonly updateSchema = undefined;
   protected readonly querySchema = AuditLogListSchema;
-
+  protected isSoftDeleteTable(): boolean {
+    return false;
+  }
   @Get("/list")
   @ApiOperation("获取审计日志列表")
   @ApiQuery(AuditLogListSchema)

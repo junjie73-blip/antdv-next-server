@@ -20,6 +20,9 @@ import {
   revokeSession,
   verifyRefreshToken,
 } from "./token.service.js";
+import { randomUUID } from "crypto";
+import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { isPlatformAdmin } from "@/common/utils/platform.js";
 
 const LOGIN_FAIL_PREFIX = "login:fail:";
 const LOGIN_LOCK_PREFIX = "login:lock:";
@@ -406,21 +409,26 @@ export class AuthService {
 
   /** 获取我的菜单 */
   async getMyMenus(userId: string, tenantId: string) {
+    // 1) 用户角色
     const userRoles = await prisma.sys_user_role.findMany({
       where: { user_id: userId, tenant_id: tenantId },
       select: { role_id: true },
     });
     if (userRoles.length === 0) return [];
-
-    const roleIds = userRoles.map((r) => r.role_id);
+    // 2) 角色关联的菜单
+    const roleIds = userRoles.map((r) => r.role_id).filter(Boolean);
     const roleMenus = await prisma.sys_role_menu.findMany({
       where: { role_id: { in: roleIds }, tenant_id: tenantId },
       select: { menu_id: true },
     });
     if (roleMenus.length === 0) return [];
+    // ⭐ 过滤 undefined，防止 in 查询带上脏数据
+    const menuIds = [
+      ...new Set(roleMenus.map((rm) => rm.menu_id).filter(Boolean)),
+    ];
+    if (menuIds.length === 0) return [];
 
-    const menuIds = [...new Set(roleMenus.map((rm) => rm.menu_id))];
-    const { isPlatformAdmin } = await import("@/common/utils/platform.js");
+    // 3) 查菜单
     const isAdmin = await isPlatformAdmin(userId, tenantId);
 
     const menus = await prisma.sys_menu.findMany({
@@ -429,12 +437,12 @@ export class AuthService {
         tenant_id: tenantId,
         status: "1",
         is_deleted: 0,
-        menu_type: { in: [1, 2] },
+        menu_type: { in: [1, 2] }, // 只要目录和菜单
         ...(isAdmin ? {} : { is_platform: 0 }),
       },
       orderBy: { sort_order: "asc" },
     });
-
+    // 4) 构建树（返回 camelCase）
     return this.buildMenuTree(menus, null);
   }
 
@@ -558,7 +566,7 @@ export class AuthService {
 
   private resolveDeviceId(input?: string): string {
     if (input && /^[A-Za-z0-9_-]{8,64}$/.test(input)) return input;
-    return require("node:crypto").randomUUID();
+    return randomUUID();
   }
 
   private async writeLoginLog(
@@ -588,11 +596,37 @@ export class AuthService {
   }
 
   private buildMenuTree(items: any[], parentId: string | null): any[] {
+    if (!Array.isArray(items) || items.length === 0) return [];
+
     return items
-      .filter((item) => item.parent_id === parentId)
-      .map((item) => ({
-        ...item,
-        children: this.buildMenuTree(items, item.menu_id),
-      }));
+      .filter((item) => {
+        // ⭐ 过滤无效项
+        if (!item || typeof item !== "object") return false;
+
+        const pid = item.parent_id;
+        if (parentId === null) {
+          return (
+            pid === null ||
+            pid === undefined ||
+            pid === "" ||
+            pid === "00000000-0000-0000-0000-000000000000"
+          );
+        }
+        return pid === parentId;
+      })
+      .map((item) => {
+        const children = this.buildMenuTree(items, item.menu_id);
+
+        const node = keysToCamelCase<any>(item);
+
+        // ⭐ 只在有子节点时才加 children（避免空数组干扰 antd 渲染）
+        if (children.length > 0) {
+          node.children = children;
+        } else {
+          delete node.children;
+        }
+
+        return node;
+      });
   }
 }

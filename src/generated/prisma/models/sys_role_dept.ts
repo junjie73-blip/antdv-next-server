@@ -30,6 +30,7 @@ export type Sys_role_deptMinAggregateOutputType = {
   dept_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_role_deptMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type Sys_role_deptMaxAggregateOutputType = {
   dept_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_role_deptCountAggregateOutputType = {
@@ -46,6 +48,7 @@ export type Sys_role_deptCountAggregateOutputType = {
   dept_id: number
   tenant_id: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -56,6 +59,7 @@ export type Sys_role_deptMinAggregateInputType = {
   dept_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_role_deptMaxAggregateInputType = {
@@ -64,6 +68,7 @@ export type Sys_role_deptMaxAggregateInputType = {
   dept_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_role_deptCountAggregateInputType = {
@@ -72,6 +77,7 @@ export type Sys_role_deptCountAggregateInputType = {
   dept_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -153,6 +159,7 @@ export type Sys_role_deptGroupByOutputType = {
   dept_id: string
   tenant_id: string
   created_at: Date
+  created_by: string | null
   _count: Sys_role_deptCountAggregateOutputType | null
   _min: Sys_role_deptMinAggregateOutputType | null
   _max: Sys_role_deptMaxAggregateOutputType | null
@@ -182,6 +189,7 @@ export type sys_role_deptWhereInput = {
   dept_id?: Prisma.UuidFilter<"sys_role_dept"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_dept"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_dept"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_dept"> | string | null
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
   dept?: Prisma.XOR<Prisma.Sys_deptScalarRelationFilter, Prisma.sys_deptWhereInput>
 }
@@ -192,6 +200,7 @@ export type sys_role_deptOrderByWithRelationInput = {
   dept_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.sys_roleOrderByWithRelationInput
   dept?: Prisma.sys_deptOrderByWithRelationInput
 }
@@ -206,6 +215,7 @@ export type sys_role_deptWhereUniqueInput = Prisma.AtLeast<{
   dept_id?: Prisma.UuidFilter<"sys_role_dept"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_dept"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_dept"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_dept"> | string | null
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
   dept?: Prisma.XOR<Prisma.Sys_deptScalarRelationFilter, Prisma.sys_deptWhereInput>
 }, "id" | "role_id_dept_id">
@@ -216,6 +226,7 @@ export type sys_role_deptOrderByWithAggregationInput = {
   dept_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_role_deptCountOrderByAggregateInput
   _max?: Prisma.sys_role_deptMaxOrderByAggregateInput
   _min?: Prisma.sys_role_deptMinOrderByAggregateInput
@@ -230,12 +241,14 @@ export type sys_role_deptScalarWhereWithAggregatesInput = {
   dept_id?: Prisma.UuidWithAggregatesFilter<"sys_role_dept"> | string
   tenant_id?: Prisma.UuidWithAggregatesFilter<"sys_role_dept"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_role_dept"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_role_dept"> | string | null
 }
 
 export type sys_role_deptCreateInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   role: Prisma.sys_roleCreateNestedOneWithoutSys_role_deptInput
   dept: Prisma.sys_deptCreateNestedOneWithoutSys_role_deptInput
 }
@@ -246,12 +259,14 @@ export type sys_role_deptUncheckedCreateInput = {
   dept_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_deptUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_role_deptNestedInput
   dept?: Prisma.sys_deptUpdateOneRequiredWithoutSys_role_deptNestedInput
 }
@@ -262,6 +277,7 @@ export type sys_role_deptUncheckedUpdateInput = {
   dept_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_deptCreateManyInput = {
@@ -270,12 +286,14 @@ export type sys_role_deptCreateManyInput = {
   dept_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_deptUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_deptUncheckedUpdateManyInput = {
@@ -284,6 +302,7 @@ export type sys_role_deptUncheckedUpdateManyInput = {
   dept_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type Sys_role_deptListRelationFilter = {
@@ -307,6 +326,7 @@ export type sys_role_deptCountOrderByAggregateInput = {
   dept_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_deptMaxOrderByAggregateInput = {
@@ -315,6 +335,7 @@ export type sys_role_deptMaxOrderByAggregateInput = {
   dept_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_deptMinOrderByAggregateInput = {
@@ -323,6 +344,7 @@ export type sys_role_deptMinOrderByAggregateInput = {
   dept_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_deptCreateNestedManyWithoutRoleInput = {
@@ -413,6 +435,7 @@ export type sys_role_deptCreateWithoutRoleInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   dept: Prisma.sys_deptCreateNestedOneWithoutSys_role_deptInput
 }
 
@@ -421,6 +444,7 @@ export type sys_role_deptUncheckedCreateWithoutRoleInput = {
   dept_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_deptCreateOrConnectWithoutRoleInput = {
@@ -458,12 +482,14 @@ export type sys_role_deptScalarWhereInput = {
   dept_id?: Prisma.UuidFilter<"sys_role_dept"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_dept"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_dept"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_dept"> | string | null
 }
 
 export type sys_role_deptCreateWithoutDeptInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   role: Prisma.sys_roleCreateNestedOneWithoutSys_role_deptInput
 }
 
@@ -472,6 +498,7 @@ export type sys_role_deptUncheckedCreateWithoutDeptInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_deptCreateOrConnectWithoutDeptInput = {
@@ -505,12 +532,14 @@ export type sys_role_deptCreateManyRoleInput = {
   dept_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_deptUpdateWithoutRoleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dept?: Prisma.sys_deptUpdateOneRequiredWithoutSys_role_deptNestedInput
 }
 
@@ -519,6 +548,7 @@ export type sys_role_deptUncheckedUpdateWithoutRoleInput = {
   dept_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_deptUncheckedUpdateManyWithoutRoleInput = {
@@ -526,6 +556,7 @@ export type sys_role_deptUncheckedUpdateManyWithoutRoleInput = {
   dept_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_deptCreateManyDeptInput = {
@@ -533,12 +564,14 @@ export type sys_role_deptCreateManyDeptInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_deptUpdateWithoutDeptInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_role_deptNestedInput
 }
 
@@ -547,6 +580,7 @@ export type sys_role_deptUncheckedUpdateWithoutDeptInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_deptUncheckedUpdateManyWithoutDeptInput = {
@@ -554,6 +588,7 @@ export type sys_role_deptUncheckedUpdateManyWithoutDeptInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -564,6 +599,7 @@ export type sys_role_deptSelect<ExtArgs extends runtime.Types.Extensions.Interna
   dept_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_dept"]>
@@ -574,6 +610,7 @@ export type sys_role_deptSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   dept_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_dept"]>
@@ -584,6 +621,7 @@ export type sys_role_deptSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   dept_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_dept"]>
@@ -594,9 +632,10 @@ export type sys_role_deptSelectScalar = {
   dept_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_role_deptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role_id" | "dept_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_dept"]>
+export type sys_role_deptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role_id" | "dept_id" | "tenant_id" | "created_at" | "created_by", ExtArgs["result"]["sys_role_dept"]>
 export type sys_role_deptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   dept?: boolean | Prisma.sys_deptDefaultArgs<ExtArgs>
@@ -621,7 +660,14 @@ export type $sys_role_deptPayload<ExtArgs extends runtime.Types.Extensions.Inter
     role_id: string
     dept_id: string
     tenant_id: string
+    /**
+     * 创建时间
+     */
     created_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_role_dept"]>
   composites: {}
 }
@@ -1052,6 +1098,7 @@ export interface sys_role_deptFieldRefs {
   readonly dept_id: Prisma.FieldRef<"sys_role_dept", 'String'>
   readonly tenant_id: Prisma.FieldRef<"sys_role_dept", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_role_dept", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_role_dept", 'String'>
 }
     
 

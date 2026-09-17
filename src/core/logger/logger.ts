@@ -1,6 +1,6 @@
 import pino from "pino";
 import { env as config } from "@config/env.js";
-import { combinedStream, errorStream, consoleTransport } from "./transports.js";
+import { combinedStream, errorStream } from "./transports.js";
 import { baseFormatter, redactPaths } from "./formatters.js";
 
 export const logger = pino(

@@ -280,159 +280,6 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     });
   }
 
-  /**
-   * 导出用户数据并返回 Excel Buffer
-   * @param where - 查询条件（不含 tenant_id）
-   * @param tenantId - 租户 ID
-   */
-  async exportUsersToExcel(where: any, tenantId: string): Promise<Buffer> {
-    const finalWhere = { ...where, tenant_id: tenantId, is_deleted: 0 };
-    const users = await this.model.findMany({
-      where: finalWhere,
-      include: {
-        sys_user_role: { include: { role: true } },
-        sys_user_dept: { include: { dept: true } },
-      },
-      orderBy: { created_at: "asc" },
-    });
-
-    const data = users.map((u) => ({
-      用户名: u.username,
-      真实姓名: u.real_name || "",
-      手机号: u.phone || "",
-      邮箱: u.email || "",
-      性别: u.gender === 1 ? "男" : u.gender === 2 ? "女" : "未知",
-      状态: u.status === "1" ? "启用" : "禁用",
-      角色: (u.sys_user_role as any[])
-        .map((ur) => ur.role?.role_name)
-        .filter(Boolean)
-        .join(","),
-      部门: (u.sys_user_dept as any[])
-        .map((ud) => ud.dept?.dept_name)
-        .filter(Boolean)
-        .join(","),
-      创建时间: u.created_at.toISOString(),
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "用户数据");
-    return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
-  }
-
-  /**
-   * 从 Excel 文件 Buffer 导入用户
-   * @param fileBuffer - 上传的 Excel 文件 Buffer
-   * @param tenantId - 租户 ID
-   * @param userId - 操作人 ID
-   * @returns 导入结果统计
-   */
-  async importUsersFromExcel(
-    fileBuffer: Buffer,
-    tenantId: string,
-    userId?: string,
-  ): Promise<{ successCount: number; failCount: number; errors: string[] }> {
-    // 1. 解析 Excel
-    const workbook = XLSX.read(fileBuffer, { type: "buffer" });
-    const sheetName = workbook.SheetNames[0];
-    if (!sheetName) throw new AppError("Excel文件为空", 400, 400);
-    const sheet = workbook.Sheets[sheetName];
-    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" }) as any[];
-    if (rows.length === 0) throw new AppError("Excel中没有数据", 400, 400);
-
-    // 2. 逐行校验并转换
-    const successList: any[] = [];
-    const errors: string[] = [];
-
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      const rowNum = i + 2; // Excel 行号（跳过表头）
-      try {
-        // 基础数据转换
-        const parsedRow = {
-          username: String(row["用户名"] || "").trim(),
-          realName: String(row["真实姓名"] || "").trim() || undefined,
-          phone: String(row["手机号"] || "").trim() || undefined,
-          email: String(row["邮箱"] || "").trim() || undefined,
-          gender: row["性别"] === "男" ? 1 : row["性别"] === "女" ? 2 : 0,
-          status: row["状态"] === "禁用" ? "0" : "1",
-          roleCodes: String(row["角色编码"] || "").trim(),
-          deptCodes: String(row["部门编码"] || "").trim(),
-        };
-
-        // 使用 Zod 校验字段格式
-        UserImportRowSchema.parse(parsedRow);
-
-        // 检查用户名是否已存在
-        const exist = await this.findUserByUsername(
-          parsedRow.username,
-          tenantId,
-        );
-        if (exist) throw new Error(`用户名 '${parsedRow.username}' 已存在`);
-
-        // 解析角色编码为 ID
-        const roleIds: string[] = [];
-        if (parsedRow.roleCodes) {
-          const codes = parsedRow.roleCodes
-            .split(",")
-            .map((c) => c.trim())
-            .filter(Boolean);
-          const roles = await prisma.sys_role.findMany({
-            where: { tenant_id: tenantId, role_code: { in: codes } },
-          });
-          if (roles.length !== codes.length)
-            throw new Error("存在无效的角色编码");
-          roleIds.push(...roles.map((r) => r.role_id));
-        }
-
-        // 解析部门编码为 ID
-        const deptIds: string[] = [];
-        if (parsedRow.deptCodes) {
-          const codes = parsedRow.deptCodes
-            .split(",")
-            .map((c) => c.trim())
-            .filter(Boolean);
-          const depts = await prisma.sys_dept.findMany({
-            where: { tenant_id: tenantId, dept_code: { in: codes } },
-          });
-          if (depts.length !== codes.length)
-            throw new Error("存在无效的部门编码");
-          deptIds.push(...depts.map((d) => d.dept_id));
-        }
-
-        // 默认密码：123456
-        const hashedPassword = await hashPassword("123456");
-        successList.push({
-          username: parsedRow.username,
-          password: hashedPassword,
-          real_name: parsedRow.realName,
-          phone: parsedRow.phone,
-          email: parsedRow.email,
-          gender: parsedRow.gender,
-          status: parsedRow.status,
-          roleIds,
-          deptIds,
-        });
-      } catch (e: any) {
-        errors.push(
-          `第${rowNum}行：${e.message || e.errors?.[0]?.message || "数据无效"}`,
-        );
-      }
-    }
-
-    // 3. 批量插入有效数据
-    let successCount = 0;
-    if (successList.length > 0) {
-      const created = await this.batchCreateUsers(
-        successList,
-        tenantId,
-        userId,
-      );
-      successCount = created.length;
-    }
-
-    return { successCount, failCount: errors.length, errors };
-  }
   async updateUserRoles(userId: string, roleIds: string[], tenantId: string) {
     if (roleIds.length > 0) {
       const validCount = await prisma.sys_role.count({
@@ -525,6 +372,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           created_at: new Date(),
           updated_at: new Date(),
           is_deleted: 0,
+          phone,
           ...encrypted,
         },
       });
@@ -823,7 +671,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
             perm_code: perm.perm_code,
             perm_name: perm.perm_name,
             resource_type: perm.resource_type,
-            action: perm.action,
+            perm_action: perm.perm_action,
             description: perm.description,
             status: perm.status,
             created_at: new Date(),

@@ -30,6 +30,7 @@ export type Sys_role_menuMinAggregateOutputType = {
   menu_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_role_menuMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type Sys_role_menuMaxAggregateOutputType = {
   menu_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_role_menuCountAggregateOutputType = {
@@ -46,6 +48,7 @@ export type Sys_role_menuCountAggregateOutputType = {
   menu_id: number
   tenant_id: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -56,6 +59,7 @@ export type Sys_role_menuMinAggregateInputType = {
   menu_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_role_menuMaxAggregateInputType = {
@@ -64,6 +68,7 @@ export type Sys_role_menuMaxAggregateInputType = {
   menu_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_role_menuCountAggregateInputType = {
@@ -72,6 +77,7 @@ export type Sys_role_menuCountAggregateInputType = {
   menu_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -153,6 +159,7 @@ export type Sys_role_menuGroupByOutputType = {
   menu_id: string
   tenant_id: string
   created_at: Date
+  created_by: string | null
   _count: Sys_role_menuCountAggregateOutputType | null
   _min: Sys_role_menuMinAggregateOutputType | null
   _max: Sys_role_menuMaxAggregateOutputType | null
@@ -182,6 +189,7 @@ export type sys_role_menuWhereInput = {
   menu_id?: Prisma.UuidFilter<"sys_role_menu"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_menu"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_menu"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_menu"> | string | null
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
   menu?: Prisma.XOR<Prisma.Sys_menuScalarRelationFilter, Prisma.sys_menuWhereInput>
 }
@@ -192,6 +200,7 @@ export type sys_role_menuOrderByWithRelationInput = {
   menu_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.sys_roleOrderByWithRelationInput
   menu?: Prisma.sys_menuOrderByWithRelationInput
 }
@@ -206,6 +215,7 @@ export type sys_role_menuWhereUniqueInput = Prisma.AtLeast<{
   menu_id?: Prisma.UuidFilter<"sys_role_menu"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_menu"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_menu"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_menu"> | string | null
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
   menu?: Prisma.XOR<Prisma.Sys_menuScalarRelationFilter, Prisma.sys_menuWhereInput>
 }, "id" | "role_id_menu_id">
@@ -216,6 +226,7 @@ export type sys_role_menuOrderByWithAggregationInput = {
   menu_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_role_menuCountOrderByAggregateInput
   _max?: Prisma.sys_role_menuMaxOrderByAggregateInput
   _min?: Prisma.sys_role_menuMinOrderByAggregateInput
@@ -230,12 +241,14 @@ export type sys_role_menuScalarWhereWithAggregatesInput = {
   menu_id?: Prisma.UuidWithAggregatesFilter<"sys_role_menu"> | string
   tenant_id?: Prisma.UuidWithAggregatesFilter<"sys_role_menu"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_role_menu"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_role_menu"> | string | null
 }
 
 export type sys_role_menuCreateInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   role: Prisma.sys_roleCreateNestedOneWithoutSys_role_menuInput
   menu: Prisma.sys_menuCreateNestedOneWithoutSys_role_menuInput
 }
@@ -246,12 +259,14 @@ export type sys_role_menuUncheckedCreateInput = {
   menu_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_menuUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_role_menuNestedInput
   menu?: Prisma.sys_menuUpdateOneRequiredWithoutSys_role_menuNestedInput
 }
@@ -262,6 +277,7 @@ export type sys_role_menuUncheckedUpdateInput = {
   menu_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_menuCreateManyInput = {
@@ -270,12 +286,14 @@ export type sys_role_menuCreateManyInput = {
   menu_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_menuUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_menuUncheckedUpdateManyInput = {
@@ -284,6 +302,7 @@ export type sys_role_menuUncheckedUpdateManyInput = {
   menu_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type Sys_role_menuListRelationFilter = {
@@ -307,6 +326,7 @@ export type sys_role_menuCountOrderByAggregateInput = {
   menu_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_menuMaxOrderByAggregateInput = {
@@ -315,6 +335,7 @@ export type sys_role_menuMaxOrderByAggregateInput = {
   menu_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_menuMinOrderByAggregateInput = {
@@ -323,6 +344,7 @@ export type sys_role_menuMinOrderByAggregateInput = {
   menu_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_menuCreateNestedManyWithoutRoleInput = {
@@ -413,6 +435,7 @@ export type sys_role_menuCreateWithoutRoleInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   menu: Prisma.sys_menuCreateNestedOneWithoutSys_role_menuInput
 }
 
@@ -421,6 +444,7 @@ export type sys_role_menuUncheckedCreateWithoutRoleInput = {
   menu_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_menuCreateOrConnectWithoutRoleInput = {
@@ -458,12 +482,14 @@ export type sys_role_menuScalarWhereInput = {
   menu_id?: Prisma.UuidFilter<"sys_role_menu"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_menu"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_menu"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_menu"> | string | null
 }
 
 export type sys_role_menuCreateWithoutMenuInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   role: Prisma.sys_roleCreateNestedOneWithoutSys_role_menuInput
 }
 
@@ -472,6 +498,7 @@ export type sys_role_menuUncheckedCreateWithoutMenuInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_menuCreateOrConnectWithoutMenuInput = {
@@ -505,12 +532,14 @@ export type sys_role_menuCreateManyRoleInput = {
   menu_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_menuUpdateWithoutRoleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menu?: Prisma.sys_menuUpdateOneRequiredWithoutSys_role_menuNestedInput
 }
 
@@ -519,6 +548,7 @@ export type sys_role_menuUncheckedUpdateWithoutRoleInput = {
   menu_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_menuUncheckedUpdateManyWithoutRoleInput = {
@@ -526,6 +556,7 @@ export type sys_role_menuUncheckedUpdateManyWithoutRoleInput = {
   menu_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_menuCreateManyMenuInput = {
@@ -533,12 +564,14 @@ export type sys_role_menuCreateManyMenuInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_menuUpdateWithoutMenuInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_role_menuNestedInput
 }
 
@@ -547,6 +580,7 @@ export type sys_role_menuUncheckedUpdateWithoutMenuInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_menuUncheckedUpdateManyWithoutMenuInput = {
@@ -554,6 +588,7 @@ export type sys_role_menuUncheckedUpdateManyWithoutMenuInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -564,6 +599,7 @@ export type sys_role_menuSelect<ExtArgs extends runtime.Types.Extensions.Interna
   menu_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   menu?: boolean | Prisma.sys_menuDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_menu"]>
@@ -574,6 +610,7 @@ export type sys_role_menuSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   menu_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   menu?: boolean | Prisma.sys_menuDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_menu"]>
@@ -584,6 +621,7 @@ export type sys_role_menuSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   menu_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   menu?: boolean | Prisma.sys_menuDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_menu"]>
@@ -594,9 +632,10 @@ export type sys_role_menuSelectScalar = {
   menu_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_role_menuOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role_id" | "menu_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_menu"]>
+export type sys_role_menuOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role_id" | "menu_id" | "tenant_id" | "created_at" | "created_by", ExtArgs["result"]["sys_role_menu"]>
 export type sys_role_menuInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   menu?: boolean | Prisma.sys_menuDefaultArgs<ExtArgs>
@@ -637,6 +676,10 @@ export type $sys_role_menuPayload<ExtArgs extends runtime.Types.Extensions.Inter
      * 创建时间
      */
     created_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_role_menu"]>
   composites: {}
 }
@@ -1067,6 +1110,7 @@ export interface sys_role_menuFieldRefs {
   readonly menu_id: Prisma.FieldRef<"sys_role_menu", 'String'>
   readonly tenant_id: Prisma.FieldRef<"sys_role_menu", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_role_menu", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_role_menu", 'String'>
 }
     
 

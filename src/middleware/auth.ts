@@ -28,6 +28,7 @@ export const AUTH_WHITELIST = [
   "/api/v1/auth/forgot-password",
   "/api/v1/auth/password-policy",
   "/api/v1/auth/captcha",
+  "/api/v1/tenant/options",
 ];
 
 export function isWhitelisted(path: string): boolean {

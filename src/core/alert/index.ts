@@ -8,7 +8,7 @@ export type AlertLevel = "info" | "warning" | "error" | "critical";
 export interface AlertPayload {
   level: AlertLevel;
   /** 告警标题（分组用） */
-  title: string;
+  title?: string;
   /** 详细消息 */
   message: string;
   /** 结构化数据 */

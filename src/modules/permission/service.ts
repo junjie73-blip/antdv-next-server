@@ -2,6 +2,8 @@ import { PermissionRepository } from "./repository.js";
 import {
   PermissionImportRowSchema,
   PermissionExportColumns,
+  LABEL_TO_RESOURCE_TYPE,
+  needAction,
 } from "./schema.js";
 import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
 import { AppError } from "@/core/errors.js";
@@ -30,7 +32,6 @@ export class PermissionService extends BaseService<PermissionRepository> {
     if (existing)
       throw new AppError(`权限编码 '${dto.permCode}' 已存在`, 409001, 409);
   }
-
   async exportToExcel(tenantId: string): Promise<Buffer> {
     const perms = await this.repository.findAllForExport(tenantId);
     return generateExcel(perms, [...PermissionExportColumns], "权限数据");
@@ -53,13 +54,29 @@ export class PermissionService extends BaseService<PermissionRepository> {
         errors.push(`权限「${code}」：已存在`);
         continue;
       }
+      const resourceLabel = String(row["资源类型"] || "接口").trim();
+      const resourceType = LABEL_TO_RESOURCE_TYPE[resourceLabel];
+      if (!resourceType) {
+        errors.push(
+          `权限「${code}」：资源类型「${resourceLabel}」不合法，` +
+            `仅支持 接口 / 数据 / 其他`,
+        );
+        continue;
+      }
+      const action = String(row["动作"] || "").trim() || null;
+      if (needAction(resourceType) && !action) {
+        errors.push(
+          `权限「${code}」：资源类型「${resourceLabel}」必须指定动作`,
+        );
+        continue;
+      }
       try {
         await this.repository.insertPermission({
           tenantId,
           permCode: code,
           permName: name,
           resourceType: String(row["资源类型"] || "api"),
-          action: String(row["动作"] || "") || null,
+          perAction: needAction(resourceType) ? action : null,
           description: String(row["描述"] || ""),
           status: row["状态"] === "禁用" ? "0" : "1",
           userId,

@@ -5,7 +5,13 @@ import { AppError } from "@/core/errors.js";
 import { dispatchNotice } from "./channels/index.js";
 import { prisma } from "@/config/database.js";
 import { BaseService } from "@/core/base/service.js";
-
+import { publishNoticePush } from "@/core/redis/pubsub.js";
+import { logger } from "@/core/logger/logger.js";
+export interface SendNoticeOptions {
+  channels?: string[];
+  receiversByChannel?: Record<string, string[]>;
+  operatorId?: string;
+}
 export class NoticeService extends BaseService<NoticeRepository> {
   constructor(repository: NoticeRepository) {
     super(repository);
@@ -24,24 +30,74 @@ export class NoticeService extends BaseService<NoticeRepository> {
     await this.repository.markManyAsRead(noticeIds, userId, tenantId);
   }
 
-  async sendNotice(noticeId: string, tenantId: string) {
+  async sendNotice(
+    noticeId: string,
+    tenantId: string,
+    options: SendNoticeOptions = {},
+  ) {
     const notice = await this.repository.findOne(
       { notice_id: noticeId },
       tenantId,
     );
     if (!notice) throw new AppError("通知不存在", 404001, 404);
-    if ((notice as any).status !== "1")
-      throw new AppError("通知未发布", 400001, 400);
+    if ((notice as any).send_status === "1") {
+      throw new AppError("该通知已发送，不能再次发布", 400001, 400);
+    }
+    if ((notice as any).revoked_at) {
+      throw new AppError("通知已撤回，无法发送", 400001, 400);
+    }
 
-    const count = await this.repository.countTargetUsers(noticeId, tenantId);
-    if (count === 0) throw new AppError("该通知没有目标用户", 400001, 400);
+    // 1) 目标人：空 → 全员
+    let targetUserIds = await this.repository.getTargetUserIds(
+      noticeId,
+      tenantId,
+    );
+    if (targetUserIds.length === 0) {
+      targetUserIds = await this.repository.getAllTenantUserIds(tenantId);
+      if (targetUserIds.length === 0) {
+        throw new AppError("租户下没有可接收通知的成员", 400001, 400);
+      }
+      await this.repository.insertNoticeUsers(
+        noticeId,
+        tenantId,
+        targetUserIds,
+      );
+      this.log("sendNotice:fallbackToAllUsers", {
+        noticeId,
+        count: targetUserIds.length,
+      });
+    }
 
-    await dispatchNotice({
+    // 2) 原子锁定发送状态（并发只允许一个通过）
+    const now = new Date();
+    await this.repository.lockSendState(noticeId, tenantId, {
+      status: "1",
+      publishTime: now,
+      sendTime: now,
+    });
+    const after = await this.repository.findOne(
+      { notice_id: noticeId },
+      tenantId,
+    );
+    if (
+      (after as any)?.send_status !== "1" ||
+      +new Date((after as any).send_time) !== +now
+    ) {
+      // 落库失败说明被别人抢先了
+      throw new AppError("该通知已发送，不能再次发布", 400001, 400);
+    }
+
+    // 3) 派发
+    const results = await dispatchNotice({
       tenantId,
       noticeId,
       title: (notice as any).title,
       content: (notice as any).content ?? undefined,
+      channels: options.channels,
+      receiversByChannel: options.receiversByChannel,
     });
+
+    return { results, targetCount: targetUserIds.length };
   }
 
   async revokeNotice(noticeId: string, tenantId: string, userId: string) {
@@ -55,21 +111,36 @@ export class NoticeService extends BaseService<NoticeRepository> {
     if ((notice as any).revoked_at)
       throw new AppError("通知已撤回", 400001, 400);
 
-    await prisma.$transaction([
-      prisma.sys_notice.update({
-        where: { notice_id: noticeId },
-        data: {
-          status: "0",
-          revoked_at: new Date(),
-          revoked_by: userId,
-          updated_at: new Date(),
-        },
-      }),
-      prisma.sys_notice_user.updateMany({
-        where: { notice_id: noticeId, tenant_id: tenantId },
-        data: { is_deleted: 1 },
-      }),
-    ]);
+    const now = new Date();
+
+    // ⭐ updateMany + 条件，保证并发下只有一次成功
+    const updated = await prisma.sys_notice.updateMany({
+      where: {
+        notice_id: noticeId,
+        tenant_id: tenantId,
+        is_deleted: 0,
+        status: "1",
+      },
+      data: {
+        status: "0", // 回到草稿态，用户端不再展示
+        revoked_at: null,
+        revoked_by: null,
+        send_status: "0", // ⭐ 允许再次发送
+        send_time: null,
+        updated_at: now,
+      },
+    });
+    if (updated.count === 0) {
+      throw new AppError("通知已撤回或状态已变更", 400001, 400);
+    }
+
+    // ⭐ 广播撤回事件：各实例推给自己的连接，客户端重新拉取
+    try {
+      await publishNoticePush(noticeId, "revoke");
+    } catch (err) {
+      // 推送失败不影响撤回结果，只记日志
+      logger.error({ err, noticeId }, "[notice] publish revoke failed");
+    }
 
     this.log("revokeNotice", { noticeId });
   }

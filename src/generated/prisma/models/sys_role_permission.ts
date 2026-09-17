@@ -30,6 +30,7 @@ export type Sys_role_permissionMinAggregateOutputType = {
   perm_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_role_permissionMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type Sys_role_permissionMaxAggregateOutputType = {
   perm_id: string | null
   tenant_id: string | null
   created_at: Date | null
+  created_by: string | null
 }
 
 export type Sys_role_permissionCountAggregateOutputType = {
@@ -46,6 +48,7 @@ export type Sys_role_permissionCountAggregateOutputType = {
   perm_id: number
   tenant_id: number
   created_at: number
+  created_by: number
   _all: number
 }
 
@@ -56,6 +59,7 @@ export type Sys_role_permissionMinAggregateInputType = {
   perm_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_role_permissionMaxAggregateInputType = {
@@ -64,6 +68,7 @@ export type Sys_role_permissionMaxAggregateInputType = {
   perm_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
 }
 
 export type Sys_role_permissionCountAggregateInputType = {
@@ -72,6 +77,7 @@ export type Sys_role_permissionCountAggregateInputType = {
   perm_id?: true
   tenant_id?: true
   created_at?: true
+  created_by?: true
   _all?: true
 }
 
@@ -153,6 +159,7 @@ export type Sys_role_permissionGroupByOutputType = {
   perm_id: string
   tenant_id: string
   created_at: Date
+  created_by: string | null
   _count: Sys_role_permissionCountAggregateOutputType | null
   _min: Sys_role_permissionMinAggregateOutputType | null
   _max: Sys_role_permissionMaxAggregateOutputType | null
@@ -182,6 +189,7 @@ export type sys_role_permissionWhereInput = {
   perm_id?: Prisma.UuidFilter<"sys_role_permission"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_permission"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_permission"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_permission"> | string | null
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
   permission?: Prisma.XOR<Prisma.Sys_permissionScalarRelationFilter, Prisma.sys_permissionWhereInput>
 }
@@ -192,6 +200,7 @@ export type sys_role_permissionOrderByWithRelationInput = {
   perm_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.sys_roleOrderByWithRelationInput
   permission?: Prisma.sys_permissionOrderByWithRelationInput
 }
@@ -206,6 +215,7 @@ export type sys_role_permissionWhereUniqueInput = Prisma.AtLeast<{
   perm_id?: Prisma.UuidFilter<"sys_role_permission"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_permission"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_permission"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_permission"> | string | null
   role?: Prisma.XOR<Prisma.Sys_roleScalarRelationFilter, Prisma.sys_roleWhereInput>
   permission?: Prisma.XOR<Prisma.Sys_permissionScalarRelationFilter, Prisma.sys_permissionWhereInput>
 }, "id" | "role_id_perm_id">
@@ -216,6 +226,7 @@ export type sys_role_permissionOrderByWithAggregationInput = {
   perm_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_role_permissionCountOrderByAggregateInput
   _max?: Prisma.sys_role_permissionMaxOrderByAggregateInput
   _min?: Prisma.sys_role_permissionMinOrderByAggregateInput
@@ -230,12 +241,14 @@ export type sys_role_permissionScalarWhereWithAggregatesInput = {
   perm_id?: Prisma.UuidWithAggregatesFilter<"sys_role_permission"> | string
   tenant_id?: Prisma.UuidWithAggregatesFilter<"sys_role_permission"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_role_permission"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_role_permission"> | string | null
 }
 
 export type sys_role_permissionCreateInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   role: Prisma.sys_roleCreateNestedOneWithoutSys_role_permissionInput
   permission: Prisma.sys_permissionCreateNestedOneWithoutSys_role_permissionInput
 }
@@ -246,12 +259,14 @@ export type sys_role_permissionUncheckedCreateInput = {
   perm_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_permissionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_role_permissionNestedInput
   permission?: Prisma.sys_permissionUpdateOneRequiredWithoutSys_role_permissionNestedInput
 }
@@ -262,6 +277,7 @@ export type sys_role_permissionUncheckedUpdateInput = {
   perm_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_permissionCreateManyInput = {
@@ -270,12 +286,14 @@ export type sys_role_permissionCreateManyInput = {
   perm_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_permissionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_permissionUncheckedUpdateManyInput = {
@@ -284,6 +302,7 @@ export type sys_role_permissionUncheckedUpdateManyInput = {
   perm_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type Sys_role_permissionListRelationFilter = {
@@ -307,6 +326,7 @@ export type sys_role_permissionCountOrderByAggregateInput = {
   perm_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_permissionMaxOrderByAggregateInput = {
@@ -315,6 +335,7 @@ export type sys_role_permissionMaxOrderByAggregateInput = {
   perm_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_permissionMinOrderByAggregateInput = {
@@ -323,6 +344,7 @@ export type sys_role_permissionMinOrderByAggregateInput = {
   perm_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
 }
 
 export type sys_role_permissionCreateNestedManyWithoutRoleInput = {
@@ -413,6 +435,7 @@ export type sys_role_permissionCreateWithoutRoleInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   permission: Prisma.sys_permissionCreateNestedOneWithoutSys_role_permissionInput
 }
 
@@ -421,6 +444,7 @@ export type sys_role_permissionUncheckedCreateWithoutRoleInput = {
   perm_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_permissionCreateOrConnectWithoutRoleInput = {
@@ -458,12 +482,14 @@ export type sys_role_permissionScalarWhereInput = {
   perm_id?: Prisma.UuidFilter<"sys_role_permission"> | string
   tenant_id?: Prisma.UuidFilter<"sys_role_permission"> | string
   created_at?: Prisma.DateTimeFilter<"sys_role_permission"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_role_permission"> | string | null
 }
 
 export type sys_role_permissionCreateWithoutPermissionInput = {
   id?: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
   role: Prisma.sys_roleCreateNestedOneWithoutSys_role_permissionInput
 }
 
@@ -472,6 +498,7 @@ export type sys_role_permissionUncheckedCreateWithoutPermissionInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_permissionCreateOrConnectWithoutPermissionInput = {
@@ -505,12 +532,14 @@ export type sys_role_permissionCreateManyRoleInput = {
   perm_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_permissionUpdateWithoutRoleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permission?: Prisma.sys_permissionUpdateOneRequiredWithoutSys_role_permissionNestedInput
 }
 
@@ -519,6 +548,7 @@ export type sys_role_permissionUncheckedUpdateWithoutRoleInput = {
   perm_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_permissionUncheckedUpdateManyWithoutRoleInput = {
@@ -526,6 +556,7 @@ export type sys_role_permissionUncheckedUpdateManyWithoutRoleInput = {
   perm_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_permissionCreateManyPermissionInput = {
@@ -533,12 +564,14 @@ export type sys_role_permissionCreateManyPermissionInput = {
   role_id: string
   tenant_id: string
   created_at?: Date | string
+  created_by?: string | null
 }
 
 export type sys_role_permissionUpdateWithoutPermissionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.sys_roleUpdateOneRequiredWithoutSys_role_permissionNestedInput
 }
 
@@ -547,6 +580,7 @@ export type sys_role_permissionUncheckedUpdateWithoutPermissionInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_role_permissionUncheckedUpdateManyWithoutPermissionInput = {
@@ -554,6 +588,7 @@ export type sys_role_permissionUncheckedUpdateManyWithoutPermissionInput = {
   role_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -564,6 +599,7 @@ export type sys_role_permissionSelect<ExtArgs extends runtime.Types.Extensions.I
   perm_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   permission?: boolean | Prisma.sys_permissionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_permission"]>
@@ -574,6 +610,7 @@ export type sys_role_permissionSelectCreateManyAndReturn<ExtArgs extends runtime
   perm_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   permission?: boolean | Prisma.sys_permissionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_permission"]>
@@ -584,6 +621,7 @@ export type sys_role_permissionSelectUpdateManyAndReturn<ExtArgs extends runtime
   perm_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   permission?: boolean | Prisma.sys_permissionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_role_permission"]>
@@ -594,9 +632,10 @@ export type sys_role_permissionSelectScalar = {
   perm_id?: boolean
   tenant_id?: boolean
   created_at?: boolean
+  created_by?: boolean
 }
 
-export type sys_role_permissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role_id" | "perm_id" | "tenant_id" | "created_at", ExtArgs["result"]["sys_role_permission"]>
+export type sys_role_permissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role_id" | "perm_id" | "tenant_id" | "created_at" | "created_by", ExtArgs["result"]["sys_role_permission"]>
 export type sys_role_permissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   role?: boolean | Prisma.sys_roleDefaultArgs<ExtArgs>
   permission?: boolean | Prisma.sys_permissionDefaultArgs<ExtArgs>
@@ -621,7 +660,14 @@ export type $sys_role_permissionPayload<ExtArgs extends runtime.Types.Extensions
     role_id: string
     perm_id: string
     tenant_id: string
+    /**
+     * 创建时间
+     */
     created_at: Date
+    /**
+     * 创建人ID
+     */
+    created_by: string | null
   }, ExtArgs["result"]["sys_role_permission"]>
   composites: {}
 }
@@ -1052,6 +1098,7 @@ export interface sys_role_permissionFieldRefs {
   readonly perm_id: Prisma.FieldRef<"sys_role_permission", 'String'>
   readonly tenant_id: Prisma.FieldRef<"sys_role_permission", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_role_permission", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_role_permission", 'String'>
 }
     
 

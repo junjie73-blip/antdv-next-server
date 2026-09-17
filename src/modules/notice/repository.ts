@@ -52,7 +52,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
           throw new AppError("存在无效的接收人", 400001, 400);
         }
         await tx.sys_notice_user.createMany({
-          data: uniqueIds.map((uid: string) => ({
+          data: (uniqueIds as string[]).map((uid: string) => ({
             notice_id: notice.notice_id,
             user_id: uid,
             tenant_id: tenantId,
@@ -189,7 +189,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
             throw new AppError("存在无效的接收人", 400001, 400);
           }
           await tx.sys_notice_user.createMany({
-            data: uniqueIds.map((uid: string) => ({
+            data: (uniqueIds as string[]).map((uid: string) => ({
               notice_id: id,
               user_id: uid,
               tenant_id: tenantId,
@@ -295,5 +295,61 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       },
     });
     return (record as any).notice_id;
+  }
+  async getTargetUserIds(
+    noticeId: string,
+    tenantId: string,
+  ): Promise<string[]> {
+    const rows = await prisma.sys_notice_user.findMany({
+      where: { notice_id: noticeId, tenant_id: tenantId, is_deleted: 0 },
+      select: { user_id: true },
+    });
+    return rows.map((r) => r.user_id);
+  }
+
+  async getAllTenantUserIds(tenantId: string): Promise<string[]> {
+    const users = await prisma.sys_user.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0, status: "1" },
+      select: { user_id: true },
+    });
+    return users.map((u) => u.user_id);
+  }
+
+  async insertNoticeUsers(
+    noticeId: string,
+    tenantId: string,
+    userIds: string[],
+  ): Promise<void> {
+    if (userIds.length === 0) return;
+    await prisma.sys_notice_user.createMany({
+      data: userIds.map((uid) => ({
+        notice_id: noticeId,
+        user_id: uid,
+        tenant_id: tenantId,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  async lockSendState(
+    noticeId: string,
+    tenantId: string,
+    patch: { status: string; publishTime: Date; sendTime: Date },
+  ): Promise<void> {
+    await prisma.sys_notice.updateMany({
+      where: {
+        notice_id: noticeId,
+        tenant_id: tenantId,
+        is_deleted: 0,
+        send_status: { not: "1" },
+      },
+      data: {
+        status: patch.status,
+        publish_time: patch.publishTime,
+        send_status: "1",
+        send_time: patch.sendTime,
+        updated_at: patch.sendTime,
+      },
+    });
   }
 }

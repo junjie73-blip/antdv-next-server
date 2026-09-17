@@ -37,7 +37,7 @@ import { traceMiddleware } from "./middleware/trace.js";
 import { wsManager } from "./core/ws/manager.js";
 import { getClientIp } from "./common/utils/ip.js";
 import { sendAlert } from "./core/alert/index.js";
-
+import * as Sentry from "@sentry/node";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -96,7 +96,7 @@ app.use(traceMiddleware);
 app.use(metricsMiddleware);
 app.get("/metrics", (req, res, next) => {
   const ip = getClientIp(req);
-  const allowed = (process.env.METRICS_WHITELIST || "127.0.0.1").split(",");
+  const allowed = (env.METRICS_WHITELIST || "127.0.0.1").split(",");
   if (!allowed.includes(ip)) {
     return res.status(403).end();
   }
@@ -119,7 +119,10 @@ app.use(dataScopeMiddleware());
 const scanner = new ControllerScanner();
 scanner.register(...controllers);
 app.use("/api/v1", new DecoratorRouter(scanner).build());
-
+if (env.NODE_ENV === "production") {
+  import("./config/sentry.js");
+  Sentry.setupExpressErrorHandler(app);
+}
 // ==================== 健康检查 ====================
 app.get("/health/live", (_req, res) => {
   res.json({ status: "ok" }); // 进程存活
@@ -137,7 +140,7 @@ app.get("/health/ready", async (_req, res) => {
 // ==================== 404 / 错误处理 ====================
 app.use(notFoundHandler);
 app.use(errorHandler);
-
+app.set("trust proxy", true);
 // ==================== 启动 ====================
 async function bootstrap(): Promise<void> {
   // 1) 连接验证

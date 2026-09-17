@@ -13,6 +13,7 @@ import { LoginLogListSchema, LoginLogExportSchema } from "./schema.js";
 import { success } from "@/common/utils/response.js";
 import { BaseController } from "@/core/base/controller.js";
 import dayjs from "dayjs";
+import { z } from "zod";
 
 @Controller("/login-log", { tags: ["登录日志"] })
 export default class LoginLogController extends BaseController<
@@ -31,15 +32,15 @@ export default class LoginLogController extends BaseController<
     defaultPageSize: 10,
     maxPageSize: 100,
   };
-  protected readonly createSchema = null;
-  protected readonly updateSchema = null;
+  protected readonly createSchema = z.object({});
+  protected readonly updateSchema = z.object({});
   protected readonly querySchema = LoginLogListSchema;
 
   @Get("/list")
   @ApiOperation("获取登录日志列表")
   @ApiQuery(LoginLogListSchema)
   async listLoginLog(@Req() req: Request, @Res() res: Response) {
-    return super.list(req, res);
+    return this.repository.findPage(req.query as any, {});
   }
 
   @Get("/export")

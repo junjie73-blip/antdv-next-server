@@ -10,9 +10,16 @@ export class MenuRepository extends BaseRepository<MenuEntity, any, any, any> {
   protected readonly primaryKey = "menu_id";
 
   /** 租户全部菜单（供 Service 构建树用） */
-  async findAllByTenant(tenantId: string): Promise<MenuEntity[]> {
+  async findAllByTenant(
+    tenantId: string,
+    menuType?: number[],
+  ): Promise<MenuEntity[]> {
     return this.model.findMany({
-      where: { tenant_id: tenantId, is_deleted: 0, menu_type: { in: [1, 2] } },
+      where: {
+        tenant_id: tenantId,
+        is_deleted: 0,
+        menu_type: menuType ? { in: menuType } : { in: [1, 2] },
+      },
       orderBy: { sort_order: "asc" },
     });
   }
@@ -161,5 +168,11 @@ export class MenuRepository extends BaseRepository<MenuEntity, any, any, any> {
       },
     });
     return (record as any).menu_id;
+  }
+  async updateStatus(id: string, status: string, tenantId: string) {
+    await this.model.update({
+      where: { menu_id: id, tenant_id: tenantId, is_deleted: 0 },
+      data: { status },
+    });
   }
 }
