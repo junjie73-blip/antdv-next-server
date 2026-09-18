@@ -28,7 +28,6 @@ import { z } from "zod";
 import { prisma } from "@/config/database.js";
 import { keysToCamelCase } from "@/common/utils/case-convert.js";
 import { success } from "@/common/utils/response.js";
-import { simpleStorage } from "../upload/controller.js";
 import { RoleService } from "./service.js";
 import { upload } from "../user/controller.js";
 
