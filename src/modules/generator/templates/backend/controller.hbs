@@ -1,0 +1,95 @@
+import {
+  Controller, Get, Post, Put, Delete,
+  Req, Res, ApiOperation, ApiBody, ApiQuery, ApiResponse,
+} from "@/core/decorator/index.js";
+import { Request, Response } from "express";
+import { z } from "zod";
+import { BaseController } from "@/core/base/controller.js";
+import { {{className}}Repository } from "./repository.js";
+import { {{className}}Service } from "./service.js";
+import {
+  {{className}}CreateSchema,
+  {{className}}UpdateSchema,
+  {{className}}ListSchema,
+} from "./schema.js";
+
+@Controller("/{{businessName}}", { tags: ["{{functionName}}"] })
+export default class {{className}}Controller extends BaseController<
+  z.infer<typeof {{className}}CreateSchema>,
+  z.infer<typeof {{className}}UpdateSchema>,
+  z.infer<typeof {{className}}ListSchema>,
+  Record<string, unknown>
+> {
+  protected readonly repository = new {{className}}Repository();
+  protected readonly service = new {{className}}Service(this.repository);
+
+  protected readonly config = {
+    routePrefix: "/api/v1/{{businessName}}",
+    tags: ["{{functionName}}"],
+    permissionPrefix: "{{businessName}}",
+    enableAudit: true,
+    defaultPageSize: 10,
+    maxPageSize: 100,
+  };
+
+  protected readonly createSchema = {{className}}CreateSchema;
+  protected readonly updateSchema = {{className}}UpdateSchema;
+  protected readonly querySchema = {{className}}ListSchema;
+
+  protected buildListWhere(query: Record<string, unknown>): Record<string, unknown> {
+    const where: Record<string, unknown> = {};
+{{#each queryColumns}}
+  {{#if (eq queryType "EQ")}}
+    if (query.{{fieldName}} !== undefined && query.{{fieldName}} !== "") {
+      where.{{columnName}} = query.{{fieldName}};
+    }
+  {{else if (eq queryType "NE")}}
+    if (query.{{fieldName}} !== undefined && query.{{fieldName}} !== "") {
+      where.{{columnName}} = { not: query.{{fieldName}} };
+    }
+  {{else if (eq queryType "GT")}}
+    if (query.{{fieldName}} !== undefined) {
+      where.{{columnName}} = { gt: query.{{fieldName}} };
+    }
+  {{else if (eq queryType "LT")}}
+    if (query.{{fieldName}} !== undefined) {
+      where.{{columnName}} = { lt: query.{{fieldName}} };
+    }
+  {{/if}}
+{{/each}}
+    return where;
+  }
+
+  @Get("/list")
+  @ApiOperation("获取{{functionName}}列表")
+  @ApiQuery({{className}}ListSchema)
+  async pageList(@Req() req: Request, @Res() res: Response) {
+    return this.list(req, res);
+  }
+
+  @Get("/:id")
+  @ApiOperation("获取{{functionName}}详情")
+  async detail(@Req() req: Request, @Res() res: Response) {
+    return super.detail(req, res);
+  }
+
+  @Post("/")
+  @ApiOperation("创建{{functionName}}")
+  @ApiBody({{className}}CreateSchema)
+  async create(@Req() req: Request, @Res() res: Response) {
+    return super.create(req, res);
+  }
+
+  @Put("/:id")
+  @ApiOperation("更新{{functionName}}")
+  @ApiBody({{className}}UpdateSchema)
+  async update(@Req() req: Request, @Res() res: Response) {
+    return super.update(req, res);
+  }
+
+  @Delete("/:id")
+  @ApiOperation("删除{{functionName}}")
+  async remove(@Req() req: Request, @Res() res: Response) {
+    return super.remove(req, res);
+  }
+}

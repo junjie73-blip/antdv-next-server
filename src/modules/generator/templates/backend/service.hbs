@@ -1,0 +1,15 @@
+import { {{className}}Repository } from "./repository.js";
+import { BaseService } from "@/core/base/service.js";
+import { NotFoundError } from "@/core/errors.js";
+
+export class {{className}}Service extends BaseService<{{className}}Repository> {
+  constructor(repository: {{className}}Repository) {
+    super(repository);
+  }
+
+  async getById(id: string, tenantId: string): Promise<Record<string, unknown>> {
+    const row = await this.repository.findById(id, tenantId);
+    if (!row) throw new NotFoundError("{{functionName}}不存在");
+    return row;
+  }
+}

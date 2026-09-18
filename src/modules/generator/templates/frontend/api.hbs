@@ -1,0 +1,38 @@
+import { http } from "@/utils";
+import type {
+  {{className}},
+  {{className}}ListParams,
+  {{className}}CreateParams,
+  {{className}}UpdateParams,
+} from "@/views/{{moduleName}}/{{businessName}}/types";
+
+/** 查询{{functionName}}列表 */
+export function get{{className}}List(params: {{className}}ListParams) {
+  return http.Get<{ list: {{className}}[]; total: number }>(
+    "/api/v1/{{businessName}}/list",
+    { params },
+  );
+}
+
+/** 查询{{functionName}}详情 */
+export function get{{className}}Detail({{pkColumn.fieldName}}: string) {
+  return http.Get<{{className}}>(`/api/v1/{{businessName}}/${ {{~pkColumn.fieldName~}} }`);
+}
+
+/** 创建{{functionName}} */
+export function create{{className}}(data: {{className}}CreateParams) {
+  return http.Post(`/api/v1/{{businessName}}`, data);
+}
+
+/** 更新{{functionName}} */
+export function update{{className}}(
+  {{pkColumn.fieldName}}: string,
+  data: {{className}}UpdateParams,
+) {
+  return http.Put(`/api/v1/{{businessName}}/${ {{~pkColumn.fieldName~}} }`, data);
+}
+
+/** 删除{{functionName}} */
+export function delete{{className}}({{pkColumn.fieldName}}: string) {
+  return http.Delete(`/api/v1/{{businessName}}/${ {{~pkColumn.fieldName~}} }`);
+}

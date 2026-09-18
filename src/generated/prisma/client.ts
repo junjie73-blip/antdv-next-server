@@ -186,3 +186,13 @@ export type sys_todo_group = Prisma.sys_todo_groupModel
  * 
  */
 export type sys_user_tenant = Prisma.sys_user_tenantModel
+/**
+ * Model gen_table
+ * 
+ */
+export type gen_table = Prisma.gen_tableModel
+/**
+ * Model gen_table_column
+ * 
+ */
+export type gen_table_column = Prisma.gen_table_columnModel

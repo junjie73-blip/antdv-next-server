@@ -645,3 +645,61 @@ model sys_user_tenant {
   @@index([tenant_id])
   @@map("sys_user_tenant")
 }
+
+model gen_table {
+  table_id        String   @id @default(uuid()) @db.Uuid
+  table_name      String   @unique @db.VarChar(200)
+  table_comment   String?  @db.VarChar(500)
+  class_name      String   @db.VarChar(100)
+  tpl_category    String   @default("crud") @db.VarChar(20)
+  package_name    String?  @db.VarChar(100)
+  module_name     String?  @db.VarChar(30)
+  business_name   String?  @db.VarChar(30)
+  function_name   String?  @db.VarChar(50)
+  function_author String?  @db.VarChar(50)
+  table_status    String   @default("pending") @db.VarChar(20) // pending / created / altered
+  // 规范字段
+  tenant_id       String   @db.Uuid
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  created_by      String?  @db.Uuid
+  updated_by      String?  @db.Uuid
+  is_deleted      Int      @default(0) @db.SmallInt
+
+  // 无数据库外键，应用层维护
+  columns gen_table_column[]
+
+  @@index([tenant_id])
+  @@index([is_deleted])
+  @@map("gen_table")
+}
+
+model gen_table_column {
+  column_id         String     @id @default(uuid()) @db.Uuid
+  table_id          String     @db.Uuid
+  column_name       String     @db.VarChar(200)
+  column_comment    String?    @db.VarChar(500)
+  column_type       String     @db.VarChar(100) // varchar(64) / int4 / uuid ...
+  ts_type           String?    @db.VarChar(50) // string / number / Date ...
+  field_name        String?    @db.VarChar(200) // camelCase
+  is_pk             String     @default("0") @db.Char(1)
+  is_increment      String     @default("0") @db.Char(1)
+  is_required       String     @default("0") @db.Char(1)
+  is_insert         String     @default("1") @db.Char(1)
+  is_edit           String     @default("1") @db.Char(1)
+  is_list           String     @default("1") @db.Char(1)
+  is_query          String     @default("0") @db.Char(1)
+  is_sort           String     @default("0") @db.Char(1) // 是否参与排序
+  query_type        String     @default("EQ") @db.VarChar(20)
+  html_type         String     @default("input") @db.VarChar(20)
+  dict_type         String?    @db.VarChar(200)
+  default_value     String?    @db.VarChar(200)
+  sort              Int?
+  is_deleted        Int        @default(0) @db.SmallInt
+  genTable          gen_table? @relation(fields: [gen_tableTable_id], references: [table_id])
+  gen_tableTable_id String?    @db.Uuid
+
+  @@index([table_id])
+  @@index([table_id, is_deleted])
+  @@map("gen_table_column")
+}

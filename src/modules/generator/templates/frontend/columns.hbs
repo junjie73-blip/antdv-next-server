@@ -1,0 +1,29 @@
+import { h } from "vue";
+import { Tag } from "antdv-next";
+import type { BasicColumn } from "@/components/business/Table/types";
+import type { {{className}} } from "./types";
+
+/**
+ * {{functionName}} 表格列
+ */
+export function get{{className}}Columns(): BasicColumn[] {
+  return [
+{{#each listColumns}}
+    {
+      title: "{{columnComment}}",
+      dataIndex: "{{fieldName}}",
+      key: "{{fieldName}}",
+  {{#if (eq isPk "1")}}
+      width: 200,
+      ellipsis: true,
+  {{/if}}
+  {{#if (eq htmlType "switch")}}
+      customRender: ({ text }: { text: boolean }) =>
+        h(Tag, { color: text ? "green" : "default" }, () =>
+          text ? "是" : "否",
+        ),
+  {{/if}}
+    },
+{{/each}}
+  ];
+}

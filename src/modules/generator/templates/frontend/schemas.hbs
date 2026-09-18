@@ -1,0 +1,49 @@
+import { computed, type ComputedRef } from "vue";
+import type { FormSchema } from "@/components/business/Form/types";
+
+/** {{functionName}} 搜索表单 */
+export function use{{className}}SearchSchemas(): ComputedRef<FormSchema[]> {
+  return computed<FormSchema[]>(() => [
+{{#each queryColumns}}
+    {
+      field: "{{fieldName}}",
+      label: "{{columnComment}}",
+      component: "{{#if (eq htmlType 'datetime')}}DatePicker{{else if (eq htmlType 'inputNumber')}}InputNumber{{else if (eq htmlType 'select')}}Select{{else if (eq htmlType 'radio')}}RadioGroup{{else}}Input{{/if}}",
+      componentProps: {
+        placeholder: "{{#if (eq htmlType 'input')}}请输入{{else}}请选择{{/if}}{{columnComment}}",
+        allowClear: true,
+  {{#if (eq htmlType "datetime")}}
+        valueFormat: "YYYY-MM-DD HH:mm:ss",
+  {{/if}}
+  {{#if (eq htmlType "inputNumber")}}
+        class: "w-full",
+  {{/if}}
+      },
+      colProps: { span: 6 },
+    },
+{{/each}}
+  ]);
+}
+
+/** {{functionName}} 新增/编辑表单 */
+export function use{{className}}FormSchemas(): ComputedRef<FormSchema[]> {
+  return computed<FormSchema[]>(() => [
+{{#each formColumns}}
+    {
+      field: "{{fieldName}}",
+      label: "{{columnComment}}",
+      component: "{{#if (eq htmlType 'textarea')}}InputTextArea{{else if (eq htmlType 'inputNumber')}}InputNumber{{else if (eq htmlType 'select')}}Select{{else if (eq htmlType 'radio')}}RadioGroup{{else if (eq htmlType 'checkbox')}}CheckboxGroup{{else if (eq htmlType 'datetime')}}DatePicker{{else if (eq htmlType 'switch')}}Switch{{else if (eq htmlType 'imageUpload')}}Upload{{else if (eq htmlType 'fileUpload')}}Upload{{else}}Input{{/if}}",
+  {{#if (eq isRequired "1")}}
+      required: true,
+  {{/if}}
+  {{#if (eq htmlType "datetime")}}
+      componentProps: { valueFormat: "YYYY-MM-DD HH:mm:ss" },
+  {{/if}}
+  {{#if (eq htmlType "textarea")}}
+      componentProps: { rows: 3, placeholder: "请输入{{columnComment}}" },
+  {{/if}}
+      colProps: { span: 12 },
+    },
+{{/each}}
+  ]);
+}

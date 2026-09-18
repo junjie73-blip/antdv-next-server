@@ -1,0 +1,35 @@
+import type { ActionItem } from "@/components/business/Table/types";
+import type { {{className}} } from "./types";
+
+export interface {{className}}ActionContext {
+  onEdit: (record: {{className}}) => void;
+  onDelete: (record: {{className}}) => void | Promise<void>;
+}
+
+/**
+ * {{functionName}} 行操作
+ *
+ * 保持无状态，副作用通过 ctx 注入
+ */
+export function get{{className}}Actions(
+  record: {{className}},
+  ctx: {{className}}ActionContext,
+): ActionItem[] {
+  return [
+    {
+      label: "编辑",
+      icon: "ant-design:edit-outlined",
+      onClick: () => ctx.onEdit(record),
+    },
+    {
+      label: "删除",
+      icon: "ant-design:delete-outlined",
+      danger: true,
+      popConfirm: {
+        title: "删除{{functionName}}",
+        content: "确定删除该条记录吗？",
+        confirm: () => ctx.onDelete(record),
+      },
+    },
+  ];
+}

@@ -79,7 +79,9 @@ export const ModelName = {
   sys_notice_send_log: 'sys_notice_send_log',
   sys_password_history: 'sys_password_history',
   sys_todo_group: 'sys_todo_group',
-  sys_user_tenant: 'sys_user_tenant'
+  sys_user_tenant: 'sys_user_tenant',
+  gen_table: 'gen_table',
+  gen_table_column: 'gen_table_column'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -609,6 +611,57 @@ export const Sys_user_tenantScalarFieldEnum = {
 } as const
 
 export type Sys_user_tenantScalarFieldEnum = (typeof Sys_user_tenantScalarFieldEnum)[keyof typeof Sys_user_tenantScalarFieldEnum]
+
+
+export const Gen_tableScalarFieldEnum = {
+  table_id: 'table_id',
+  table_name: 'table_name',
+  table_comment: 'table_comment',
+  class_name: 'class_name',
+  tpl_category: 'tpl_category',
+  package_name: 'package_name',
+  module_name: 'module_name',
+  business_name: 'business_name',
+  function_name: 'function_name',
+  function_author: 'function_author',
+  table_status: 'table_status',
+  tenant_id: 'tenant_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Gen_tableScalarFieldEnum = (typeof Gen_tableScalarFieldEnum)[keyof typeof Gen_tableScalarFieldEnum]
+
+
+export const Gen_table_columnScalarFieldEnum = {
+  column_id: 'column_id',
+  table_id: 'table_id',
+  column_name: 'column_name',
+  column_comment: 'column_comment',
+  column_type: 'column_type',
+  ts_type: 'ts_type',
+  field_name: 'field_name',
+  is_pk: 'is_pk',
+  is_increment: 'is_increment',
+  is_required: 'is_required',
+  is_insert: 'is_insert',
+  is_edit: 'is_edit',
+  is_list: 'is_list',
+  is_query: 'is_query',
+  is_sort: 'is_sort',
+  query_type: 'query_type',
+  html_type: 'html_type',
+  dict_type: 'dict_type',
+  default_value: 'default_value',
+  sort: 'sort',
+  is_deleted: 'is_deleted',
+  gen_tableTable_id: 'gen_tableTable_id'
+} as const
+
+export type Gen_table_columnScalarFieldEnum = (typeof Gen_table_columnScalarFieldEnum)[keyof typeof Gen_table_columnScalarFieldEnum]
 
 
 export const SortOrder = {

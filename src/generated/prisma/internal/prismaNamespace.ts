@@ -425,7 +425,9 @@ export const ModelName = {
   sys_notice_send_log: 'sys_notice_send_log',
   sys_password_history: 'sys_password_history',
   sys_todo_group: 'sys_todo_group',
-  sys_user_tenant: 'sys_user_tenant'
+  sys_user_tenant: 'sys_user_tenant',
+  gen_table: 'gen_table',
+  gen_table_column: 'gen_table_column'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -441,7 +443,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant"
+    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2591,6 +2593,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    gen_table: {
+      payload: Prisma.$gen_tablePayload<ExtArgs>
+      fields: Prisma.gen_tableFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.gen_tableFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.gen_tableFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>
+        }
+        findFirst: {
+          args: Prisma.gen_tableFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.gen_tableFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>
+        }
+        findMany: {
+          args: Prisma.gen_tableFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>[]
+        }
+        create: {
+          args: Prisma.gen_tableCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>
+        }
+        createMany: {
+          args: Prisma.gen_tableCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.gen_tableCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>[]
+        }
+        delete: {
+          args: Prisma.gen_tableDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>
+        }
+        update: {
+          args: Prisma.gen_tableUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>
+        }
+        deleteMany: {
+          args: Prisma.gen_tableDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.gen_tableUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.gen_tableUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>[]
+        }
+        upsert: {
+          args: Prisma.gen_tableUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_tablePayload>
+        }
+        aggregate: {
+          args: Prisma.Gen_tableAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGen_table>
+        }
+        groupBy: {
+          args: Prisma.gen_tableGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Gen_tableGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.gen_tableCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Gen_tableCountAggregateOutputType> | number
+        }
+      }
+    }
+    gen_table_column: {
+      payload: Prisma.$gen_table_columnPayload<ExtArgs>
+      fields: Prisma.gen_table_columnFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.gen_table_columnFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.gen_table_columnFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>
+        }
+        findFirst: {
+          args: Prisma.gen_table_columnFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.gen_table_columnFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>
+        }
+        findMany: {
+          args: Prisma.gen_table_columnFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>[]
+        }
+        create: {
+          args: Prisma.gen_table_columnCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>
+        }
+        createMany: {
+          args: Prisma.gen_table_columnCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.gen_table_columnCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>[]
+        }
+        delete: {
+          args: Prisma.gen_table_columnDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>
+        }
+        update: {
+          args: Prisma.gen_table_columnUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>
+        }
+        deleteMany: {
+          args: Prisma.gen_table_columnDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.gen_table_columnUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.gen_table_columnUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>[]
+        }
+        upsert: {
+          args: Prisma.gen_table_columnUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$gen_table_columnPayload>
+        }
+        aggregate: {
+          args: Prisma.Gen_table_columnAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGen_table_column>
+        }
+        groupBy: {
+          args: Prisma.gen_table_columnGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Gen_table_columnGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.gen_table_columnCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Gen_table_columnCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3143,6 +3293,57 @@ export const Sys_user_tenantScalarFieldEnum = {
 export type Sys_user_tenantScalarFieldEnum = (typeof Sys_user_tenantScalarFieldEnum)[keyof typeof Sys_user_tenantScalarFieldEnum]
 
 
+export const Gen_tableScalarFieldEnum = {
+  table_id: 'table_id',
+  table_name: 'table_name',
+  table_comment: 'table_comment',
+  class_name: 'class_name',
+  tpl_category: 'tpl_category',
+  package_name: 'package_name',
+  module_name: 'module_name',
+  business_name: 'business_name',
+  function_name: 'function_name',
+  function_author: 'function_author',
+  table_status: 'table_status',
+  tenant_id: 'tenant_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Gen_tableScalarFieldEnum = (typeof Gen_tableScalarFieldEnum)[keyof typeof Gen_tableScalarFieldEnum]
+
+
+export const Gen_table_columnScalarFieldEnum = {
+  column_id: 'column_id',
+  table_id: 'table_id',
+  column_name: 'column_name',
+  column_comment: 'column_comment',
+  column_type: 'column_type',
+  ts_type: 'ts_type',
+  field_name: 'field_name',
+  is_pk: 'is_pk',
+  is_increment: 'is_increment',
+  is_required: 'is_required',
+  is_insert: 'is_insert',
+  is_edit: 'is_edit',
+  is_list: 'is_list',
+  is_query: 'is_query',
+  is_sort: 'is_sort',
+  query_type: 'query_type',
+  html_type: 'html_type',
+  dict_type: 'dict_type',
+  default_value: 'default_value',
+  sort: 'sort',
+  is_deleted: 'is_deleted',
+  gen_tableTable_id: 'gen_tableTable_id'
+} as const
+
+export type Gen_table_columnScalarFieldEnum = (typeof Gen_table_columnScalarFieldEnum)[keyof typeof Gen_table_columnScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3408,6 +3609,8 @@ export type GlobalOmitConfig = {
   sys_password_history?: Prisma.sys_password_historyOmit
   sys_todo_group?: Prisma.sys_todo_groupOmit
   sys_user_tenant?: Prisma.sys_user_tenantOmit
+  gen_table?: Prisma.gen_tableOmit
+  gen_table_column?: Prisma.gen_table_columnOmit
 }
 
 /* Types for Logging */

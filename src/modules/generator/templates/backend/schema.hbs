@@ -1,0 +1,38 @@
+import { z } from "zod";
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+
+extendZodWithOpenApi(z);
+
+/**
+ * {{functionName}} 创建入参
+ */
+export const {{className}}CreateSchema = z
+  .object({
+{{#each formColumns}}
+  {{#if (eq isInsert "1")}}
+    {{fieldName}}: {{zodType}}.openapi({ description: "{{columnComment}}" }),
+  {{/if}}
+{{/each}}
+  })
+  .openapi("{{className}}Create");
+
+/**
+ * {{functionName}} 更新入参
+ */
+export const {{className}}UpdateSchema = {{className}}CreateSchema
+  .partial()
+  .openapi("{{className}}Update");
+
+/**
+ * {{functionName}} 列表查询入参
+ */
+export const {{className}}ListSchema = z
+  .object({
+    pageNum: z.number().int().positive().default(1),
+    pageSize: z.number().int().positive().max(100).default(10),
+    keyword: z.string().optional(),
+{{#each queryColumns}}
+    {{fieldName}}: {{zodType}}.optional().openapi({ description: "{{columnComment}}" }),
+{{/each}}
+  })
+  .openapi("{{className}}List");

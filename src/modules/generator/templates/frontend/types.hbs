@@ -1,0 +1,23 @@
+/** {{functionName}} */
+export interface {{className}} {
+{{#each columns}}
+  /** {{columnComment}} */
+  {{fieldName}}{{#if (ne isRequired "1")}}?{{/if}}: {{tsType}};
+{{/each}}
+}
+
+/** 列表查询参数 */
+export interface {{className}}ListParams {
+  pageNum?: number;
+  pageSize?: number;
+  keyword?: string;
+{{#each queryColumns}}
+  {{fieldName}}?: {{tsType}};
+{{/each}}
+}
+
+/** 创建参数 */
+export type {{className}}CreateParams = Omit<{{className}}, "{{pkColumn.fieldName}}">;
+
+/** 更新参数 */
+export type {{className}}UpdateParams = Partial<{{className}}CreateParams>;

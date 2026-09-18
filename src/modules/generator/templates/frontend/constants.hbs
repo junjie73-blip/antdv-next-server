@@ -1,0 +1,15 @@
+import { cn } from "@/utils/cn";
+
+export const CONTAINER_CLASS = cn("space-y-4");
+
+export const CARD_CLASS = cn(
+  "rounded bg-white p-4",
+  "dark:bg-gray-900",
+);
+{{#if hasDict}}
+
+/** 字典映射（生成时占位，请按实际字典替换） */
+export const {{className}}_DICT_MAP: Record<string, string> = {
+  // TODO: 从 useDictStore 或接口加载
+};
+{{/if}}

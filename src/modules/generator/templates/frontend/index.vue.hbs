@@ -1,0 +1,135 @@
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { message } from "antdv-next";
+import { BasicTable, useTable } from "@/components/business/Table";
+import { BasicForm, useForm } from "@/components/business/Form";
+import {
+  create{{className}},
+  delete{{className}},
+  get{{className}}List,
+  update{{className}},
+} from "@/api/{{moduleName}}/{{businessName}}";
+import type { {{className}}, {{className}}CreateParams, {{className}}ListParams } from "./types";
+import { CONTAINER_CLASS } from "./constants";
+import { get{{className}}Columns } from "./columns";
+import {
+  use{{className}}FormSchemas,
+  use{{className}}SearchSchemas,
+} from "./schemas";
+import {
+  get{{className}}Actions,
+  type {{className}}ActionContext,
+} from "./actions";
+
+defineOptions({ name: "{{className}}Page" });
+
+// ============================================================
+// 表格
+// ============================================================
+const [tableRegister, tableMethods] = useTable();
+
+async function fetchApi(params: Record<string, unknown>) {
+  return await get{{className}}List(params as {{className}}ListParams);
+}
+
+const columns = get{{className}}Columns();
+
+// ============================================================
+// 表单
+// ============================================================
+const searchSchemas = use{{className}}SearchSchemas();
+const formSchemas = use{{className}}FormSchemas();
+const [formRegister, formMethods] = useForm();
+
+// ============================================================
+// 弹窗
+// ============================================================
+const modalVisible = ref(false);
+const isEditing = ref(false);
+const editingId = ref<string | null>(null);
+const modalTitle = computed(() =>
+  isEditing.value ? "编辑{{functionName}}" : "新增{{functionName}}",
+);
+
+function handleAdd() {
+  isEditing.value = false;
+  editingId.value = null;
+  modalVisible.value = true;
+  void formMethods.resetFields();
+}
+
+async function handleEdit(record: {{className}}) {
+  isEditing.value = true;
+  editingId.value = String(record.{{pkColumn.fieldName}});
+  modalVisible.value = true;
+  await formMethods.setFieldsValue({ ...record } as never);
+}
+
+async function handleSave() {
+  const values = (await formMethods.validate()) as {{className}}CreateParams;
+  if (isEditing.value && editingId.value) {
+    await update{{className}}(editingId.value, values);
+    message.success("更新成功");
+  } else {
+    await create{{className}}(values);
+    message.success("创建成功");
+  }
+  modalVisible.value = false;
+  tableMethods.reload();
+}
+
+async function handleDelete(record: {{className}}) {
+  await delete{{className}}(String(record.{{pkColumn.fieldName}}));
+  message.success("删除成功");
+  tableMethods.reload();
+}
+
+// ============================================================
+// 行操作
+// ============================================================
+const actionCtx: {{className}}ActionContext = {
+  onEdit: (record) => void handleEdit(record),
+  onDelete: (record) => handleDelete(record),
+};
+
+const actionColumn = {
+  width: 180,
+};
+</script>
+
+<template>
+  <div :class="CONTAINER_CLASS">
+    <BasicTable
+      :columns="columns"
+      :api="fetchApi"
+      :immediate="true"
+      :use-search-form="true"
+      :form-config="{ schemas: searchSchemas, labelWidth: 80 }"
+      :action-column="actionColumn"
+      row-key="{{pkColumn.fieldName}}"
+      :pagination="{ pageSize: 10, showSizeChanger: true }"
+      @register="tableRegister"
+    >
+      <template #toolbar>
+        <a-button type="primary" @click="handleAdd">新增</a-button>
+      </template>
+      <template #action="{ record }">
+        <TableAction :record="record" :actions="get{{className}}Actions(record, actionCtx)" />
+      </template>
+    </BasicTable>
+
+    <a-modal
+      v-model:open="modalVisible"
+      :title="modalTitle"
+      width="720px"
+      @ok="handleSave"
+    >
+      <BasicForm
+        :schemas="formSchemas"
+        :grid="{ cols: 2 }"
+        :show-action-button-group="false"
+        @register="formRegister"
+      />
+    </a-modal>
+  </div>
+</template>

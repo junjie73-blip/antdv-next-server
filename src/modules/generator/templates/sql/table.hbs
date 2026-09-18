@@ -1,0 +1,28 @@
+-- ============================================================
+-- {{tableComment}}
+-- 表名: {{tableName}}
+-- 生成时间: {{datetime}}
+-- ============================================================
+
+{{#if tableComment}}
+COMMENT ON TABLE "{{tableName}}" IS '{{tableComment}}';
+{{/if}}
+CREATE TABLE IF NOT EXISTS "{{tableName}}" (
+{{#each columns}}
+  "{{columnName}}" {{columnType}}{{#if defaultValue}} DEFAULT {{defaultValue}}{{/if}}{{#if (eq isRequired "1")}} NOT NULL{{/if}}{{#unless @last}},{{/unless}}
+{{/each}}
+{{#if pkColumns.length}}
+  ,PRIMARY KEY ({{#each pkColumns}}"{{columnName}}"{{#unless @last}}, {{/unless}}{{/each}})
+{{/if}}
+);
+
+{{#each columns}}
+{{#if columnComment}}
+COMMENT ON COLUMN "{{../tableName}}"."{{columnName}}" IS '{{columnComment}}';
+{{/if}}
+{{/each}}
+
+{{#if columns.length}}
+CREATE INDEX IF NOT EXISTS "idx_{{tableName}}_tenant" ON "{{tableName}}" (tenant_id);
+CREATE INDEX IF NOT EXISTS "idx_{{tableName}}_deleted" ON "{{tableName}}" (is_deleted);
+{{/if}}

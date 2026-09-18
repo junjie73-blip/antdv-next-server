@@ -1,0 +1,38 @@
+-- ============================================================
+-- {{functionName}} 菜单权限 SQL
+-- 表名: {{tableName}}
+-- 生成时间: {{datetime}}
+-- 说明: 执行前请确认 parent_id 对应的父菜单
+-- ============================================================
+
+-- 菜单
+INSERT INTO sys_menu (
+  menu_id, menu_name, parent_id, order_num, path, component,
+  menu_type, visible, status, perms, icon,
+  tenant_id, created_at, updated_at, is_deleted
+) VALUES (
+  gen_random_uuid(),
+  '{{functionName}}',
+  NULL,
+  1,
+  '{{businessName}}',
+  '{{moduleName}}/{{businessName}}/index',
+  'C',
+  '1',
+  '0',
+  '{{businessName}}:list',
+  '#',
+  '{{tenantId}}',
+  NOW(), NOW(), 0
+);
+
+-- 按钮权限
+INSERT INTO sys_menu (
+  menu_id, menu_name, parent_id, order_num, path, component,
+  menu_type, visible, status, perms, icon,
+  tenant_id, created_at, updated_at, is_deleted
+) VALUES
+  (gen_random_uuid(), '{{functionName}}查询', NULL, 1, '', '', 'F', '1', '0', '{{businessName}}:query',  '#', '{{tenantId}}', NOW(), NOW(), 0),
+  (gen_random_uuid(), '{{functionName}}新增', NULL, 2, '', '', 'F', '1', '0', '{{businessName}}:create', '#', '{{tenantId}}', NOW(), NOW(), 0),
+  (gen_random_uuid(), '{{functionName}}修改', NULL, 3, '', '', 'F', '1', '0', '{{businessName}}:update', '#', '{{tenantId}}', NOW(), NOW(), 0),
+  (gen_random_uuid(), '{{functionName}}删除', NULL, 4, '', '', 'F', '1', '0', '{{businessName}}:delete', '#', '{{tenantId}}', NOW(), NOW(), 0);

@@ -12,25 +12,26 @@ import Controller_9 from './dept/controller.js';
 import Controller_10 from './dict-data/controller.js';
 import Controller_11 from './dict-type/controller.js';
 import Controller_12 from './file/controller.js';
-import Controller_13 from './ip-rule/controller.js';
-import Controller_14 from './job/controller.js';
-import Controller_15 from './job/job-log.controller.js';
-import Controller_16 from './login-log/controller.js';
-import Controller_17 from './menu/controller.js';
-import Controller_18 from './mfa/controller.js';
-import Controller_19 from './notice/channel.controller.js';
-import Controller_20 from './notice/controller.js';
-import Controller_21 from './notice/my-notice.controller.js';
-import Controller_22 from './online/controller.js';
-import Controller_23 from './permission/controller.js';
-import Controller_24 from './role/controller.js';
-import Controller_25 from './server/controller.js';
-import Controller_26 from './tenant/controller.js';
-import Controller_27 from './todo/controller.js';
-import Controller_28 from './todo-group/controller.js';
-import Controller_29 from './upload/controller.js';
-import Controller_30 from './user/controller.js';
-import Controller_31 from './workbench/controller.js';
+import Controller_13 from './generator/controller.js';
+import Controller_14 from './ip-rule/controller.js';
+import Controller_15 from './job/controller.js';
+import Controller_16 from './job/job-log.controller.js';
+import Controller_17 from './login-log/controller.js';
+import Controller_18 from './menu/controller.js';
+import Controller_19 from './mfa/controller.js';
+import Controller_20 from './notice/channel.controller.js';
+import Controller_21 from './notice/controller.js';
+import Controller_22 from './notice/my-notice.controller.js';
+import Controller_23 from './online/controller.js';
+import Controller_24 from './permission/controller.js';
+import Controller_25 from './role/controller.js';
+import Controller_26 from './server/controller.js';
+import Controller_27 from './tenant/controller.js';
+import Controller_28 from './todo/controller.js';
+import Controller_29 from './todo-group/controller.js';
+import Controller_30 from './upload/controller.js';
+import Controller_31 from './user/controller.js';
+import Controller_32 from './workbench/controller.js';
 
 export const controllers = [
   Controller_0,
@@ -65,4 +66,5 @@ export const controllers = [
   Controller_29,
   Controller_30,
   Controller_31,
+  Controller_32,
 ];
