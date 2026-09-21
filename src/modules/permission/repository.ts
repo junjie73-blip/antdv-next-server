@@ -1,14 +1,19 @@
 import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { AppError } from "@/middleware/error-handler.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 import { PERMISSION_RESOURCE_TYPES } from "./schema.js";
 
 /** 资源类型白名单（防 DTO 被绕过） */
 const VALID_RESOURCE_TYPES = new Set<string>(PERMISSION_RESOURCE_TYPES);
 export class PermissionRepository extends BaseRepository<any, any, any, any> {
+  async findAll(tenantId: string) {
+    return this.model.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0 },
+    });
+  }
   protected readonly model = prisma.sys_permission;
-  protected readonly primaryKey = "permission_id";
+  protected readonly primaryKey = "perm_id";
   async beforeCreate(data: any, tenantId: string): Promise<any> {
     // ⭐ 资源类型白名单校验
     if (!VALID_RESOURCE_TYPES.has(data.resourceType)) {

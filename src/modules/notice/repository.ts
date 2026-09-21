@@ -4,7 +4,7 @@ import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import {
   keysToCamelCase,
   keysToSnakeCase,
-} from "@/common/utils/case-convert.js";
+} from "@/shared/utils/case-convert.js";
 import { pushNotice } from "./pusher.js";
 import { AppError } from "@/core/errors.js";
 

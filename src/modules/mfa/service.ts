@@ -1,9 +1,9 @@
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
 import { prisma } from "@config/database.js";
-import { encrypt, decrypt } from "@common/utils/crypto.js";
+import { encrypt, decrypt } from "@/core/security/crypto.js";
 import { env as config } from "@config/env.js";
-import { logger } from "@core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 import bcryptjs from "bcryptjs";
 import {
   MFASecretResult,

@@ -4,8 +4,8 @@ import { emailChannel } from "./email.js";
 import { smsChannel } from "./sms.js";
 import { webhookChannel } from "./webhook.js";
 import { prisma } from "@/config/database.js";
-import { logger } from "@core/logger/index.js";
-import { sendAlert } from "@/core/alert/index.js";
+import { logger } from "@/platform/logger/index.js";
+import { sendAlert } from "@/platform/alert/index.js";
 
 const channelFailureCounter = new Map<string, number>();
 const REGISTRY: Record<string, NoticeChannel> = {

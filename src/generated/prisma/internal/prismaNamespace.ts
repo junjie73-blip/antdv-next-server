@@ -427,7 +427,10 @@ export const ModelName = {
   sys_todo_group: 'sys_todo_group',
   sys_user_tenant: 'sys_user_tenant',
   gen_table: 'gen_table',
-  gen_table_column: 'gen_table_column'
+  gen_table_column: 'gen_table_column',
+  sys_upload_task: 'sys_upload_task',
+  sys_audit_daily: 'sys_audit_daily',
+  sys_login_daily: 'sys_login_daily'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -443,7 +446,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column"
+    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2741,6 +2744,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    sys_upload_task: {
+      payload: Prisma.$sys_upload_taskPayload<ExtArgs>
+      fields: Prisma.sys_upload_taskFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_upload_taskFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_upload_taskFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_upload_taskFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_upload_taskFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>
+        }
+        findMany: {
+          args: Prisma.sys_upload_taskFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>[]
+        }
+        create: {
+          args: Prisma.sys_upload_taskCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>
+        }
+        createMany: {
+          args: Prisma.sys_upload_taskCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_upload_taskCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_upload_taskDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>
+        }
+        update: {
+          args: Prisma.sys_upload_taskUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_upload_taskDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_upload_taskUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_upload_taskUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_upload_taskUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_upload_taskPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_upload_taskAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_upload_task>
+        }
+        groupBy: {
+          args: Prisma.sys_upload_taskGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_upload_taskGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_upload_taskCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_upload_taskCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_audit_daily: {
+      payload: Prisma.$sys_audit_dailyPayload<ExtArgs>
+      fields: Prisma.sys_audit_dailyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_audit_dailyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_audit_dailyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_audit_dailyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_audit_dailyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>
+        }
+        findMany: {
+          args: Prisma.sys_audit_dailyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>[]
+        }
+        create: {
+          args: Prisma.sys_audit_dailyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>
+        }
+        createMany: {
+          args: Prisma.sys_audit_dailyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_audit_dailyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_audit_dailyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>
+        }
+        update: {
+          args: Prisma.sys_audit_dailyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_audit_dailyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_audit_dailyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_audit_dailyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_audit_dailyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_audit_dailyPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_audit_dailyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_audit_daily>
+        }
+        groupBy: {
+          args: Prisma.sys_audit_dailyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_audit_dailyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_audit_dailyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_audit_dailyCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_login_daily: {
+      payload: Prisma.$sys_login_dailyPayload<ExtArgs>
+      fields: Prisma.sys_login_dailyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_login_dailyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_login_dailyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_login_dailyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_login_dailyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>
+        }
+        findMany: {
+          args: Prisma.sys_login_dailyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>[]
+        }
+        create: {
+          args: Prisma.sys_login_dailyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>
+        }
+        createMany: {
+          args: Prisma.sys_login_dailyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_login_dailyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_login_dailyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>
+        }
+        update: {
+          args: Prisma.sys_login_dailyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_login_dailyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_login_dailyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_login_dailyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_login_dailyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_login_dailyPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_login_dailyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_login_daily>
+        }
+        groupBy: {
+          args: Prisma.sys_login_dailyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_login_dailyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_login_dailyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_login_dailyCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3094,6 +3319,7 @@ export const Sys_fileScalarFieldEnum = {
   size: 'size',
   mime_type: 'mime_type',
   uploader: 'uploader',
+  category: 'category',
   created_at: 'created_at',
   updated_at: 'updated_at',
   created_by: 'created_by',
@@ -3344,6 +3570,52 @@ export const Gen_table_columnScalarFieldEnum = {
 export type Gen_table_columnScalarFieldEnum = (typeof Gen_table_columnScalarFieldEnum)[keyof typeof Gen_table_columnScalarFieldEnum]
 
 
+export const Sys_upload_taskScalarFieldEnum = {
+  task_id: 'task_id',
+  upload_id: 'upload_id',
+  file_name: 'file_name',
+  total_chunks: 'total_chunks',
+  status: 'status',
+  progress: 'progress',
+  error_msg: 'error_msg',
+  file_id: 'file_id',
+  url: 'url',
+  size: 'size',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Sys_upload_taskScalarFieldEnum = (typeof Sys_upload_taskScalarFieldEnum)[keyof typeof Sys_upload_taskScalarFieldEnum]
+
+
+export const Sys_audit_dailyScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  stat_date: 'stat_date',
+  operation: 'operation',
+  total_count: 'total_count',
+  fail_count: 'fail_count',
+  avg_time_ms: 'avg_time_ms',
+  p95_time_ms: 'p95_time_ms'
+} as const
+
+export type Sys_audit_dailyScalarFieldEnum = (typeof Sys_audit_dailyScalarFieldEnum)[keyof typeof Sys_audit_dailyScalarFieldEnum]
+
+
+export const Sys_login_dailyScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  stat_date: 'stat_date',
+  total_count: 'total_count',
+  fail_count: 'fail_count',
+  unique_users: 'unique_users'
+} as const
+
+export type Sys_login_dailyScalarFieldEnum = (typeof Sys_login_dailyScalarFieldEnum)[keyof typeof Sys_login_dailyScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3413,6 +3685,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt'
+ */
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt[]'
+ */
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
     
 
 
@@ -3611,6 +3897,9 @@ export type GlobalOmitConfig = {
   sys_user_tenant?: Prisma.sys_user_tenantOmit
   gen_table?: Prisma.gen_tableOmit
   gen_table_column?: Prisma.gen_table_columnOmit
+  sys_upload_task?: Prisma.sys_upload_taskOmit
+  sys_audit_daily?: Prisma.sys_audit_dailyOmit
+  sys_login_daily?: Prisma.sys_login_dailyOmit
 }
 
 /* Types for Logging */

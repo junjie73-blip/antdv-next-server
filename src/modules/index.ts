@@ -1,70 +1,79 @@
-// 此文件由 scripts/generate-modules.ts 自动生成，请勿手动修改
-import Controller_0 from './audit-log/controller.js';
-import Controller_1 from './auth/controller.js';
-import Controller_2 from './auth/menu.controller.js';
-import Controller_3 from './auth/misc.controller.js';
-import Controller_4 from './auth/profile.controller.js';
-import Controller_5 from './auth/tenant-switch.controller.js';
-import Controller_6 from './cache/controller.js';
-import Controller_7 from './config/controller.js';
-import Controller_8 from './dashboard/controller.js';
-import Controller_9 from './dept/controller.js';
-import Controller_10 from './dict-data/controller.js';
-import Controller_11 from './dict-type/controller.js';
-import Controller_12 from './file/controller.js';
-import Controller_13 from './generator/controller.js';
-import Controller_14 from './ip-rule/controller.js';
-import Controller_15 from './job/controller.js';
-import Controller_16 from './job/job-log.controller.js';
-import Controller_17 from './login-log/controller.js';
-import Controller_18 from './menu/controller.js';
-import Controller_19 from './mfa/controller.js';
-import Controller_20 from './notice/channel.controller.js';
-import Controller_21 from './notice/controller.js';
-import Controller_22 from './notice/my-notice.controller.js';
-import Controller_23 from './online/controller.js';
-import Controller_24 from './permission/controller.js';
-import Controller_25 from './role/controller.js';
-import Controller_26 from './server/controller.js';
-import Controller_27 from './tenant/controller.js';
-import Controller_28 from './todo/controller.js';
-import Controller_29 from './todo-group/controller.js';
-import Controller_30 from './upload/controller.js';
-import Controller_31 from './user/controller.js';
-import Controller_32 from './workbench/controller.js';
+// ⚠️ 此文件由 scripts/generate-modules.ts 自动生成，请勿手动修改。
+// 重新生成: pnpm generate:modules
+// CI 校验: pnpm generate:modules:check
+
+import AuditLogController from "./audit-log/controller.js";
+import AuthLoginController from "./auth/controller/login.controller.js";
+import AuthMenuController from "./auth/controller/menu.controller.js";
+import AuthMiscController from "./auth/controller/misc.controller.js";
+import AuthProfileController from "./auth/controller/profile.controller.js";
+import AuthRegisterController from "./auth/controller/register.controller.js";
+import AuthTenantSwitchController from "./auth/controller/tenant-switch.controller.js";
+import CacheController from "./cache/controller.js";
+import ConfigController from "./config/controller.js";
+import DashboardController from "./dashboard/controller.js";
+import DeptController from "./dept/controller.js";
+import DictDataController from "./dict-data/controller.js";
+import DictTypeController from "./dict-type/controller.js";
+import FileController from "./file/controller.js";
+import GeneratorController from "./generator/controller.js";
+import IpRuleController from "./ip-rule/controller.js";
+import JobController from "./job/controller.js";
+import JobJobLogController from "./job/job-log.controller.js";
+import LoginLogController from "./login-log/controller.js";
+import MenuController from "./menu/controller.js";
+import MfaController from "./mfa/controller.js";
+import NoticeChannelController from "./notice/channel.controller.js";
+import NoticeController from "./notice/controller.js";
+import NoticeMyNoticeController from "./notice/my-notice.controller.js";
+import OnlineController from "./online/controller.js";
+import PermissionController from "./permission/controller.js";
+import RbacPermissionController from "./rbac/controller/permission.controller.js";
+import RbacRoleController from "./rbac/controller/role.controller.js";
+import RoleController from "./role/controller.js";
+import ServerController from "./server/controller.js";
+import TenantController from "./tenant/controller.js";
+import TodoGroupController from "./todo-group/controller.js";
+import TodoController from "./todo/controller.js";
+import UploadController from "./upload/controller.js";
+import UserController from "./user/controller.js";
+import WorkbenchController from "./workbench/controller.js";
 
 export const controllers = [
-  Controller_0,
-  Controller_1,
-  Controller_2,
-  Controller_3,
-  Controller_4,
-  Controller_5,
-  Controller_6,
-  Controller_7,
-  Controller_8,
-  Controller_9,
-  Controller_10,
-  Controller_11,
-  Controller_12,
-  Controller_13,
-  Controller_14,
-  Controller_15,
-  Controller_16,
-  Controller_17,
-  Controller_18,
-  Controller_19,
-  Controller_20,
-  Controller_21,
-  Controller_22,
-  Controller_23,
-  Controller_24,
-  Controller_25,
-  Controller_26,
-  Controller_27,
-  Controller_28,
-  Controller_29,
-  Controller_30,
-  Controller_31,
-  Controller_32,
-];
+  AuditLogController,
+  AuthLoginController,
+  AuthMenuController,
+  AuthMiscController,
+  AuthProfileController,
+  AuthRegisterController,
+  AuthTenantSwitchController,
+  CacheController,
+  ConfigController,
+  DashboardController,
+  DeptController,
+  DictDataController,
+  DictTypeController,
+  FileController,
+  GeneratorController,
+  IpRuleController,
+  JobController,
+  JobJobLogController,
+  LoginLogController,
+  MenuController,
+  MfaController,
+  NoticeChannelController,
+  NoticeController,
+  NoticeMyNoticeController,
+  OnlineController,
+  PermissionController,
+  RbacPermissionController,
+  RbacRoleController,
+  RoleController,
+  ServerController,
+  TenantController,
+  TodoGroupController,
+  TodoController,
+  UploadController,
+  UserController,
+  WorkbenchController,
+] as const;

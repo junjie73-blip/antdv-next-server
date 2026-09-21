@@ -99,7 +99,15 @@ export const PermissionListSchema = z
     permCode: z.string().optional(),
     permName: z.string().optional(),
     resourceType: resourceTypeSchema.optional(),
-    status: z.string().optional(),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .optional()
+      .openapi({ description: "状态过滤" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("PermissionList");
 

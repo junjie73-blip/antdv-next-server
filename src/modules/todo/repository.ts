@@ -1,6 +1,6 @@
 import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
-import { AppError } from "@/middleware/error-handler.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 
 export class TodoRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_todo;

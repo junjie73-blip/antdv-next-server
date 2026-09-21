@@ -4,7 +4,7 @@ import { z } from "zod";
 import { GenTableRepository } from "./repository.js";
 import { BaseService } from "@/core/base/service.js";
 import { AppError, ConflictError, ValidationError } from "@/core/errors.js";
-import { logger } from "@/core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 import { prisma } from "@/config/database.js";
 import type { GenTableCreateSchema, GenTableUpdateSchema } from "./schema.js";
 import type { TableDdl, TemplateColumn } from "./types.js";
@@ -24,7 +24,7 @@ import {
 import { buildCreateTableDdl } from "./utils/db-ddl-builder.js";
 import { renderTemplate } from "./utils/template-engine.js";
 import { tableExists } from "./utils/db-metadata.js";
-import { keysToSnakeCase } from "@/common/utils/case-convert.js";
+import { keysToSnakeCase } from "@/shared/utils/case-convert.js";
 
 type CreateInput = z.infer<typeof GenTableCreateSchema>;
 type UpdateInput = z.infer<typeof GenTableUpdateSchema>;

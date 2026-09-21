@@ -12,9 +12,9 @@ import {
   ApiResponse,
   ApiBody,
 } from "@core/decorator/index.js";
-import { authMiddleware } from "@middleware/auth.js";
+import { authMiddleware } from "@/middleware/security/auth.js";
 import * as mfaService from "./service.js";
-import { logger } from "@core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 
 const TokenSchema = z
   .object({

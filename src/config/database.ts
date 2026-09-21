@@ -1,58 +1,50 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client.js";
-import { logger } from "@/core/logger/logger.js";
-import { dbQueryDuration } from "@/core/metrics/index.js";
-import { sendAlert } from "@/core/alert/index.js";
-const SLOW_QUERY_MS = 5000;
+import { logger } from "@/platform/logger/logger.js";
+import { sendAlert } from "@/platform/alert/index.js";
+import { env } from "./env.js";
+
+const SLOW_QUERY_MS = 500;
 const DB_FAIL_THRESHOLD = 10;
 
 let consecutiveFailures = 0;
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = env.DATABASE_URL;
+  const adapter = new PrismaPg({
+    connectionString,
+    max: Number(env.DB_POOL_MAX),
+    idleTimeoutMillis: Number(env.DB_IDLE_TIMEOUT_MS),
+    connectionTimeoutMillis: Number(env.DB_CONNECT_TIMEOUT_MS),
+  });
 
-  const adapter = new PrismaPg({ connectionString });
-  // 本地开发：使用标准 Prisma Client（依赖 pg）
   return new PrismaClient({
     adapter,
-    transactionOptions: {
-      maxWait: 5000,
-      timeout: 15000,
-    },
-    log: [
-      {
-        emit: "event",
-        level: "query",
-      },
-    ],
+    transactionOptions: { maxWait: 5000, timeout: 15000 },
+    log: [{ emit: "event", level: "query" }],
   });
 }
-const prisma = createPrismaClient();
+
+export const prisma = createPrismaClient();
 
 prisma.$on("query", (e) => {
-  if (process.env.NODE_ENV !== "production") {
+  if (env.NODE_ENV !== "production") {
     logger.debug(
       { duration: e.duration, query: e.query.slice(0, 200) },
       "prisma query",
     );
   }
-
-  // 慢查询告警
   if (e.duration > SLOW_QUERY_MS) {
     void sendAlert({
       level: "warning",
       title: "slow_query",
       message: `慢查询 ${e.duration}ms`,
       source: "database",
-      data: {
-        duration: e.duration,
-        query: e.query.slice(0, 500),
-      },
+      data: { duration: e.duration, query: e.query.slice(0, 500) },
     });
   }
 });
-const originalError = prisma.$on.bind(prisma);
-// 或在 error handler 里做：
+
 export async function withDbHealth<T>(fn: () => Promise<T>): Promise<T> {
   try {
     const result = await fn();
@@ -72,4 +64,3 @@ export async function withDbHealth<T>(fn: () => Promise<T>): Promise<T> {
     throw err;
   }
 }
-export { prisma };

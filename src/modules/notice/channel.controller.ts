@@ -11,7 +11,7 @@ import {
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { prisma } from "@/config/database.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { AppError } from "@/core/errors.js";
 import { z } from "zod";
 

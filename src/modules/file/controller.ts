@@ -11,8 +11,9 @@ import { Request, Response } from "express";
 import { FileRepository } from "./repository.js";
 import { FileService } from "./service.js";
 import { FileListSchema } from "./schema.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { BaseController } from "@/core/base/controller.js";
+import { z } from "zod";
 
 @Controller("/file", { tags: ["文件管理"] })
 export default class FileController extends BaseController<any, any, any, any> {
@@ -25,9 +26,10 @@ export default class FileController extends BaseController<any, any, any, any> {
     enableAudit: true,
     defaultPageSize: 10,
     maxPageSize: 100,
+    filterFields: ["fields"],
   };
-  protected readonly createSchema = undefined;
-  protected readonly updateSchema = undefined;
+  protected readonly createSchema = z.object({});
+  protected readonly updateSchema = z.object({});
   protected readonly querySchema = FileListSchema;
 
   @Get("/list")

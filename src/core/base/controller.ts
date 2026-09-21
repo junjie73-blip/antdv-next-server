@@ -1,22 +1,41 @@
 import { Request, Response } from "express";
 import { z, ZodTypeAny } from "zod";
 import dayjs from "dayjs";
-import { success, pageSuccess, error } from "@/common/utils/response.js";
+import { success, pageSuccess, error } from "@/shared/http/response.js";
 import {
   keysToCamelCase,
   keysToSnakeCase,
-} from "@/common/utils/case-convert.js";
-import { BaseRepository } from "./repository.js";
+} from "@/shared/utils/case-convert.js";
+import { BaseRepository, BaseQuery } from "./repository.js";
 import { BaseService } from "./service.js";
-import {
-  IControllerHooks,
-  BaseControllerConfig,
-} from "@/types/base-controller.js";
-import { BaseQuery } from "@/types/base-repository.js";
 import { AppError } from "@/core/errors.js";
-import { Req, Res } from "../decorator/index.js";
-import { logger } from "@core/logger/index.js";
-import { forIn } from "es-toolkit/compat";
+import { logger } from "@/platform/logger/index.js";
+import { getDataScopeWhere } from "../context/index.js";
+
+export interface BaseControllerConfig {
+  routePrefix: string;
+  tags: string[];
+  permissionPrefix: string;
+  enableAudit?: boolean;
+  defaultPageSize?: number;
+  maxPageSize?: number;
+  filterableFields?: string[];
+  keywordFields?: string[];
+  hiddenFields?: string[];
+}
+
+export interface IControllerHooks<T, CreateDto, UpdateDto, QueryDto> {
+  beforeList(query: QueryDto, req: Request): Promise<QueryDto>;
+  afterList(data: T[], req: Request): Promise<T[]>;
+  beforeCreate(dto: CreateDto, req: Request): Promise<CreateDto>;
+  afterCreate(data: T, req: Request): Promise<T>;
+  beforeUpdate(id: string, dto: UpdateDto, req: Request): Promise<UpdateDto>;
+  afterUpdate(data: T, req: Request): Promise<T>;
+  beforeDelete(id: string, req: Request): Promise<boolean>;
+  afterDelete(id: string, req: Request): Promise<void>;
+  beforeDetail(id: string, req: Request): Promise<void>;
+  afterDetail(data: T, req: Request): Promise<T>;
+}
 
 export abstract class BaseController<
   T,
@@ -24,51 +43,36 @@ export abstract class BaseController<
   UpdateDto extends Record<string, unknown>,
   QueryDto extends BaseQuery,
 > implements IControllerHooks<T, CreateDto, UpdateDto, QueryDto> {
-  /** 数据访问（必需） */
   protected abstract readonly repository: BaseRepository<T, any, any, any>;
-
-  /**
-   * 业务服务（可选）
-   * - 简单 CRUD 不实现
-   * - 复杂业务实现，Controller 会优先调用 service 的方法
-   */
   protected readonly service?: BaseService<any>;
-
-  /** 控制器配置（必需） */
   protected abstract readonly config: BaseControllerConfig;
-
   protected abstract readonly createSchema?: ZodTypeAny;
   protected abstract readonly updateSchema?: ZodTypeAny;
 
-  protected readonly querySchema: ZodTypeAny = z.object({
-    pageNum: z.number().default(1),
-    pageSize: z.number().default(10),
-    keyword: z.string().optional(),
-    status: z.string().optional(),
-  });
+  protected readonly querySchema: ZodTypeAny = z
+    .object({
+      pageNum: z.number().default(1),
+      pageSize: z.number().default(10),
+      keyword: z.string().optional(),
+      status: z.string().optional(),
+    })
+    .strict();
 
-  protected readonly idParamSchema = z.object({
-    id: z.string().uuid(),
-  });
+  protected readonly idParamSchema = z.object({ id: z.string().uuid() });
 
-  // ==================== 钩子 ====================
-
+  // ========== 钩子 ==========
   async beforeList(query: QueryDto, _req: Request): Promise<QueryDto> {
     return query;
   }
-
   async afterList(data: T[], _req: Request): Promise<T[]> {
     return this.transformList(data);
   }
-
   async beforeCreate(dto: CreateDto, _req: Request): Promise<CreateDto> {
     return dto;
   }
-
   async afterCreate(data: T, _req: Request): Promise<T> {
     return this.transformOne(data);
   }
-
   async beforeUpdate(
     id: string,
     dto: UpdateDto,
@@ -76,40 +80,38 @@ export abstract class BaseController<
   ): Promise<UpdateDto> {
     return dto;
   }
-
   async afterUpdate(data: T, _req: Request): Promise<T> {
     return this.transformOne(data);
   }
-
   async beforeDelete(_id: string, _req: Request): Promise<boolean> {
     return true;
   }
-
   async afterDelete(_id: string, _req: Request): Promise<void> {}
-
   async beforeDetail(_id: string, _req: Request): Promise<void> {}
-
   async afterDetail(data: T, _req: Request): Promise<T> {
     return this.transformOne(data);
   }
 
-  // ==================== 通用 CRUD ====================
+  // ========== CRUD ==========
 
-  async list(@Req() req: Request, @Res() res: Response): Promise<void> {
+  /** fail-closed：从 ALS 读，缺上下文直接抛 */
+  protected applyDataScope(): void {
+    const where = getDataScopeWhere();
+    this.repository.setDataScope(where);
+  }
+
+  async list(req: Request, res: Response): Promise<void> {
     try {
       const tenantId = req.tenantId;
       if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-      // ⭐ beforeList 先执行（业务可能想改 dataScope）
       let query = this.parseQueryParams(req.query) as QueryDto;
       query.tenantId = tenantId;
       query = await this.beforeList(query, req);
 
-      // ⭐ 再设置 dataScope
-      this.repository.setDataScope((req as any).dataScopeWhere ?? {});
+      this.applyDataScope();
 
       const where = this.buildListWhere(query);
-
       const result = await this.repository.findPage(query, where);
       result.list = await this.afterList(result.list, req);
 
@@ -125,13 +127,13 @@ export abstract class BaseController<
     }
   }
 
-  async detail(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async detail(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const tenantId = req.tenantId;
       if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-      this.repository.setDataScope((req as any).dataScopeWhere ?? {});
+      this.applyDataScope();
       await this.beforeDetail(id, req);
 
       const data = await this.repository.findById(id, tenantId);
@@ -143,17 +145,15 @@ export abstract class BaseController<
     }
   }
 
-  async create(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async create(req: Request, res: Response): Promise<void> {
     try {
       const tenantId = req.tenantId || req.user?.tenantId;
       if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
-
       const userId = req.user?.userId;
 
       let dto = this.parseCreateDto(req.body);
       dto = await this.beforeCreate(dto, req);
 
-      // ⭐ 只转顶层 key，避免嵌套对象被误伤
       const dbData = keysToSnakeCase(dto);
       const result = await this.repository.create(dbData, tenantId, userId);
       const created = await this.afterCreate(result, req);
@@ -163,13 +163,13 @@ export abstract class BaseController<
     }
   }
 
-  async update(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async update(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const tenantId = req.tenantId;
       if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-      this.repository.setDataScope((req as any).dataScopeWhere ?? {});
+      this.applyDataScope();
       let dto = this.parseUpdateDto(req.body);
       dto = await this.beforeUpdate(id, dto, req);
 
@@ -181,41 +181,37 @@ export abstract class BaseController<
         req.user?.userId,
       );
       await this.afterUpdate(result, req);
-
       success(res, null, "更新成功");
     } catch (err) {
       this.handleError(res, err);
     }
   }
 
-  async remove(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async remove(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const tenantId = req.tenantId;
       if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-      this.repository.setDataScope((req as any).dataScopeWhere ?? {});
+      this.applyDataScope();
       const canDelete = await this.beforeDelete(id, req);
       if (!canDelete) throw new AppError("不满足删除条件", 400001, 400);
 
       await this.repository.softDelete(id, tenantId, req.user?.userId);
       await this.afterDelete(id, req);
-
       success(res, null, "删除成功");
     } catch (err) {
       this.handleError(res, err);
     }
   }
 
-  async batchRemove(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async batchRemove(req: Request, res: Response): Promise<void> {
     try {
       const { ids } = req.body;
       const tenantId = req.tenantId;
       if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
-
-      if (!Array.isArray(ids) || ids.length === 0) {
+      if (!Array.isArray(ids) || ids.length === 0)
         throw new AppError("请选择要删除的记录", 400001, 400);
-      }
 
       const result = await this.repository.softDeleteMany(
         ids,
@@ -228,67 +224,79 @@ export abstract class BaseController<
     }
   }
 
-  // ==================== 工具方法 ====================
+  // ========== 工具 ==========
 
   protected parseQueryParams(query: any): QueryDto {
-    const pageNum = Math.max(1, parseInt(query.pageNum, 10) || 1);
+    const parsed: any = this.querySchema.safeParse({
+      ...query,
+      pageNum: Number(query.pageNum) || 1,
+      pageSize: Number(query.pageSize) || this.config.defaultPageSize || 10,
+    });
+    if (!parsed.success) {
+      throw new AppError("查询参数无效", 400001, 400, parsed.error.flatten());
+    }
+    const { pageNum, pageSize, ...rest } = parsed.data;
     const maxSize = this.config.maxPageSize ?? 100;
-    const pageSize = Math.min(
-      maxSize,
-      Math.max(
-        1,
-        parseInt(query.pageSize, 10) || this.config.defaultPageSize || 10,
-      ),
-    );
-    return { ...query, pageNum, pageSize } as QueryDto;
+    return {
+      ...rest,
+      pageNum: Math.max(1, pageNum),
+      pageSize: Math.min(maxSize, Math.max(1, pageSize)),
+    } as QueryDto;
   }
 
   protected parseCreateDto(body: any): CreateDto {
-    return body as CreateDto;
+    if (!this.createSchema)
+      throw new AppError("createSchema 未定义", 500001, 500);
+    const parsed: any = this.createSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new AppError("参数校验失败", 400001, 400, parsed.error.flatten());
+    }
+    return parsed.data as CreateDto;
   }
 
   protected parseUpdateDto(body: any): UpdateDto {
-    return body as UpdateDto;
+    if (!this.updateSchema)
+      throw new AppError("updateSchema 未定义", 500001, 500);
+    const parsed: any = this.updateSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new AppError("参数校验失败", 400001, 400, parsed.error.flatten());
+    }
+    return parsed.data as UpdateDto;
   }
 
   protected buildListWhere(query: QueryDto): any {
     const where: any = {};
-    if (query.status !== undefined) where.status = query.status;
-    forIn(query, (value, key) => {
-      if (!["pageSize", "pageNum", "fields"].includes(key)) {
-        where[key] = value;
+    const allow = this.config.filterableFields ?? ["status", "fields"];
+    for (const key of allow) {
+      if (query[key] !== undefined && query[key] !== "") {
+        where[key] = query[key];
       }
-    });
+    }
+    if (query.keyword && this.config.keywordFields?.length) {
+      where.OR = this.config.keywordFields.map((f) => ({
+        [f]: { contains: query.keyword },
+      }));
+    }
     return keysToSnakeCase(where);
   }
 
-  /**
-   * ⭐ 数据转换：单条
-   */
   protected transformOne(data: T): T {
     const camel = keysToCamelCase<any>(data);
     for (const key in camel) {
       if (camel[key] instanceof Date) {
         camel[key] = dayjs(camel[key]).format("YYYY-MM-DD HH:mm:ss");
       }
-      if (this.config.hiddenFields?.includes(key)) {
-        delete camel[key];
-      }
+      if (this.config.hiddenFields?.includes(key)) delete camel[key];
     }
     return camel as T;
   }
 
-  /**
-   * ⭐ 数据转换：列表
-   */
   protected transformList(data: T[]): T[] {
     return data.map((item) => this.transformOne(item));
   }
 
-  /**
-   * ⭐ 统一错误处理（去掉 @Res() 装饰器）
-   */
   protected handleError(res: Response, err: unknown): void {
+    if (res.headersSent) return;
     if (err instanceof AppError) {
       error(res, err.message, err.code, err.statusCode);
       return;

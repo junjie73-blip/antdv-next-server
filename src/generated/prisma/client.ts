@@ -196,3 +196,18 @@ export type gen_table = Prisma.gen_tableModel
  * 
  */
 export type gen_table_column = Prisma.gen_table_columnModel
+/**
+ * Model sys_upload_task
+ * 
+ */
+export type sys_upload_task = Prisma.sys_upload_taskModel
+/**
+ * Model sys_audit_daily
+ * 每日审计聚合（保留 2 年）
+ */
+export type sys_audit_daily = Prisma.sys_audit_dailyModel
+/**
+ * Model sys_login_daily
+ * 每日登录聚合
+ */
+export type sys_login_daily = Prisma.sys_login_dailyModel

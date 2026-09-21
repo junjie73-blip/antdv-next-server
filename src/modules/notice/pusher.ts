@@ -1,5 +1,5 @@
 import { prisma } from "@/config/database.js";
-import { logger } from "@/core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 import { dispatchNotice } from "./channels/index.js";
 
 export async function pushNotice(

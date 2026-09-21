@@ -2,8 +2,8 @@ import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { NotFoundError } from "@/core/errors.js";
 import type { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
-import { logger } from "@/core/logger/logger.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
+import { logger } from "@/platform/logger/logger.js";
 
 interface GenTableRow {
   table_id: string;

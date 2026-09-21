@@ -18,7 +18,7 @@ import { JobRepository } from "./repository.js";
 import { JobLogRepository } from "./job-log.repository.js";
 import { JobService } from "./service.js";
 import { AppError } from "@/core/errors.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { upload } from "../user/controller.js";
 
 @Controller("/job", { tags: ["定时任务"] })
@@ -45,7 +45,12 @@ export default class JobController extends BaseController<any, any, any, any> {
     remark: z.string().max(512).optional(),
   });
   protected readonly updateSchema = this.createSchema.partial();
-  protected readonly querySchema = z.object({});
+  protected readonly querySchema = z.object({
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
+  });
 
   protected buildListWhere(q: any) {
     const where: any = {};

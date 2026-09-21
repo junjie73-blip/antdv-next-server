@@ -19,11 +19,11 @@ import {
   DeptUpdateSchema,
   DeptListSchema,
 } from "./schema.js";
-import { AppError } from "@/middleware/error-handler.js";
-import { success } from "@/common/utils/response.js";
+import { AppError } from "@/core/errors.js";
+import { success } from "@/shared/http/response.js";
 import { z } from "zod";
-import { upload } from "../user/controller.js";
 import { DeptService } from "./service.js";
+import { upload } from "../user/controller.js";
 
 @Controller("/dept", { tags: ["部门管理"] })
 export default class DeptController extends BaseController<any, any, any, any> {
@@ -45,26 +45,22 @@ export default class DeptController extends BaseController<any, any, any, any> {
     const where: any = {};
     if (query.deptName) where.dept_name = { contains: query.deptName };
     if (query.status !== undefined) where.status = query.status;
-    if (query.parentId) {
-      where.parent_id = query.parentId;
-    }
+    if (query.parentId) where.parent_id = query.parentId;
     return where;
   }
 
-  // 创建前唯一性检查
   async beforeCreate(dto: any, req: Request) {
     dto = await super.beforeCreate(dto, req);
-    await this.service.checkBeforeCreate(dto, req.tenantId!); // ⭐
+    await this.service.checkBeforeCreate(dto, req.tenantId!);
     return dto;
   }
 
   async beforeUpdate(id: string, dto: any, req: Request) {
     dto = await super.beforeUpdate(id, dto, req);
-    await this.service.checkBeforeUpdate(id, dto, req.tenantId!); // ⭐
+    await this.service.checkBeforeUpdate(id, dto, req.tenantId!);
     return dto;
   }
 
-  // 树查询
   @Get("/tree")
   @ApiQuery(
     z.object({
@@ -78,14 +74,13 @@ export default class DeptController extends BaseController<any, any, any, any> {
   async tree(@Req() req: Request, @Res() res: Response) {
     try {
       const onlyEnabled = req.query.onlyEnabled === "1";
-      const data = await this.service.getTree(req.tenantId!, { onlyEnabled }); // ⭐
+      const data = await this.service.getTree(req.tenantId!, { onlyEnabled });
       success(res, data, "获取部门树成功");
     } catch (err) {
       this.handleError(res, err);
     }
   }
 
-  // CRUD 路由
   @Get("/list")
   @ApiOperation("获取部门列表", "平铺列表")
   @ApiQuery(DeptListSchema)
@@ -123,6 +118,7 @@ export default class DeptController extends BaseController<any, any, any, any> {
   async removeDept(@Req() req: Request, @Res() res: Response) {
     return super.remove(req, res);
   }
+
   @Put("/:id/users")
   @ApiOperation("更新部门用户", "批量设置部门下的用户列表")
   @ApiBody(z.object({ userIds: z.array(z.string().uuid()) }))
@@ -130,7 +126,7 @@ export default class DeptController extends BaseController<any, any, any, any> {
   async updateDeptUsers(@Req() req: Request, @Res() res: Response) {
     try {
       const { userIds } = req.body;
-      await this.service.updateDeptUsers(req.params.id, userIds, req.tenantId!); // ⭐
+      await this.service.updateDeptUsers(req.params.id, userIds, req.tenantId!);
       success(res, null, "更新成功");
     } catch (err) {
       this.handleError(res, err);
@@ -145,14 +141,15 @@ export default class DeptController extends BaseController<any, any, any, any> {
       const users = await this.service.getDeptUsers(
         req.params.id,
         req.tenantId!,
-      ); // ⭐
+      );
       success(res, users, "查询成功");
     } catch (err) {
       this.handleError(res, err);
     }
   }
+
   @Get("/export")
-  async exportDepts(@Req() req, @Res() res) {
+  async exportDepts(@Req() req: Request, @Res() res: Response) {
     const buffer = await this.service.exportToExcel(req.tenantId!);
     res.setHeader(
       "Content-Type",
@@ -166,7 +163,7 @@ export default class DeptController extends BaseController<any, any, any, any> {
   }
 
   @Post("/import")
-  async importDepts(@Req() req, @Res() res) {
+  async importDepts(@Req() req: Request, @Res() res: Response) {
     upload.single("file")(req, res, async (err) => {
       if (err)
         return this.handleError(res, new AppError("文件上传失败", 400001, 400));

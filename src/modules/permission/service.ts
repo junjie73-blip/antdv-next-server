@@ -5,11 +5,14 @@ import {
   LABEL_TO_RESOURCE_TYPE,
   needAction,
 } from "./schema.js";
-import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
 import { AppError } from "@/core/errors.js";
 import { BaseService } from "@/core/base/service.js";
+import { generateExcel, parseExcel } from "@/platform/excel/service.js";
 
 export class PermissionService extends BaseService<PermissionRepository> {
+  async getAll(tenantId: string) {
+    return this.repository.findAll(tenantId);
+  }
   constructor(repository: PermissionRepository) {
     super(repository);
   }

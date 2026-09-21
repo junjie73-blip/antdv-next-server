@@ -1,5 +1,5 @@
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
-import { logger } from "@core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 
 export const smsChannel: NoticeChannel = {
   type: "sms",

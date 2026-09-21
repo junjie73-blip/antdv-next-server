@@ -6,12 +6,12 @@ import {
   PermissionMetadata,
 } from "./metadata.js";
 import { ControllerScanner, ScannedController } from "./scanner.js";
-import { registry } from "@core/swagger/registry.js";
+import { registry } from "@/platform/swagger/registry.js";
 import { validateRequest } from "./validator.js";
-import { logger } from "@core/logger/index.js";
-import { checkUserPermissions } from "@/common/utils/permission.js";
-import { requireMfaMiddleware } from "@/middleware/require-mfa.js";
+import { logger } from "@/platform/logger/index.js";
+import { requireMfaMiddleware } from "@/middleware/security/mfa.js";
 import { MFA_METADATA_KEY } from "./require-mfa.js";
+import { checkUserPermissions } from "@/modules/rbac/index.js";
 export class DecoratorRouter {
   private router = Router();
   private scanner: ControllerScanner;
@@ -81,7 +81,12 @@ export class DecoratorRouter {
         if (permissionMetadata.length > 0) {
           const requiredPerms = permissionMetadata.map((p) => p.permission); // 注意是 p.permission
           const hasPermission = await checkUserPermissions(
-            req.user,
+            req.user as {
+              userId: string;
+              tenantId: string;
+              username: string;
+              roles?: string[];
+            },
             requiredPerms,
           );
           if (!hasPermission) {

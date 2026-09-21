@@ -12,9 +12,9 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import { NoticeRepository } from "./repository.js";
 import { NoticeService } from "./service.js";
-import { error, success } from "@/common/utils/response.js";
+import { error, success } from "@/shared/http/response.js";
 import { AppError } from "@/core/errors.js";
-import { logger } from "@/core/logger/logger.js";
+import { logger } from "@/platform/logger/logger.js";
 
 @Controller("/notice", { tags: ["我的消息"] })
 export default class MyNoticeController {

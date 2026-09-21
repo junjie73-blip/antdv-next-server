@@ -1,13 +1,13 @@
 import { DeptRepository } from "./repository.js";
 import { DeptImportRowSchema, DeptExportColumns } from "./schema.js";
-import {
-  parseExcel,
-  generateExcel,
-  importTreeData,
-} from "@/core/excel/excel.service.js";
 import { AppError } from "@/core/errors.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import { BaseService } from "@/core/base/service.js";
+import {
+  generateExcel,
+  parseExcel,
+  importTreeData,
+} from "@/platform/excel/service.js";
 
 export class DeptService extends BaseService<DeptRepository> {
   constructor(repository: DeptRepository) {

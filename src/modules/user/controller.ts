@@ -22,21 +22,17 @@ import {
 } from "./schema.js";
 import { z } from "zod";
 import multer from "multer";
-import { AppError } from "@/middleware/error-handler.js";
-import { success } from "@/common/utils/response.js";
+import { AppError } from "@/middleware/http/error-handler.js";
+import { success } from "@/shared/http/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { prisma } from "@/config/database.js";
-import { encrypt } from "@/common/utils/crypto.js";
-import {
-  decryptField,
-  hashField,
-  maskEmail,
-  maskPhone,
-} from "@/common/utils/field-encrypt.js";
-import { getClientIp } from "@/common/utils/ip.js";
-import { writeAuditLog } from "@/core/logger/audit-logger.js";
-import { logger } from "@/core/logger/logger.js";
+import { encrypt } from "@/core/security/crypto.js";
+
+import { getClientIp } from "@/shared/utils/ip.js";
+import { logger } from "@/platform/logger/logger.js";
 import { UserService } from "./service.js";
+import { hashField, maskPhone, maskEmail, decryptField } from "@/core/index.js";
+import { writeAuditLog } from "@/platform/audit/writer.js";
 
 export const upload = multer({
   storage: multer.memoryStorage(),

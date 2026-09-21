@@ -11,7 +11,11 @@ export const TenantCreateSchema = z
     contactName: z.string().max(64).optional(),
     contactPhone: z.string().max(32).optional(),
     contactEmail: z.string().email().max(128).optional(),
-    status: z.number().int().min(0).max(1).default(1),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .default("1")
+      .optional(),
     expireTime: z.coerce.date().nullable().optional(), // 自动转换字符串为 Date
   })
   .openapi("TenantCreate");
@@ -24,7 +28,11 @@ export const TenantUpdateSchema = z
     contactName: z.string().max(64).optional(),
     contactPhone: z.string().max(32).optional(),
     contactEmail: z.string().email().max(128).optional(),
-    status: z.number().int().min(0).max(1).optional(),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .default("1")
+      .optional(),
     expireTime: z.string().datetime().nullable().optional(),
   })
   .openapi("TenantUpdate");
@@ -35,7 +43,11 @@ export const TenantListSchema = z
     pageNum: z.number().int().positive().default(1),
     pageSize: z.number().int().positive().max(100).default(10),
     keyword: z.string().optional(),
-    status: z.string().optional(),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .optional()
+      .openapi({ description: "状态过滤" }),
   })
   .openapi("TenantList");
 

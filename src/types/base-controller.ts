@@ -53,4 +53,8 @@ export interface BaseControllerConfig {
   maxPageSize: number;
   /** 隐藏字段 */
   hiddenFields?: string[];
+  /** 允许查询字段 */
+  filterableFields?: string[];
+  /** 允许模糊查询关键词字段 */
+  keywordFields?: string[];
 }

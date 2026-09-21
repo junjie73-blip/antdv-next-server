@@ -13,7 +13,7 @@ import {
 import { Request, Response } from "express";
 import { BaseController } from "@/core/base/controller.js";
 import { IpRuleRepository } from "./repository.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { z } from "zod";
 import { IpRuleService } from "./service.js";
@@ -55,7 +55,12 @@ export default class IpRuleController extends BaseController<
   protected readonly service = new IpRuleService(this.repository);
   protected readonly createSchema = IpRuleCreateSchema;
   protected readonly updateSchema = IpRuleUpdateSchema;
-  protected readonly querySchema = z.object({});
+  protected readonly querySchema = z.object({
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
+  });
 
   protected buildListWhere() {
     return {};

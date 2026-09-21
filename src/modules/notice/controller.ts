@@ -15,14 +15,14 @@ import { BaseController } from "@/core/base/controller.js";
 import { NoticeRepository } from "./repository.js";
 import { NoticeService } from "./service.js";
 import { AppError } from "@/core/errors.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import {
   NoticeCreateSchema,
   NoticeUpdateSchema,
   NoticeListSchema,
   SendNoticeSchema,
 } from "./schema.js";
-import z from "zod";
+import { z } from "zod";
 import { upload } from "../user/controller.js";
 
 @Controller("/notice", { tags: ["通知公告"] })

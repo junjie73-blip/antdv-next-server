@@ -1,7 +1,7 @@
 import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import dayjs from "dayjs";
 
 export class LoginLogRepository extends BaseRepository<any, any, any, any> {

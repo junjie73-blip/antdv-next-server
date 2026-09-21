@@ -1,5 +1,4 @@
 import { AppError } from "@/core/errors.js";
-import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
 import { DictDataRepository } from "@/modules/dict-data/repository.js";
 import { DictTypeRepository } from "@/modules/dict-type/repository.js";
 import * as XLSX from "xlsx";

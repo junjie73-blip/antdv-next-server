@@ -10,7 +10,7 @@ import {
 import { Request, Response } from "express";
 import { DashboardRepository } from "./repository.js";
 import { DashboardRangeSchema } from "./schema.js";
-import { success, error } from "@/common/utils/response.js";
+import { success, error } from "@/shared/http/response.js";
 
 @Controller("/dashboard", { tags: ["仪表盘"] })
 export default class DashboardController {

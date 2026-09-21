@@ -10,10 +10,10 @@ import {
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { OnlineRepository } from "./repository.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
-import { AppError } from "@/middleware/error-handler.js";
-import { kickUser } from "@/core/ws/force-logout.js";
+import { AppError } from "@/middleware/http/error-handler.js";
+import { kickUser } from "@/platform/ws/force-logout.js";
 
 @Controller("/online", { tags: ["在线用户"] })
 export default class OnlineController {

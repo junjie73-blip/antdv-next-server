@@ -7,7 +7,7 @@ import {
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { ServerRepository } from "./repository.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 
 @Controller("/monitor/server", { tags: ["服务监控"] })

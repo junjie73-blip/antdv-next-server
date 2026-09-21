@@ -33,6 +33,10 @@ export const ConfigListSchema = z
       .default(10)
       .openapi({ description: "每页条数" }),
     keyword: z.string().optional().openapi({ description: "配置键或描述" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("ConfigList");
 export const ConfigImportRowSchema = z.object({

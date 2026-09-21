@@ -32,5 +32,6 @@ module.exports = {
       // 优雅关闭，给应用留出处理剩余请求的时间[reference:6]
       kill_timeout: 5000,
     },
+    { name: "worker", script: "./dist/worker.js", instances: 2 },
   ],
 };

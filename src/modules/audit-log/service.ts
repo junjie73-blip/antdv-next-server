@@ -1,7 +1,7 @@
 import { BaseService } from "@/core/base/service.js";
 import { AuditLogRepository } from "./repository.js";
-import { generateExcel, type ExcelColumn } from "@/core/excel/excel.service.js";
 import dayjs from "dayjs";
+import { ExcelColumn, generateExcel } from "@/platform/excel/index.js";
 
 const EXPORT_COLUMNS: ExcelColumn[] = [
   { header: "日志ID", key: "log_id", width: 36 },
@@ -31,7 +31,7 @@ const EXPORT_COLUMNS: ExcelColumn[] = [
   },
 ];
 
-export class AuditLogService extends BaseService<AuditLogRepository> {
+export class AuditLogService extends BaseService<any> {
   constructor(repository: AuditLogRepository) {
     super(repository);
   }

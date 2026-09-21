@@ -13,8 +13,9 @@ import path from "path";
 import fs from "fs";
 import { v4 as uuidv4, validate as isUuid } from "uuid";
 import { FileRepository } from "@/modules/file/repository.js";
-import { success, error } from "@/common/utils/response.js";
+import { success, error } from "@/shared/http/response.js";
 import { UploadService } from "./service.js";
+import { checkUploadIdRate } from "@/middleware/security/rate-limit.js";
 
 export const UPLOAD_ROOT =
   process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
@@ -53,7 +54,21 @@ export const simpleUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
 });
-
+const fixFileNameEncoding = (name: string): string => {
+  if (!name) return name;
+  try {
+    // 将 latin1 解码的字符串重新按 latin1 编码为 Buffer，再按 utf8 解码
+    const buf = Buffer.from(name, "latin1");
+    const decoded = buf.toString("utf8");
+    // 检查是否包含替换字符 (�)，如果没有，说明成功还原
+    if (!decoded.includes("\uFFFD")) {
+      return decoded;
+    }
+  } catch (e) {
+    // 忽略错误
+  }
+  return name;
+};
 @Controller("/upload", { tags: ["文件上传"] })
 export default class UploadController {
   private fileRepository = new FileRepository();
@@ -73,7 +88,7 @@ export default class UploadController {
 
       try {
         const result = await this.service.saveSimpleFile({
-          originalName: req.file.originalname,
+          originalName: fixFileNameEncoding(req.file.originalname),
           buffer: req.file.buffer,
           mimeType: req.file.mimetype,
           size: req.file.size,
@@ -107,10 +122,15 @@ export default class UploadController {
   )
   @ApiResponse(200, "分片上传成功")
   async uploadChunk(@Req() req: Request, @Res() res: Response) {
-    chunkUpload.single("file")(req, res, (err) => {
+    chunkUpload.single("file")(req, res, async (err) => {
       if (err) return error(res, "分片上传失败：" + err.message, 400, 400);
       if (!req.file) return error(res, "未接收到文件", 400, 400);
-      const { chunkIndex } = req.body;
+      const { chunkIndex, uploadId } = req.body;
+
+      const ok = await checkUploadIdRate(uploadId, 50);
+      if (!ok) {
+        return error(res, "该上传任务请求过快，请稍后重试", 429);
+      }
       if (chunkIndex === undefined)
         return error(res, "缺少chunkIndex", 400, 400);
       success(res, { chunkIndex }, "分片上传成功");
@@ -125,23 +145,44 @@ export default class UploadController {
   @ApiResponse(200, "合并成功")
   async mergeChunks(@Req() req: Request, @Res() res: Response) {
     try {
-      const { uploadId, fileName, totalChunks } = req.body;
-      if (!uploadId || !fileName || !totalChunks) {
+      const {
+        uploadId,
+        filename: fileName,
+        totalChunks: total,
+        mimeType,
+      } = req.body;
+      if (!uploadId || !fileName || !total || !mimeType) {
         return error(res, "缺少参数", 400, 400);
       }
-      const result = await this.service.mergeChunks({
+      const { taskId, status } = await this.service.triggerMerge({
         uploadId,
         fileName,
-        totalChunks: Number(totalChunks),
+        totalChunks: Number(total),
         tenantId: (req as any).tenantId,
         userId: (req as any).user?.userId,
+        mimeType,
       });
-      success(res, result, "合并成功");
+      success(res, { taskId, status }, "任务已提交");
     } catch (err: any) {
-      error(res, err?.message || "合并失败", 500, 500);
+      error(res, err?.message || "提交失败", 500, 500);
     }
   }
-
+  @Get("/merge/status")
+  @ApiOperation("查询合并任务状态", "返回 status / progress / url 等")
+  @ApiResponse(200, "查询成功")
+  async getMergeStatus(@Req() req: Request, @Res() res: Response) {
+    try {
+      const taskId = req.query.taskId as string;
+      if (!taskId) return error(res, "缺少taskId", 400, 400);
+      const result = await this.service.getTaskStatus(
+        taskId,
+        (req as any).tenantId,
+      );
+      success(res, result);
+    } catch (err: any) {
+      error(res, err?.message || "查询失败", 500, 500);
+    }
+  }
   /**
    * 根据 URL 删除 COS 上的对象（仅删文件，不删数据库记录）
    */
@@ -159,6 +200,126 @@ export default class UploadController {
       success(res, null, "删除成功");
     } catch (err: any) {
       error(res, err?.message || "删除失败", 500, 500);
+    }
+  }
+  @Get("/tasks")
+  @ApiOperation(
+    "查询上传任务列表",
+    "返回当前用户正在上传/合并中的任务，用于刷新页面后恢复进度",
+  )
+  @ApiResponse(200, "查询成功")
+  async listTasks(@Req() req: Request, @Res() res: Response) {
+    try {
+      const userId = (req as any).user?.userId;
+      const tenantId = (req as any).tenantId;
+      if (!userId) return error(res, "请先登录", 401, 401);
+
+      const status = (req.query.status as string) || "all";
+      const page = Number(req.query.pageNum) || 1;
+      const pageSize = Number(req.query.pageSize) || 20;
+
+      const result = await this.service.listUploadingTasks({
+        userId,
+        tenantId,
+        status,
+        page,
+        pageSize,
+      });
+
+      success(res, result);
+    } catch (err: any) {
+      error(res, err?.message || "查询失败", 500, 500);
+    }
+  }
+
+  @Post("/tasks/cancel")
+  @ApiOperation("取消上传任务", "批量取消，同时清理本地分片")
+  async cancelTasks(@Req() req: Request, @Res() res: Response) {
+    try {
+      const userId = (req as any).user?.userId;
+      const tenantId = (req as any).tenantId;
+      if (!userId) return error(res, "请先登录", 401, 401);
+
+      const { taskIds } = req.body;
+      if (!Array.isArray(taskIds) || taskIds.length === 0) {
+        return error(res, "缺少taskIds", 400, 400);
+      }
+
+      const result = await this.service.cancelTasks({
+        taskIds,
+        userId,
+        tenantId,
+      });
+
+      success(res, result, "已取消");
+    } catch (err: any) {
+      error(res, err?.message || "取消失败", 500, 500);
+    }
+  }
+  @Get("/preview")
+  @ApiOperation("获取文件预览地址", "返回临时签名 URL，浏览器 inline 展示")
+  @ApiResponse(200, "获取成功")
+  async previewFile(@Req() req: Request, @Res() res: Response) {
+    try {
+      const fileId = req.query.fileId as string;
+
+      if (!fileId) {
+        return error(res, "缺少 fileId", 400, 400);
+      }
+      const file = await this.service.findByFileId(
+        fileId,
+        (req as any).tenantId,
+      );
+
+      if (!file) return error(res, "文件不存在", 404, 404);
+      let targetUrl = file.url;
+
+      const previewUrl = await this.service.buildPreviewUrl(targetUrl);
+      success(res, { url: previewUrl, expiresIn: 15 * 60 });
+    } catch (err: any) {
+      error(res, err?.message || "获取预览地址失败", 500, 500);
+    }
+  }
+
+  @Get("/download")
+  @ApiOperation("获取文件下载地址", "返回临时签名 URL，浏览器强制下载")
+  @ApiResponse(200, "获取成功")
+  async downloadFile(@Req() req: Request, @Res() res: Response) {
+    try {
+      const fileId = req.query.fileId as string;
+      const url = req.query.url as string;
+
+      if (!fileId && !url) {
+        return error(res, "缺少 fileId 或 url", 400, 400);
+      }
+
+      let targetUrl = url;
+      let fileName = (req.query.fileName as string) || "download";
+
+      if (fileId) {
+        const file = await this.service.findByFileId(
+          fileId,
+          (req as any).tenantId,
+        );
+        if (!file) return error(res, "文件不存在", 404, 404);
+        targetUrl = file.url;
+        fileName = file.filename;
+      }
+
+      const downloadUrl = await this.service.buildDownloadUrl(
+        targetUrl,
+        fileName,
+      );
+
+      // 两种返回方式，选一种：
+
+      // 方式 A：返回 JSON 让前端拿 URL（推荐，前端灵活控制）
+      success(res, { url: downloadUrl, fileName, expiresIn: 15 * 60 });
+
+      // 方式 B：直接 302 重定向到 COS（简单，但前端不好处理错误）
+      // res.redirect(downloadUrl);
+    } catch (err: any) {
+      error(res, err?.message || "获取下载地址失败", 500, 500);
     }
   }
 }

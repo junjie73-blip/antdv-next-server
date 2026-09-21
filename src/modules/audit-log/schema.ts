@@ -37,6 +37,10 @@ export const AuditLogListSchema = z
       .datetime()
       .optional()
       .openapi({ description: "结束时间（ISO格式）" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("AuditLogList");
 

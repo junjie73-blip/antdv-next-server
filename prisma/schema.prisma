@@ -304,13 +304,11 @@ model sys_audit_log {
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   created_by     String?  @db.Uuid
 
-  @@index([tenant_id])
-  @@index([user_id])
+  @@index([log_id, created_at])
+  @@index([tenant_id, created_at(sort: Desc)])
+  @@index([tenant_id, user_id, created_at])
+  @@index([tenant_id, operation, created_at])
   @@index([created_at])
-  @@index([operation])
-  @@index([tenant_id, created_at(sort: Desc)]) // 列表按时间倒序
-  @@index([tenant_id, user_id, created_at]) // 按用户查
-  @@index([tenant_id, operation]) // 按操作类型
   @@map("sys_audit_log")
 }
 
@@ -432,6 +430,7 @@ model sys_file {
   size       Int      @db.Integer
   mime_type  String?  @db.VarChar(128)
   uploader   String?  @db.Uuid
+  category   String   @default("other")
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
   created_by String?  @db.Uuid
@@ -702,4 +701,54 @@ model gen_table_column {
   @@index([table_id])
   @@index([table_id, is_deleted])
   @@map("gen_table_column")
+}
+
+model sys_upload_task {
+  task_id      String   @id @default(uuid())
+  upload_id    String
+  file_name    String
+  total_chunks Int
+  status       String // pending | merging | uploading | completed | failed
+  progress     Int      @default(0) // 0 ~ 100
+  error_msg    String?
+  file_id      String?
+  url          String?
+  size         BigInt?
+  tenant_id    String?
+  user_id      String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@index([upload_id])
+  @@index([status])
+  @@map("sys_upload_task")
+}
+
+/// 每日审计聚合（保留 2 年）
+model sys_audit_daily {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenant_id   String   @db.Uuid
+  stat_date   DateTime @db.Date
+  operation   String   @db.VarChar(128)
+  total_count Int      @default(0)
+  fail_count  Int      @default(0)
+  avg_time_ms Int      @default(0)
+  p95_time_ms Int      @default(0)
+
+  @@unique([tenant_id, stat_date, operation])
+  @@index([tenant_id, stat_date])
+  @@map("sys_audit_daily")
+}
+
+/// 每日登录聚合
+model sys_login_daily {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenant_id    String   @db.Uuid
+  stat_date    DateTime @db.Date
+  total_count  Int      @default(0)
+  fail_count   Int      @default(0)
+  unique_users Int      @default(0)
+
+  @@unique([tenant_id, stat_date])
+  @@map("sys_login_daily")
 }

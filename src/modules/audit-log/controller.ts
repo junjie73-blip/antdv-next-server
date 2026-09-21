@@ -11,7 +11,7 @@ import { Request, Response } from "express";
 import { AuditLogRepository } from "./repository.js";
 import { AuditLogService } from "./service.js";
 import { AuditLogListSchema, AuditLogExportSchema } from "./schema.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { BaseController } from "@/core/base/controller.js";
 import { AppError } from "@/core/errors.js";
 

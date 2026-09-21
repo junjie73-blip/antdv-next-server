@@ -16,11 +16,9 @@ export const DeptCreateSchema = z
     email: z.string().email().optional().openapi({ description: "邮箱" }),
     sortOrder: z.number().int().default(0).openapi({ description: "排序值" }),
     status: z
-      .number()
-      .int()
-      .min(0)
-      .max(1)
-      .default(1)
+      .string()
+      .regex(/^[01]$/)
+      .default("1")
       .openapi({ description: "状态：0-禁用，1-启用" }),
   })
   .openapi("DeptCreate");
@@ -31,7 +29,15 @@ export const DeptUpdateSchema =
 export const DeptListSchema = z
   .object({
     deptName: z.string().optional().openapi({ description: "部门名称过滤" }),
-    status: z.string().optional().openapi({ description: "状态过滤" }),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .optional()
+      .openapi({ description: "状态过滤" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("DeptList");
 export const DeptImportRowSchema = z.object({

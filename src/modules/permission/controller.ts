@@ -19,10 +19,11 @@ import {
   PermissionUpdateSchema,
   PermissionListSchema,
 } from "./schema.js";
-import { AppError } from "@/middleware/error-handler.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 import { PermissionService } from "./service.js";
 import { upload } from "../user/controller.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 
 @Controller("/permission", { tags: ["权限管理"] })
 export default class PermissionController extends BaseController<
@@ -67,36 +68,6 @@ export default class PermissionController extends BaseController<
   async listPermission(@Req() req: Request, @Res() res: Response) {
     return super.list(req, res);
   }
-
-  @Get("/:id")
-  @ApiOperation("获取权限详情")
-  @ApiResponse(200, "查询成功")
-  async getDetail(@Req() req: Request, @Res() res: Response) {
-    return super.detail(req, res);
-  }
-
-  @Post("/")
-  @ApiOperation("创建权限")
-  @ApiBody(PermissionCreateSchema)
-  @ApiResponse(200, "创建成功")
-  async createPermission(@Req() req: Request, @Res() res: Response) {
-    return super.create(req, res);
-  }
-
-  @Put("/:id")
-  @ApiOperation("更新权限")
-  @ApiBody(PermissionUpdateSchema)
-  @ApiResponse(200, "更新成功")
-  async updatePermission(@Req() req: Request, @Res() res: Response) {
-    return super.update(req, res);
-  }
-
-  @Delete("/:id")
-  @ApiOperation("删除权限")
-  @ApiResponse(200, "删除成功")
-  async removePermission(@Req() req: Request, @Res() res: Response) {
-    return super.remove(req, res);
-  }
   @Get("/export")
   @ApiOperation("导出权限")
   async export(@Req() req: Request, @Res() res: Response) {
@@ -127,5 +98,42 @@ export default class PermissionController extends BaseController<
       );
       success(res, result, "导入完成");
     });
+  }
+  // 获取全部权限接口
+  @Get("/all")
+  @ApiOperation("获取全部权限")
+  @ApiResponse(200, "查询成功")
+  async getAll(@Req() req: Request, @Res() res: Response) {
+    const permissions = await this.service.getAll(req.tenantId!);
+    success(res, keysToCamelCase(permissions), "查询成功");
+  }
+  @Get("/:id")
+  @ApiOperation("获取权限详情")
+  @ApiResponse(200, "查询成功")
+  async getDetail(@Req() req: Request, @Res() res: Response) {
+    return super.detail(req, res);
+  }
+
+  @Post("/")
+  @ApiOperation("创建权限")
+  @ApiBody(PermissionCreateSchema)
+  @ApiResponse(200, "创建成功")
+  async createPermission(@Req() req: Request, @Res() res: Response) {
+    return super.create(req, res);
+  }
+
+  @Put("/:id")
+  @ApiOperation("更新权限")
+  @ApiBody(PermissionUpdateSchema)
+  @ApiResponse(200, "更新成功")
+  async updatePermission(@Req() req: Request, @Res() res: Response) {
+    return super.update(req, res);
+  }
+
+  @Delete("/:id")
+  @ApiOperation("删除权限")
+  @ApiResponse(200, "删除成功")
+  async removePermission(@Req() req: Request, @Res() res: Response) {
+    return super.remove(req, res);
   }
 }

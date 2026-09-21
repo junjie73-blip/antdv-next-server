@@ -1,10 +1,10 @@
 import { ConfigRepository } from "./repository.js";
 import { ConfigImportRowSchema, ConfigExportColumns } from "./schema.js";
-import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
 import { AppError } from "@/core/errors.js";
 import { BaseService } from "@/core/base/service.js";
+import { generateExcel, parseExcel } from "@/platform/excel/service.js";
 
-export class ConfigService extends BaseService<ConfigRepository> {
+export class ConfigService extends BaseService<any> {
   constructor(repository: ConfigRepository) {
     super(repository);
   }

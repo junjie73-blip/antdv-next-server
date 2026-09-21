@@ -1,74 +1,270 @@
 import { redis } from "@/config/redis.js";
+import { delChunked } from "@/core/cache/redis-client.js";
+import {
+  CACHE_GROUPS,
+  KEY_PREFIX_MAX_DEPTH,
+  KEY_SEPARATOR,
+  SCAN_BATCH_SIZE,
+  SCAN_MAX_KEYS,
+  UNCLASSIFIED_REMARK,
+} from "@/config/constants.js";
+import { assertSafePrefix } from "./prefix-guard.js";
 
-interface CacheKeyInfo {
+export interface CacheInfo {
+  redisVersion: string;
+  redisMode: string;
+  os: string;
+  archBits: number;
+  multiplexingApi: string;
+  processId: number;
+  runId: string;
+  tcpPort: number;
+  uptimeDays: number;
+  connectedClients: number;
+  usedMemory: number;
+  usedMemoryHuman: string;
+  usedMemoryRss: number;
+  usedMemoryRssHuman: string;
+  usedMemoryPeak: number;
+  usedMemoryPeakHuman: string;
+  usedMemoryLua: number;
+  usedMemoryLuaHuman: string;
+  maxMemory: number;
+  maxMemoryHuman: string;
+  maxMemoryPolicy: string;
+  totalConnectionsReceived: number;
+  totalCommandsProcessed: number;
+  instantaneousOpsPerSec: number;
+  keyspaceHits: number;
+  keyspaceMisses: number;
+  hitRate: string;
+  latestForkUsec: number;
+  totalNetInputBytes: number;
+  totalNetOutputBytes: number;
+  rejectedConnections: number;
+  syncFull: number;
+  syncPartialOk: number;
+  expiredKeys: number;
+  evictedKeys: number;
+  dbKeys: number;
+  dbSize: number;
+}
+
+export interface CacheGroupInfo {
+  name: string;
+  prefix: string;
+  remark: string;
+  count: number;
+  discovered?: boolean;
+}
+
+export interface CacheKeyInfo {
   key: string;
   ttl: number;
   type: string;
 }
 
+export interface CacheKeyValue {
+  key: string;
+  type: string;
+  ttl: number;
+  value: unknown;
+  total?: number;
+  truncated?: boolean;
+}
+
+const SORTED_RULES = [...CACHE_GROUPS].sort(
+  (a, b) => b.prefix.length - a.prefix.length,
+);
+
+function parseInfo(raw: string): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const line of raw.split(/\r?\n/)) {
+    if (!line || line.startsWith("#")) continue;
+    const idx = line.indexOf(":");
+    if (idx === -1) continue;
+    result[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
+  }
+  return result;
+}
+
+function toNumber(v: string | undefined, def = 0): number {
+  if (v === undefined) return def;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : def;
+}
+
+function extractPrefix(key: string, _maxDepth = KEY_PREFIX_MAX_DEPTH): string {
+  for (const rule of SORTED_RULES) {
+    if (key.startsWith(rule.prefix)) return rule.prefix;
+  }
+  const parts = key.split(KEY_SEPARATOR);
+  const depth = Math.min(KEY_PREFIX_MAX_DEPTH, Math.max(1, parts.length - 1));
+  return parts.slice(0, depth).join(KEY_SEPARATOR) + KEY_SEPARATOR;
+}
+
+function findRemark(prefix: string): string {
+  const byRule = CACHE_GROUPS.find((r) => r.prefix === prefix);
+  return byRule?.remark ?? UNCLASSIFIED_REMARK;
+}
+
 export class CacheRepository {
-  /**
-   * 获取缓存概览信息
-   * Upstash 不支持 INFO 命令，用 DBSIZE + 环境变量 + 估算值代替
-   */
-  async info() {
-    // 1. key 总数（Upstash 支持 DBSIZE）
+  async info(): Promise<CacheInfo> {
+    const [server, clients, memory, stats, keyspace] = await Promise.all([
+      redis.info("server"),
+      redis.info("clients"),
+      redis.info("memory"),
+      redis.info("stats"),
+      redis.info("keyspace"),
+    ]);
+
+    const info = {
+      ...parseInfo(server),
+      ...parseInfo(clients),
+      ...parseInfo(memory),
+      ...parseInfo(stats),
+    };
+
+    const hits = toNumber(info.keyspace_hits);
+    const misses = toNumber(info.keyspace_misses);
+    const total = hits + misses;
+    const hitRate = total > 0 ? ((hits / total) * 100).toFixed(2) : "0.00";
+
     let dbKeys = 0;
-    try {
-      dbKeys = await redis.dbsize();
-    } catch (e) {
-      console.warn("[cache] dbsize failed:", e);
+    const ks = parseInfo(keyspace);
+    for (const key of Object.keys(ks)) {
+      const m = ks[key].match(/keys=(\d+)/);
+      if (m) dbKeys += Number(m[1]);
     }
 
-    // 2. 估算内存：Upstash 不提供 used_memory，用 key 数 * 平均大小估算
-    const estimatedMemory = dbKeys * 512; // 假设每个 key 平均 512 字节
-
-    // 3. 连接数、命中率等 Upstash 不直接暴露
-    // 可以从环境变量或手动配置读取
-    const connectedClients =
-      Number(process.env.REDIS_MAX_CLIENTS || 0) || "N/A";
-
     return {
-      provider: "Upstash Redis",
-      version: "REST API",
-      mode: "serverless",
-      uptime: 0, // Upstash 无此概念
-      connectedClients,
-      usedMemory: estimatedMemory,
-      usedMemoryHuman: formatBytes(estimatedMemory),
-      totalCommands: "N/A",
-      hits: "N/A",
-      misses: "N/A",
-      hitRate: "N/A",
+      redisVersion: info.redis_version || "-",
+      redisMode: info.redis_mode || "standalone",
+      os: info.os || "-",
+      archBits: toNumber(info.arch_bits),
+      multiplexingApi: info.multiplexing_api || "-",
+      processId: toNumber(info.process_id),
+      runId: info.run_id || "-",
+      tcpPort: toNumber(info.tcp_port),
+      uptimeDays: toNumber(info.uptime_in_days),
+      connectedClients: toNumber(info.connected_clients),
+      usedMemory: toNumber(info.used_memory),
+      usedMemoryHuman: info.used_memory_human || "-",
+      usedMemoryRss: toNumber(info.used_memory_rss),
+      usedMemoryRssHuman: info.used_memory_rss_human || "-",
+      usedMemoryPeak: toNumber(info.used_memory_peak),
+      usedMemoryPeakHuman: info.used_memory_peak_human || "-",
+      usedMemoryLua: toNumber(info.used_memory_lua),
+      usedMemoryLuaHuman: info.used_memory_lua_human || "-",
+      maxMemory: toNumber(info.maxmemory),
+      maxMemoryHuman: info.maxmemory_human || "-",
+      maxMemoryPolicy: info.maxmemory_policy || "noeviction",
+      totalConnectionsReceived: toNumber(info.total_connections_received),
+      totalCommandsProcessed: toNumber(info.total_commands_processed),
+      instantaneousOpsPerSec: toNumber(info.instantaneous_ops_per_sec),
+      keyspaceHits: hits,
+      keyspaceMisses: misses,
+      hitRate,
+      latestForkUsec: toNumber(info.latest_fork_usec),
+      totalNetInputBytes: toNumber(info.total_net_input_bytes),
+      totalNetOutputBytes: toNumber(info.total_net_output_bytes),
+      rejectedConnections: toNumber(info.rejected_connections),
+      syncFull: toNumber(info.sync_full),
+      syncPartialOk: toNumber(info.sync_partial_ok),
+      expiredKeys: toNumber(info.expired_keys),
+      evictedKeys: toNumber(info.evicted_keys),
       dbKeys,
-      // Upstash 特有信息
-      endpoint: maskUrl(process.env.UPSTASH_REDIS_REST_URL || ""),
-      note: "Upstash 通过 REST API 提供服务，部分 Redis 原生指标不可用",
+      dbSize: dbKeys,
     };
   }
 
-  /**
-   * 获取 key 列表
-   * 用 KEYS 替代 SCAN（Upstash 不支持 SCAN）
-   * 注意：keys 数量大时性能会下降，建议加 pattern 过滤
-   */
-  async keys(pattern = "*", limit = 100): Promise<CacheKeyInfo[]> {
-    let keyList: string[] = [];
+  async getGroupList(): Promise<CacheGroupInfo[]> {
+    const knownGroups = new Map<string, CacheGroupInfo>();
+    for (const g of CACHE_GROUPS) {
+      knownGroups.set(g.prefix, { ...g, count: 0, discovered: false });
+    }
+
+    const dynamicCounts = new Map<string, number>();
+    let cursor = "0";
+    let scanned = 0;
+
     try {
-      // Upstash 的 keys 返回 string[]
-      const result = await redis.keys(pattern);
-      keyList = Array.isArray(result) ? result : [];
+      do {
+        const [next, keys] = await redis.scan(
+          cursor,
+          "MATCH",
+          "*",
+          "COUNT",
+          SCAN_BATCH_SIZE,
+        );
+        cursor = next;
+
+        for (const key of keys) {
+          scanned++;
+          const exact = CACHE_GROUPS.find((g) => key.startsWith(g.prefix));
+          if (exact) {
+            const entry = knownGroups.get(exact.prefix);
+            if (entry) entry.count++;
+            continue;
+          }
+          const prefix = extractPrefix(key);
+          dynamicCounts.set(prefix, (dynamicCounts.get(prefix) ?? 0) + 1);
+        }
+
+        if (scanned >= SCAN_MAX_KEYS) break;
+      } while (cursor !== "0");
     } catch (e) {
-      console.warn("[cache] keys failed:", e);
+      console.warn("[cache] SCAN failed:", e);
+    }
+
+    const result: CacheGroupInfo[] = Array.from(knownGroups.values());
+    for (const [prefix, count] of dynamicCounts) {
+      const name = prefix.endsWith(KEY_SEPARATOR)
+        ? prefix.slice(0, -KEY_SEPARATOR.length)
+        : prefix;
+      result.push({
+        name,
+        prefix,
+        remark: findRemark(prefix),
+        count,
+        discovered: true,
+      });
+    }
+
+    result.sort((a, b) => {
+      if (a.discovered !== b.discovered) return a.discovered ? 1 : -1;
+      if (a.discovered && b.discovered) return b.count - a.count;
+      return 0;
+    });
+    return result;
+  }
+
+  async getKeys(prefix: string, limit = 500): Promise<CacheKeyInfo[]> {
+    assertSafePrefix(prefix);
+
+    const keys: string[] = [];
+    let cursor = "0";
+    try {
+      do {
+        const [next, batch] = await redis.scan(
+          cursor,
+          "MATCH",
+          `${prefix}*`,
+          "COUNT",
+          500,
+        );
+        cursor = next;
+        keys.push(...batch);
+        if (keys.length >= limit) break;
+      } while (cursor !== "0");
+    } catch (e) {
+      console.warn(`[cache] scan ${prefix}* failed:`, e);
       return [];
     }
 
-    // 限制数量
-    keyList = keyList.slice(0, limit);
-
-    // 并发获取每个 key 的 ttl 和 type
-    const result = await Promise.all(
-      keyList.map(async (key) => {
+    const sliced = keys.slice(0, limit);
+    return Promise.all(
+      sliced.map(async (key) => {
         try {
           const [ttl, type] = await Promise.all([
             redis.ttl(key),
@@ -80,54 +276,95 @@ export class CacheRepository {
         }
       }),
     );
-
-    return result;
   }
 
-  /**
-   * 删除单个 key
-   */
-  async deleteKey(key: string) {
+  async getValue(key: string, limit = 200): Promise<CacheKeyValue> {
+    assertSafePrefix(key);
+
+    const type = String(await redis.type(key));
+    if (type === "none") throw new Error(`Key "${key}" 不存在`);
+
+    const ttl = Number(await redis.ttl(key));
+    let value: unknown = null;
+    let total: number | undefined;
+    let truncated = false;
+
+    try {
+      switch (type) {
+        case "string": {
+          const raw = await redis.get(key);
+          const text = typeof raw === "string" ? raw : JSON.stringify(raw);
+          total = text?.length ?? 0;
+          if (text && text.length > 10_000) {
+            value = text.slice(0, 10_000);
+            truncated = true;
+          } else {
+            value = raw;
+          }
+          break;
+        }
+        case "list": {
+          total = Number(await redis.llen(key));
+          value = await redis.lrange(key, 0, limit - 1);
+          truncated = (total ?? 0) > limit;
+          break;
+        }
+        case "set": {
+          total = Number(await redis.scard(key));
+          const members = await redis.smembers(key);
+          value = members.slice(0, limit);
+          truncated = members.length > limit;
+          break;
+        }
+        case "zset": {
+          total = Number(await redis.zcard(key));
+          value = await redis.zrange(key, 0, String(limit - 1), "WITHSCORES");
+          truncated = (total ?? 0) > limit;
+          break;
+        }
+        case "hash": {
+          total = Number(await redis.hlen(key));
+          value = await redis.hgetall(key);
+          break;
+        }
+        default:
+          value = `不支持的 key 类型: ${type}`;
+      }
+    } catch (e) {
+      value = `读取失败: ${(e as Error).message}`;
+    }
+
+    return { key, type, ttl, value, total, truncated };
+  }
+
+  async deleteKey(key: string): Promise<void> {
+    assertSafePrefix(key);
     await redis.del(key);
   }
 
-  /**
-   * 批量删除匹配的 key
-   */
-  async deleteByPattern(pattern: string): Promise<number> {
-    const keys = await redis.keys(pattern);
-    if (!Array.isArray(keys) || keys.length === 0) return 0;
-    await redis.del(...keys);
-    return keys.length;
+  async clearByPrefix(prefix: string): Promise<number> {
+    assertSafePrefix(prefix);
+
+    let count = 0;
+    let cursor = "0";
+    do {
+      const [next, keys] = await redis.scan(
+        cursor,
+        "MATCH",
+        `${prefix}*`,
+        "COUNT",
+        500,
+      );
+      cursor = next;
+      if (keys.length > 0) {
+        count += await delChunked(keys);
+      }
+    } while (cursor !== "0");
+    return count;
   }
 
-  /**
-   * 清空缓存
-   * Upstash 不支持 flushdb，用 flushall
-   * ⚠️ 注意：flushall 会清空整个数据库，慎用
-   */
-  async clear() {
-    // @upstash/redis 的 flushall 需要传 async 参数
-    await redis.flushall();
-  }
-}
-
-// ============ 工具函数 ============
-
-function formatBytes(bytes: number): string {
-  if (!bytes) return "0 B";
-  const units = ["B", "KB", "MB", "GB"];
-  const k = 1024;
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${(bytes / k ** i).toFixed(2)} ${units[i]}`;
-}
-
-function maskUrl(url: string): string {
-  if (!url) return "";
-  try {
-    const u = new URL(url);
-    return `${u.protocol}//${u.host}`;
-  } catch {
-    return url;
+  /** ⚠️ clearAll 已禁用：只允许按组清理，禁止 flushdb */
+  async clearAll(): Promise<void> {
+    throw new Error("clearAll 已禁用，请使用 clearByPrefix 按组清理");
   }
 }

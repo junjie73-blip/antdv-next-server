@@ -19,11 +19,9 @@ export const RoleCreateSchema = z
       .openapi({ description: "描述" }),
     sortOrder: z.number().int().default(0).openapi({ description: "排序值" }),
     status: z
-      .number()
-      .int()
-      .min(0)
-      .max(1)
-      .default(1)
+      .string()
+      .regex(/^[01]$/)
+      .default("1")
       .openapi({ description: "状态：0-禁用，1-启用" }),
     dataScope: RoleDataScopeEnum.default("1").openapi({
       description: "数据范围：1-全部 2-自定义 3-本部门 4-本部门及以下 5-仅本人",
@@ -52,8 +50,13 @@ export const RoleListSchema = z
     keyword: z.string().optional().openapi({ description: "角色编码或名称" }),
     status: z
       .string()
+      .regex(/^[01]$/)
       .optional()
       .openapi({ description: "状态过滤：'0'或'1'" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("RoleList");
 

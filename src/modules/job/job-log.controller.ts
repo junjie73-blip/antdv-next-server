@@ -12,10 +12,10 @@ import { Request, Response } from "express";
 import { JobRepository } from "./repository.js";
 import { JobLogRepository } from "./job-log.repository.js";
 import { JobService } from "./service.js";
-import { error, success } from "@/common/utils/response.js";
+import { error, success } from "@/shared/http/response.js";
 import { z } from "zod";
 import { AppError } from "@/core/errors.js";
-import { logger } from "@/core/logger/logger.js";
+import { logger } from "@/platform/logger/logger.js";
 
 /**
  * 任务日志 Controller

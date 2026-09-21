@@ -1,8 +1,8 @@
 import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
-import { AppError } from "@/middleware/error-handler.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 
 export class DeptRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_dept;

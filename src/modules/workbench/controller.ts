@@ -7,7 +7,7 @@ import {
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { WorkbenchRepository } from "./repository.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 
 @Controller("/workbench", { tags: ["工作台"] })
 export default class WorkbenchController {

@@ -1,6 +1,6 @@
 import { prisma } from "@/config/database.js";
-import { publishNoticePush } from "@/core/redis/pubsub.js";
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
+import { publishNoticePush } from "@/platform/ws/index.js";
 
 /** 站内信：通过 Redis pub/sub 广播，各实例推自己的连接 */
 export const inAppChannel: NoticeChannel = {

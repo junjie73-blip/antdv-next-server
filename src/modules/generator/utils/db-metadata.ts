@@ -1,5 +1,5 @@
 import { prisma } from "@/config/database.js";
-import { logger } from "@/core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 import { ValidationError } from "@/core/errors.js";
 import type { DbColumn } from "../types.js";
 import { toCamelCase } from "./naming.js";

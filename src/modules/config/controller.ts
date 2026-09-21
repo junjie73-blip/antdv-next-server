@@ -20,9 +20,8 @@ import {
   ConfigListSchema,
 } from "./schema.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
-import { AppError } from "@/middleware/error-handler.js";
 import { z } from "zod";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { ConfigService } from "./service.js";
 
 @Controller("/config", { tags: ["系统配置"] })

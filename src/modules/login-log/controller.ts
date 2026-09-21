@@ -10,7 +10,7 @@ import { Request, Response } from "express";
 import { LoginLogRepository } from "./repository.js";
 import { LoginLogService } from "./service.js";
 import { LoginLogListSchema, LoginLogExportSchema } from "./schema.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { BaseController } from "@/core/base/controller.js";
 import dayjs from "dayjs";
 import { z } from "zod";

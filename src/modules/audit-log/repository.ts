@@ -1,7 +1,7 @@
 import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 
 export class AuditLogRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_audit_log;

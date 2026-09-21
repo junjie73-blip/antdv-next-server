@@ -19,12 +19,12 @@ import {
   DictTypeUpdateSchema,
   DictTypeListSchema,
 } from "./schema.js";
-import { AppError } from "@/middleware/error-handler.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 import { z } from "zod";
 import { upload } from "../user/controller.js";
 import { DictService } from "@/core/excel/dict.service.js";
 import { DictDataRepository } from "../dict-data/repository.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 
 @Controller("/dict-type", { tags: ["字典类型"] })
 export default class DictTypeController extends BaseController<

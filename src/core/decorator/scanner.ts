@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { METADATA_KEYS, RouteMetadata } from "./metadata.js";
-import { logger } from "@core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 
 export interface ControllerClass {
   new (...args: any[]): any;

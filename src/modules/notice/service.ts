@@ -1,12 +1,12 @@
 import { NoticeRepository } from "./repository.js";
 import { NoticeImportRowSchema, NoticeExportColumns } from "./schema.js";
-import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
 import { AppError } from "@/core/errors.js";
 import { dispatchNotice } from "./channels/index.js";
 import { prisma } from "@/config/database.js";
 import { BaseService } from "@/core/base/service.js";
-import { publishNoticePush } from "@/core/redis/pubsub.js";
-import { logger } from "@/core/logger/logger.js";
+import { logger } from "@/platform/logger/logger.js";
+import { generateExcel, parseExcel } from "@/platform/excel/service.js";
+import { publishNoticePush } from "@/platform/ws/notice-pubsub.js";
 export interface SendNoticeOptions {
   channels?: string[];
   receiversByChannel?: Record<string, string[]>;

@@ -1,5 +1,6 @@
-import { redis, scanAll } from "@/config/redis.js";
 import { prisma } from "@/config/database.js";
+import { redis } from "@/config/index.js";
+import { scanAll } from "@/core/index.js";
 
 export class OnlineRepository {
   /** 扫描在线会话（Redis 键 access:*） */

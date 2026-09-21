@@ -1,6 +1,9 @@
-scrape_configs:
-  - job_name: "antdv-server"
-    static_configs:
-      - targets: ["server-1:3000", "server-2:3000"]
-    metrics_path: "/metrics"
-    scrape_interval: 15s
+- alert: NodeHeapHigh
+  expr: process_heap_used_bytes / process_heap_total_bytes > 0.9
+  for: 5m
+  annotations: { summary: "Heap >90% 持续 5 分钟" }
+
+- alert: EventLoopLagHigh
+  expr: node_event_loop_lag_seconds > 0.5
+  for: 2m
+  annotations: { summary: "事件循环延迟 >500ms" }

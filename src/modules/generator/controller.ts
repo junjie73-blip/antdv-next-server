@@ -15,8 +15,8 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import { BaseController } from "@/core/base/controller.js";
 import { NotFoundError } from "@/core/errors.js";
-import { success } from "@/common/utils/response.js";
-import { logger } from "@/core/logger/index.js";
+import { success } from "@/shared/http/response.js";
+import { logger } from "@/platform/logger/index.js";
 import { GenTableRepository } from "./repository.js";
 import { GenTableService } from "./service.js";
 import {

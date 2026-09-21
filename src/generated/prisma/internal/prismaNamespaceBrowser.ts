@@ -81,7 +81,10 @@ export const ModelName = {
   sys_todo_group: 'sys_todo_group',
   sys_user_tenant: 'sys_user_tenant',
   gen_table: 'gen_table',
-  gen_table_column: 'gen_table_column'
+  gen_table_column: 'gen_table_column',
+  sys_upload_task: 'sys_upload_task',
+  sys_audit_daily: 'sys_audit_daily',
+  sys_login_daily: 'sys_login_daily'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -414,6 +417,7 @@ export const Sys_fileScalarFieldEnum = {
   size: 'size',
   mime_type: 'mime_type',
   uploader: 'uploader',
+  category: 'category',
   created_at: 'created_at',
   updated_at: 'updated_at',
   created_by: 'created_by',
@@ -662,6 +666,52 @@ export const Gen_table_columnScalarFieldEnum = {
 } as const
 
 export type Gen_table_columnScalarFieldEnum = (typeof Gen_table_columnScalarFieldEnum)[keyof typeof Gen_table_columnScalarFieldEnum]
+
+
+export const Sys_upload_taskScalarFieldEnum = {
+  task_id: 'task_id',
+  upload_id: 'upload_id',
+  file_name: 'file_name',
+  total_chunks: 'total_chunks',
+  status: 'status',
+  progress: 'progress',
+  error_msg: 'error_msg',
+  file_id: 'file_id',
+  url: 'url',
+  size: 'size',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Sys_upload_taskScalarFieldEnum = (typeof Sys_upload_taskScalarFieldEnum)[keyof typeof Sys_upload_taskScalarFieldEnum]
+
+
+export const Sys_audit_dailyScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  stat_date: 'stat_date',
+  operation: 'operation',
+  total_count: 'total_count',
+  fail_count: 'fail_count',
+  avg_time_ms: 'avg_time_ms',
+  p95_time_ms: 'p95_time_ms'
+} as const
+
+export type Sys_audit_dailyScalarFieldEnum = (typeof Sys_audit_dailyScalarFieldEnum)[keyof typeof Sys_audit_dailyScalarFieldEnum]
+
+
+export const Sys_login_dailyScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  stat_date: 'stat_date',
+  total_count: 'total_count',
+  fail_count: 'fail_count',
+  unique_users: 'unique_users'
+} as const
+
+export type Sys_login_dailyScalarFieldEnum = (typeof Sys_login_dailyScalarFieldEnum)[keyof typeof Sys_login_dailyScalarFieldEnum]
 
 
 export const SortOrder = {

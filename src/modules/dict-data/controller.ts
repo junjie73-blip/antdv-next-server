@@ -20,9 +20,9 @@ import {
   DictDataListSchema,
   DictTreeQuerySchema,
 } from "./schema.js";
-import { AppError } from "@/middleware/error-handler.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 import { z } from "zod";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { DictService } from "@/core/excel/dict.service.js";
 import { DictTypeRepository } from "../dict-type/repository.js";
 import { upload } from "../user/controller.js";

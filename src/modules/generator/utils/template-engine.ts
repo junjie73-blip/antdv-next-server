@@ -1,7 +1,7 @@
 import Handlebars from "handlebars";
 import fs from "node:fs";
 import path from "node:path";
-import { logger } from "@/core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 import { AppError } from "@/core/errors.js";
 
 const TEMPLATE_ROOT = path.join(import.meta.dirname, "../templates");

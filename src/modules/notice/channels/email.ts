@@ -1,4 +1,4 @@
-import { parseSmtpConfig, sendMail } from "@/common/utils/mail.js";
+import { parseSmtpConfig, sendMail } from "@/platform/email/service.js";
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
 import { renderNoticeEmail } from "@/modules/notice/template/email-template.js";
 import { env } from "@/config/env.js";

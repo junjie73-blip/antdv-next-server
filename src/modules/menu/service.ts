@@ -1,16 +1,17 @@
 import { MenuRepository } from "./repository.js";
 import { MenuImportRowSchema, MenuExportColumns } from "./schema.js";
-import {
-  parseExcel,
-  generateExcel,
-  importTreeData,
-} from "@/core/excel/excel.service.js";
+
 import { AppError } from "@/core/errors.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import type { MenuImportRow, MenuEntity, MenuNode } from "./types.js";
 import { randomUUID } from "crypto";
 import { Prisma, sys_menu } from "@/generated/prisma/client.js";
 import { BaseService } from "@/core/base/service.js";
+import {
+  generateExcel,
+  parseExcel,
+  importTreeData,
+} from "@/platform/excel/service.js";
 
 type Tx = Prisma.TransactionClient;
 
@@ -94,7 +95,7 @@ export async function copyMenusFromTemplate(
 // Service
 // ============================================================
 
-export class MenuService extends BaseService<MenuRepository> {
+export class MenuService extends BaseService<any> {
   constructor(repository: MenuRepository) {
     super(repository);
   }

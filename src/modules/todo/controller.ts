@@ -14,7 +14,7 @@ import {
 import { Request, Response } from "express";
 import { BaseController } from "@/core/base/controller.js";
 import { TodoRepository } from "./repository.js";
-import { success } from "@/common/utils/response.js";
+import { success } from "@/shared/http/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { z } from "zod";
 
@@ -26,14 +26,26 @@ const TodoCreateSchema = z
     priority: z.number().int().min(0).max(2).default(0),
     dueTime: z.string().datetime().nullable().optional(),
     groupId: z.string().optional(),
-    status: z.string().optional(),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .default("1")
+      .openapi({ description: "状态：0-禁用，1-启用" }),
     noticeType: z.number().int().min(0).max(2).default(0),
   })
   .openapi("TodoCreate");
 const TodoListSchema = z
   .object({
     groupId: z.string().optional(),
-    status: z.string().optional(),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .optional()
+      .openapi({ description: "状态过滤：'0'或'1'" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
     noticeType: z.number().int().min(0).max(2).default(0),
   })
   .openapi("TodoList");

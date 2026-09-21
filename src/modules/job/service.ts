@@ -1,10 +1,9 @@
 import { JobRepository } from "./repository.js";
 import { JobLogRepository } from "./job-log.repository.js";
 import { JobImportRowSchema, JobExportColumns } from "./schema.js";
-import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
-import { AppError } from "@/core/errors.js";
 import { startJob, stopJob } from "./scheduler.js";
 import { BaseService } from "@/core/base/service.js";
+import { generateExcel, parseExcel } from "@/platform/excel/service.js";
 
 export class JobService extends BaseService<JobRepository> {
   private readonly logRepo: JobLogRepository;

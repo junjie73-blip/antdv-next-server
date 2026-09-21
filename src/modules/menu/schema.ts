@@ -30,11 +30,9 @@ export const MenuCreateSchema = z
       .openapi({ description: "权限标识，如 system:user:create" }),
     sortOrder: z.number().int().default(0).openapi({ description: "排序值" }),
     status: z
-      .number()
-      .int()
-      .min(0)
-      .max(1)
-      .default(1)
+      .string()
+      .regex(/^[01]$/, { message: "状态必须是0或1" })
+      .default("1")
       .openapi({ description: "状态：0-禁用，1-启用" }),
   })
   .openapi("MenuCreate");
@@ -45,7 +43,15 @@ export const MenuUpdateSchema =
 export const MenuListSchema = z
   .object({
     menuName: z.string().optional().openapi({ description: "菜单名称过滤" }),
-    status: z.string().optional().openapi({ description: "状态过滤" }),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .optional()
+      .openapi({ description: "状态过滤" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("MenuList");
 /** 菜单导入的 Excel 行 Schema */

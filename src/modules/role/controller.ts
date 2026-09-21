@@ -23,11 +23,11 @@ import {
   RoleAssignUsersSchema,
   RoleAssignDeptsSchema,
 } from "./schema.js";
-import { AppError } from "@/middleware/error-handler.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 import { z } from "zod";
 import { prisma } from "@/config/database.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
-import { success } from "@/common/utils/response.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
+import { success } from "@/shared/http/response.js";
 import { RoleService } from "./service.js";
 import { upload } from "../user/controller.js";
 

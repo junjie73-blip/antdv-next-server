@@ -1,8 +1,9 @@
-import { BaseRepository } from "@/core/base/repository.js";
+import { BaseRepository, normalizeSelect } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
-import { BaseQuery, PageResult } from "@/types/base-repository.js";
+import type { BaseQuery, PageResult } from "@/core/base/repository.js";
 import { AppError } from "@/core/errors.js";
-import { deleteFile } from "@/config/blob.js";
+import { isString } from "es-toolkit";
+import { deleteFile } from "@/platform/storge/blob.js";
 
 export class FileRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_file;
@@ -21,17 +22,28 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
     if (query.keyword) finalWhere.filename = { contains: query.keyword };
     if (query.mimeType) finalWhere.mime_type = { contains: query.mimeType };
 
+    let select: any = {};
+    if (query.fields) {
+      const fields = isString(query.fields)
+        ? query.fields.split(",")
+        : query.fields.filter(Boolean);
+      const input = fields.map((item) => ({ [item]: true }));
+      select = normalizeSelect(input);
+      delete finalWhere.fields;
+    }
+
     const [rawList, total] = await Promise.all([
       this.model.findMany({
         where: finalWhere,
         skip,
         take: pageSize,
         orderBy: { created_at: "desc" },
+        select,
       }),
       this.model.count({ where: finalWhere }),
     ]);
 
-    // ========== 批量解析 uploader → username ==========
+    // 批量解析 uploader → username
     const uploaderIds = [
       ...new Set(rawList.map((f: any) => f.uploader).filter(Boolean)),
     ];
@@ -59,7 +71,6 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
       const uploader = userMap.get(f.uploader);
       return {
         ...f,
-        // 覆盖 uploader 字段为用户名；同时保留原始 id
         uploader: uploader?.username ?? null,
         uploaderId: f.uploader ?? null,
         uploaderRealName: uploader?.realName ?? null,
@@ -80,6 +91,7 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
     url: string;
     size: number;
     mimeType?: string;
+    category?: string;
     uploader?: string;
     tenantId: string;
   }) {
@@ -90,6 +102,7 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
         size: data.size,
         mime_type: data.mimeType ?? null,
         uploader: data.uploader ?? null,
+        category: data.category ?? "other",
         tenant_id: data.tenantId,
         created_at: new Date(),
         is_deleted: 0,

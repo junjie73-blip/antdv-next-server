@@ -1,6 +1,6 @@
 import { prisma } from "@/config/database.js";
 import { redis } from "@/config/redis.js";
-import { logger } from "@/core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 
 const CACHE_KEY_PREFIX = "ip-rule:";
 const CACHE_TTL = 300; // 5 分钟兜底过期

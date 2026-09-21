@@ -1,7 +1,7 @@
 import { BaseService } from "@/core/base/service.js";
 import { LoginLogRepository } from "./repository.js";
-import { generateExcel, type ExcelColumn } from "@/core/excel/excel.service.js";
 import dayjs from "dayjs";
+import { ExcelColumn, generateExcel } from "@/platform/excel/service.js";
 
 const EXPORT_COLUMNS: ExcelColumn[] = [
   { header: "日志ID", key: "log_id", width: 36 },

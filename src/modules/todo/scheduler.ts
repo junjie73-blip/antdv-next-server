@@ -1,8 +1,8 @@
 import cron from "node-cron";
 import { prisma } from "@/config/database.js";
-import { logger } from "@/core/logger/index.js";
-import { withLock } from "@/core/scheduler/lock.js";
-import { wsManager } from "@/core/ws/manager.js";
+import { logger } from "@/platform/logger/index.js";
+import { wsManager } from "@/platform/ws/manager.js";
+import { withLock } from "@/core/index.js";
 
 export function startTodoReminderScheduler() {
   // 每分钟检查

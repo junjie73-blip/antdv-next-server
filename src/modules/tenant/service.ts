@@ -1,10 +1,10 @@
 import { TenantRepository } from "./repository.js";
 import { TenantImportRowSchema, TenantExportColumns } from "./schema.js";
-import { parseExcel, generateExcel } from "@/core/excel/excel.service.js";
 import { AppError } from "@/core/errors.js";
-import { logger } from "@core/logger/index.js";
+import { logger } from "@/platform/logger/index.js";
 import type { TenantOption } from "./types.js";
 import { BaseService } from "@/core/base/service.js";
+import { generateExcel, parseExcel } from "@/platform/excel/service.js";
 
 export class TenantService extends BaseService<TenantRepository> {
   constructor(repository: TenantRepository) {

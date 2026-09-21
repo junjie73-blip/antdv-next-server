@@ -4,18 +4,19 @@ import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import {
   keysToSnakeCase,
   keysToCamelCase,
-} from "@/common/utils/case-convert.js";
+} from "@/shared/utils/case-convert.js";
 import * as XLSX from "xlsx";
-import { AppError } from "@/middleware/error-handler.js";
+import { AppError } from "@/middleware/http/error-handler.js";
 import { UserCreateDto, UserImportRowSchema } from "./schema.js";
-import { verifyPassword, hashPassword } from "@/common/utils/crypto.js";
 import { v4 as uuidv4 } from "uuid";
 import { copyMenusFromTemplate } from "../menu/service.js";
 import {
   decryptField,
+  hashPassword,
   encryptField,
   hashField,
-} from "@/common/utils/field-encrypt.js";
+} from "@/core/index.js";
+
 const TEMPLATE_TENANT_CODE = "__TEMPLATE__";
 export class UserRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "user_id";

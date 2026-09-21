@@ -1,6 +1,6 @@
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import { AppError } from "@/core/errors.js";
 import type { MenuEntity } from "./types.js";
 import { BaseRepository } from "@/core/base/repository.js";

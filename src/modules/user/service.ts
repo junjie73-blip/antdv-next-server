@@ -1,11 +1,9 @@
 import { UserRepository } from "./repository.js";
-import { AppError } from "@/core/errors.js";
 import { hash } from "bcryptjs";
-import { generateExcel, type ExcelColumn } from "@/core/excel/excel.service.js";
 import * as XLSX from "xlsx";
-import { UserImportRowSchema } from "./schema.js";
 import { BaseService } from "@/core/base/service.js";
 import dayjs from "dayjs";
+import { ExcelColumn, generateExcel } from "@/platform/excel/index.js";
 
 const EXPORT_COLUMNS: ExcelColumn[] = [
   { header: "用户名", key: "username", width: 16 },

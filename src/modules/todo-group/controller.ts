@@ -14,9 +14,9 @@ import { Request, Response } from "express";
 import { TodoGroupRepository } from "./repository.js";
 import { TodoGroupCreateSchema, TodoGroupUpdateSchema } from "./schema.js";
 import { AppError } from "@/core/errors.js";
-import { error, success } from "@/common/utils/response.js";
-import { logger } from "@core/logger/index.js";
-import { keysToCamelCase } from "@/common/utils/case-convert.js";
+import { error, success } from "@/shared/http/response.js";
+import { logger } from "@/platform/logger/index.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 
 @Controller("/todo-group", { tags: ["待办分组"] })
 export default class TodoGroupController {

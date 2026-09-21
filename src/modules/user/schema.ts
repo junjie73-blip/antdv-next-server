@@ -37,11 +37,9 @@ export const UserCreateSchema = z
       .optional()
       .openapi({ description: "性别：0-未知，1-男，2-女" }),
     status: z
-      .number()
-      .int()
-      .min(0)
-      .max(1)
-      .default(1)
+      .string()
+      .regex(/^[01]$/)
+      .default("1")
       .openapi({ description: "状态：0-禁用，1-启用" }),
     roleIds: z
       .array(z.string().uuid())
@@ -66,7 +64,10 @@ export const UserUpdateSchema = z
     email: z.string().email().max(128).optional(),
     avatar: z.string().max(512).optional(),
     gender: z.number().int().min(0).max(2).optional(),
-    status: z.number().int().min(0).max(1).optional(),
+    status: z
+      .string()
+      .regex(/^[01]$/)
+      .openapi({ description: "状态：0-禁用，1-启用" }),
     roleIds: z.array(z.string().uuid()).optional(),
     deptIds: z.array(z.string().uuid()).optional(),
     tenantId: z.string().uuid().optional(),
@@ -95,6 +96,7 @@ export const UserListSchema = z
       .openapi({ description: "关键字（用户名/真实姓名/手机号/邮箱）" }),
     status: z
       .string()
+      .regex(/^[01]$/)
       .optional()
       .openapi({ description: "状态过滤：'0'或'1'" }),
     roleId: z.string().optional().openapi({ description: "角色ID过滤" }),
@@ -103,6 +105,10 @@ export const UserListSchema = z
       .array(z.string().uuid())
       .optional()
       .openapi({ description: "用户ID列表" }),
+    fields: z
+      .string()
+      .optional()
+      .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("UserList");
 
