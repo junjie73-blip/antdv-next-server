@@ -248,6 +248,8 @@ export abstract class BaseController<
     if (!this.createSchema)
       throw new AppError("createSchema 未定义", 500001, 500);
     const parsed: any = this.createSchema.safeParse(body);
+    console.log(parsed, "parsed");
+
     if (!parsed.success) {
       throw new AppError("参数校验失败", 400001, 400, parsed.error.flatten());
     }
@@ -258,6 +260,8 @@ export abstract class BaseController<
     if (!this.updateSchema)
       throw new AppError("updateSchema 未定义", 500001, 500);
     const parsed: any = this.updateSchema.safeParse(body);
+
+    console.log(parsed, "parsed");
     if (!parsed.success) {
       throw new AppError("参数校验失败", 400001, 400, parsed.error.flatten());
     }

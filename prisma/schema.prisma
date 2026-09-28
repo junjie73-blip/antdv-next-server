@@ -112,6 +112,7 @@ model sys_dept {
   dept_code  String   @db.VarChar(64)
   dept_name  String   @db.VarChar(128)
   leader     String?  @db.VarChar(64)
+  leader_id  String?  @db.Uuid
   phone      String?  @db.VarChar(32)
   email      String?  @db.VarChar(128)
   sort_order Int      @default(0)
@@ -129,31 +130,35 @@ model sys_dept {
   @@unique([tenant_id, dept_code])
   @@index([tenant_id])
   @@index([is_deleted])
+  @@index([leader_id])
   @@index([status])
   @@map("sys_dept")
 }
 
 // ==================== 菜单表 ====================
-/// 菜单表，支持目录、菜单、按钮三级结构
 model sys_menu {
-  menu_id     String   @id @default(uuid()) @db.Uuid
-  tenant_id   String   @db.Uuid
-  parent_id   String?  @db.Uuid
-  menu_name   String   @db.VarChar(128)
-  menu_type   Int      @db.SmallInt /// 1-目录 2-菜单 3-按钮
-  icon        String?  @db.VarChar(128)
-  path        String?  @db.VarChar(256)
-  component   String?  @db.VarChar(256)
-  permission  String?  @db.VarChar(128)
-  sort_order  Int      @default(0)
-  status      String   @default("1") @db.VarChar(10)
-  is_platform Int      @default(0) @db.SmallInt /// 1-平台级菜单，0-业务菜单
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime @updatedAt @db.Timestamptz(6)
-  created_by  String?  @db.Uuid
-  updated_by  String?  @db.Uuid
-  is_deleted  Int      @default(0) @db.SmallInt
-
+  menu_id       String          @id @default(uuid()) @db.Uuid
+  tenant_id     String          @db.Uuid
+  parent_id     String?         @db.Uuid
+  menu_name     String          @db.VarChar(128)
+  menu_type     Int             @db.SmallInt /// 1-目录 2-菜单 3-按钮
+  icon          String?         @db.VarChar(128)
+  path          String?         @db.VarChar(256)
+  component     String?         @db.VarChar(256)
+  permission    String?         @db.VarChar(128)
+  sort_order    Int             @default(0)
+  status        String          @default("1") @db.VarChar(10)
+  is_platform   Int             @default(0) @db.SmallInt /// 1-平台级菜单，0-业务菜单
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime        @updatedAt @db.Timestamptz(6)
+  created_by    String?         @db.Uuid
+  updated_by    String?         @db.Uuid
+  is_deleted    Int             @default(0) @db.SmallInt
+  micro_app     Json? /// 微应用配置 { name, url, baseroute, ... }
+  is_external   Boolean         @default(false) /// 是否外链（新窗口打开）
+  layout        String?         @db.VarChar(20) /// 布局类型：blank 表示无布局全屏
+  hidden        Boolean         @default(false) /// 侧边栏是否隐藏
+  keep_alive    Boolean         @default(false)
   // ===== 反向关系字段 =====
   sys_role_menu sys_role_menu[]
 
@@ -751,4 +756,82 @@ model sys_login_daily {
 
   @@unique([tenant_id, stat_date])
   @@map("sys_login_daily")
+}
+
+// ==================== 审批申请主表 ====================
+model sys_approval_request {
+  request_id      String   @id @default(uuid()) @db.Uuid
+  tenant_id       String   @db.Uuid
+  title           String   @db.VarChar(256)
+  content         String?  @db.Text
+  form_data       Json?
+  applicant_id    String   @db.Uuid
+  current_dept_id String   @db.Uuid
+  status          String   @default("0") @db.VarChar(20)
+  is_deleted      Int      @default(0) @db.SmallInt
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @updatedAt @db.Timestamptz(6)
+  created_by      String?  @db.Uuid
+  updated_by      String?  @db.Uuid
+
+  // ===== 反向关系字段 =====
+  nodes sys_approval_node[]
+  logs  sys_approval_log[]
+
+  @@index([tenant_id, status])
+  @@index([tenant_id, applicant_id])
+  @@index([is_deleted])
+  @@map("sys_approval_request")
+}
+
+// ==================== 审批节点表 ====================
+model sys_approval_node {
+  node_id            String    @id @default(uuid()) @db.Uuid
+  tenant_id          String    @db.Uuid
+  request_id         String    @db.Uuid
+  dept_id            String    @db.Uuid
+  approver_id        String?   @db.Uuid
+  sequence           Int
+  status             String    @default("0") @db.VarChar(20)
+  is_current         Int       @default(0) @db.SmallInt
+  round              Int       @default(1)
+  reject_reason_type String?   @db.VarChar(64)
+  reject_reason      String?   @db.VarChar(512)
+  approved_at        DateTime? @db.Timestamptz(6)
+  is_deleted         Int       @default(0) @db.SmallInt
+  created_at         DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime  @updatedAt @db.Timestamptz(6)
+  created_by         String?   @db.Uuid
+  updated_by         String?   @db.Uuid
+
+  // ===== 关系字段 =====
+  request sys_approval_request @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
+
+  @@index([tenant_id, request_id])
+  @@index([tenant_id, dept_id, status])
+  @@map("sys_approval_node")
+}
+
+// ==================== 审批操作日志表 ====================
+model sys_approval_log {
+  log_id        String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  request_id    String   @db.Uuid
+  operator_id   String   @db.Uuid
+  operator_name String   @db.VarChar(64)
+  action        String   @db.VarChar(32)
+  from_status   String?  @db.VarChar(20)
+  to_status     String?  @db.VarChar(20)
+  remark        String?  @db.Text
+  reason_type   String?  @db.VarChar(64)
+  metadata      Json?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  created_by    String?  @db.Uuid
+
+  // ===== 关系字段 =====
+  request sys_approval_request @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
+
+  @@index([tenant_id, request_id])
+  @@index([created_at])
+  @@map("sys_approval_log")
 }
