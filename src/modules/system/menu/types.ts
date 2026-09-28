@@ -1,4 +1,14 @@
 /** 菜单导出/导入的行结构 */
+export interface MicroAppConfig {
+  name: string;
+  url: string;
+  baseroute: string;
+  keepAlive?: boolean;
+  disableMemoryRouter?: boolean;
+  disablePatchRequest?: boolean;
+  inline?: boolean;
+  destroy?: boolean;
+}
 export interface MenuImportRow {
   menuName: string;
   menuType: number;
@@ -22,6 +32,11 @@ export interface MenuEntity {
   path: string | null;
   component: string | null;
   permission: string | null;
+  micro_app: MicroAppConfig | null;
+  is_external: boolean;
+  layout: string | null;
+  hidden: boolean;
+  keep_alive: boolean;
   sort_order: number;
   status: string;
   created_at: Date;
@@ -39,24 +54,11 @@ export interface MenuImportRow {
   permission: string;
   sortOrder: number;
   status: string;
-}
-
-/** 菜单表实体 */
-export interface MenuEntity {
-  menu_id: string;
-  tenant_id: string;
-  parent_id: string | null;
-  menu_name: string;
-  menu_type: number;
-  icon: string | null;
-  path: string | null;
-  component: string | null;
-  permission: string | null;
-  sort_order: number;
-  status: string;
-  created_at: Date;
-  updated_at: Date;
-  is_deleted: number;
+  microApp: MicroAppConfig | null;
+  isExternal: boolean;
+  layout: string | null;
+  hidden: boolean;
+  keepAlive: boolean;
 }
 
 /** 菜单树节点 */
@@ -72,4 +74,9 @@ export interface MenuNode {
   sortOrder: number;
   status: string;
   children?: MenuNode[];
+  microApp: MicroAppConfig | null;
+  isExternal: boolean;
+  layout: string | null;
+  hidden: boolean;
+  keepAlive: boolean;
 }

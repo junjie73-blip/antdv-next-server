@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_menu
- * 菜单表，支持目录、菜单、按钮三级结构
+ * 
  */
 export type sys_menuModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_menuPayload>
 
@@ -58,6 +58,10 @@ export type Sys_menuMinAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  is_external: boolean | null
+  layout: string | null
+  hidden: boolean | null
+  keep_alive: boolean | null
 }
 
 export type Sys_menuMaxAggregateOutputType = {
@@ -78,6 +82,10 @@ export type Sys_menuMaxAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  is_external: boolean | null
+  layout: string | null
+  hidden: boolean | null
+  keep_alive: boolean | null
 }
 
 export type Sys_menuCountAggregateOutputType = {
@@ -98,6 +106,11 @@ export type Sys_menuCountAggregateOutputType = {
   created_by: number
   updated_by: number
   is_deleted: number
+  micro_app: number
+  is_external: number
+  layout: number
+  hidden: number
+  keep_alive: number
   _all: number
 }
 
@@ -134,6 +147,10 @@ export type Sys_menuMinAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  is_external?: true
+  layout?: true
+  hidden?: true
+  keep_alive?: true
 }
 
 export type Sys_menuMaxAggregateInputType = {
@@ -154,6 +171,10 @@ export type Sys_menuMaxAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  is_external?: true
+  layout?: true
+  hidden?: true
+  keep_alive?: true
 }
 
 export type Sys_menuCountAggregateInputType = {
@@ -174,6 +195,11 @@ export type Sys_menuCountAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  micro_app?: true
+  is_external?: true
+  layout?: true
+  hidden?: true
+  keep_alive?: true
   _all?: true
 }
 
@@ -281,6 +307,11 @@ export type Sys_menuGroupByOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number
+  micro_app: runtime.JsonValue | null
+  is_external: boolean
+  layout: string | null
+  hidden: boolean
+  keep_alive: boolean
   _count: Sys_menuCountAggregateOutputType | null
   _avg: Sys_menuAvgAggregateOutputType | null
   _sum: Sys_menuSumAggregateOutputType | null
@@ -324,6 +355,11 @@ export type sys_menuWhereInput = {
   created_by?: Prisma.UuidNullableFilter<"sys_menu"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_menu"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_menu"> | number
+  micro_app?: Prisma.JsonNullableFilter<"sys_menu">
+  is_external?: Prisma.BoolFilter<"sys_menu"> | boolean
+  layout?: Prisma.StringNullableFilter<"sys_menu"> | string | null
+  hidden?: Prisma.BoolFilter<"sys_menu"> | boolean
+  keep_alive?: Prisma.BoolFilter<"sys_menu"> | boolean
   sys_role_menu?: Prisma.Sys_role_menuListRelationFilter
 }
 
@@ -345,6 +381,11 @@ export type sys_menuOrderByWithRelationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  micro_app?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_external?: Prisma.SortOrder
+  layout?: Prisma.SortOrderInput | Prisma.SortOrder
+  hidden?: Prisma.SortOrder
+  keep_alive?: Prisma.SortOrder
   sys_role_menu?: Prisma.sys_role_menuOrderByRelationAggregateInput
 }
 
@@ -369,6 +410,11 @@ export type sys_menuWhereUniqueInput = Prisma.AtLeast<{
   created_by?: Prisma.UuidNullableFilter<"sys_menu"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_menu"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_menu"> | number
+  micro_app?: Prisma.JsonNullableFilter<"sys_menu">
+  is_external?: Prisma.BoolFilter<"sys_menu"> | boolean
+  layout?: Prisma.StringNullableFilter<"sys_menu"> | string | null
+  hidden?: Prisma.BoolFilter<"sys_menu"> | boolean
+  keep_alive?: Prisma.BoolFilter<"sys_menu"> | boolean
   sys_role_menu?: Prisma.Sys_role_menuListRelationFilter
 }, "menu_id">
 
@@ -390,6 +436,11 @@ export type sys_menuOrderByWithAggregationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  micro_app?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_external?: Prisma.SortOrder
+  layout?: Prisma.SortOrderInput | Prisma.SortOrder
+  hidden?: Prisma.SortOrder
+  keep_alive?: Prisma.SortOrder
   _count?: Prisma.sys_menuCountOrderByAggregateInput
   _avg?: Prisma.sys_menuAvgOrderByAggregateInput
   _max?: Prisma.sys_menuMaxOrderByAggregateInput
@@ -418,6 +469,11 @@ export type sys_menuScalarWhereWithAggregatesInput = {
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_menu"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_menu"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_menu"> | number
+  micro_app?: Prisma.JsonNullableWithAggregatesFilter<"sys_menu">
+  is_external?: Prisma.BoolWithAggregatesFilter<"sys_menu"> | boolean
+  layout?: Prisma.StringNullableWithAggregatesFilter<"sys_menu"> | string | null
+  hidden?: Prisma.BoolWithAggregatesFilter<"sys_menu"> | boolean
+  keep_alive?: Prisma.BoolWithAggregatesFilter<"sys_menu"> | boolean
 }
 
 export type sys_menuCreateInput = {
@@ -438,6 +494,11 @@ export type sys_menuCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: boolean
+  layout?: string | null
+  hidden?: boolean
+  keep_alive?: boolean
   sys_role_menu?: Prisma.sys_role_menuCreateNestedManyWithoutMenuInput
 }
 
@@ -459,6 +520,11 @@ export type sys_menuUncheckedCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: boolean
+  layout?: string | null
+  hidden?: boolean
+  keep_alive?: boolean
   sys_role_menu?: Prisma.sys_role_menuUncheckedCreateNestedManyWithoutMenuInput
 }
 
@@ -480,6 +546,11 @@ export type sys_menuUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  layout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hidden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keep_alive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sys_role_menu?: Prisma.sys_role_menuUpdateManyWithoutMenuNestedInput
 }
 
@@ -501,6 +572,11 @@ export type sys_menuUncheckedUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  layout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hidden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keep_alive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sys_role_menu?: Prisma.sys_role_menuUncheckedUpdateManyWithoutMenuNestedInput
 }
 
@@ -522,6 +598,11 @@ export type sys_menuCreateManyInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: boolean
+  layout?: string | null
+  hidden?: boolean
+  keep_alive?: boolean
 }
 
 export type sys_menuUpdateManyMutationInput = {
@@ -542,6 +623,11 @@ export type sys_menuUpdateManyMutationInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  layout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hidden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keep_alive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type sys_menuUncheckedUpdateManyInput = {
@@ -562,6 +648,11 @@ export type sys_menuUncheckedUpdateManyInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  layout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hidden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keep_alive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type sys_menuCountOrderByAggregateInput = {
@@ -582,6 +673,11 @@ export type sys_menuCountOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  micro_app?: Prisma.SortOrder
+  is_external?: Prisma.SortOrder
+  layout?: Prisma.SortOrder
+  hidden?: Prisma.SortOrder
+  keep_alive?: Prisma.SortOrder
 }
 
 export type sys_menuAvgOrderByAggregateInput = {
@@ -609,6 +705,10 @@ export type sys_menuMaxOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  is_external?: Prisma.SortOrder
+  layout?: Prisma.SortOrder
+  hidden?: Prisma.SortOrder
+  keep_alive?: Prisma.SortOrder
 }
 
 export type sys_menuMinOrderByAggregateInput = {
@@ -629,6 +729,10 @@ export type sys_menuMinOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  is_external?: Prisma.SortOrder
+  layout?: Prisma.SortOrder
+  hidden?: Prisma.SortOrder
+  keep_alive?: Prisma.SortOrder
 }
 
 export type sys_menuSumOrderByAggregateInput = {
@@ -641,6 +745,10 @@ export type sys_menuSumOrderByAggregateInput = {
 export type Sys_menuScalarRelationFilter = {
   is?: Prisma.sys_menuWhereInput
   isNot?: Prisma.sys_menuWhereInput
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type sys_menuCreateNestedOneWithoutSys_role_menuInput = {
@@ -675,6 +783,11 @@ export type sys_menuCreateWithoutSys_role_menuInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: boolean
+  layout?: string | null
+  hidden?: boolean
+  keep_alive?: boolean
 }
 
 export type sys_menuUncheckedCreateWithoutSys_role_menuInput = {
@@ -695,6 +808,11 @@ export type sys_menuUncheckedCreateWithoutSys_role_menuInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: boolean
+  layout?: string | null
+  hidden?: boolean
+  keep_alive?: boolean
 }
 
 export type sys_menuCreateOrConnectWithoutSys_role_menuInput = {
@@ -731,6 +849,11 @@ export type sys_menuUpdateWithoutSys_role_menuInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  layout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hidden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keep_alive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type sys_menuUncheckedUpdateWithoutSys_role_menuInput = {
@@ -751,6 +874,11 @@ export type sys_menuUncheckedUpdateWithoutSys_role_menuInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  micro_app?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_external?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  layout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hidden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  keep_alive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -802,6 +930,11 @@ export type sys_menuSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  micro_app?: boolean
+  is_external?: boolean
+  layout?: boolean
+  hidden?: boolean
+  keep_alive?: boolean
   sys_role_menu?: boolean | Prisma.sys_menu$sys_role_menuArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_menuCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_menu"]>
@@ -824,6 +957,11 @@ export type sys_menuSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  micro_app?: boolean
+  is_external?: boolean
+  layout?: boolean
+  hidden?: boolean
+  keep_alive?: boolean
 }, ExtArgs["result"]["sys_menu"]>
 
 export type sys_menuSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -844,6 +982,11 @@ export type sys_menuSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  micro_app?: boolean
+  is_external?: boolean
+  layout?: boolean
+  hidden?: boolean
+  keep_alive?: boolean
 }, ExtArgs["result"]["sys_menu"]>
 
 export type sys_menuSelectScalar = {
@@ -864,9 +1007,14 @@ export type sys_menuSelectScalar = {
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  micro_app?: boolean
+  is_external?: boolean
+  layout?: boolean
+  hidden?: boolean
+  keep_alive?: boolean
 }
 
-export type sys_menuOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"menu_id" | "tenant_id" | "parent_id" | "menu_name" | "menu_type" | "icon" | "path" | "component" | "permission" | "sort_order" | "status" | "is_platform" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_menu"]>
+export type sys_menuOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"menu_id" | "tenant_id" | "parent_id" | "menu_name" | "menu_type" | "icon" | "path" | "component" | "permission" | "sort_order" | "status" | "is_platform" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "micro_app" | "is_external" | "layout" | "hidden" | "keep_alive", ExtArgs["result"]["sys_menu"]>
 export type sys_menuInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sys_role_menu?: boolean | Prisma.sys_menu$sys_role_menuArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_menuCountOutputTypeDefaultArgs<ExtArgs>
@@ -903,6 +1051,23 @@ export type $sys_menuPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     created_by: string | null
     updated_by: string | null
     is_deleted: number
+    /**
+     * 微应用配置 { name, url, baseroute, ... }
+     */
+    micro_app: runtime.JsonValue | null
+    /**
+     * 是否外链（新窗口打开）
+     */
+    is_external: boolean
+    /**
+     * 布局类型：blank 表示无布局全屏
+     */
+    layout: string | null
+    /**
+     * 侧边栏是否隐藏
+     */
+    hidden: boolean
+    keep_alive: boolean
   }, ExtArgs["result"]["sys_menu"]>
   composites: {}
 }
@@ -1344,6 +1509,11 @@ export interface sys_menuFieldRefs {
   readonly created_by: Prisma.FieldRef<"sys_menu", 'String'>
   readonly updated_by: Prisma.FieldRef<"sys_menu", 'String'>
   readonly is_deleted: Prisma.FieldRef<"sys_menu", 'Int'>
+  readonly micro_app: Prisma.FieldRef<"sys_menu", 'Json'>
+  readonly is_external: Prisma.FieldRef<"sys_menu", 'Boolean'>
+  readonly layout: Prisma.FieldRef<"sys_menu", 'String'>
+  readonly hidden: Prisma.FieldRef<"sys_menu", 'Boolean'>
+  readonly keep_alive: Prisma.FieldRef<"sys_menu", 'Boolean'>
 }
     
 

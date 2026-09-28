@@ -1,13 +1,29 @@
 import { z } from "zod";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 extendZodWithOpenApi(z);
+export const MicroAppConfigSchema = z
+  .object({
+    name: z.string().min(1).max(64).openapi({ description: "微应用名称" }),
+    url: z.string().min(1).max(512).openapi({ description: "微应用入口 URL" }),
+    baseroute: z
+      .string()
+      .min(1)
+      .max(256)
+      .openapi({ description: "微应用路由前缀，如 /app-name" }),
+    keepAlive: z.boolean().optional(),
+    disableMemoryRouter: z.boolean().optional(),
+    disablePatchRequest: z.boolean().optional(),
+    inline: z.boolean().optional(),
+    destroy: z.boolean().optional(),
+  })
+  .openapi("MicroAppConfig");
 
 export const MenuCreateSchema = z
   .object({
     parentId: z
       .string()
       .uuid()
-      .optional()
+      .nullish()
       .openapi({ description: "父菜单ID，顶级可传全零UUID或省略" }),
     menuName: z.string().min(1).max(128).openapi({ description: "菜单名称" }),
     menuType: z
@@ -34,6 +50,26 @@ export const MenuCreateSchema = z
       .regex(/^[01]$/, { message: "状态必须是0或1" })
       .default("1")
       .openapi({ description: "状态：0-禁用，1-启用" }),
+    microApp: MicroAppConfigSchema.nullable()
+      .optional()
+      .openapi({ description: "微应用配置，仅 menuType=2 时有意义" }),
+    isExternal: z
+      .boolean()
+      .default(false)
+      .openapi({ description: "是否外链（新窗口打开）" }),
+    layout: z
+      .enum(["blank", "default"])
+      .nullable()
+      .optional()
+      .openapi({ description: "布局类型：blank 表示无布局全屏渲染" }),
+    hidden: z
+      .boolean()
+      .default(false)
+      .openapi({ description: "侧边栏是否隐藏" }),
+    keepAlive: z
+      .boolean()
+      .default(false)
+      .openapi({ description: "页面是否缓存" }),
   })
   .openapi("MenuCreate");
 
@@ -54,6 +90,7 @@ export const MenuListSchema = z
       .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("MenuList");
+const YesNoSchema = z.enum(["是", "否"]).default("否");
 /** 菜单导入的 Excel 行 Schema */
 export const MenuImportRowSchema = z.object({
   菜单名称: z.string().min(1).max(128),
@@ -64,6 +101,26 @@ export const MenuImportRowSchema = z.object({
   组件路径: z.string().max(256).optional().default(""),
   权限标识: z.string().max(128).optional().default(""),
   排序: z.coerce.number().int().default(0),
+  微应用配置: z
+    .string()
+    .optional()
+    .default("")
+    .refine(
+      (s) => {
+        if (!s) return true;
+        try {
+          JSON.parse(s);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: "微应用配置必须是合法 JSON" },
+    ),
+  是否外链: YesNoSchema,
+  布局: z.enum(["blank", "default", ""]).optional().default(""),
+  是否隐藏: YesNoSchema,
+  是否缓存: YesNoSchema,
   状态: z.enum(["启用", "禁用"]).default("启用"),
 });
 
@@ -80,6 +137,31 @@ export const MenuExportColumns = [
   { header: "路由地址", key: "path", width: 24 },
   { header: "组件路径", key: "component", width: 24 },
   { header: "权限标识", key: "permission", width: 24 },
+  {
+    header: "微应用配置",
+    key: "micro_app",
+    width: 40,
+    formatter: (v: unknown) => (v ? JSON.stringify(v) : ""),
+  },
+  {
+    header: "是否外链",
+    key: "is_external",
+    width: 10,
+    formatter: (v: boolean) => (v ? "是" : "否"),
+  },
+  { header: "布局", key: "layout", width: 10 },
+  {
+    header: "是否隐藏",
+    key: "hidden",
+    width: 10,
+    formatter: (v: boolean) => (v ? "是" : "否"),
+  },
+  {
+    header: "是否缓存",
+    key: "keep_alive",
+    width: 10,
+    formatter: (v: boolean) => (v ? "是" : "否"),
+  },
   { header: "排序", key: "sort_order", width: 8 },
   {
     header: "状态",
@@ -88,3 +170,8 @@ export const MenuExportColumns = [
     formatter: (v: string) => (v === "1" ? "启用" : "禁用"),
   },
 ] as const;
+export const MenuStatusSchema = z.object({
+  status: z.string().openapi({
+    description: "菜单状态",
+  }),
+});

@@ -19,7 +19,7 @@ import { JobLogRepository } from "./job-log.repository.js";
 import { JobService } from "./service.js";
 import { AppError } from "@/core/errors.js";
 import { success } from "@/shared/http/response.js";
-import { upload } from "../user/controller.js";
+import { upload } from "../../system/user/controller.js";
 
 @Controller("/job", { tags: ["定时任务"] })
 export default class JobController extends BaseController<any, any, any, any> {

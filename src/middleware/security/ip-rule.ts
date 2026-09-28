@@ -3,8 +3,8 @@ import { logger } from "@/platform/logger/index.js";
 import { getClientIp } from "@/shared/utils/ip.js";
 
 // TODO(phase4): 迁移到 @/modules/ip-rule/*
-import { getIpRules } from "@/modules/ip-rule/cache.js";
-import { checkIpAgainstRules } from "@/modules/ip-rule/matcher.js";
+import { getIpRules } from "@/modules/system/ip-rule/cache.js";
+import { checkIpAgainstRules } from "@/modules/system/ip-rule/matcher.js";
 
 const WHITELIST_PREFIXES = [
   "/api/v1/health",

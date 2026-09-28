@@ -384,6 +384,7 @@ export class AuthService {
     if (menuIds.length === 0) return [];
 
     const isAdmin = await isPlatformAdmin(userId, tenantId);
+    console.log(userId, tenantId, "isAdmin");
     const menus = await prisma.sys_menu.findMany({
       where: {
         menu_id: { in: menuIds },

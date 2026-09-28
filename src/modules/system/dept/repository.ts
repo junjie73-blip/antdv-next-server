@@ -115,13 +115,19 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
   }
 
   async insertDept(data: any): Promise<string> {
+    const { leader, leader_id } = await this.resolveLeaderFields(
+      data.tenantId,
+      data.leaderId,
+      data.leader,
+    );
     const record = await this.model.create({
       data: {
         tenant_id: data.tenantId,
         parent_id: data.parentId,
         dept_code: data.deptCode,
         dept_name: data.deptName,
-        leader: data.leader || null,
+        leader: leader,
+        leader_id: leader_id,
         phone: data.phone || null,
         email: data.email || null,
         sort_order: data.sortOrder,
@@ -139,7 +145,7 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
     tenantId: string,
     options: { onlyEnabled?: boolean } = {},
   ) {
-    return this.model.findMany({
+    const rows = await this.model.findMany({
       where: {
         tenant_id: tenantId,
         is_deleted: 0,
@@ -147,5 +153,114 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
       },
       orderBy: { sort_order: "asc" },
     });
+
+    // 批量补 leaderName
+    const leaderIds = rows
+      .map((r: any) => r.leader_id)
+      .filter((id: string | null): id is string => !!id);
+
+    const userMap = await this.findUsersByIds(
+      [...new Set(leaderIds)],
+      tenantId,
+    );
+
+    return rows.map((r: any) => {
+      const user = r.leader_id ? userMap.get(r.leader_id) : null;
+      return {
+        ...r,
+        leader_name: user?.real_name ?? user?.username ?? null,
+      };
+    });
+  }
+  /**
+   * 根据 user_id 找用户（用于 leaderId → leader 字符串）
+   */
+  async findUserById(userId: string, tenantId: string) {
+    return prisma.sys_user.findFirst({
+      where: { user_id: userId, tenant_id: tenantId, is_deleted: 0 },
+      select: { user_id: true, username: true, real_name: true },
+    });
+  }
+
+  /**
+   * 根据 username / real_name 找用户（用于 leader 字符串 → leaderId）
+   */
+  async findUserByLeaderText(leaderText: string, tenantId: string) {
+    const text = leaderText.trim();
+    if (!text) return null;
+    return prisma.sys_user.findFirst({
+      where: {
+        tenant_id: tenantId,
+        is_deleted: 0,
+        OR: [{ username: text }, { real_name: text }],
+      },
+      select: { user_id: true, username: true, real_name: true },
+    });
+  }
+
+  /**
+   * 批量查用户信息（给列表/树填充 leaderName）
+   */
+  async findUsersByIds(userIds: string[], tenantId: string) {
+    if (userIds.length === 0) return new Map();
+    const rows = await prisma.sys_user.findMany({
+      where: {
+        user_id: { in: userIds },
+        tenant_id: tenantId,
+        is_deleted: 0,
+      },
+      select: { user_id: true, username: true, real_name: true },
+    });
+    return new Map(rows.map((r) => [r.user_id, r]));
+  }
+  async resolveLeaderFields(
+    tenantId: string,
+    leaderId?: string | null,
+    leaderText?: string | null,
+  ): Promise<{ leader: string | null; leader_id: string | null }> {
+    // 优先按 leaderId 查
+    if (leaderId) {
+      const user = await this.findUserById(leaderId, tenantId);
+      if (!user) throw new AppError("指定的负责人用户不存在", 400, 400);
+      return {
+        leader_id: user.user_id,
+        leader: user.username, // 存 username，稳定
+      };
+    }
+
+    // 退而求其次：按字符串查
+    if (leaderText && leaderText.trim()) {
+      const user = await this.findUserByLeaderText(leaderText, tenantId);
+      if (!user) {
+        // 找不到用户，也允许写字符串（用于历史数据兼容），但不填 leader_id
+        return { leader_id: null, leader: leaderText.trim() };
+      }
+      return {
+        leader_id: user.user_id,
+        leader: user.username,
+      };
+    }
+
+    return { leader_id: null, leader: null };
+  }
+  async update(id: string, tenantId: string, data: any, userId?: string) {
+    // 若传了 leader 相关字段，先做解析
+    const hasLeaderInput =
+      data.leaderId !== undefined || data.leader !== undefined;
+
+    if (hasLeaderInput) {
+      const resolved = await this.resolveLeaderFields(
+        tenantId,
+        data.leaderId,
+        data.leader,
+      );
+      data.leader = resolved.leader;
+      data.leader_id = resolved.leader_id;
+    }
+
+    // 移除不入库的字段
+    delete data.leaderId;
+
+    return super.update(id, tenantId, data, userId);
   }
 }

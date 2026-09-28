@@ -20,6 +20,7 @@ import {
   MenuCreateSchema,
   MenuUpdateSchema,
   MenuListSchema,
+  MenuStatusSchema,
 } from "./schema.js";
 import { AppError } from "@/core/errors.js";
 import { success } from "@/shared/http/response.js";
@@ -28,7 +29,7 @@ import { upload } from "../user/controller.js";
 @Controller("/menu", { tags: ["菜单管理"] })
 export default class MenuController extends BaseController<any, any, any, any> {
   protected readonly repository = new MenuRepository();
-  protected readonly service = new MenuService(this.repository); // ⭐ 必需
+  protected readonly service = new MenuService(this.repository);
   protected readonly config = {
     routePrefix: "/api/v1/menu",
     tags: ["菜单管理"],
@@ -52,13 +53,13 @@ export default class MenuController extends BaseController<any, any, any, any> {
 
   async beforeCreate(dto: any, req: Request): Promise<any> {
     dto = await super.beforeCreate(dto, req);
-    await this.service.checkBeforeCreate(dto, req.tenantId!); // ⭐ 用 service
+    await this.service.checkBeforeCreate(dto, req.tenantId!);
     return dto;
   }
 
   async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
     dto = await super.beforeUpdate(id, dto, req);
-    await this.service.checkBeforeUpdate(id, dto, req.tenantId!); // ⭐
+    await this.service.checkBeforeUpdate(id, dto, req.tenantId!);
     return dto;
   }
 
@@ -66,7 +67,9 @@ export default class MenuController extends BaseController<any, any, any, any> {
 
   @Get("/tree")
   @ApiQuery({
-    menuType: z.string().optional(),
+    menuType: z.string().optional().openapi({
+      description: "菜单类型，逗号分隔，如 '1,2'；不传默认返回目录+菜单",
+    }),
   })
   @ApiOperation("获取菜单树", "返回树形结构菜单")
   @ApiResponse(200, "查询成功")
@@ -77,7 +80,7 @@ export default class MenuController extends BaseController<any, any, any, any> {
         req.query.menuType
           ? (req.query.menuType as unknown as string).split(",").map(Number)
           : undefined,
-      ); // ⭐
+      );
       success(res, data, "查询成功");
     } catch (err) {
       this.handleError(res, err);
@@ -94,7 +97,6 @@ export default class MenuController extends BaseController<any, any, any, any> {
   async buttons(@Req() req: Request, @Res() res: Response) {
     try {
       const data = await this.service.getButtons(
-        // ⭐
         req.query.parentId as string,
         req.tenantId!,
       );
@@ -142,16 +144,11 @@ export default class MenuController extends BaseController<any, any, any, any> {
   // 改变菜单状态
   @Put("/:id/status")
   @ApiOperation("改变菜单状态")
-  @ApiBody({
-    status: z.string().optional(),
-  })
+  @ApiBody(MenuStatusSchema)
   async changeStatus(@Req() req: Request, @Res() res: Response) {
     try {
-      await this.service.changeStatus(
-        req.params.id,
-        req.body.status,
-        req.tenantId!,
-      );
+      const { status } = MenuStatusSchema.parse(req.body);
+      await this.service.changeStatus(req.params.id, status, req.tenantId!);
       return success(res, null, "状态改变成功");
     } catch (error) {
       this.handleError(res, error);

@@ -43,6 +43,7 @@ export type Sys_deptMinAggregateOutputType = {
   dept_code: string | null
   dept_name: string | null
   leader: string | null
+  leader_id: string | null
   phone: string | null
   email: string | null
   sort_order: number | null
@@ -61,6 +62,7 @@ export type Sys_deptMaxAggregateOutputType = {
   dept_code: string | null
   dept_name: string | null
   leader: string | null
+  leader_id: string | null
   phone: string | null
   email: string | null
   sort_order: number | null
@@ -79,6 +81,7 @@ export type Sys_deptCountAggregateOutputType = {
   dept_code: number
   dept_name: number
   leader: number
+  leader_id: number
   phone: number
   email: number
   sort_order: number
@@ -109,6 +112,7 @@ export type Sys_deptMinAggregateInputType = {
   dept_code?: true
   dept_name?: true
   leader?: true
+  leader_id?: true
   phone?: true
   email?: true
   sort_order?: true
@@ -127,6 +131,7 @@ export type Sys_deptMaxAggregateInputType = {
   dept_code?: true
   dept_name?: true
   leader?: true
+  leader_id?: true
   phone?: true
   email?: true
   sort_order?: true
@@ -145,6 +150,7 @@ export type Sys_deptCountAggregateInputType = {
   dept_code?: true
   dept_name?: true
   leader?: true
+  leader_id?: true
   phone?: true
   email?: true
   sort_order?: true
@@ -250,6 +256,7 @@ export type Sys_deptGroupByOutputType = {
   dept_code: string
   dept_name: string
   leader: string | null
+  leader_id: string | null
   phone: string | null
   email: string | null
   sort_order: number
@@ -291,6 +298,7 @@ export type sys_deptWhereInput = {
   dept_code?: Prisma.StringFilter<"sys_dept"> | string
   dept_name?: Prisma.StringFilter<"sys_dept"> | string
   leader?: Prisma.StringNullableFilter<"sys_dept"> | string | null
+  leader_id?: Prisma.UuidNullableFilter<"sys_dept"> | string | null
   phone?: Prisma.StringNullableFilter<"sys_dept"> | string | null
   email?: Prisma.StringNullableFilter<"sys_dept"> | string | null
   sort_order?: Prisma.IntFilter<"sys_dept"> | number
@@ -311,6 +319,7 @@ export type sys_deptOrderByWithRelationInput = {
   dept_code?: Prisma.SortOrder
   dept_name?: Prisma.SortOrder
   leader?: Prisma.SortOrderInput | Prisma.SortOrder
+  leader_id?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   sort_order?: Prisma.SortOrder
@@ -335,6 +344,7 @@ export type sys_deptWhereUniqueInput = Prisma.AtLeast<{
   dept_code?: Prisma.StringFilter<"sys_dept"> | string
   dept_name?: Prisma.StringFilter<"sys_dept"> | string
   leader?: Prisma.StringNullableFilter<"sys_dept"> | string | null
+  leader_id?: Prisma.UuidNullableFilter<"sys_dept"> | string | null
   phone?: Prisma.StringNullableFilter<"sys_dept"> | string | null
   email?: Prisma.StringNullableFilter<"sys_dept"> | string | null
   sort_order?: Prisma.IntFilter<"sys_dept"> | number
@@ -355,6 +365,7 @@ export type sys_deptOrderByWithAggregationInput = {
   dept_code?: Prisma.SortOrder
   dept_name?: Prisma.SortOrder
   leader?: Prisma.SortOrderInput | Prisma.SortOrder
+  leader_id?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   sort_order?: Prisma.SortOrder
@@ -381,6 +392,7 @@ export type sys_deptScalarWhereWithAggregatesInput = {
   dept_code?: Prisma.StringWithAggregatesFilter<"sys_dept"> | string
   dept_name?: Prisma.StringWithAggregatesFilter<"sys_dept"> | string
   leader?: Prisma.StringNullableWithAggregatesFilter<"sys_dept"> | string | null
+  leader_id?: Prisma.UuidNullableWithAggregatesFilter<"sys_dept"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"sys_dept"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"sys_dept"> | string | null
   sort_order?: Prisma.IntWithAggregatesFilter<"sys_dept"> | number
@@ -399,6 +411,7 @@ export type sys_deptCreateInput = {
   dept_code: string
   dept_name: string
   leader?: string | null
+  leader_id?: string | null
   phone?: string | null
   email?: string | null
   sort_order?: number
@@ -419,6 +432,7 @@ export type sys_deptUncheckedCreateInput = {
   dept_code: string
   dept_name: string
   leader?: string | null
+  leader_id?: string | null
   phone?: string | null
   email?: string | null
   sort_order?: number
@@ -439,6 +453,7 @@ export type sys_deptUpdateInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -459,6 +474,7 @@ export type sys_deptUncheckedUpdateInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -479,6 +495,7 @@ export type sys_deptCreateManyInput = {
   dept_code: string
   dept_name: string
   leader?: string | null
+  leader_id?: string | null
   phone?: string | null
   email?: string | null
   sort_order?: number
@@ -497,6 +514,7 @@ export type sys_deptUpdateManyMutationInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -515,6 +533,7 @@ export type sys_deptUncheckedUpdateManyInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -538,6 +557,7 @@ export type sys_deptCountOrderByAggregateInput = {
   dept_code?: Prisma.SortOrder
   dept_name?: Prisma.SortOrder
   leader?: Prisma.SortOrder
+  leader_id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   sort_order?: Prisma.SortOrder
@@ -561,6 +581,7 @@ export type sys_deptMaxOrderByAggregateInput = {
   dept_code?: Prisma.SortOrder
   dept_name?: Prisma.SortOrder
   leader?: Prisma.SortOrder
+  leader_id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   sort_order?: Prisma.SortOrder
@@ -579,6 +600,7 @@ export type sys_deptMinOrderByAggregateInput = {
   dept_code?: Prisma.SortOrder
   dept_name?: Prisma.SortOrder
   leader?: Prisma.SortOrder
+  leader_id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   sort_order?: Prisma.SortOrder
@@ -635,6 +657,7 @@ export type sys_deptCreateWithoutSys_user_deptInput = {
   dept_code: string
   dept_name: string
   leader?: string | null
+  leader_id?: string | null
   phone?: string | null
   email?: string | null
   sort_order?: number
@@ -654,6 +677,7 @@ export type sys_deptUncheckedCreateWithoutSys_user_deptInput = {
   dept_code: string
   dept_name: string
   leader?: string | null
+  leader_id?: string | null
   phone?: string | null
   email?: string | null
   sort_order?: number
@@ -689,6 +713,7 @@ export type sys_deptUpdateWithoutSys_user_deptInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -708,6 +733,7 @@ export type sys_deptUncheckedUpdateWithoutSys_user_deptInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -727,6 +753,7 @@ export type sys_deptCreateWithoutSys_role_deptInput = {
   dept_code: string
   dept_name: string
   leader?: string | null
+  leader_id?: string | null
   phone?: string | null
   email?: string | null
   sort_order?: number
@@ -746,6 +773,7 @@ export type sys_deptUncheckedCreateWithoutSys_role_deptInput = {
   dept_code: string
   dept_name: string
   leader?: string | null
+  leader_id?: string | null
   phone?: string | null
   email?: string | null
   sort_order?: number
@@ -781,6 +809,7 @@ export type sys_deptUpdateWithoutSys_role_deptInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -800,6 +829,7 @@ export type sys_deptUncheckedUpdateWithoutSys_role_deptInput = {
   dept_code?: Prisma.StringFieldUpdateOperationsInput | string
   dept_name?: Prisma.StringFieldUpdateOperationsInput | string
   leader?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leader_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sort_order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -859,6 +889,7 @@ export type sys_deptSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   dept_code?: boolean
   dept_name?: boolean
   leader?: boolean
+  leader_id?: boolean
   phone?: boolean
   email?: boolean
   sort_order?: boolean
@@ -880,6 +911,7 @@ export type sys_deptSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   dept_code?: boolean
   dept_name?: boolean
   leader?: boolean
+  leader_id?: boolean
   phone?: boolean
   email?: boolean
   sort_order?: boolean
@@ -898,6 +930,7 @@ export type sys_deptSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   dept_code?: boolean
   dept_name?: boolean
   leader?: boolean
+  leader_id?: boolean
   phone?: boolean
   email?: boolean
   sort_order?: boolean
@@ -916,6 +949,7 @@ export type sys_deptSelectScalar = {
   dept_code?: boolean
   dept_name?: boolean
   leader?: boolean
+  leader_id?: boolean
   phone?: boolean
   email?: boolean
   sort_order?: boolean
@@ -927,7 +961,7 @@ export type sys_deptSelectScalar = {
   is_deleted?: boolean
 }
 
-export type sys_deptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"dept_id" | "tenant_id" | "parent_id" | "dept_code" | "dept_name" | "leader" | "phone" | "email" | "sort_order" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_dept"]>
+export type sys_deptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"dept_id" | "tenant_id" | "parent_id" | "dept_code" | "dept_name" | "leader" | "leader_id" | "phone" | "email" | "sort_order" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_dept"]>
 export type sys_deptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sys_user_dept?: boolean | Prisma.sys_dept$sys_user_deptArgs<ExtArgs>
   sys_role_dept?: boolean | Prisma.sys_dept$sys_role_deptArgs<ExtArgs>
@@ -949,6 +983,7 @@ export type $sys_deptPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     dept_code: string
     dept_name: string
     leader: string | null
+    leader_id: string | null
     phone: string | null
     email: string | null
     sort_order: number
@@ -1389,6 +1424,7 @@ export interface sys_deptFieldRefs {
   readonly dept_code: Prisma.FieldRef<"sys_dept", 'String'>
   readonly dept_name: Prisma.FieldRef<"sys_dept", 'String'>
   readonly leader: Prisma.FieldRef<"sys_dept", 'String'>
+  readonly leader_id: Prisma.FieldRef<"sys_dept", 'String'>
   readonly phone: Prisma.FieldRef<"sys_dept", 'String'>
   readonly email: Prisma.FieldRef<"sys_dept", 'String'>
   readonly sort_order: Prisma.FieldRef<"sys_dept", 'Int'>

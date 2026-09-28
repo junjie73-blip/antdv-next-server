@@ -8,11 +8,6 @@ export async function isPlatformAdmin(
   userId: string,
   tenantId: string,
 ): Promise<boolean> {
-  const tenant = await prisma.sys_tenant.findUnique({
-    where: { tenant_id: tenantId },
-  });
-  if (!(tenant as any)?.is_platform) return false;
-
   const userRoles = await prisma.sys_user_role.findMany({
     where: { user_id: userId, tenant_id: tenantId },
     include: { role: { select: { role_code: true } } },

@@ -23,7 +23,7 @@ import {
   SendNoticeSchema,
 } from "./schema.js";
 import { z } from "zod";
-import { upload } from "../user/controller.js";
+import { upload } from "../system/user/controller.js";
 
 @Controller("/notice", { tags: ["通知公告"] })
 export default class NoticeController extends BaseController<

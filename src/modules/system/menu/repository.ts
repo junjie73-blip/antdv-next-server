@@ -2,8 +2,9 @@ import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import { AppError } from "@/core/errors.js";
-import type { MenuEntity } from "./types.js";
+import type { MenuEntity, MicroAppConfig } from "./types.js";
 import { BaseRepository } from "@/core/base/repository.js";
+import { Prisma } from "@/generated/prisma/client.js";
 
 export class MenuRepository extends BaseRepository<MenuEntity, any, any, any> {
   protected readonly model = prisma.sys_menu;
@@ -21,29 +22,22 @@ export class MenuRepository extends BaseRepository<MenuEntity, any, any, any> {
         menu_type: menuType ? { in: menuType } : { in: [1, 2] },
       },
       orderBy: { sort_order: "asc" },
-    });
+    }) as unknown as Promise<MenuEntity[]>;
   }
 
   /**
    * 分页（⭐ 改用基类 paginate）
    */
   async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
-    return this.paginate(
-      {
-        ...query,
-        maxPageSize: 100,
+    return this.paginate({ ...query, maxPageSize: 100 }, where, {
+      defaultOrderBy: { sort_order: "asc" },
+      extendWhere: ({ query }) => {
+        const extra: Record<string, any> = {};
+        if (query.menuName) extra.menu_name = { contains: query.menuName };
+        if (query.status !== undefined) extra.status = query.status;
+        return extra;
       },
-      where,
-      {
-        defaultOrderBy: { sort_order: "asc" },
-        extendWhere: ({ query }) => {
-          const extra: Record<string, any> = {};
-          if (query.menuName) extra.menu_name = { contains: query.menuName };
-          if (query.status !== undefined) extra.status = query.status;
-          return extra;
-        },
-      },
-    );
+    });
   }
 
   /** 软删除：检查子菜单 */
@@ -147,6 +141,11 @@ export class MenuRepository extends BaseRepository<MenuEntity, any, any, any> {
     sortOrder: number;
     status: string;
     userId?: string;
+    microApp?: MicroAppConfig | null;
+    isExternal?: boolean;
+    layout?: string | null;
+    hidden?: boolean;
+    keepAlive?: boolean;
   }): Promise<string> {
     const record = await this.model.create({
       data: {
@@ -165,6 +164,13 @@ export class MenuRepository extends BaseRepository<MenuEntity, any, any, any> {
         created_at: new Date(),
         updated_at: new Date(),
         is_deleted: 0,
+        micro_app: (data.microApp ?? null) as unknown as
+          | Prisma.InputJsonValue
+          | undefined,
+        is_external: data.isExternal ?? false,
+        layout: data.layout ?? null,
+        hidden: data.hidden ?? false,
+        keep_alive: data.keepAlive ?? false,
       },
     });
     return (record as any).menu_id;

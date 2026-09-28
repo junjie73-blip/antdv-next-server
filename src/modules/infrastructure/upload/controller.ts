@@ -12,7 +12,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { v4 as uuidv4, validate as isUuid } from "uuid";
-import { FileRepository } from "@/modules/file/repository.js";
+import { FileRepository } from "@/modules/infrastructure/file/repository.js";
 import { success, error } from "@/shared/http/response.js";
 import { UploadService } from "./service.js";
 import { checkUploadIdRate } from "@/middleware/security/rate-limit.js";

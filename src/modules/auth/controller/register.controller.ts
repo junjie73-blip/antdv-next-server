@@ -10,7 +10,7 @@ import { Request, Response } from "express";
 import { success, error } from "@/shared/http/response.js";
 import { AppError } from "@/core/errors.js";
 import { logger } from "@/platform/logger/index.js";
-import { UserRepository } from "@/modules/user/repository.js";
+import { UserRepository } from "@/modules/system/user/repository.js";
 import { RegisterSchema } from "../schema.js";
 
 const RESERVED_TENANT_PREFIX = "__";

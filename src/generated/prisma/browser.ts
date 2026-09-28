@@ -39,7 +39,7 @@ export type sys_role = Prisma.sys_roleModel
 export type sys_dept = Prisma.sys_deptModel
 /**
  * Model sys_menu
- * 菜单表，支持目录、菜单、按钮三级结构
+ * 
  */
 export type sys_menu = Prisma.sys_menuModel
 /**
@@ -187,3 +187,18 @@ export type sys_audit_daily = Prisma.sys_audit_dailyModel
  * 每日登录聚合
  */
 export type sys_login_daily = Prisma.sys_login_dailyModel
+/**
+ * Model sys_approval_request
+ * 
+ */
+export type sys_approval_request = Prisma.sys_approval_requestModel
+/**
+ * Model sys_approval_node
+ * 
+ */
+export type sys_approval_node = Prisma.sys_approval_nodeModel
+/**
+ * Model sys_approval_log
+ * 
+ */
+export type sys_approval_log = Prisma.sys_approval_logModel

@@ -430,7 +430,10 @@ export const ModelName = {
   gen_table_column: 'gen_table_column',
   sys_upload_task: 'sys_upload_task',
   sys_audit_daily: 'sys_audit_daily',
-  sys_login_daily: 'sys_login_daily'
+  sys_login_daily: 'sys_login_daily',
+  sys_approval_request: 'sys_approval_request',
+  sys_approval_node: 'sys_approval_node',
+  sys_approval_log: 'sys_approval_log'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -446,7 +449,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily"
+    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily" | "sys_approval_request" | "sys_approval_node" | "sys_approval_log"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2966,6 +2969,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    sys_approval_request: {
+      payload: Prisma.$sys_approval_requestPayload<ExtArgs>
+      fields: Prisma.sys_approval_requestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_approval_requestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_approval_requestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_approval_requestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_approval_requestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>
+        }
+        findMany: {
+          args: Prisma.sys_approval_requestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>[]
+        }
+        create: {
+          args: Prisma.sys_approval_requestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>
+        }
+        createMany: {
+          args: Prisma.sys_approval_requestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_approval_requestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_approval_requestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>
+        }
+        update: {
+          args: Prisma.sys_approval_requestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_approval_requestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_approval_requestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_approval_requestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_approval_requestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_requestPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_approval_requestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_approval_request>
+        }
+        groupBy: {
+          args: Prisma.sys_approval_requestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_approval_requestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_approval_requestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_approval_requestCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_approval_node: {
+      payload: Prisma.$sys_approval_nodePayload<ExtArgs>
+      fields: Prisma.sys_approval_nodeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_approval_nodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_approval_nodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>
+        }
+        findFirst: {
+          args: Prisma.sys_approval_nodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_approval_nodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>
+        }
+        findMany: {
+          args: Prisma.sys_approval_nodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>[]
+        }
+        create: {
+          args: Prisma.sys_approval_nodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>
+        }
+        createMany: {
+          args: Prisma.sys_approval_nodeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_approval_nodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>[]
+        }
+        delete: {
+          args: Prisma.sys_approval_nodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>
+        }
+        update: {
+          args: Prisma.sys_approval_nodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_approval_nodeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_approval_nodeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_approval_nodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_approval_nodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_nodePayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_approval_nodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_approval_node>
+        }
+        groupBy: {
+          args: Prisma.sys_approval_nodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_approval_nodeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_approval_nodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_approval_nodeCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_approval_log: {
+      payload: Prisma.$sys_approval_logPayload<ExtArgs>
+      fields: Prisma.sys_approval_logFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_approval_logFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_approval_logFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_approval_logFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_approval_logFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>
+        }
+        findMany: {
+          args: Prisma.sys_approval_logFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>[]
+        }
+        create: {
+          args: Prisma.sys_approval_logCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>
+        }
+        createMany: {
+          args: Prisma.sys_approval_logCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_approval_logCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_approval_logDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>
+        }
+        update: {
+          args: Prisma.sys_approval_logUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_approval_logDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_approval_logUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_approval_logUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_approval_logUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_approval_logPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_approval_logAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_approval_log>
+        }
+        groupBy: {
+          args: Prisma.sys_approval_logGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_approval_logGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_approval_logCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_approval_logCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3081,6 +3306,7 @@ export const Sys_deptScalarFieldEnum = {
   dept_code: 'dept_code',
   dept_name: 'dept_name',
   leader: 'leader',
+  leader_id: 'leader_id',
   phone: 'phone',
   email: 'email',
   sort_order: 'sort_order',
@@ -3112,7 +3338,12 @@ export const Sys_menuScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  micro_app: 'micro_app',
+  is_external: 'is_external',
+  layout: 'layout',
+  hidden: 'hidden',
+  keep_alive: 'keep_alive'
 } as const
 
 export type Sys_menuScalarFieldEnum = (typeof Sys_menuScalarFieldEnum)[keyof typeof Sys_menuScalarFieldEnum]
@@ -3616,12 +3847,81 @@ export const Sys_login_dailyScalarFieldEnum = {
 export type Sys_login_dailyScalarFieldEnum = (typeof Sys_login_dailyScalarFieldEnum)[keyof typeof Sys_login_dailyScalarFieldEnum]
 
 
+export const Sys_approval_requestScalarFieldEnum = {
+  request_id: 'request_id',
+  tenant_id: 'tenant_id',
+  title: 'title',
+  content: 'content',
+  form_data: 'form_data',
+  applicant_id: 'applicant_id',
+  current_dept_id: 'current_dept_id',
+  status: 'status',
+  is_deleted: 'is_deleted',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
+} as const
+
+export type Sys_approval_requestScalarFieldEnum = (typeof Sys_approval_requestScalarFieldEnum)[keyof typeof Sys_approval_requestScalarFieldEnum]
+
+
+export const Sys_approval_nodeScalarFieldEnum = {
+  node_id: 'node_id',
+  tenant_id: 'tenant_id',
+  request_id: 'request_id',
+  dept_id: 'dept_id',
+  approver_id: 'approver_id',
+  sequence: 'sequence',
+  status: 'status',
+  is_current: 'is_current',
+  round: 'round',
+  reject_reason_type: 'reject_reason_type',
+  reject_reason: 'reject_reason',
+  approved_at: 'approved_at',
+  is_deleted: 'is_deleted',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
+} as const
+
+export type Sys_approval_nodeScalarFieldEnum = (typeof Sys_approval_nodeScalarFieldEnum)[keyof typeof Sys_approval_nodeScalarFieldEnum]
+
+
+export const Sys_approval_logScalarFieldEnum = {
+  log_id: 'log_id',
+  tenant_id: 'tenant_id',
+  request_id: 'request_id',
+  operator_id: 'operator_id',
+  operator_name: 'operator_name',
+  action: 'action',
+  from_status: 'from_status',
+  to_status: 'to_status',
+  remark: 'remark',
+  reason_type: 'reason_type',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type Sys_approval_logScalarFieldEnum = (typeof Sys_approval_logScalarFieldEnum)[keyof typeof Sys_approval_logScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -3638,6 +3938,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -3685,6 +3994,27 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -3900,6 +4230,9 @@ export type GlobalOmitConfig = {
   sys_upload_task?: Prisma.sys_upload_taskOmit
   sys_audit_daily?: Prisma.sys_audit_dailyOmit
   sys_login_daily?: Prisma.sys_login_dailyOmit
+  sys_approval_request?: Prisma.sys_approval_requestOmit
+  sys_approval_node?: Prisma.sys_approval_nodeOmit
+  sys_approval_log?: Prisma.sys_approval_logOmit
 }
 
 /* Types for Logging */

@@ -1,6 +1,6 @@
 import { AppError } from "@/core/errors.js";
-import { DictDataRepository } from "@/modules/dict-data/repository.js";
-import { DictTypeRepository } from "@/modules/dict-type/repository.js";
+import { DictDataRepository } from "@/modules/system/dict-data/repository.js";
+import { DictTypeRepository } from "@/modules/system/dict-type/repository.js";
 import * as XLSX from "xlsx";
 import { BaseService } from "../base/service.js";
 

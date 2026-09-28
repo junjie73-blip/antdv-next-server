@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { AppError } from "@/core/errors.js";
 
 // TODO(phase4): 迁移到 @/modules/mfa/service.js
-import { verifyToken as verifyMfaToken } from "@/modules/mfa/service.js";
+import { verifyToken as verifyMfaToken } from "@/modules/system/mfa/service.js";
 
 export async function requireMfaMiddleware(
   req: Request,

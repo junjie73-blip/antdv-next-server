@@ -2,9 +2,12 @@ import { Worker, type Job } from "bullmq";
 import { createBullConnection } from "@/config/redis.js";
 import { logger } from "@/platform/logger/index.js";
 import { prisma } from "@/config/database.js";
-import { UploadService } from "@/modules/upload/service.js";
-import { FileRepository } from "@/modules/file/repository.js";
-import { MergeJobData, MERGE_QUEUE_NAME } from "@/modules/upload/queue.js";
+import { UploadService } from "@/modules/infrastructure/upload/service.js";
+import { FileRepository } from "@/modules/infrastructure/file/repository.js";
+import {
+  MergeJobData,
+  MERGE_QUEUE_NAME,
+} from "@/modules/infrastructure/upload/queue.js";
 
 const uploadService = new UploadService(new FileRepository());
 

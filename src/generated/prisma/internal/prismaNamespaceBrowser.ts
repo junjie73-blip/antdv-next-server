@@ -84,7 +84,10 @@ export const ModelName = {
   gen_table_column: 'gen_table_column',
   sys_upload_task: 'sys_upload_task',
   sys_audit_daily: 'sys_audit_daily',
-  sys_login_daily: 'sys_login_daily'
+  sys_login_daily: 'sys_login_daily',
+  sys_approval_request: 'sys_approval_request',
+  sys_approval_node: 'sys_approval_node',
+  sys_approval_log: 'sys_approval_log'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -179,6 +182,7 @@ export const Sys_deptScalarFieldEnum = {
   dept_code: 'dept_code',
   dept_name: 'dept_name',
   leader: 'leader',
+  leader_id: 'leader_id',
   phone: 'phone',
   email: 'email',
   sort_order: 'sort_order',
@@ -210,7 +214,12 @@ export const Sys_menuScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  micro_app: 'micro_app',
+  is_external: 'is_external',
+  layout: 'layout',
+  hidden: 'hidden',
+  keep_alive: 'keep_alive'
 } as const
 
 export type Sys_menuScalarFieldEnum = (typeof Sys_menuScalarFieldEnum)[keyof typeof Sys_menuScalarFieldEnum]
@@ -714,12 +723,81 @@ export const Sys_login_dailyScalarFieldEnum = {
 export type Sys_login_dailyScalarFieldEnum = (typeof Sys_login_dailyScalarFieldEnum)[keyof typeof Sys_login_dailyScalarFieldEnum]
 
 
+export const Sys_approval_requestScalarFieldEnum = {
+  request_id: 'request_id',
+  tenant_id: 'tenant_id',
+  title: 'title',
+  content: 'content',
+  form_data: 'form_data',
+  applicant_id: 'applicant_id',
+  current_dept_id: 'current_dept_id',
+  status: 'status',
+  is_deleted: 'is_deleted',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
+} as const
+
+export type Sys_approval_requestScalarFieldEnum = (typeof Sys_approval_requestScalarFieldEnum)[keyof typeof Sys_approval_requestScalarFieldEnum]
+
+
+export const Sys_approval_nodeScalarFieldEnum = {
+  node_id: 'node_id',
+  tenant_id: 'tenant_id',
+  request_id: 'request_id',
+  dept_id: 'dept_id',
+  approver_id: 'approver_id',
+  sequence: 'sequence',
+  status: 'status',
+  is_current: 'is_current',
+  round: 'round',
+  reject_reason_type: 'reject_reason_type',
+  reject_reason: 'reject_reason',
+  approved_at: 'approved_at',
+  is_deleted: 'is_deleted',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
+} as const
+
+export type Sys_approval_nodeScalarFieldEnum = (typeof Sys_approval_nodeScalarFieldEnum)[keyof typeof Sys_approval_nodeScalarFieldEnum]
+
+
+export const Sys_approval_logScalarFieldEnum = {
+  log_id: 'log_id',
+  tenant_id: 'tenant_id',
+  request_id: 'request_id',
+  operator_id: 'operator_id',
+  operator_name: 'operator_name',
+  action: 'action',
+  from_status: 'from_status',
+  to_status: 'to_status',
+  remark: 'remark',
+  reason_type: 'reason_type',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type Sys_approval_logScalarFieldEnum = (typeof Sys_approval_logScalarFieldEnum)[keyof typeof Sys_approval_logScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -736,4 +814,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

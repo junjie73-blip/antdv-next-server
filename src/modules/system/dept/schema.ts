@@ -7,11 +7,21 @@ export const DeptCreateSchema = z
     parentId: z
       .string()
       .uuid()
-      .optional()
+      .nullish()
       .openapi({ description: "父部门ID，顶级可传全零UUID或省略" }),
     deptCode: z.string().min(2).max(64).openapi({ description: "部门编码" }),
     deptName: z.string().min(2).max(128).openapi({ description: "部门名称" }),
-    leader: z.string().max(64).optional().openapi({ description: "负责人" }),
+    leaderId: z
+      .string()
+      .uuid()
+      .nullish()
+      .openapi({ description: "部门负责人的用户ID" }),
+    /** 兼容旧接口：字符串形式的负责人（如 username），仅当 leaderId 未传时使用 */
+    leader: z
+      .string()
+      .max(64)
+      .optional()
+      .openapi({ description: "负责人（兼容字段）" }),
     phone: z.string().max(32).optional().openapi({ description: "联系电话" }),
     email: z.string().email().optional().openapi({ description: "邮箱" }),
     sortOrder: z.number().int().default(0).openapi({ description: "排序值" }),
@@ -40,6 +50,8 @@ export const DeptListSchema = z
       .openapi({ description: "查询字段，逗号分隔" }),
   })
   .openapi("DeptList");
+
+// 导入模板保持不变（Excel 里仍然用文字负责人）
 export const DeptImportRowSchema = z.object({
   部门编码: z.string().min(2).max(64),
   部门名称: z.string().min(2).max(128),

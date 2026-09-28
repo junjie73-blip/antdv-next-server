@@ -54,17 +54,30 @@ export class DeptService extends BaseService<DeptRepository> {
       "部门编码",
       dto.deptCode,
     );
+
+    // ⭐ 若传了 leaderId，校验用户存在
+    if (dto.leaderId) {
+      const user = await this.repository.findUserById(dto.leaderId, tenantId);
+      if (!user) throw new AppError("指定的负责人用户不存在", 400, 400);
+    }
   }
 
   async checkBeforeUpdate(id: string, dto: any, tenantId: string) {
-    if (!dto.deptCode) return;
-    const existing = await this.repository.findByDeptCode(
-      dto.deptCode,
-      tenantId,
-      id,
-    );
-    if (existing) {
-      throw new AppError(`部门编码 '${dto.deptCode}' 已存在`, 409001, 409);
+    if (dto.deptCode) {
+      const existing = await this.repository.findByDeptCode(
+        dto.deptCode,
+        tenantId,
+        id,
+      );
+      if (existing) {
+        throw new AppError(`部门编码 '${dto.deptCode}' 已存在`, 409001, 409);
+      }
+    }
+
+    // ⭐ 若传了 leaderId，校验用户存在
+    if (dto.leaderId) {
+      const user = await this.repository.findUserById(dto.leaderId, tenantId);
+      if (!user) throw new AppError("指定的负责人用户不存在", 400, 400);
     }
   }
 
@@ -115,7 +128,7 @@ export class DeptService extends BaseService<DeptRepository> {
       deptCode: raw["部门编码"] as string,
       deptName: raw["部门名称"] as string,
       parentCode: (raw["上级部门编码"] || "").trim(),
-      leader: raw["负责人"] || "",
+      leader: raw["负责人"] || "", // ⭐ 交给 repo 反查 leader_id
       phone: raw["联系电话"] || "",
       email: raw["邮箱"] || "",
       sortOrder: raw["排序"] ?? 0,
