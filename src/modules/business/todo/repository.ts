@@ -6,6 +6,11 @@ export class TodoRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_todo;
   protected readonly primaryKey = "todo_id";
   protected readonly tenantField = "tenant_id";
+  setDataScope(_where: Record<string, any> | undefined | null): void {}
+
+  protected mergeDataScope<W extends Record<string, any>>(where: W): W {
+    return where;
+  }
 
   async complete(id: string, tenantId: string) {
     const todo = await this.model.findFirst({
