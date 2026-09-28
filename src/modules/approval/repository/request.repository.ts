@@ -39,7 +39,7 @@ export interface ApprovalLogInput {
   to_status?: string | null;
   remark?: string | null;
   reason_type?: string | null;
-  metadata?: Prisma.InputJsonValue | null;
+  metadata?: Prisma.InputJsonValue | Prisma.NullableJsonNullValueInput;
 }
 export class ApprovalRequestRepository extends BaseRepository<
   any,
@@ -378,7 +378,7 @@ export class ApprovalRequestRepository extends BaseRepository<
         to_status: data.to_status ?? null,
         remark: data.remark ?? null,
         reason_type: data.reason_type ?? null,
-        metadata: data.metadata ?? null,
+        metadata: data.metadata,
         created_at: new Date(),
         created_by: data.operator_id,
       },

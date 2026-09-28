@@ -19,6 +19,7 @@ interface RawNode {
   is_current: number;
   reject_reason: string | null;
   approved_at: Date | null;
+  reject_reason_type: string;
 }
 
 interface RawRequest {
@@ -177,6 +178,7 @@ export class ApprovalFlowService extends BaseService<ApprovalRequestRepository> 
       is_applicant: true,
       applicant_name: userMap.get(r.applicant_id) ?? null,
       submitted_at: r.created_at,
+      reject_reason_type: null,
     };
 
     return keysToCamelCase({
