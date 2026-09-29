@@ -2,10 +2,14 @@ import { prisma } from "@/config/database.js";
 import { redis } from "@/config/redis.js";
 import { createHash } from "node:crypto";
 import { isString } from "es-toolkit";
-import { keysToSnakeCase } from "@/shared/utils/case-convert.js";
+import {
+  keysToCamelCase,
+  keysToSnakeCase,
+} from "@/shared/utils/case-convert.js";
 import { AppError } from "@/core/errors.js";
 import { SCAN_MAX_KEYS } from "@/config/constants.js";
 import { scanAll } from "../cache/redis-client.js";
+import dayjs from "dayjs";
 
 export const SOFT_DELETE_FLAG = { NORMAL: 0, DELETED: 1 } as const;
 
@@ -166,11 +170,22 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
     if (options.include) findArgs.include = options.include;
     if (options.select) findArgs.select = options.select;
 
-    const [list, total] = await Promise.all([
+    const [_list, total] = await Promise.all([
       this.model.findMany(findArgs),
       this.countWithCache(finalWhere),
     ]);
-
+    const list = _list.map((item) => {
+      if (item[this.createdAtField])
+        item[this.createdAtField] = dayjs(item[this.createdAtField]).format(
+          "YYYY-MM-DD HH:mm:ss",
+        );
+      if (item[this.updatedAtField])
+        item[this.updatedAtField] = dayjs(item[this.updatedAtField]).format(
+          "YYYY-MM-DD HH:mm:ss",
+        );
+      item = keysToCamelCase(item);
+      return item;
+    });
     return {
       list,
       total,
