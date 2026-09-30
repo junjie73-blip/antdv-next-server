@@ -30,8 +30,8 @@ export class LoginLogService extends BaseService<LoginLogRepository> {
     super(repository);
   }
 
-  async exportToExcel(where: any): Promise<Buffer> {
-    const logs = await this.repository.findAll(where);
+  async exportToExcel(where: any, tenantId: string): Promise<Buffer> {
+    const logs = await this.repository.findAll(where, tenantId);
     return generateExcel(logs, EXPORT_COLUMNS, "登录日志");
   }
 }

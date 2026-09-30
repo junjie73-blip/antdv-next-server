@@ -3,7 +3,8 @@ import { prisma } from "@/config/database.js";
 import type { BaseQuery, PageResult } from "@/core/base/repository.js";
 import { AppError } from "@/core/errors.js";
 import { isString } from "es-toolkit";
-import { deleteFile } from "@/platform/storge/blob.js";
+import { deleteFileByUrl } from "@/platform/storage/factory.js";
+import { logger } from "@/platform/logger/logger.js";
 
 export class FileRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_file;
@@ -120,14 +121,21 @@ export class FileRepository extends BaseRepository<any, any, any, any> {
     });
     if (!file) throw new AppError("文件不存在", 404001, 404);
 
+    const result = await super.softDelete(id, tenantId, userId);
+
     if (file.url) {
       try {
-        await deleteFile(file.url);
+        await prisma.sys_file_pending_delete.create({
+          data: { tenant_id: tenantId, url: file.url },
+        });
       } catch (e) {
-        console.warn("[FileRepository] 删除物理文件失败:", file.url, e);
+        logger.warn(
+          { e, url: file.url },
+          "[file] enqueue pending-delete failed",
+        );
       }
     }
 
-    return super.softDelete(id, tenantId, userId);
+    return result;
   }
 }

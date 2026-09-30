@@ -88,7 +88,48 @@ export default class DeptController extends BaseController<any, any, any, any> {
   async listDept(@Req() req: Request, @Res() res: Response) {
     return super.list(req, res);
   }
+  @Get("/export")
+  async exportDepts(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+      const buffer = await this.service.exportToExcel(tenantId);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=depts_${Date.now()}.xlsx`,
+      );
+      res.send(buffer);
+    } catch (err) {
+      this.handleError(res, err); // ✅
+    }
+  }
 
+  @Post("/import")
+  async importDepts(@Req() req: Request, @Res() res: Response) {
+    upload.single("file")(req, res, async (err) => {
+      if (err)
+        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
+      if (!req.file)
+        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
+      try {
+        // ✅
+        const tenantId = req.tenantId;
+        if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+        const result = await this.service.importFromExcel(
+          req.file.buffer,
+          tenantId,
+          req.user?.userId,
+        );
+        success(res, result, "导入完成");
+      } catch (err) {
+        this.handleError(res, err);
+      }
+    });
+  }
   @Get("/:id")
   @ApiOperation("获取部门详情")
   @ApiResponse(200, "查询成功")
@@ -146,35 +187,5 @@ export default class DeptController extends BaseController<any, any, any, any> {
     } catch (err) {
       this.handleError(res, err);
     }
-  }
-
-  @Get("/export")
-  async exportDepts(@Req() req: Request, @Res() res: Response) {
-    const buffer = await this.service.exportToExcel(req.tenantId!);
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=depts_${Date.now()}.xlsx`,
-    );
-    res.send(buffer);
-  }
-
-  @Post("/import")
-  async importDepts(@Req() req: Request, @Res() res: Response) {
-    upload.single("file")(req, res, async (err) => {
-      if (err)
-        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
-      if (!req.file)
-        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
-      const result = await this.service.importFromExcel(
-        req.file.buffer,
-        req.tenantId!,
-        req.user?.userId,
-      );
-      success(res, result, "导入完成");
-    });
   }
 }

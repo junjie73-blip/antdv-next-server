@@ -11,7 +11,12 @@ const REFRESH_SECRET = new TextEncoder().encode(config.JWT_REFRESH_SECRET);
 
 export async function issueTokens(payload: TokenPayload) {
   const deviceId = payload.deviceId ?? randomUUID();
-
+  const deviceMetaKey = `device:${payload.tenantId}:${payload.userId}:${deviceId}`;
+  const deviceMeta = JSON.stringify({
+    lastActiveAt: Date.now(),
+    ip: (payload as any).clientIp ?? null,
+    userAgent: (payload as any).userAgent ?? null,
+  });
   const accessToken = await new SignJWT({
     userId: payload.userId,
     tenantId: payload.tenantId,
@@ -50,6 +55,7 @@ export async function issueTokens(payload: TokenPayload) {
       refreshTtl,
       refreshToken,
     ),
+    redis.setex(deviceMetaKey, accessTtl, deviceMeta),
   ]);
 
   return { accessToken, refreshToken, deviceId };
@@ -70,6 +76,7 @@ export async function revokeSession(
   await Promise.all([
     redis.del(`access:${tenantId}:${userId}:${deviceId}`),
     redis.del(`refresh:${tenantId}:${userId}:${deviceId}`),
+    redis.del(`device:${tenantId}:${userId}:${deviceId}`),
   ]);
 }
 

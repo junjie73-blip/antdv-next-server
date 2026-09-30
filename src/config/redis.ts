@@ -4,9 +4,9 @@ import { logger } from "@/platform/logger/logger.js";
 import { sendAlert } from "@/platform/alert/index.js";
 import { env } from "@/config/env.js";
 
-const redisUrl = env.REDIS_URL || "";
+const redisUrl = env.REDIS_URL;
 if (!redisUrl) {
-  console.warn("[redis] REDIS_URL 未配置，Redis 相关功能将不可用");
+  logger.warn("[redis] REDIS_URL 未配置，Redis 相关功能将不可用");
 }
 
 const baseOptions = {

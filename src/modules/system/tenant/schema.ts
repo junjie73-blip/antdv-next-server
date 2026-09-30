@@ -2,7 +2,11 @@ import { z } from "zod";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 
 extendZodWithOpenApi(z);
-
+const expireTimeSchema = z.coerce
+  .date()
+  .nullable()
+  .optional()
+  .openapi({ description: "过期时间（ISO 或可解析字符串）" });
 // 租户创建 Schema
 export const TenantCreateSchema = z
   .object({
@@ -16,7 +20,7 @@ export const TenantCreateSchema = z
       .regex(/^[01]$/)
       .default("1")
       .optional(),
-    expireTime: z.coerce.date().nullable().optional(), // 自动转换字符串为 Date
+    expireTime: expireTimeSchema,
   })
   .openapi("TenantCreate");
 
@@ -33,7 +37,7 @@ export const TenantUpdateSchema = z
       .regex(/^[01]$/)
       .default("1")
       .optional(),
-    expireTime: z.string().datetime().nullable().optional(),
+    expireTime: expireTimeSchema,
   })
   .openapi("TenantUpdate");
 

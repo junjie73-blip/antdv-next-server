@@ -1,6 +1,14 @@
 import { parseSmtpConfig, sendMail } from "@/platform/email/service.js";
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
-import { renderNoticeEmail } from "@/modules/notice/template/email-template.js";
+import {
+  renderNoticeEmail,
+  renderTemplateEmail,
+} from "@/modules/notice/template/email-template.js";
+import {
+  buildDefaultContext,
+  renderTemplateToHtml,
+  replaceVars,
+} from "@/modules/notice/template/renderer.js";
 import { env } from "@/config/env.js";
 
 export const emailChannel: NoticeChannel = {
@@ -24,22 +32,68 @@ export const emailChannel: NoticeChannel = {
 
     const errors: SendResult["errors"] = [];
     let success = 0;
-    const html = renderNoticeEmail({
-      title: ctx.title,
-      content: ctx.content,
-      noticeType: ctx.config?.noticeType,
-      publishTime: ctx.config?.publishTime,
-      systemName: env?.SYSTEM_NAME ?? "通知中心",
-      brandColor: ctx.config?.brandColor ?? "#0F172A",
-    });
+    const baseContext = buildDefaultContext();
+
     for (const to of ctx.receivers) {
+      // ⭐ per-receiver 上下文
+      const meta = ctx.receiverMeta?.[to] ?? {};
+      const renderContext = {
+        ...baseContext,
+        userName: meta.userName,
+        realName: meta.realName,
+        deptName: meta.deptName,
+      };
+
+      let html: string;
+      let subject: string;
+
+      if (ctx.template) {
+        // ⭐ 使用消息模板
+        const tplTitle = ctx.template.title
+          ? replaceVars(ctx.template.title, renderContext)
+          : ctx.title;
+        const contentHtml = renderTemplateToHtml(
+          ctx.template.content,
+          ctx.template.contentFormat,
+          renderContext,
+        );
+
+        subject = tplTitle || ctx.title;
+        html = renderTemplateEmail({
+          title: tplTitle || ctx.title,
+          contentHtml,
+          noticeType: ctx.config?.noticeType ?? 1,
+          publishTime: ctx.config?.publishTime ?? new Date(),
+          systemName: env?.SYSTEM_NAME ?? "通知中心",
+          brandColor: ctx.config?.brandColor ?? "#0F172A",
+          receiverName: meta.realName ?? meta.userName,
+        });
+      } else {
+        // ⭐ 默认模板
+        const title = replaceVars(ctx.title, renderContext);
+        const content = ctx.content
+          ? replaceVars(ctx.content, renderContext)
+          : undefined;
+
+        subject = title;
+        html = renderNoticeEmail({
+          title,
+          content,
+          noticeType: ctx.config?.noticeType,
+          publishTime: ctx.config?.publishTime,
+          systemName: env?.SYSTEM_NAME ?? "通知中心",
+          brandColor: ctx.config?.brandColor ?? "#0F172A",
+          receiverName: meta.realName ?? meta.userName,
+        });
+      }
+
       const ok = await sendMail({
         to,
-        subject: ctx.title,
+        subject,
         html,
-        // ⭐ 把租户配置透下去（需要 mail.ts 支持 smtp 参数）
         smtp,
       } as any);
+
       if (ok) success++;
       else errors.push({ receiver: to, reason: "SMTP send failed" });
     }

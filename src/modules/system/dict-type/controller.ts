@@ -84,6 +84,61 @@ export default class DictTypeController extends BaseController<
     return super.list(req, res);
   }
 
+  @Get("/export")
+  async export(@Req() req, @Res() res) {
+    try {
+      if (!req.tenantId) {
+        return this.handleError(
+          res,
+          new AppError("缺少租户上下文", 401001, 401),
+        );
+      }
+      const buffer = await this.service.exportToExcel(req.tenantId!);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=dict_${Date.now()}.xlsx`,
+      );
+      res.send(buffer);
+    } catch (err) {
+      return this.handleError(res, err);
+    }
+  }
+
+  @Post("/import")
+  async import(@Req() req, @Res() res) {
+    try {
+      if (!req.tenantId) {
+        return this.handleError(
+          res,
+          new AppError("缺少租户上下文", 401001, 401),
+        );
+      }
+      upload.single("file")(req, res, async (err) => {
+        if (err)
+          return this.handleError(
+            res,
+            new AppError("文件上传失败", 400001, 400),
+          );
+        if (!req.file)
+          return this.handleError(
+            res,
+            new AppError("请上传 Excel", 400001, 400),
+          );
+        const result = await this.service.importFromExcel(
+          req.file.buffer,
+          req.tenantId!,
+          req.user?.userId,
+        );
+        success(res, result, "导入完成");
+      });
+    } catch (err) {
+      return this.handleError(res, err);
+    }
+  }
   @Get("/:id")
   @ApiOperation("获取字典类型详情")
   @ApiResponse(200, "查询成功")
@@ -120,34 +175,5 @@ export default class DictTypeController extends BaseController<
   @ApiResponse(200, "删除成功")
   async batchRemoveDictType(@Req() req: Request, @Res() res: Response) {
     return this.batchRemove(req, res);
-  }
-  @Get("/export")
-  async export(@Req() req, @Res() res) {
-    const buffer = await this.service.exportToExcel(req.tenantId!);
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=dict_${Date.now()}.xlsx`,
-    );
-    res.send(buffer);
-  }
-
-  @Post("/import")
-  async import(@Req() req, @Res() res) {
-    upload.single("file")(req, res, async (err) => {
-      if (err)
-        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
-      if (!req.file)
-        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
-      const result = await this.service.importFromExcel(
-        req.file.buffer,
-        req.tenantId!,
-        req.user?.userId,
-      );
-      success(res, result, "导入完成");
-    });
   }
 }

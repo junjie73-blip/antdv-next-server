@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   sys_tenant: 'sys_tenant',
   sys_user: 'sys_user',
+  sys_verify_code: 'sys_verify_code',
   sys_role: 'sys_role',
   sys_dept: 'sys_dept',
   sys_menu: 'sys_menu',
@@ -87,7 +88,9 @@ export const ModelName = {
   sys_login_daily: 'sys_login_daily',
   sys_approval_request: 'sys_approval_request',
   sys_approval_node: 'sys_approval_node',
-  sys_approval_log: 'sys_approval_log'
+  sys_approval_log: 'sys_approval_log',
+  sys_notice_template: 'sys_notice_template',
+  sys_file_pending_delete: 'sys_file_pending_delete'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -149,11 +152,32 @@ export const Sys_userScalarFieldEnum = {
   id_card: 'id_card',
   phone_enc: 'phone_enc',
   phone_hash: 'phone_hash',
+  cancelled_at: 'cancelled_at',
+  cancel_reason: 'cancel_reason',
+  cancel_effective: 'cancel_effective',
   id_card_enc: 'id_card_enc',
-  id_card_hash: 'id_card_hash'
+  id_card_hash: 'id_card_hash',
+  email_verified: 'email_verified',
+  email_verified_at: 'email_verified_at'
 } as const
 
 export type Sys_userScalarFieldEnum = (typeof Sys_userScalarFieldEnum)[keyof typeof Sys_userScalarFieldEnum]
+
+
+export const Sys_verify_codeScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  target: 'target',
+  code: 'code',
+  scene: 'scene',
+  expires_at: 'expires_at',
+  used_at: 'used_at',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type Sys_verify_codeScalarFieldEnum = (typeof Sys_verify_codeScalarFieldEnum)[keyof typeof Sys_verify_codeScalarFieldEnum]
 
 
 export const Sys_roleScalarFieldEnum = {
@@ -289,6 +313,7 @@ export const Sys_noticeScalarFieldEnum = {
   status: 'status',
   publish_time: 'publish_time',
   created_at: 'created_at',
+  template_id: 'template_id',
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
@@ -337,7 +362,8 @@ export const Sys_audit_logScalarFieldEnum = {
   status: 'status',
   error_msg: 'error_msg',
   created_at: 'created_at',
-  created_by: 'created_by'
+  created_by: 'created_by',
+  metadata: 'metadata'
 } as const
 
 export type Sys_audit_logScalarFieldEnum = (typeof Sys_audit_logScalarFieldEnum)[keyof typeof Sys_audit_logScalarFieldEnum]
@@ -431,7 +457,8 @@ export const Sys_fileScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  md5: 'md5'
 } as const
 
 export type Sys_fileScalarFieldEnum = (typeof Sys_fileScalarFieldEnum)[keyof typeof Sys_fileScalarFieldEnum]
@@ -490,7 +517,12 @@ export const Sys_jobScalarFieldEnum = {
   timeout_seconds: 'timeout_seconds',
   is_paused: 'is_paused',
   last_run_at: 'last_run_at',
-  next_run_at: 'next_run_at'
+  next_run_at: 'next_run_at',
+  alert_enabled: 'alert_enabled',
+  alert_channels: 'alert_channels',
+  alert_receivers: 'alert_receivers',
+  alert_threshold: 'alert_threshold',
+  fail_count: 'fail_count'
 } as const
 
 export type Sys_jobScalarFieldEnum = (typeof Sys_jobScalarFieldEnum)[keyof typeof Sys_jobScalarFieldEnum]
@@ -782,6 +814,41 @@ export const Sys_approval_logScalarFieldEnum = {
 } as const
 
 export type Sys_approval_logScalarFieldEnum = (typeof Sys_approval_logScalarFieldEnum)[keyof typeof Sys_approval_logScalarFieldEnum]
+
+
+export const Sys_notice_templateScalarFieldEnum = {
+  template_id: 'template_id',
+  tenant_id: 'tenant_id',
+  template_code: 'template_code',
+  template_name: 'template_name',
+  channel_type: 'channel_type',
+  title: 'title',
+  content: 'content',
+  content_format: 'content_format',
+  remark: 'remark',
+  params: 'params',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_notice_templateScalarFieldEnum = (typeof Sys_notice_templateScalarFieldEnum)[keyof typeof Sys_notice_templateScalarFieldEnum]
+
+
+export const Sys_file_pending_deleteScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  url: 'url',
+  retry_count: 'retry_count',
+  next_retry: 'next_retry',
+  last_error: 'last_error',
+  created_at: 'created_at'
+} as const
+
+export type Sys_file_pending_deleteScalarFieldEnum = (typeof Sys_file_pending_deleteScalarFieldEnum)[keyof typeof Sys_file_pending_deleteScalarFieldEnum]
 
 
 export const SortOrder = {

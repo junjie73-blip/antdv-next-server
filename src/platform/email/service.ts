@@ -27,9 +27,9 @@ function buildTransport(cfg: SmtpConfig): Transporter {
     pool: true,
     maxConnections: 3,
     maxMessages: 100,
-    connectionTimeout: 10_000,
-    greetingTimeout: 10_000,
-    socketTimeout: 20_000,
+    connectionTimeout: 5_000,
+    greetingTimeout: 5_000,
+    socketTimeout: 10_000,
   });
 }
 
@@ -124,20 +124,42 @@ export async function sendMailDetailed(input: MailInput): Promise<MailResult> {
     return { success: false, error: "SMTP not configured" };
   }
 
-  try {
-    const info = await transporter.sendMail({ from, ...rest });
-    logger.info(
-      { to: rest.to, subject: rest.subject, messageId: info.messageId },
-      "[mail] sent",
-    );
-    return { success: true, messageId: info.messageId };
-  } catch (err: any) {
-    logger.error(
-      { err, to: rest.to, subject: rest.subject },
-      "[mail] send failed",
-    );
-    return { success: false, error: err?.message ?? String(err) };
+  const MAX_RETRY = 2;
+  let lastErr: any = null;
+
+  for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+    try {
+      const info = await transporter.sendMail({ from, ...rest });
+      logger.info(
+        {
+          to: rest.to,
+          subject: rest.subject,
+          messageId: info.messageId,
+          attempt,
+        },
+        "[mail] sent",
+      );
+      return { success: true, messageId: info.messageId };
+    } catch (err: any) {
+      lastErr = err;
+      // 认证错误不重试
+      if (err.code === "EAUTH") {
+        logger.error({ err, host: from }, "[mail] auth failed");
+        break;
+      }
+      // 最后一次失败也不重试
+      if (attempt < MAX_RETRY) {
+        logger.warn({ err, attempt }, "[mail] send failed, retrying...");
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+    }
   }
+
+  logger.error(
+    { err: lastErr, to: rest.to, subject: rest.subject },
+    "[mail] send failed (all attempts)",
+  );
+  return { success: false, error: lastErr?.message ?? String(lastErr) };
 }
 
 export function isMailReady(): boolean {
@@ -178,4 +200,40 @@ function normalizeFrom(raw: any, fallbackUser: string): string {
   const m = s.match(/([^@\s]+@[^@\s]+\.[^@\s]+)/);
   if (m) return m[1];
   return fallbackUser;
+}
+
+export async function sendVerifyCode(
+  email: string,
+  code: string,
+  purpose: string,
+) {
+  const subject = `【${env.APP_NAME}】${purpose}验证码`;
+  const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; background: #f8fafc;">
+        <div style="background: #ffffff; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <h2 style="margin: 0 0 8px; font-size: 20px; color: #0f172a;">${purpose}</h2>
+          <p style="margin: 0 0 24px; font-size: 14px; color: #64748b;">您正在进行${purpose}操作，请使用以下验证码完成验证：</p>
+          <div style="background: #f1f5f9; border-radius: 8px; padding: 20px; text-align: center; margin: 24px 0;">
+            <span style="font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #2563eb; font-family: 'Courier New', monospace;">${code}</span>
+          </div>
+          <p style="margin: 0; font-size: 13px; color: #94a3b8;">验证码 5 分钟内有效，请勿泄露给他人。</p>
+          <p style="margin: 8px 0 0; font-size: 13px; color: #94a3b8;">如果这不是您的操作，请忽略此邮件。</p>
+          <hr style="margin: 32px 0 16px; border: none; border-top: 1px solid #e2e8f0;" />
+          <p style="margin: 0; font-size: 12px; color: #cbd5e1; text-align: center;">${env.APP_NAME} · 系统自动发送，请勿回复</p>
+        </div>
+      </div>
+    `;
+
+  try {
+    await sendMail({
+      from: `"${env.APP_NAME}" <${env.SMTP_FROM}>`,
+      to: email,
+      subject,
+      html,
+    });
+    logger.info({ email, purpose }, "[email] verify code sent");
+  } catch (err) {
+    logger.error({ err, email }, "[email] send failed");
+    throw err;
+  }
 }

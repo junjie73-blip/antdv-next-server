@@ -24,3 +24,40 @@ export const JobExportColumns = [
   },
   { header: "备注", key: "remark", width: 30 },
 ] as const;
+export const JobCreateSchema = z.object({
+  jobName: z.string().min(1).max(128),
+  jobGroup: z.string().max(64).default("DEFAULT"),
+  invokeTarget: z.string().min(1).max(256),
+  cronExpression: z.string().min(1).max(64),
+  misfirePolicy: z.number().int().min(1).max(3).default(3),
+  concurrent: z.number().int().min(0).max(1).default(1),
+  status: z
+    .string()
+    .regex(/^[01]$/)
+    .default("1"),
+  remark: z.string().max(512).optional(),
+  // ⭐ 告警字段
+  alertEnabled: z.number().int().min(0).max(1).default(0),
+  alertChannels: z.array(z.enum(["email", "sms", "webhook"])).default([]),
+  alertReceivers: z.array(z.string().min(1).max(256)).default([]),
+  alertThreshold: z.number().int().min(1).max(20).default(3),
+});
+
+export const JobUpdateSchema = JobCreateSchema.partial();
+
+/* ============================================================
+ * 日志查询
+ * ============================================================ */
+export const JobLogListSchema = z.object({
+  jobName: z.string().optional(),
+  status: z
+    .string()
+    .regex(/^[01]$/)
+    .optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+});
+
+export type JobCreateDTO = z.infer<typeof JobCreateSchema>;
+export type JobUpdateDTO = z.infer<typeof JobUpdateSchema>;
+export type JobLogListDTO = z.infer<typeof JobLogListSchema>;

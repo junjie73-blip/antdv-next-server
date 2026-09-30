@@ -16,7 +16,7 @@ export class RoleService extends BaseService<RoleRepository> {
   }
 
   async checkBeforeUpdate(id: string, dto: any, tenantId: string) {
-    if (!dto.roleCode) return;
+    if (dto.roleCode === undefined) return;
     const existing = await this.repository.findByRoleCode(
       dto.roleCode,
       tenantId,

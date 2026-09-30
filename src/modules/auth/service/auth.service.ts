@@ -22,6 +22,7 @@ import {
 } from "./token.service.js";
 import { randomUUID } from "crypto";
 import type { LoginInput } from "../types.js";
+import { UserRepository } from "@/modules/system/user/repository.js";
 
 const LOGIN_FAIL_PREFIX = "login:fail:";
 const LOGIN_LOCK_PREFIX = "login:lock:";
@@ -29,6 +30,7 @@ const MAX_LOGIN_FAIL = 5;
 const LOGIN_LOCK_SECONDS = 15 * 60;
 
 export class AuthService {
+  private userRepo = new UserRepository();
   async login(input: LoginInput) {
     const {
       tenantCode,
@@ -129,7 +131,30 @@ export class AuthService {
     }
 
     if (user.status !== "1") throw new AppError("账号已被禁用", 403001, 403);
-
+    if (user.cancelled_at) {
+      await prisma.sys_user.update({
+        where: { user_id: user.user_id },
+        data: {
+          cancelled_at: null,
+          cancel_reason: null,
+          cancel_effective: null,
+          updated_at: new Date(),
+        },
+      });
+      await this.writeLoginLog(
+        tenant.tenant_id,
+        user.user_id,
+        username,
+        clientIp,
+        userAgent,
+        "1",
+        "登录成功（已自动撤销注销申请）",
+      );
+      logger.info(
+        { userId: user.user_id, tenantId: tenant.tenant_id },
+        "[auth] cancel account revoked by re-login",
+      );
+    }
     await Promise.all([
       prisma.sys_user.update({
         where: { user_id: user.user_id },
@@ -562,4 +587,66 @@ export class AuthService {
         return node;
       });
   }
+
+  /**
+   * 查询当前用户的登录日志
+   */
+  async getMyLoginLogs(
+    userId: string,
+    tenantId: string,
+    pageNum: number,
+    pageSize: number,
+    options: { status?: string; startTime?: Date; endTime?: Date } = {},
+  ) {
+    // 限制单页最大 100 条
+    const limit = Math.min(Math.max(1, pageSize), 100);
+    const page = Math.max(1, pageNum);
+
+    const { list, total } = await this.userRepo.findMyLoginLogs(
+      userId,
+      tenantId,
+      page,
+      limit,
+      options,
+    );
+
+    // 增强字段：从 user-agent 解析浏览器/系统
+    const enriched = list.map((log) => ({
+      logId: log.log_id,
+      ipAddress: log.ip_address,
+      userAgent: log.user_agent,
+      browser: parseBrowser(log.user_agent),
+      os: parseOS(log.user_agent),
+      status: log.status,
+      message: log.message,
+      createdAt: log.created_at,
+    }));
+
+    return { list: enriched, total };
+  }
+}
+/**
+ * 简易 UA 解析（可替换为 ua-parser-js）
+ */
+function parseBrowser(ua: string | null): string {
+  if (!ua) return "未知";
+  if (ua.includes("Edg/")) return "Edge";
+  if (ua.includes("Chrome/")) return "Chrome";
+  if (ua.includes("Firefox/")) return "Firefox";
+  if (ua.includes("Safari/") && !ua.includes("Chrome")) return "Safari";
+  if (ua.includes("MicroMessenger")) return "微信";
+  if (ua.includes("curl/")) return "curl";
+  if (ua.includes("Postman")) return "Postman";
+  return "其他";
+}
+
+function parseOS(ua: string | null): string {
+  if (!ua) return "未知";
+  if (ua.includes("Windows NT 10")) return "Windows 10+";
+  if (ua.includes("Windows")) return "Windows";
+  if (ua.includes("Mac OS X")) return "macOS";
+  if (ua.includes("Android")) return "Android";
+  if (ua.includes("iPhone") || ua.includes("iPad")) return "iOS";
+  if (ua.includes("Linux")) return "Linux";
+  return "其他";
 }

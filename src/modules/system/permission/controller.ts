@@ -71,33 +71,60 @@ export default class PermissionController extends BaseController<
   @Get("/export")
   @ApiOperation("导出权限")
   async export(@Req() req: Request, @Res() res: Response) {
-    const buffer = await this.service.exportToExcel(req.tenantId!);
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=permissions_${Date.now()}.xlsx`,
-    );
-    res.send(buffer);
+    try {
+      if (!req.tenantId) {
+        return this.handleError(
+          res,
+          new AppError("缺少租户上下文", 401001, 401),
+        );
+      }
+      const buffer = await this.service.exportToExcel(req.tenantId!);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=permissions_${Date.now()}.xlsx`,
+      );
+      res.send(buffer);
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 
   @Post("/import")
   @ApiOperation("导入权限")
   async import(@Req() req: Request, @Res() res: Response) {
-    upload.single("file")(req, res, async (err) => {
-      if (err)
-        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
-      if (!req.file)
-        return this.handleError(res, new AppError("请上传 Excel", 400001, 400));
-      const result = await this.service.importFromExcel(
-        req.file.buffer,
-        req.tenantId!,
-        req.user?.userId,
-      );
-      success(res, result, "导入完成");
-    });
+    try {
+      if (!req.tenantId) {
+        return this.handleError(
+          res,
+          new AppError("缺少租户上下文", 401001, 401),
+        );
+      }
+      upload.single("file")(req, res, async (err) => {
+        if (err)
+          return this.handleError(
+            res,
+            new AppError("文件上传失败", 400001, 400),
+          );
+        if (!req.file)
+          return this.handleError(
+            res,
+            new AppError("请上传 Excel", 400001, 400),
+          );
+        const result = await this.service.importFromExcel(
+          req.file.buffer,
+          req.tenantId!,
+          req.user?.userId,
+        );
+        success(res, result, "导入完成");
+      });
+    } catch (err) {
+      this.handleError(res, err);
+      return;
+    }
   }
   // 获取全部权限接口
   @Get("/all")

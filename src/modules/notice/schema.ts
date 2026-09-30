@@ -14,6 +14,7 @@ export const NoticeCreateSchema = z
       .openapi({ description: "状态：0-禁用，1-启用" }),
     publishTime: z.string().datetime().optional(),
     targetUserIds: z.array(z.string().uuid()).optional(), // 新增
+    templateId: z.string().uuid().optional().nullable(),
   })
   .openapi("NoticeCreate");
 export const NoticeUpdateSchema =

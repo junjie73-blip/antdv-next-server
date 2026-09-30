@@ -46,10 +46,9 @@ export const UserCreateSchema = z
       .optional()
       .openapi({ description: "关联角色ID列表" }),
     deptIds: z
-      .string()
-      .uuid()
+      .array(z.string().uuid())
       .optional()
-      .openapi({ description: "关联部门ID列表" }),
+      .openapi({ description: "关联部门ID数组" }),
     sortOrder: z.string().optional().openapi({ description: "排序顺序" }),
     tenantId: z.string().uuid().openapi({ description: "租户ID" }),
   })
@@ -101,10 +100,7 @@ export const UserListSchema = z
       .openapi({ description: "状态过滤：'0'或'1'" }),
     roleId: z.string().optional().openapi({ description: "角色ID过滤" }),
     deptId: z.string().optional().openapi({ description: "部门ID过滤" }),
-    ids: z
-      .array(z.string().uuid())
-      .optional()
-      .openapi({ description: "用户ID列表" }),
+    ids: z.string().optional().openapi({ description: "用户ID列表，逗号分隔" }),
     fields: z
       .string()
       .optional()
@@ -125,6 +121,13 @@ export const UserImportRowSchema = z
     deptCodes: z.string().optional(), // 逗号分隔的部门编码
   })
   .openapi("UserImportRow");
+export const ResetPasswordSchema = z
+  .object({
+    password: z.string().min(6).max(64),
+  })
+  .openapi("ResetPassword");
+
+export type ResetPasswordDTO = z.infer<typeof ResetPasswordSchema>;
 
 export type UserCreateDto = z.infer<typeof UserCreateSchema>;
 export type UserUpdateDto = z.infer<typeof UserUpdateSchema>;

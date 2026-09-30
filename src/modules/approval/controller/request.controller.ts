@@ -21,6 +21,10 @@ import {
 } from "../schema.js";
 import { ZodType } from "zod";
 import { $ZodTypeInternals } from "zod/v4/core";
+import {
+  AUDIT_OP,
+  AUDIT_OP_LABEL,
+} from "@/shared/constants/audit-operation.js";
 
 interface AuthUser {
   userId: string;
@@ -63,6 +67,10 @@ function buildAudit(
     executeTime: Date.now() - startTime,
     status,
     errorMsg,
+    metadata: {
+      label: AUDIT_OP_LABEL[operation] ?? operation,
+      requestId: safeParams.id,
+    },
   };
 }
 
@@ -95,23 +103,25 @@ export default class ApprovalRequestController extends BaseController<
     const dto = CreateApprovalSchema.parse(req.body);
     try {
       const result = await this.service.createRequest(userId, tenantId, dto);
-      await pushAudit(
-        buildAudit(req, start, "1", "提交审批申请", {
+      pushAudit(
+        buildAudit(req, start, "1", AUDIT_OP.APPROVAL_SUBMIT, {
           requestId: result.request_id,
         }),
       );
+      (req as any).__auditHandled = true;
       return success(res, result, "提交成功");
     } catch (err) {
-      await pushAudit(
+      pushAudit(
         buildAudit(
           req,
           start,
           "0",
-          "提交审批申请",
+          AUDIT_OP.APPROVAL_SUBMIT,
           null,
           err instanceof Error ? err.message : "未知错误",
         ),
       );
+      (req as any).__auditHandled = true;
       throw err;
     }
   }
@@ -125,19 +135,21 @@ export default class ApprovalRequestController extends BaseController<
     const dto = ApproveSchema.parse(req.body);
     try {
       await this.service.approveRequest(req.params.id, userId, tenantId, dto);
-      await pushAudit(buildAudit(req, start, "1", "审批通过"));
+      pushAudit(buildAudit(req, start, "1", AUDIT_OP.APPROVAL_APPROVE));
+      (req as any).__auditHandled = true;
       return success(res, null, "审批已通过");
     } catch (err) {
-      await pushAudit(
+      pushAudit(
         buildAudit(
           req,
           start,
           "0",
-          "审批通过",
+          AUDIT_OP.APPROVAL_APPROVE,
           null,
           err instanceof Error ? err.message : "未知错误",
         ),
       );
+      (req as any).__auditHandled = true;
       throw err;
     }
   }
@@ -151,15 +163,16 @@ export default class ApprovalRequestController extends BaseController<
     const dto = RejectSchema.parse(req.body);
     try {
       await this.service.rejectRequest(req.params.id, userId, tenantId, dto);
-      await pushAudit(buildAudit(req, start, "1", "审批驳回"));
+      pushAudit(buildAudit(req, start, "1", AUDIT_OP.APPROVAL_REJECT));
+      (req as any).__auditHandled = true;
       return success(res, null, "已驳回");
     } catch (err) {
-      await pushAudit(
+      pushAudit(
         buildAudit(
           req,
           start,
           "0",
-          "审批驳回",
+          AUDIT_OP.APPROVAL_REJECT,
           null,
           err instanceof Error ? err.message : "未知错误",
         ),
@@ -177,19 +190,21 @@ export default class ApprovalRequestController extends BaseController<
     const dto = CreateApprovalSchema.parse(req.body);
     try {
       await this.service.resubmitRequest(req.params.id, userId, tenantId, dto);
-      await pushAudit(buildAudit(req, start, "1", "重新提交审批"));
+      pushAudit(buildAudit(req, start, "1", AUDIT_OP.APPROVAL_RESUBMIT));
+      (req as any).__auditHandled = true;
       return success(res, null, "重新提交成功");
     } catch (err) {
-      await pushAudit(
+      pushAudit(
         buildAudit(
           req,
           start,
           "0",
-          "重新提交审批",
+          AUDIT_OP.APPROVAL_RESUBMIT,
           null,
           err instanceof Error ? err.message : "未知错误",
         ),
       );
+      (req as any).__auditHandled = true;
       throw err;
     }
   }

@@ -2,47 +2,19 @@ import { config } from "dotenv";
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { z } from "zod";
+const cwd = process.cwd();
+const base = resolve(cwd, ".env");
+const dev = resolve(cwd, ".env.development");
+const prod = resolve(cwd, ".env.production");
 
-function findEnvFile(): string | null {
-  const candidates = [
-    resolve(process.cwd(), ".env.development"),
-    resolve(process.cwd(), ".env"),
-  ];
-  for (const p of candidates) if (existsSync(p)) return p;
-  return null;
-}
+if (existsSync(base)) config({ path: base });
+const envSpecific = process.env.NODE_ENV === "production" ? prod : dev;
+if (existsSync(envSpecific)) config({ path: envSpecific, override: true });
 
-const envPath = findEnvFile();
-if (!envPath) {
-  console.error("❌ 找不到 .env 或 .env.development 文件");
-  console.error("   当前工作目录:", process.cwd());
+if (!existsSync(base) && !existsSync(envSpecific)) {
+  console.error("❌ 找不到任何 .env 文件，工作目录:", cwd);
   throw new Error("环境变量文件缺失");
 }
-
-config({ path: envPath, override: true });
-
-if (!envPath.includes(".env.development")) {
-  const devPath = envPath.replace(".env", ".env.development");
-  if (existsSync(devPath)) config({ path: devPath, override: true });
-}
-
-const raw = readFileSync(envPath, "utf-8");
-if (!process.env.DATABASE_URL) {
-  raw.split("\n").forEach((line) => {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) return;
-    const eq = trimmed.indexOf("=");
-    if (eq === -1) return;
-    const key = trimmed.slice(0, eq).trim();
-    const value = trimmed
-      .slice(eq + 1)
-      .trim()
-      .replace(/^["']|["']$/g, "");
-    process.env[key] = value;
-  });
-}
-
-const isVercel = process.env.VERCEL === "1";
 
 /** 布尔字符串 → boolean（z.coerce.boolean 有 "false" → true 的坑） */
 const boolStr = (def: "true" | "false") =>
@@ -64,7 +36,7 @@ const envSchema = z.object({
   DB_CONNECT_TIMEOUT_MS: z.string().default("5000"),
   REDIS_URL: z.string().url().min(1, "REDIS_URL 不能为空"),
   REDIS_TOKEN: z.string().optional(),
-  BLOB_READ_WRITE_TOKEN: isVercel ? z.string().min(1) : z.string().optional(),
+  BLOB_READ_WRITE_TOKEN: z.string().optional(),
   JWT_SECRET: z.string().min(32, "JWT_SECRET 至少32位"),
   JWT_REFRESH_SECRET: z.string().min(32, "JWT_REFRESH_SECRET 至少32位"),
   JWT_EXPIRES_IN: z.string().default("3h"),
@@ -113,6 +85,12 @@ const envSchema = z.object({
   JOB_LOG_RETENTION_DAYS: z.string().optional().default("60"),
   MINIO_ENABLED: boolStr("true"),
   ALLOW_UNAUTH_TENANT_HEADER: boolStr("false"),
+  APP_NAME: z.string().default("Antdv"),
+  TEMPLATE_TENANT_ID: z
+    .string()
+    .min(1, "TEMPLATE_TENANT_ID 不能为空")
+    .default("68454ffe-6bd5-4715-830d-84bc5e019ea8"),
+  ALLOW_SELF_KICK: z.enum(["true", "false"]).default("false"),
 });
 
 export const env = envSchema.parse(process.env);

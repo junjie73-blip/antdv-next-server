@@ -1,5 +1,6 @@
 import { deepRedact } from "@/core/security/redact.js";
 import { postWebhook, shouldSend, type AlertPayload } from "./webhook.js";
+import { logger } from "../logger/logger.js";
 
 export type { AlertPayload } from "./webhook.js";
 
@@ -20,7 +21,7 @@ export async function sendAlert(payload: AlertPayload): Promise<void> {
 
   // 保底日志（避免依赖 logger）
   // eslint-disable-next-line no-console
-  console.warn(
+  logger.warn(
     JSON.stringify({
       alert: true,
       level: payload.level,
@@ -35,6 +36,6 @@ export async function sendAlert(payload: AlertPayload): Promise<void> {
     await postWebhook({ ...payload, data: safeData });
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error("[alert] send failed:", (err as Error)?.message);
+    logger.error({ err: err }, "[alert] send failed:", (err as Error)?.message);
   }
 }

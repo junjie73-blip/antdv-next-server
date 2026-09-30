@@ -5,6 +5,7 @@
 import ApprovalFlowController from "./approval/controller/flow.controller.js";
 import ApprovalLogController from "./approval/controller/log.controller.js";
 import ApprovalRequestController from "./approval/controller/request.controller.js";
+import AuthDeviceController from "./auth/controller/device.controller.js";
 import AuthLoginController from "./auth/controller/login.controller.js";
 import AuthMenuController from "./auth/controller/menu.controller.js";
 import AuthMiscController from "./auth/controller/misc.controller.js";
@@ -22,15 +23,18 @@ import InfrastructureJobController from "./infrastructure/job/controller.js";
 import InfrastructureJobJobLogController from "./infrastructure/job/job-log.controller.js";
 import InfrastructureOnlineController from "./infrastructure/online/controller.js";
 import InfrastructureUploadController from "./infrastructure/upload/controller.js";
+import MessageTemplateController from "./message/template/controller.js";
+import MonitorAuditDailyController from "./monitor/audit-daily/controller.js";
 import MonitorAuditLogController from "./monitor/audit-log/controller.js";
+import MonitorDatabaseController from "./monitor/database/controller.js";
 import MonitorLoginLogController from "./monitor/login-log/controller.js";
+import MonitorQpsController from "./monitor/qps/controller.js";
 import MonitorServerController from "./monitor/server/controller.js";
 import NoticeChannelController from "./notice/channel.controller.js";
 import NoticeController from "./notice/controller.js";
 import NoticeMyNoticeController from "./notice/my-notice.controller.js";
 import RbacPermissionController from "./rbac/controller/permission.controller.js";
 import RbacRoleController from "./rbac/controller/role.controller.js";
-import SystemConfigController from "./system/config/controller.js";
 import SystemDeptController from "./system/dept/controller.js";
 import SystemDictDataController from "./system/dict-data/controller.js";
 import SystemDictTypeController from "./system/dict-type/controller.js";
@@ -39,6 +43,7 @@ import SystemMenuController from "./system/menu/controller.js";
 import SystemMfaController from "./system/mfa/controller.js";
 import SystemPermissionController from "./system/permission/controller.js";
 import SystemRoleController from "./system/role/controller.js";
+import SystemSettingController from "./system/setting/controller.js";
 import SystemTenantController from "./system/tenant/controller.js";
 import SystemUserController from "./system/user/controller.js";
 
@@ -46,6 +51,7 @@ export const controllers = [
   ApprovalFlowController,
   ApprovalLogController,
   ApprovalRequestController,
+  AuthDeviceController,
   AuthLoginController,
   AuthMenuController,
   AuthMiscController,
@@ -63,15 +69,18 @@ export const controllers = [
   InfrastructureJobJobLogController,
   InfrastructureOnlineController,
   InfrastructureUploadController,
+  MessageTemplateController,
+  MonitorAuditDailyController,
   MonitorAuditLogController,
+  MonitorDatabaseController,
   MonitorLoginLogController,
+  MonitorQpsController,
   MonitorServerController,
   NoticeChannelController,
   NoticeController,
   NoticeMyNoticeController,
   RbacPermissionController,
   RbacRoleController,
-  SystemConfigController,
   SystemDeptController,
   SystemDictDataController,
   SystemDictTypeController,
@@ -80,6 +89,7 @@ export const controllers = [
   SystemMfaController,
   SystemPermissionController,
   SystemRoleController,
+  SystemSettingController,
   SystemTenantController,
   SystemUserController,
 ] as const;

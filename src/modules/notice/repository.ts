@@ -15,12 +15,13 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
    * 创建通知（重写基类方法以处理目标用户关联）
    */
   async create(data, tenantId, userId) {
-    const { target_user_ids: targetUserIds, publishTime, ...noticeData } = data;
+    // ✅ 统一从驼峰读取
+    const { targetUserIds, publishTime, ...noticeData } = data;
     const publishTimeDate = publishTime ? new Date(publishTime) : null;
     const status =
       publishTimeDate && publishTimeDate > new Date()
         ? "0"
-        : String(data.status ?? "1");
+        : String(noticeData.status ?? "1");
 
     return prisma.$transaction(async (tx) => {
       const notice = await tx.sys_notice.create({
@@ -38,12 +39,12 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
         },
       });
 
-      if (targetUserIds?.length) {
-        // ⭐ 归属校验
+      // ✅ 目标用户处理
+      if (Array.isArray(targetUserIds) && targetUserIds.length > 0) {
         const uniqueIds = [...new Set(targetUserIds)];
         const validCount = await tx.sys_user.count({
           where: {
-            user_id: { in: uniqueIds as string[] },
+            user_id: { in: uniqueIds },
             tenant_id: tenantId,
             is_deleted: 0,
           },
@@ -52,12 +53,12 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
           throw new AppError("存在无效的接收人", 400001, 400);
         }
         await tx.sys_notice_user.createMany({
-          data: (uniqueIds as string[]).map((uid: string) => ({
+          data: uniqueIds.map((uid) => ({
             notice_id: notice.notice_id,
             user_id: uid,
             tenant_id: tenantId,
           })),
-          skipDuplicates: true, // ⭐
+          skipDuplicates: true,
         });
       }
 
@@ -143,18 +144,14 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
     });
   }
   async update(id, data, tenantId, userId) {
-    // ⭐ 先校验归属
     const exists = await prisma.sys_notice.findFirst({
       where: { notice_id: id, tenant_id: tenantId, is_deleted: 0 },
       select: { notice_id: true },
     });
     if (!exists) throw new AppError("通知不存在", 404001, 404);
 
-    const {
-      target_user_ids: targetUserIds,
-      publish_time: publishTime,
-      ...noticeData
-    } = data;
+    // ✅ 统一驼峰
+    const { targetUserIds, publishTime, ...noticeData } = data;
     const publishTimeDate = publishTime ? new Date(publishTime) : null;
     let status = noticeData.status;
     if (publishTimeDate && publishTimeDate > new Date()) status = "0";
@@ -165,14 +162,15 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
         data: {
           // @ts-ignore
           ...keysToSnakeCase(noticeData),
-          status,
-          publish_time: publishTimeDate,
+          ...(status !== undefined ? { status } : {}),
+          ...(publishTimeDate ? { publish_time: publishTimeDate } : {}),
           updated_by: userId,
           updated_at: new Date(),
         },
       });
 
-      if (targetUserIds !== undefined) {
+      // ✅ 语义区分：[] 表示清空，undefined 表示不动
+      if (Array.isArray(targetUserIds)) {
         await tx.sys_notice_user.deleteMany({
           where: { notice_id: id, tenant_id: tenantId },
         });
@@ -180,7 +178,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
           const uniqueIds = [...new Set(targetUserIds)];
           const validCount = await tx.sys_user.count({
             where: {
-              user_id: { in: uniqueIds as string[] },
+              user_id: { in: uniqueIds },
               tenant_id: tenantId,
               is_deleted: 0,
             },
@@ -189,15 +187,16 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
             throw new AppError("存在无效的接收人", 400001, 400);
           }
           await tx.sys_notice_user.createMany({
-            data: (uniqueIds as string[]).map((uid: string) => ({
+            data: uniqueIds.map((uid) => ({
               notice_id: id,
               user_id: uid,
               tenant_id: tenantId,
             })),
-            skipDuplicates: true, // ⭐
+            skipDuplicates: true,
           });
         }
       } else if (status === "1") {
+        // 未显式指定目标人，但状态为发布 → 全员
         await tx.sys_notice_user.deleteMany({
           where: { notice_id: id, tenant_id: tenantId },
         });
@@ -212,7 +211,7 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
               user_id: u.user_id,
               tenant_id: tenantId,
             })),
-            skipDuplicates: true, // ⭐
+            skipDuplicates: true,
           });
         }
       }

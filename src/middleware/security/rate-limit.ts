@@ -15,7 +15,13 @@ const MAX_BYTES_PER_HOUR =
 const MAX_PER_SEC = Number(env.UPLOAD_ID_RATE_PER_SEC || 200);
 const SKIP_RATE_LIMIT =
   /^\/api\/v1\/(auth|tenant\/options|docs)|^\/(health|metrics|uploads|favicon)/;
-
+const INCR_WITH_TTL = `
+  local current = redis.call('INCRBY', KEYS[1], ARGV[1])
+  if redis.call('TTL', KEYS[1]) < 0 then
+    redis.call('EXPIRE', KEYS[1], ARGV[2])
+  end
+  return current
+`;
 export interface LimitRule {
   windowMs: number;
   max: number;
@@ -179,18 +185,11 @@ export const globalRateLimit = createProtectedLimiter(
   "global",
 );
 
-export const chunkUploadRateLimit = rateLimit({
-  windowMs: 10_000,
-  max: 1000,
-  standardHeaders: true,
-  legacyHeaders: false,
-  store: createStore("chunk"),
-  keyGenerator: (req) => resolveIdentifier("both", req),
-  handler: (_req, res) => {
-    res.setHeader("Retry-After", "10");
-    error(res, "上传过快，请稍后重试", 429);
-  },
-});
+export const chunkUploadRateLimit = createProtectedLimiter(
+  "both",
+  RULES.chunkUpload,
+  "chunk",
+);
 
 export const fileUploadRateLimit = createProtectedLimiter(
   "both",
@@ -233,9 +232,13 @@ export function autoRateLimit() {
   const cache = new Map<string, RateLimitRequestHandler>();
   const block = blockCheck("both", "auto");
   return async (req: Request, res: Response, next: NextFunction) => {
-    await new Promise<void>((resolve, reject) => {
-      block(req, res, (err?: any) => (err ? reject(err) : resolve()));
-    });
+    try {
+      await new Promise<void>((resolve, reject) => {
+        block(req, res, (err?: any) => (err ? reject(err) : resolve()));
+      });
+    } catch (err) {
+      return next(err);
+    }
     if (res.headersSent) return;
 
     const match = PATH_RULES.find(({ pattern }) => pattern.test(req.path));
@@ -255,11 +258,14 @@ export function chunkByteRateLimit() {
         : `ip-rule:${req.ip || "unknown"}`;
       const key = `upload:bytes:${identifier}`;
       const contentLength = Number(req.headers["content-length"] || 0);
-
-      const current = await redis.incrby(key, contentLength);
-      if (current === contentLength) {
-        await redis.expire(key, 3600, "NX").catch(() => {});
-      }
+      if (!Number.isFinite(contentLength) || contentLength <= 0) return next();
+      const current = (await redis.eval(
+        INCR_WITH_TTL,
+        1,
+        key,
+        String(contentLength),
+        "3600",
+      )) as number;
 
       if (current > MAX_BYTES_PER_HOUR) {
         res.setHeader("Retry-After", "300");

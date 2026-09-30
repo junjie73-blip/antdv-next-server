@@ -50,6 +50,7 @@ export type Sys_fileMinAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  md5: string | null
 }
 
 export type Sys_fileMaxAggregateOutputType = {
@@ -66,6 +67,7 @@ export type Sys_fileMaxAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  md5: string | null
 }
 
 export type Sys_fileCountAggregateOutputType = {
@@ -82,6 +84,7 @@ export type Sys_fileCountAggregateOutputType = {
   created_by: number
   updated_by: number
   is_deleted: number
+  md5: number
   _all: number
 }
 
@@ -110,6 +113,7 @@ export type Sys_fileMinAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  md5?: true
 }
 
 export type Sys_fileMaxAggregateInputType = {
@@ -126,6 +130,7 @@ export type Sys_fileMaxAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  md5?: true
 }
 
 export type Sys_fileCountAggregateInputType = {
@@ -142,6 +147,7 @@ export type Sys_fileCountAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  md5?: true
   _all?: true
 }
 
@@ -245,6 +251,7 @@ export type Sys_fileGroupByOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number
+  md5: string | null
   _count: Sys_fileCountAggregateOutputType | null
   _avg: Sys_fileAvgAggregateOutputType | null
   _sum: Sys_fileSumAggregateOutputType | null
@@ -284,6 +291,7 @@ export type sys_fileWhereInput = {
   created_by?: Prisma.UuidNullableFilter<"sys_file"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_file"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_file"> | number
+  md5?: Prisma.StringNullableFilter<"sys_file"> | string | null
 }
 
 export type sys_fileOrderByWithRelationInput = {
@@ -300,6 +308,7 @@ export type sys_fileOrderByWithRelationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  md5?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_fileWhereUniqueInput = Prisma.AtLeast<{
@@ -319,6 +328,7 @@ export type sys_fileWhereUniqueInput = Prisma.AtLeast<{
   created_by?: Prisma.UuidNullableFilter<"sys_file"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_file"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_file"> | number
+  md5?: Prisma.StringNullableFilter<"sys_file"> | string | null
 }, "file_id">
 
 export type sys_fileOrderByWithAggregationInput = {
@@ -335,6 +345,7 @@ export type sys_fileOrderByWithAggregationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  md5?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_fileCountOrderByAggregateInput
   _avg?: Prisma.sys_fileAvgOrderByAggregateInput
   _max?: Prisma.sys_fileMaxOrderByAggregateInput
@@ -359,6 +370,7 @@ export type sys_fileScalarWhereWithAggregatesInput = {
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_file"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_file"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_file"> | number
+  md5?: Prisma.StringNullableWithAggregatesFilter<"sys_file"> | string | null
 }
 
 export type sys_fileCreateInput = {
@@ -375,6 +387,7 @@ export type sys_fileCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  md5?: string | null
 }
 
 export type sys_fileUncheckedCreateInput = {
@@ -391,6 +404,7 @@ export type sys_fileUncheckedCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  md5?: string | null
 }
 
 export type sys_fileUpdateInput = {
@@ -407,6 +421,7 @@ export type sys_fileUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  md5?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_fileUncheckedUpdateInput = {
@@ -423,6 +438,7 @@ export type sys_fileUncheckedUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  md5?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_fileCreateManyInput = {
@@ -439,6 +455,7 @@ export type sys_fileCreateManyInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  md5?: string | null
 }
 
 export type sys_fileUpdateManyMutationInput = {
@@ -455,6 +472,7 @@ export type sys_fileUpdateManyMutationInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  md5?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_fileUncheckedUpdateManyInput = {
@@ -471,6 +489,7 @@ export type sys_fileUncheckedUpdateManyInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  md5?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_fileCountOrderByAggregateInput = {
@@ -487,6 +506,7 @@ export type sys_fileCountOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  md5?: Prisma.SortOrder
 }
 
 export type sys_fileAvgOrderByAggregateInput = {
@@ -508,6 +528,7 @@ export type sys_fileMaxOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  md5?: Prisma.SortOrder
 }
 
 export type sys_fileMinOrderByAggregateInput = {
@@ -524,6 +545,7 @@ export type sys_fileMinOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  md5?: Prisma.SortOrder
 }
 
 export type sys_fileSumOrderByAggregateInput = {
@@ -547,6 +569,7 @@ export type sys_fileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  md5?: boolean
 }, ExtArgs["result"]["sys_file"]>
 
 export type sys_fileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -563,6 +586,7 @@ export type sys_fileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  md5?: boolean
 }, ExtArgs["result"]["sys_file"]>
 
 export type sys_fileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -579,6 +603,7 @@ export type sys_fileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  md5?: boolean
 }, ExtArgs["result"]["sys_file"]>
 
 export type sys_fileSelectScalar = {
@@ -595,9 +620,10 @@ export type sys_fileSelectScalar = {
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  md5?: boolean
 }
 
-export type sys_fileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"file_id" | "tenant_id" | "filename" | "url" | "size" | "mime_type" | "uploader" | "category" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_file"]>
+export type sys_fileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"file_id" | "tenant_id" | "filename" | "url" | "size" | "mime_type" | "uploader" | "category" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "md5", ExtArgs["result"]["sys_file"]>
 
 export type $sys_filePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_file"
@@ -616,6 +642,7 @@ export type $sys_filePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     created_by: string | null
     updated_by: string | null
     is_deleted: number
+    md5: string | null
   }, ExtArgs["result"]["sys_file"]>
   composites: {}
 }
@@ -1052,6 +1079,7 @@ export interface sys_fileFieldRefs {
   readonly created_by: Prisma.FieldRef<"sys_file", 'String'>
   readonly updated_by: Prisma.FieldRef<"sys_file", 'String'>
   readonly is_deleted: Prisma.FieldRef<"sys_file", 'Int'>
+  readonly md5: Prisma.FieldRef<"sys_file", 'String'>
 }
     
 

@@ -6,15 +6,24 @@ import fs from "fs/promises";
 import { UPLOAD_ROOT } from "../upload/controller.js";
 import { sendAlert } from "@/platform/alert/index.js";
 import { withLock } from "@/core/index.js";
+import { dispatchNotice } from "@/modules/notice/channels/index.js";
+import { JobRepository } from "./repository.js";
+import { runAuditCleanTask } from "@/jobs/tasks/audit-clean.task.js";
+import { runAuditDailyTask } from "@/jobs/tasks/audit-daily.task.js";
+
 const running = new Map<string, ScheduledTask>();
-const failureCounter = new Map<string, number>();
+const repo = new JobRepository();
+
+/* ============================================================
+ * 启动时加载所有任务
+ * ============================================================ */
 export async function loadJobs(): Promise<number> {
   const list = await prisma.sys_job.findMany({
     where: { status: "1", is_deleted: 0, is_paused: 0 },
   });
   for (const job of list) startJob(job);
   logger.info(`Loaded ${list.length} jobs`);
-  return list.length; // ⭐ 返回数量
+  return list.length;
 }
 
 export function startJob(job: any) {
@@ -24,18 +33,31 @@ export function startJob(job: any) {
     return;
   }
 
+  const perAttempt = (job.timeout_seconds || 300) * 1000;
+  const retries = job.retry_count || 0;
+  const intervalMs = (job.retry_interval || 60) * 1000;
+  const worstMs = perAttempt * (retries + 1) + intervalMs * retries;
+  const ttl = Math.min(Math.ceil(worstMs / 1000) + 30, 7200);
   const task = cron.schedule(
     job.cron_expression,
     async () => {
       const lockKey = `job:lock:${job.tenant_id}:${job.job_id}`;
-      const ttl = Math.min(job.timeout_seconds || 300, 3600);
 
       await withLock(lockKey, ttl, async () => {
+        const latest = await prisma.sys_job.findUnique({
+          where: { job_id: job.job_id },
+        });
+        if (!latest || latest.is_deleted === 1 || latest.status !== "1") {
+          logger.debug({ jobId: job.job_id }, "[job] skipped, job not active");
+          return;
+        }
+
         await prisma.sys_job.update({
           where: { job_id: job.job_id },
           data: { last_run_at: new Date() },
         });
-        await runJobWithRetry(job);
+
+        await runJobWithRetry(latest);
       });
     },
     { timezone: "Asia/Shanghai" },
@@ -51,7 +73,10 @@ export function stopJob(id: string) {
     running.delete(id);
   }
 }
-/** 带重试和超时的执行 */
+
+/* ============================================================
+ * 带重试和超时的执行
+ * ============================================================ */
 async function runJobWithRetry(job: any): Promise<void> {
   const maxRetry = job.retry_count || 0;
   const intervalMs = (job.retry_interval || 60) * 1000;
@@ -74,9 +99,9 @@ async function runJobWithRetry(job: any): Promise<void> {
         if (timeoutHandle) clearTimeout(timeoutHandle);
       }
 
-      // 成功清计数
-      failureCounter.delete(job.job_id);
+      /* ========== 执行成功 ========== */
 
+      // 1. 记录成功日志
       await prisma.sys_job_log.create({
         data: {
           job_id: job.job_id,
@@ -88,28 +113,39 @@ async function runJobWithRetry(job: any): Promise<void> {
           duration_ms: Date.now() - started,
         },
       });
+
+      // ⭐ 2. 重置失败计数
+      await repo.resetFailCount(job.job_id);
+
+      logger.info(
+        { jobId: job.job_id, name: job.job_name, attempt },
+        "[job] success",
+      );
       return;
     } catch (e: any) {
       const isLast = attempt === maxRetry;
       const isTimeout = String(e?.message || "").includes("timeout");
 
-      // ⭐ 超时告警
+      /* ⭐ 超时走平台告警（不占用户渠道） */
       if (isTimeout) {
-        void sendAlert({
+        void sendPlatformAlert({
           level: "warning",
           title: `job_timeout:${job.job_id}`,
-          message: `任务「${job.job_name}」超时`,
+          message: `任务「${job.job_name}」超时（${timeoutMs}ms）`,
           source: "job",
-          data: { jobId: job.job_id, timeoutMs },
+          data: { jobId: job.job_id, timeoutMs, attempt },
         });
       }
 
+      // 记录失败日志
       await prisma.sys_job_log.create({
         data: {
           job_id: job.job_id,
           job_name: job.job_name,
           invoke_target: job.invoke_target,
-          job_message: isLast ? "执行失败（已达重试上限）" : "执行失败，将重试",
+          job_message: isLast
+            ? "执行失败（已达重试上限）"
+            : `执行失败，${intervalMs / 1000}s 后重试`,
           status: "0",
           retry_attempt: attempt,
           duration_ms: Date.now() - started,
@@ -120,57 +156,211 @@ async function runJobWithRetry(job: any): Promise<void> {
       logger.error({ err: e, job: job.job_name, attempt }, "[job] failed");
 
       if (isLast) {
-        // ⭐ 连续失败计数
-        const count = (failureCounter.get(job.job_id) || 0) + 1;
-        failureCounter.set(job.job_id, count);
-
-        if (count >= 3) {
-          void sendAlert({
-            level: "warning",
-            title: `job_repeated_failure:${job.job_id}`,
-            message: `任务「${job.job_name}」连续失败 ${count} 次`,
-            source: "job",
-            data: {
-              jobId: job.job_id,
-              jobName: job.job_name,
-              error: String(e?.message || e),
-            },
-          });
-        }
+        /* ⭐ 最后一次失败：更新计数 + 判断是否触发告警 */
+        await handleJobFailure(job, e, attempt);
       } else {
+        /* 中间重试：等待间隔 */
         await new Promise((r) => setTimeout(r, intervalMs));
       }
     }
   }
 }
 
-/** 手动立即执行：也走锁 */
+/* ============================================================
+ * ⭐ 处理任务失败（持久化计数 + 阈值 + 告警）
+ * ============================================================ */
+async function handleJobFailure(
+  job: any,
+  err: any,
+  attempt: number,
+): Promise<void> {
+  // 1. 计数 +1（持久化到数据库）
+  let newCount = 0;
+  try {
+    newCount = await repo.incrementFailCount(job.job_id);
+  } catch (e) {
+    logger.error(
+      { err: e, jobId: job.job_id },
+      "[job] increment fail count failed",
+    );
+    return;
+  }
+
+  // 2. 未开启告警 → 只计数，不通知
+  if (job.alert_enabled !== 1) {
+    logger.debug(
+      { jobId: job.job_id, failCount: newCount },
+      "[job] alert disabled",
+    );
+    return;
+  }
+
+  // 3. 阈值判断
+  const threshold = job.alert_threshold ?? 3;
+  if (newCount < threshold) {
+    logger.debug(
+      { jobId: job.job_id, failCount: newCount, threshold },
+      "[job] fail count below threshold",
+    );
+    return;
+  }
+
+  // 4. 触发告警
+  try {
+    await sendJobAlert(job, {
+      failCount: newCount,
+      threshold,
+      lastError: String(err?.message || err),
+      lastRunAt: new Date(),
+      attempt,
+    });
+
+    // ⭐ 告警成功后重置计数，避免"每失败一次就发一次"
+    await repo.resetFailCount(job.job_id);
+
+    logger.info(
+      { jobId: job.job_id, failCount: newCount, threshold },
+      "[job] alert sent, fail count reset",
+    );
+  } catch (alertErr) {
+    logger.error(
+      { err: alertErr, jobId: job.job_id },
+      "[job] send alert failed",
+    );
+  }
+}
+
+/* ============================================================
+ * ⭐ 任务告警：走通知系统（用户渠道配置）
+ * ============================================================ */
+async function sendJobAlert(
+  job: any,
+  ctx: {
+    failCount: number;
+    threshold: number;
+    lastError: string;
+    lastRunAt: Date;
+    attempt: number;
+  },
+): Promise<void> {
+  const channels = (job.alert_channels ?? "email")
+    .split(",")
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+
+  const receivers = (job.alert_receivers ?? "")
+    .split(",")
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+
+  if (receivers.length === 0) {
+    logger.warn({ jobId: job.job_id }, "[job] alert receivers empty, skip");
+    return;
+  }
+
+  const title = `【任务告警】${job.job_name} 连续失败 ${ctx.failCount} 次`;
+  const content = [
+    `任务名称：${job.job_name}`,
+    `任务分组：${job.job_group || "DEFAULT"}`,
+    `执行目标：${job.invoke_target}`,
+    `Cron 表达式：${job.cron_expression}`,
+    `连续失败：${ctx.failCount} 次（阈值 ${ctx.threshold}）`,
+    `重试次数：${ctx.attempt}`,
+    `最近执行：${ctx.lastRunAt.toISOString()}`,
+    ``,
+    `最近错误：`,
+    ctx.lastError,
+    ``,
+    `请及时检查任务配置或依赖服务，避免影响业务。`,
+  ].join("\n");
+
+  // 按渠道分发相同的接收人
+  const receiversByChannel: Record<string, string[]> = {};
+  for (const ch of channels) {
+    receiversByChannel[ch] = receivers;
+  }
+
+  await dispatchNotice({
+    tenantId: job.tenant_id,
+    title,
+    content,
+    channels,
+    receiversByChannel,
+  });
+}
+
+/* ============================================================
+ * ⭐ 平台告警（超时/系统级，不依赖租户渠道）
+ * ============================================================ */
+async function sendPlatformAlert(input: {
+  level: "info" | "warning" | "error";
+  title: string;
+  message: string;
+  source: string;
+  data: Record<string, any>;
+}): Promise<void> {
+  try {
+    await sendAlert(input);
+  } catch (e) {
+    logger.error({ err: e }, "[job] send platform alert failed");
+  }
+}
+
+/* ============================================================
+ * 手动执行
+ * ============================================================ */
 export async function runJobOnce(id: string) {
   const job = await prisma.sys_job.findUnique({ where: { job_id: id } });
   if (!job) return;
+
   const lockKey = `job:lock:${job.tenant_id}:${job.job_id}`;
-  const result = await withLock(lockKey, 10 * 60, () => runJob(job));
+  const result = await withLock(lockKey, 10 * 60, () => runJobManually(job));
+
   if (result === null) {
     logger.warn({ jobId: id }, "[job] manual run skipped, lock held");
   }
 }
 
-async function runJob(job: any) {
+/**
+ * ⭐ 手动执行：独立逻辑
+ * - 有超时保护
+ * - 记录日志
+ * - 不更新 fail_count（避免误触发告警）
+ */
+async function runJobManually(job: any): Promise<void> {
   const start = Date.now();
+  const timeoutMs = (job.timeout_seconds || 300) * 1000;
+  let timeoutHandle: NodeJS.Timeout | null = null;
+
   try {
-    await execute(job.invoke_target);
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutHandle = setTimeout(
+        () => reject(new Error(`Job timeout after ${timeoutMs}ms`)),
+        timeoutMs,
+      );
+    });
+
+    try {
+      // ⭐ 修正：传 job 对象而非字符串
+      await Promise.race([execute(job), timeoutPromise]);
+    } finally {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+    }
+
     await prisma.sys_job_log.create({
       data: {
         job_id: job.job_id,
         job_name: job.job_name,
         invoke_target: job.invoke_target,
-        job_message: "执行成功",
+        job_message: "手动执行成功",
         status: "1",
+        duration_ms: Date.now() - start,
       },
     });
+
     logger.info(
       { jobId: job.job_id, name: job.job_name, ms: Date.now() - start },
-      "[job] success",
+      "[job] manual success",
     );
   } catch (e: any) {
     await prisma.sys_job_log.create({
@@ -178,19 +368,21 @@ async function runJob(job: any) {
         job_id: job.job_id,
         job_name: job.job_name,
         invoke_target: job.invoke_target,
-        job_message: "执行失败",
+        job_message: "手动执行失败",
         status: "0",
+        duration_ms: Date.now() - start,
         exception_info: String(e?.stack || e?.message || e),
       },
     });
-    logger.error({ err: e, job: job.job_name }, "[job] failed");
+
+    logger.error({ err: e, job: job.job_name }, "[job] manual failed");
+    // ⭐ 注意：手动失败不触发连续失败计数
   }
 }
-/**
- * 执行任务
- * 入参是整个 job 对象，方便 invoke_target 分支读取 job 自身的配置
- * （如 retention_days、自定义参数等）
- */
+
+/* ============================================================
+ * execute：任务分发（保留原逻辑）
+ * ============================================================ */
 async function execute(job: any): Promise<void> {
   const target = job.invoke_target as string;
   const tenantId = job.tenant_id as string;
@@ -216,26 +408,34 @@ async function execute(job: any): Promise<void> {
     }
 
     case "log:clean": {
-      // ⭐ 从 job 读保留天数，没有则默认 30
       const retentionDays = Number(
         (job as any).retention_days ?? (job as any).retentionDays ?? 30,
       );
       const before = new Date(Date.now() - retentionDays * 86400000);
 
-      // 清理审计日志
-      const auditResult = await prisma.sys_audit_log.deleteMany({
-        where: { tenant_id: tenantId, created_at: { lt: before } },
+      // ✅ 先取本租户 job_id，job_log 无 tenant_id
+      const tenantJobs = await prisma.sys_job.findMany({
+        where: { tenant_id: tenantId, is_deleted: 0 },
+        select: { job_id: true },
       });
+      const jobIds = tenantJobs.map((j) => j.job_id);
 
-      // 清理任务日志
-      const jobLogResult = await prisma.sys_job_log.deleteMany({
-        where: { created_at: { lt: before } },
-      });
-
-      // 清理登录日志
-      const loginLogResult = await prisma.sys_login_log.deleteMany({
-        where: { tenant_id: tenantId, created_at: { lt: before } },
-      });
+      const [auditResult, loginLogResult, jobLogResult] = await Promise.all([
+        prisma.sys_audit_log.deleteMany({
+          where: { tenant_id: tenantId, created_at: { lt: before } },
+        }),
+        prisma.sys_login_log.deleteMany({
+          where: { tenant_id: tenantId, created_at: { lt: before } },
+        }),
+        jobIds.length > 0
+          ? prisma.sys_job_log.deleteMany({
+              where: {
+                job_id: { in: jobIds },
+                created_at: { lt: before },
+              },
+            })
+          : Promise.resolve({ count: 0 }),
+      ]);
 
       logger.info(
         {
@@ -251,7 +451,6 @@ async function execute(job: any): Promise<void> {
     }
 
     case "todo:overdue-notify": {
-      // 逾期待办提醒（可选扩展）
       const now = new Date();
       const overdueTodos = await prisma.sys_todo.findMany({
         where: {
@@ -264,11 +463,11 @@ async function execute(job: any): Promise<void> {
       });
 
       for (const t of overdueTodos) {
-        // TODO: 发送 WS 提醒 / 站内信
         logger.debug({ todoId: t.todo_id }, "[job] overdue todo notify");
       }
       break;
     }
+
     case "upload:clean-temp": {
       const tempDir = path.join(UPLOAD_ROOT, "temp");
       const dirs = await fs.readdir(tempDir);
@@ -284,6 +483,7 @@ async function execute(job: any): Promise<void> {
       }
       break;
     }
+
     case "db:backup": {
       const { exec } = await import("child_process");
       const { promisify } = await import("util");
@@ -293,6 +493,14 @@ async function execute(job: any): Promise<void> {
       });
       break;
     }
+    case "audit:daily":
+      await runAuditDailyTask();
+      break;
+
+    // ⭐ 审计日报清理
+    case "audit:clean-daily":
+      await runAuditCleanTask();
+      break;
     default:
       logger.warn({ target, jobId: job.job_id }, "[job] unknown invoke_target");
   }

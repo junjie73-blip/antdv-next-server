@@ -10,7 +10,6 @@ import { logger } from "@/platform/logger/index.js";
 const SLOW_MS = 1000;
 
 function normalizePath(req: Request): string {
-  if (req.route?.path) return `${req.baseUrl}${req.route.path}`;
   return req.path
     .replace(/\/[0-9a-f-]{36}/gi, "/:id")
     .replace(/\/\d+/g, "/:id");

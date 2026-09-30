@@ -2,6 +2,7 @@ import { BaseService } from "@/core/base/service.js";
 import { AuditLogRepository } from "./repository.js";
 import dayjs from "dayjs";
 import { ExcelColumn, generateExcel } from "@/platform/excel/index.js";
+import { NotFoundError } from "@/core/index.js";
 
 const EXPORT_COLUMNS: ExcelColumn[] = [
   { header: "日志ID", key: "log_id", width: 36 },
@@ -36,12 +37,14 @@ export class AuditLogService extends BaseService<any> {
     super(repository);
   }
 
-  async exportToExcel(where: any): Promise<Buffer> {
-    const logs = await this.repository.findAll(where);
+  async exportToExcel(where: any, tenantId: string): Promise<Buffer> {
+    const logs = await this.repository.findAll(where, tenantId);
     return generateExcel(logs, EXPORT_COLUMNS, "审计日志");
   }
 
   async findDetail(id: string, tenantId: string) {
-    return this.repository.findDetailById(id, tenantId);
+    const log = await this.repository.findDetailById(id, tenantId);
+    if (!log) throw new NotFoundError("审计日志不存在");
+    return log;
   }
 }

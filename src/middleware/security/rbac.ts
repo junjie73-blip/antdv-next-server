@@ -67,9 +67,11 @@ export function createRbacMiddleware(options: RbacOptions = {}) {
           });
         }
       }
-
-      if (permissions.length > 0) {
-        const userPerms = await getUserPermissions(userId, tenantId);
+      const needPerms = permissions.length > 0 || anyPermissions.length > 0;
+      const userPerms = needPerms
+        ? await getUserPermissions(userId, tenantId)
+        : null;
+      if (permissions.length > 0 && userPerms) {
         const hasAll =
           userPerms.includes("*") ||
           permissions.every((p) => userPerms.includes(p));
@@ -87,8 +89,7 @@ export function createRbacMiddleware(options: RbacOptions = {}) {
         }
       }
 
-      if (anyPermissions.length > 0) {
-        const userPerms = await getUserPermissions(userId, tenantId);
+      if (anyPermissions.length > 0 && userPerms) {
         const hasAny =
           userPerms.includes("*") ||
           anyPermissions.some((p) => userPerms.includes(p));

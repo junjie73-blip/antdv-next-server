@@ -20,6 +20,7 @@ import { JobService } from "./service.js";
 import { AppError } from "@/core/errors.js";
 import { success } from "@/shared/http/response.js";
 import { upload } from "../../system/user/controller.js";
+import { JobCreateSchema, JobUpdateSchema } from "./schema.js";
 
 @Controller("/job", { tags: ["定时任务"] })
 export default class JobController extends BaseController<any, any, any, any> {
@@ -69,12 +70,14 @@ export default class JobController extends BaseController<any, any, any, any> {
 
   @Post("/")
   @ApiOperation("创建任务")
+  @ApiBody(JobCreateSchema)
   async jobCreate(@Req() req: Request, @Res() res: Response) {
     return super.create(req, res);
   }
 
   @Put("/:id")
   @ApiOperation("更新任务")
+  @ApiBody(JobUpdateSchema)
   async jobUpdate(@Req() req: Request, @Res() res: Response) {
     return super.update(req, res);
   }

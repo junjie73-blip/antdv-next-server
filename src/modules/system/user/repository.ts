@@ -16,6 +16,8 @@ import {
   encryptField,
   hashField,
 } from "@/core/index.js";
+import { env } from "@/config/env.js";
+import { logger } from "@/platform/logger/logger.js";
 
 const TEMPLATE_TENANT_CODE = "__TEMPLATE__";
 export class UserRepository extends BaseRepository<any, any, any, any> {
@@ -346,22 +348,27 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
    * 创建用户并关联角色/部门
    */
   async createWithRelations(data: any, tenantId: string, userId?: string) {
-    // 从 data 中解构出 deptIds 和 roleIds，剩余部分才是用户表字段
     const {
       phone,
-      dept_ids: deptIds,
-      role_ids: roleIds,
+      deptIds, // ✅ 用驼峰字段名（原本是 dept_ids）
+      roleIds,
       password,
       ...userData
     } = data;
-    // 密码哈希提前进行
-    const hashedPassword = await hashPassword(password);
-    const encrypted = phone
-      ? { phone_enc: encryptField(phone), phone_hash: hashField(phone) }
-      : {};
 
+    const hashedPassword = await hashPassword(password);
+
+    const encrypted = phone
+      ? {
+          phone_enc: encryptField(String(phone)),
+          phone_hash: hashField(String(phone)),
+        }
+      : {};
+    const deptArr =
+      deptIds == null ? [] : Array.isArray(deptIds) ? deptIds : [deptIds];
+    const roleArr =
+      roleIds == null ? [] : Array.isArray(roleIds) ? roleIds : [roleIds];
     return prisma.$transaction(async (tx) => {
-      // 1. 创建用户主体
       const user = await tx.sys_user.create({
         data: {
           // @ts-ignore
@@ -373,37 +380,31 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           created_at: new Date(),
           updated_at: new Date(),
           is_deleted: 0,
-          phone,
           ...encrypted,
         },
       });
 
-      // 2. 处理部门关联
-      if (deptIds && deptIds.length > 0) {
-        // 兼容 deptIds 可能是单个字符串或数组
-        const deptArray = Array.isArray(deptIds) ? deptIds : [deptIds];
+      if (deptArr.length > 0) {
         await tx.sys_user_dept.createMany({
-          data: deptArray.map((deptId: string) => ({
+          data: deptArr.map((deptId: string) => ({
             user_id: user.user_id,
             dept_id: deptId,
             tenant_id: tenantId,
             is_primary: 0,
           })),
+          skipDuplicates: true,
         });
       }
-
-      // 3. 处理角色关联
-      if (roleIds && roleIds.length > 0) {
-        const roleArray = Array.isArray(roleIds) ? roleIds : [roleIds];
+      if (roleArr.length > 0) {
         await tx.sys_user_role.createMany({
-          data: roleArray.map((roleId: string) => ({
+          data: roleArr.map((roleId: string) => ({
             user_id: user.user_id,
             role_id: roleId,
             tenant_id: tenantId,
           })),
+          skipDuplicates: true,
         });
       }
-
       return user;
     });
   }
@@ -459,11 +460,13 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       data;
     const hashedPassword = await hashPassword(password);
 
-    const TEMPLATE_TENANT_ID = process.env.TEMPLATE_TENANT_ID;
+    const TEMPLATE_TENANT_ID = env.TEMPLATE_TENANT_ID;
     if (!TEMPLATE_TENANT_ID) {
       throw new Error("缺少环境变量 TEMPLATE_TENANT_ID");
     }
-
+    const phoneEnc = phone
+      ? { phone_enc: encryptField(phone), phone_hash: hashField(phone) }
+      : {};
     return prisma.$transaction(
       async (tx) => {
         // 1) 校验用户名在该租户下唯一
@@ -541,6 +544,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
             real_name: realName ?? null,
             status: "1",
             is_deleted: 0,
+            ...phoneEnc,
           },
         });
 
@@ -604,7 +608,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       where: { tenant_code: TEMPLATE_TENANT_CODE, is_deleted: 0 },
     });
     if (!templateTenant) {
-      console.warn("[initTenantData] 模板租户不存在，跳过初始化");
+      logger.warn("[initTenantData] 模板租户不存在，跳过初始化");
       return;
     }
     const templateId = templateTenant.tenant_id;
@@ -801,6 +805,153 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
       where: { tenant_id: tenantId, dept_code: { in: codes }, is_deleted: 0 },
       select: { dept_id: true },
     });
+  }
+  /**
+   * 查询当前用户的登录日志（分页）
+   */
+  async findMyLoginLogs(
+    userId: string,
+    tenantId: string,
+    pageNum: number,
+    pageSize: number,
+    options: { status?: string; startTime?: Date; endTime?: Date } = {},
+  ) {
+    const where: any = {
+      tenant_id: tenantId,
+      user_id: userId,
+    };
+
+    if (options.status === "0" || options.status === "1") {
+      where.status = options.status;
+    }
+    if (options.startTime || options.endTime) {
+      where.created_at = {
+        ...(options.startTime ? { gte: options.startTime } : {}),
+        ...(options.endTime ? { lte: options.endTime } : {}),
+      };
+    }
+
+    const skip = (pageNum - 1) * pageSize;
+
+    const [list, total] = await Promise.all([
+      prisma.sys_login_log.findMany({
+        where,
+        orderBy: { created_at: "desc" },
+        skip,
+        take: pageSize,
+        select: {
+          log_id: true,
+          ip_address: true,
+          user_agent: true,
+          status: true,
+          message: true,
+          created_at: true,
+        },
+      }),
+      prisma.sys_login_log.count({ where }),
+    ]);
+
+    return { list, total };
+  }
+  // 创建验证码
+  async createVerifyCode(data: {
+    tenantId: string;
+    userId: string;
+    target: string;
+    code: string;
+    scene: string;
+    expiresAt: Date;
+  }) {
+    return prisma.sys_verify_code.create({
+      data: {
+        tenant_id: data.tenantId,
+        user_id: data.userId,
+        target: data.target,
+        code: data.code,
+        scene: data.scene,
+        expires_at: data.expiresAt,
+        created_by: data.userId,
+      },
+    });
+  }
+
+  /**
+   * 查找有效的验证码
+   */
+  async findValidCode(
+    tenantId: string,
+    userId: string,
+    target: string,
+    code: string,
+    scene: string,
+  ) {
+    return prisma.sys_verify_code.findFirst({
+      where: {
+        tenant_id: tenantId,
+        user_id: userId,
+        target,
+        code,
+        scene,
+        used_at: null,
+        expires_at: { gt: new Date() },
+      },
+      orderBy: { created_at: "desc" },
+    });
+  }
+
+  /**
+   * 标记验证码已使用
+   */
+  async markCodeUsed(id: string) {
+    return prisma.sys_verify_code.update({
+      where: { id },
+      data: { used_at: new Date() },
+    });
+  }
+
+  /**
+   * 清理过期验证码
+   */
+  async cleanExpiredCodes(): Promise<number> {
+    const result = await prisma.sys_verify_code.deleteMany({
+      where: { expires_at: { lt: new Date() } },
+    });
+    return result.count;
+  }
+
+  /**
+   * 更新用户邮箱（并标记已验证）
+   */
+  async updateUserEmail(userId: string, tenantId: string, email: string) {
+    return prisma.sys_user.update({
+      where: { user_id: userId },
+      data: {
+        email,
+        email_verified: 1,
+        email_verified_at: new Date(),
+        updated_at: new Date(),
+      },
+    });
+  }
+
+  /**
+   * 检查邮箱是否被同租户其他用户占用
+   */
+  async isEmailTaken(
+    email: string,
+    tenantId: string,
+    excludeUserId: string,
+  ): Promise<boolean> {
+    const existing = await prisma.sys_user.findFirst({
+      where: {
+        tenant_id: tenantId,
+        email,
+        user_id: { not: excludeUserId },
+        is_deleted: 0,
+      },
+      select: { user_id: true },
+    });
+    return !!existing;
   }
 }
 /**

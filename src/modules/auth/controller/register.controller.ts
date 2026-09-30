@@ -12,6 +12,7 @@ import { AppError } from "@/core/errors.js";
 import { logger } from "@/platform/logger/index.js";
 import { UserRepository } from "@/modules/system/user/repository.js";
 import { RegisterSchema } from "../schema.js";
+import { encryptField, hashField } from "@/core/security/index.js";
 
 const RESERVED_TENANT_PREFIX = "__";
 
@@ -50,7 +51,12 @@ export default class AuthRegisterController {
         if (tenant.expire_time && new Date(tenant.expire_time) < new Date())
           throw new AppError("该租户已过期", 403001, 403);
       }
-
+      const phoneEnc = dto.phone
+        ? {
+            phone_enc: encryptField(dto.phone!),
+            phone_hash: hashField(dto.phone!),
+          }
+        : {};
       const data = await this.userRepository.registerUserInTenant({
         ...dto,
         tenantId: tenant.tenant_id,
@@ -59,6 +65,7 @@ export default class AuthRegisterController {
         password: dto.password,
         email: dto.email,
         phone: dto.phone,
+        ...phoneEnc,
       });
       success(res, data, "注册成功");
     } catch (err) {

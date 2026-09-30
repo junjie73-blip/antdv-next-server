@@ -8,7 +8,8 @@ import {
   SCAN_MAX_KEYS,
   UNCLASSIFIED_REMARK,
 } from "@/config/constants.js";
-import { assertSafePrefix } from "./prefix-guard.js";
+import { assertSafeKey, assertSafePrefix } from "./prefix-guard.js";
+import { logger } from "@/platform/logger/index.js";
 
 export interface CacheInfo {
   redisVersion: string;
@@ -214,7 +215,7 @@ export class CacheRepository {
         if (scanned >= SCAN_MAX_KEYS) break;
       } while (cursor !== "0");
     } catch (e) {
-      console.warn("[cache] SCAN failed:", e);
+      logger.warn({ err: e }, "[cache] SCAN failed:");
     }
 
     const result: CacheGroupInfo[] = Array.from(knownGroups.values());
@@ -258,7 +259,7 @@ export class CacheRepository {
         if (keys.length >= limit) break;
       } while (cursor !== "0");
     } catch (e) {
-      console.warn(`[cache] scan ${prefix}* failed:`, e);
+      logger.warn({ err: e }, "[cache] scan ${prefix}* failed:");
       return [];
     }
 
@@ -279,7 +280,7 @@ export class CacheRepository {
   }
 
   async getValue(key: string, limit = 200): Promise<CacheKeyValue> {
-    assertSafePrefix(key);
+    assertSafeKey(key);
 
     const type = String(await redis.type(key));
     if (type === "none") throw new Error(`Key "${key}" 不存在`);
@@ -338,7 +339,7 @@ export class CacheRepository {
   }
 
   async deleteKey(key: string): Promise<void> {
-    assertSafePrefix(key);
+    assertSafeKey(key);
     await redis.del(key);
   }
 

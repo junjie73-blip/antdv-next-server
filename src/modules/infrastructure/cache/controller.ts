@@ -10,6 +10,7 @@ import { Request, Response } from "express";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { CacheRepository } from "./repository.js";
 import { success } from "@/shared/http/response.js";
+import { assertSafeKey } from "./prefix-guard.js";
 
 @Controller("/monitor/cache", { tags: ["缓存监控"] })
 export default class CacheController {

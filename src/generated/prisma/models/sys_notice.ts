@@ -49,6 +49,7 @@ export type Sys_noticeMinAggregateOutputType = {
   status: string | null
   publish_time: Date | null
   created_at: Date | null
+  template_id: string | null
   updated_at: Date | null
   created_by: string | null
   updated_by: string | null
@@ -70,6 +71,7 @@ export type Sys_noticeMaxAggregateOutputType = {
   status: string | null
   publish_time: Date | null
   created_at: Date | null
+  template_id: string | null
   updated_at: Date | null
   created_by: string | null
   updated_by: string | null
@@ -91,6 +93,7 @@ export type Sys_noticeCountAggregateOutputType = {
   status: number
   publish_time: number
   created_at: number
+  template_id: number
   updated_at: number
   created_by: number
   updated_by: number
@@ -128,6 +131,7 @@ export type Sys_noticeMinAggregateInputType = {
   status?: true
   publish_time?: true
   created_at?: true
+  template_id?: true
   updated_at?: true
   created_by?: true
   updated_by?: true
@@ -149,6 +153,7 @@ export type Sys_noticeMaxAggregateInputType = {
   status?: true
   publish_time?: true
   created_at?: true
+  template_id?: true
   updated_at?: true
   created_by?: true
   updated_by?: true
@@ -170,6 +175,7 @@ export type Sys_noticeCountAggregateInputType = {
   status?: true
   publish_time?: true
   created_at?: true
+  template_id?: true
   updated_at?: true
   created_by?: true
   updated_by?: true
@@ -278,6 +284,7 @@ export type Sys_noticeGroupByOutputType = {
   status: string
   publish_time: Date | null
   created_at: Date
+  template_id: string | null
   updated_at: Date
   created_by: string | null
   updated_by: string | null
@@ -322,6 +329,7 @@ export type sys_noticeWhereInput = {
   status?: Prisma.StringFilter<"sys_notice"> | string
   publish_time?: Prisma.DateTimeNullableFilter<"sys_notice"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"sys_notice"> | Date | string
+  template_id?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
   updated_at?: Prisma.DateTimeFilter<"sys_notice"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
@@ -344,6 +352,7 @@ export type sys_noticeOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   publish_time?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  template_id?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -369,6 +378,7 @@ export type sys_noticeWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"sys_notice"> | string
   publish_time?: Prisma.DateTimeNullableFilter<"sys_notice"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"sys_notice"> | Date | string
+  template_id?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
   updated_at?: Prisma.DateTimeFilter<"sys_notice"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_notice"> | string | null
@@ -391,6 +401,7 @@ export type sys_noticeOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   publish_time?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  template_id?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -420,6 +431,7 @@ export type sys_noticeScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"sys_notice"> | string
   publish_time?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_notice"> | Date | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_notice"> | Date | string
+  template_id?: Prisma.UuidNullableWithAggregatesFilter<"sys_notice"> | string | null
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_notice"> | Date | string
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_notice"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_notice"> | string | null
@@ -441,6 +453,7 @@ export type sys_noticeCreateInput = {
   status?: string
   publish_time?: Date | string | null
   created_at?: Date | string
+  template_id?: string | null
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
@@ -463,6 +476,7 @@ export type sys_noticeUncheckedCreateInput = {
   status?: string
   publish_time?: Date | string | null
   created_at?: Date | string
+  template_id?: string | null
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
@@ -485,6 +499,7 @@ export type sys_noticeUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publish_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  template_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -507,6 +522,7 @@ export type sys_noticeUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publish_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  template_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -529,6 +545,7 @@ export type sys_noticeCreateManyInput = {
   status?: string
   publish_time?: Date | string | null
   created_at?: Date | string
+  template_id?: string | null
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
@@ -550,6 +567,7 @@ export type sys_noticeUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publish_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  template_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -571,6 +589,7 @@ export type sys_noticeUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publish_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  template_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -592,6 +611,7 @@ export type sys_noticeCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publish_time?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  template_id?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
@@ -620,6 +640,7 @@ export type sys_noticeMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publish_time?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  template_id?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
@@ -641,6 +662,7 @@ export type sys_noticeMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publish_time?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  template_id?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
@@ -688,6 +710,7 @@ export type sys_noticeCreateWithoutTarget_usersInput = {
   status?: string
   publish_time?: Date | string | null
   created_at?: Date | string
+  template_id?: string | null
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
@@ -709,6 +732,7 @@ export type sys_noticeUncheckedCreateWithoutTarget_usersInput = {
   status?: string
   publish_time?: Date | string | null
   created_at?: Date | string
+  template_id?: string | null
   updated_at?: Date | string
   created_by?: string | null
   updated_by?: string | null
@@ -746,6 +770,7 @@ export type sys_noticeUpdateWithoutTarget_usersInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publish_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  template_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -767,6 +792,7 @@ export type sys_noticeUncheckedUpdateWithoutTarget_usersInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publish_time?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  template_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -819,6 +845,7 @@ export type sys_noticeSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   status?: boolean
   publish_time?: boolean
   created_at?: boolean
+  template_id?: boolean
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
@@ -842,6 +869,7 @@ export type sys_noticeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   status?: boolean
   publish_time?: boolean
   created_at?: boolean
+  template_id?: boolean
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
@@ -863,6 +891,7 @@ export type sys_noticeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   status?: boolean
   publish_time?: boolean
   created_at?: boolean
+  template_id?: boolean
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
@@ -884,6 +913,7 @@ export type sys_noticeSelectScalar = {
   status?: boolean
   publish_time?: boolean
   created_at?: boolean
+  template_id?: boolean
   updated_at?: boolean
   created_by?: boolean
   updated_by?: boolean
@@ -896,7 +926,7 @@ export type sys_noticeSelectScalar = {
   revoked_by?: boolean
 }
 
-export type sys_noticeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "publish_time" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "priority" | "is_top" | "send_status" | "send_time" | "revoked_at" | "revoked_by", ExtArgs["result"]["sys_notice"]>
+export type sys_noticeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"notice_id" | "tenant_id" | "title" | "content" | "notice_type" | "status" | "publish_time" | "created_at" | "template_id" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "priority" | "is_top" | "send_status" | "send_time" | "revoked_at" | "revoked_by", ExtArgs["result"]["sys_notice"]>
 export type sys_noticeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   target_users?: boolean | Prisma.sys_notice$target_usersArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_noticeCountOutputTypeDefaultArgs<ExtArgs>
@@ -918,6 +948,7 @@ export type $sys_noticePayload<ExtArgs extends runtime.Types.Extensions.Internal
     status: string
     publish_time: Date | null
     created_at: Date
+    template_id: string | null
     updated_at: Date
     created_by: string | null
     updated_by: string | null
@@ -1360,6 +1391,7 @@ export interface sys_noticeFieldRefs {
   readonly status: Prisma.FieldRef<"sys_notice", 'String'>
   readonly publish_time: Prisma.FieldRef<"sys_notice", 'DateTime'>
   readonly created_at: Prisma.FieldRef<"sys_notice", 'DateTime'>
+  readonly template_id: Prisma.FieldRef<"sys_notice", 'String'>
   readonly updated_at: Prisma.FieldRef<"sys_notice", 'DateTime'>
   readonly created_by: Prisma.FieldRef<"sys_notice", 'String'>
   readonly updated_by: Prisma.FieldRef<"sys_notice", 'String'>

@@ -17,6 +17,7 @@ const WHITELIST_PREFIXES = [
   "/api/v1/auth/password-policy",
   "/api/v1/auth/captcha",
   "/api/v1/tenant/options",
+  "/api/v1/health",
 ];
 
 function isWhitelistPath(path: string): boolean {

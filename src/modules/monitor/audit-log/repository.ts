@@ -61,9 +61,9 @@ export class AuditLogRepository extends BaseRepository<any, any, any, any> {
     };
   }
 
-  async findAll(where: any): Promise<any[]> {
+  async findAll(where: any, tenantId: string): Promise<any[]> {
     return this.model.findMany({
-      where,
+      where: { ...where, tenant_id: tenantId }, // ✅ 强制
       orderBy: { created_at: "desc" },
     });
   }

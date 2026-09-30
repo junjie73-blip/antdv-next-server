@@ -19,6 +19,7 @@ import {
   UserUpdateSchema,
   UserListSchema,
   UserCreateDto,
+  ResetPasswordSchema,
 } from "./schema.js";
 import { z } from "zod";
 import multer from "multer";
@@ -79,15 +80,21 @@ export default class UserController extends BaseController<any, any, any, any> {
       where.OR = [
         { username: { contains: query.keyword } },
         { real_name: { contains: query.keyword } },
-        { phone: { contains: hash } },
-        { email: { contains: hash } },
+        { phone_hash: { contains: hash } },
+        { email: { contains: query.keyword } },
       ];
     }
     if (query.status !== undefined) {
       where.status = query.status;
     }
     if (query.ids) {
-      where.user_id = { in: query.ids.split(",") };
+      const arr = Array.isArray(query.ids)
+        ? query.ids
+        : String(query.ids)
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+      if (arr.length > 0) where.user_id = { in: arr };
     }
     return where;
   }
@@ -270,15 +277,13 @@ export default class UserController extends BaseController<any, any, any, any> {
   }
   @Put("/:id/password")
   @ApiOperation("重置用户密码")
-  @ApiBody(z.object({ password: z.string().min(6).max(64) }))
+  @ApiBody(ResetPasswordSchema)
   async resetPassword(@Req() req: Request, @Res() res: Response) {
     try {
-      const { password } = req.body;
-      await this.service.resetPassword(
-        req.params.id,
-        req.body.password,
-        req.tenantId!,
-      );
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+      const { password } = ResetPasswordSchema.parse(req.body);
+      await this.service.resetPassword(req.params.id, password, tenantId);
       success(res, null, "密码重置成功");
     } catch (err) {
       this.handleError(res, err);
@@ -314,31 +319,29 @@ export default class UserController extends BaseController<any, any, any, any> {
   @Get("/all/options")
   @ApiOperation("获取用户选项", "返回全部启用用户的 ID 和用户名")
   @ApiResponse(200, "查询成功")
-  async useroOtions(@Req() req: Request, @Res() res: Response) {
-    const users = await prisma.sys_user.findMany({
-      where: {
-        tenant_id: req.tenantId!,
-        status: "1", // 只返回启用用户
-        is_deleted: 0,
-      },
-      select: {
-        user_id: true,
-        username: true,
-        real_name: true, // 可选，若需要显示姓名
-      },
-      orderBy: { username: "asc" },
-    });
+  async userOptions(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-    // 转换为前端需要的格式
-    const options = users.map((user) => ({
-      userId: user.user_id,
-      username: user.username,
-      realName: user.real_name || user.username,
-      label: user.real_name || user.username, // 显示名称
-      value: user.user_id, // 值
-    }));
-
-    success(res, options);
+      const users = await prisma.sys_user.findMany({
+        where: { tenant_id: tenantId, status: "1", is_deleted: 0 },
+        select: { user_id: true, username: true, real_name: true },
+        orderBy: { username: "asc" },
+      });
+      success(
+        res,
+        users.map((u) => ({
+          userId: u.user_id,
+          username: u.username,
+          realName: u.real_name || u.username,
+          label: u.real_name || u.username,
+          value: u.user_id,
+        })),
+      );
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
   @Get("/:id/sensitive")
   @ApiOperation(

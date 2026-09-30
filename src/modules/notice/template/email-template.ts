@@ -11,7 +11,16 @@ interface TemplateInput {
   /** 收件人名称，可选 */
   receiverName?: string;
 }
-
+interface ShellInput {
+  title: string;
+  bodyHtml: string;
+  noticeType?: number | string;
+  publishTime?: string | Date;
+  actionUrl?: string;
+  systemName?: string;
+  brandColor?: string;
+  receiverName?: string;
+}
 const TYPE_MAP: Record<string, { label: string; en: string }> = {
   "1": { label: "通知", en: "NOTICE" },
   "2": { label: "公告", en: "ANNOUNCEMENT" },
@@ -51,10 +60,10 @@ const FONT =
   "-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif";
 const MONO = "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace";
 
-export function renderNoticeEmail(input: TemplateInput): string {
+function renderEmailShell(input: ShellInput): string {
   const {
     title,
-    content,
+    bodyHtml,
     noticeType,
     publishTime,
     actionUrl,
@@ -65,7 +74,6 @@ export function renderNoticeEmail(input: TemplateInput): string {
 
   const t = TYPE_MAP[String(noticeType ?? "1")] ?? TYPE_MAP["1"];
   const safeTitle = escapeHtml(title);
-  const bodyHtml = renderContent(content);
   const time = fmtTime(publishTime);
   const safeSystem = escapeHtml(systemName);
   const greeting = receiverName ? `${escapeHtml(receiverName)}，你好` : "";
@@ -87,21 +95,16 @@ export function renderNoticeEmail(input: TemplateInput): string {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F5F7;">
     <tr>
       <td align="center" style="padding:48px 16px 64px;">
-
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
-
-          <!-- 卡片 -->
           <tr>
             <td style="background:#FFFFFF;border-radius:14px;border:1px solid #E8EAED;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.04),0 8px 24px -12px rgba(15,23,42,0.08);">
 
-              <!-- 顶部极窄品牌条 -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="height:3px;background:${brandColor};line-height:3px;font-size:0;">&nbsp;</td>
                 </tr>
               </table>
 
-              <!-- 品牌区 -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="padding:28px 40px 24px;">
@@ -128,17 +131,13 @@ export function renderNoticeEmail(input: TemplateInput): string {
                 </tr>
               </table>
 
-              <!-- 主内容区 -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="padding:8px 40px 40px;">
-
-                    <!-- 类型标签 -->
                     <div style="font-size:11px;font-weight:600;color:#94A3B8;letter-spacing:1.5px;text-transform:uppercase;font-family:${FONT};margin-bottom:14px;">
                       ${t.en}
                     </div>
 
-                    <!-- ⭐ 标题 + 左侧品牌竖线 -->
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
                       <tr>
                         <td style="vertical-align:top;padding-right:14px;">
@@ -152,10 +151,8 @@ export function renderNoticeEmail(input: TemplateInput): string {
                       </tr>
                     </table>
 
-                    <!-- 分隔线 -->
                     <div style="height:1px;background:#EEF0F3;line-height:1px;font-size:0;margin-bottom:28px;">&nbsp;</div>
 
-                    <!-- 正文 -->
                     <div style="font-size:15px;line-height:1.8;color:#475569;font-family:${FONT};">
                       ${greeting ? `<p style="margin:0 0 16px;color:#0F172A;font-weight:500;">${greeting}</p>` : ""}
                       ${bodyHtml || `<p style="margin:0;color:#94A3B8;">（无正文内容）</p>`}
@@ -164,7 +161,6 @@ export function renderNoticeEmail(input: TemplateInput): string {
                     ${
                       actionUrl
                         ? `
-                    <!-- 按钮 -->
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:32px;">
                       <tr>
                         <td style="background:${brandColor};border-radius:8px;">
@@ -182,7 +178,6 @@ export function renderNoticeEmail(input: TemplateInput): string {
                 </tr>
               </table>
 
-              <!-- 页脚区（浅灰背景，与正文区分离） -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="background:#FAFBFC;border-top:1px solid #EEF0F3;padding:20px 40px;">
@@ -197,17 +192,59 @@ export function renderNoticeEmail(input: TemplateInput): string {
             </td>
           </tr>
 
-          <!-- 卡片外页脚 -->
           <tr>
             <td style="padding:20px 8px 0;text-align:center;font-size:11px;color:#B0B7C3;letter-spacing:0.3px;font-family:${FONT};">
               © ${year} ${safeSystem} · All rights reserved
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
   </table>
 </body>
 </html>`;
+}
+
+/* ============================================================
+ * 对外：手写内容（默认模板）
+ * ============================================================ */
+export function renderNoticeEmail(input: TemplateInput): string {
+  return renderEmailShell({
+    title: input.title,
+    bodyHtml: renderContent(input.content),
+    noticeType: input.noticeType,
+    publishTime: input.publishTime,
+    actionUrl: input.actionUrl,
+    systemName: input.systemName,
+    brandColor: input.brandColor,
+    receiverName: input.receiverName,
+  });
+}
+
+/* ============================================================
+ * 对外：消息模板（content 已渲染为 HTML）
+ * ============================================================ */
+export interface TemplateEmailInput {
+  title: string;
+  /** 已渲染为 HTML 的正文（markdown → html 或 html 原样或 text 转义） */
+  contentHtml: string;
+  noticeType?: number | string;
+  publishTime?: string | Date;
+  actionUrl?: string;
+  systemName?: string;
+  brandColor?: string;
+  receiverName?: string;
+}
+
+export function renderTemplateEmail(input: TemplateEmailInput): string {
+  return renderEmailShell({
+    title: input.title,
+    bodyHtml: input.contentHtml,
+    noticeType: input.noticeType ?? 1,
+    publishTime: input.publishTime,
+    actionUrl: input.actionUrl,
+    systemName: input.systemName,
+    brandColor: input.brandColor,
+    receiverName: input.receiverName,
+  });
 }

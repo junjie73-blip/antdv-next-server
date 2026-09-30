@@ -15,6 +15,7 @@ export interface AuditLogEntry {
   executeTime: number;
   status: string;
   errorMsg?: string | null;
+  metadata?: Record<string, unknown> | null;
 }
 
 /** 单条直接写库（低频，同步语义） */
@@ -39,6 +40,7 @@ export async function writeAuditLog(entry: AuditLogEntry): Promise<void> {
         execute_time: entry.executeTime,
         status: entry.status,
         error_msg: entry.errorMsg ?? null,
+        metadata: (entry.metadata ?? null) as any,
       },
     });
   } catch (err) {
@@ -66,6 +68,7 @@ export async function writeAuditBatch(entries: AuditLogEntry[]): Promise<void> {
       execute_time: it.executeTime,
       status: it.status,
       error_msg: it.errorMsg ?? null,
+      metadata: (it.metadata ?? null) as any,
     })),
   });
 }

@@ -13,8 +13,7 @@ export async function requireMfaMiddleware(
     const user = (req as any).user;
     if (!user?.userId) throw new AppError("未认证", 401001, 401);
 
-    const mfaToken =
-      (req.headers["x-mfa-token"] as string) || (req.body as any)?._mfaToken;
+    const mfaToken = req.headers["x-mfa-token"] as string | undefined;
 
     if (!mfaToken || !/^\d{6}$/.test(mfaToken)) {
       return res.status(428).json({

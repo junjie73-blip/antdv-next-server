@@ -1,3 +1,4 @@
+import { startConfigSubscriber } from "@/modules/system/setting/cache.js";
 import { logger } from "@/platform/logger/index.js";
 import {
   startNoticeSubscriber,
@@ -14,6 +15,7 @@ export async function startSubscribers(): Promise<void> {
     { name: "notice", fn: startNoticeSubscriber },
     { name: "force-logout", fn: startForceLogoutSubscriber },
     { name: "upload-notify", fn: startUploadNotifySubscriber },
+    { name: "config", fn: startConfigSubscriber },
   ];
 
   const results = await Promise.allSettled(tasks.map((t) => t.fn()));

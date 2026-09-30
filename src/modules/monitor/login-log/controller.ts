@@ -10,10 +10,12 @@ import { Request, Response } from "express";
 import { LoginLogRepository } from "./repository.js";
 import { LoginLogService } from "./service.js";
 import { LoginLogListSchema, LoginLogExportSchema } from "./schema.js";
-import { success } from "@/shared/http/response.js";
+import { error, success } from "@/shared/http/response.js";
 import { BaseController } from "@/core/base/controller.js";
 import dayjs from "dayjs";
 import { z } from "zod";
+import { AppError } from "@/middleware/index.js";
+import { logger } from "@/platform/logger/logger.js";
 
 @Controller("/login-log", { tags: ["登录日志"] })
 export default class LoginLogController extends BaseController<
@@ -40,16 +42,29 @@ export default class LoginLogController extends BaseController<
   @ApiOperation("获取登录日志列表")
   @ApiQuery(LoginLogListSchema)
   async listLoginLog(@Req() req: Request, @Res() res: Response) {
-    return this.repository.findPage(req.query as any, {});
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+      const data = await this.repository.findPage(
+        { ...(req.query as any), tenantId }, // ✅ 注入
+        {},
+      );
+      success(res, data); // ✅ 补 send
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 
   @Get("/export")
-  @ApiOperation("导出登录日志")
-  @ApiQuery(LoginLogExportSchema)
   async export(@Req() req: Request, @Res() res: Response) {
     try {
-      const where = this.buildListWhere(req.query as any);
-      const buffer = await this.service.exportToExcel(where);
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+      const where = {
+        ...this.buildListWhere(req.query as any),
+        tenant_id: tenantId,
+      };
+      const buffer = await this.service.exportToExcel(where, tenantId);
       res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -79,5 +94,11 @@ export default class LoginLogController extends BaseController<
         lte: new Date(query.endTime),
       };
     return where;
+  }
+  protected handleError(res: Response, err: unknown): void {
+    if (err instanceof AppError)
+      return error(res, err.message, err.code, err.statusCode);
+    logger.error({ err }, "[LoginLog] error");
+    error(res, "操作失败", 500, 500);
   }
 }

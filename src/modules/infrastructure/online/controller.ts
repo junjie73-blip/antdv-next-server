@@ -10,10 +10,12 @@ import {
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import { OnlineRepository } from "./repository.js";
-import { success } from "@/shared/http/response.js";
+import { error, success } from "@/shared/http/response.js";
 import { RequirePermission } from "@/core/decorator/permission.js";
 import { AppError } from "@/middleware/http/error-handler.js";
 import { kickUser } from "@/platform/ws/force-logout.js";
+import { env } from "@/config/index.js";
+import { logger } from "@/platform/logger/logger.js";
 
 @Controller("/online", { tags: ["在线用户"] })
 export default class OnlineController {
@@ -30,20 +32,34 @@ export default class OnlineController {
   @Delete("/:userId")
   @ApiOperation("强制下线")
   @ApiResponse(200, "操作成功")
+  @Delete("/:userId")
   async kick(@Req() req: Request, @Res() res: Response) {
-    const { userId } = req.params;
-    const operatorId = req.user!.userId;
+    try {
+      const { userId } = req.params;
+      const operatorId = req.user!.userId;
 
-    if (userId === operatorId) {
-      throw new AppError("不能踢自己下线", 400, 400);
+      if (userId === operatorId) {
+        const allow = env.ALLOW_SELF_KICK;
+        if (!allow) throw new AppError("不能踢自己下线", 400, 400);
+      }
+
+      await kickUser(userId, {
+        reason: "您已被管理员强制下线",
+        operatorId,
+      });
+      success(res, null, "已将该用户强制下线");
+    } catch (err) {
+      this.handleError(res, err);
     }
-
-    await kickUser(userId, {
-      reason: "您已被管理员强制下线",
-      operatorId,
-    });
-
-    success(res, null, "已将该用户强制下线");
+  }
+  handleError(res: Response<any, Record<string, any>>, err: any) {
+    if (res.headersSent) return;
+    if (err instanceof AppError) {
+      error(res, err.message, err.code, err.statusCode);
+      return;
+    }
+    logger.error({ err }, "Controller error");
+    error(res, "操作失败", 500, 500);
   }
 
   @Post("/kick-all")

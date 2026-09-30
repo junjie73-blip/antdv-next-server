@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_role
- * 角色表，存储租户内角色信息
+ * 
  */
 export type sys_roleModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_rolePayload>
 

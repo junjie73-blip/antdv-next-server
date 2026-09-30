@@ -34,6 +34,9 @@ export type Sys_jobAvgAggregateOutputType = {
   retry_interval: number | null
   timeout_seconds: number | null
   is_paused: number | null
+  alert_enabled: number | null
+  alert_threshold: number | null
+  fail_count: number | null
 }
 
 export type Sys_jobSumAggregateOutputType = {
@@ -44,6 +47,9 @@ export type Sys_jobSumAggregateOutputType = {
   retry_interval: number | null
   timeout_seconds: number | null
   is_paused: number | null
+  alert_enabled: number | null
+  alert_threshold: number | null
+  fail_count: number | null
 }
 
 export type Sys_jobMinAggregateOutputType = {
@@ -68,6 +74,11 @@ export type Sys_jobMinAggregateOutputType = {
   is_paused: number | null
   last_run_at: Date | null
   next_run_at: Date | null
+  alert_enabled: number | null
+  alert_channels: string | null
+  alert_receivers: string | null
+  alert_threshold: number | null
+  fail_count: number | null
 }
 
 export type Sys_jobMaxAggregateOutputType = {
@@ -92,6 +103,11 @@ export type Sys_jobMaxAggregateOutputType = {
   is_paused: number | null
   last_run_at: Date | null
   next_run_at: Date | null
+  alert_enabled: number | null
+  alert_channels: string | null
+  alert_receivers: string | null
+  alert_threshold: number | null
+  fail_count: number | null
 }
 
 export type Sys_jobCountAggregateOutputType = {
@@ -116,6 +132,11 @@ export type Sys_jobCountAggregateOutputType = {
   is_paused: number
   last_run_at: number
   next_run_at: number
+  alert_enabled: number
+  alert_channels: number
+  alert_receivers: number
+  alert_threshold: number
+  fail_count: number
   _all: number
 }
 
@@ -128,6 +149,9 @@ export type Sys_jobAvgAggregateInputType = {
   retry_interval?: true
   timeout_seconds?: true
   is_paused?: true
+  alert_enabled?: true
+  alert_threshold?: true
+  fail_count?: true
 }
 
 export type Sys_jobSumAggregateInputType = {
@@ -138,6 +162,9 @@ export type Sys_jobSumAggregateInputType = {
   retry_interval?: true
   timeout_seconds?: true
   is_paused?: true
+  alert_enabled?: true
+  alert_threshold?: true
+  fail_count?: true
 }
 
 export type Sys_jobMinAggregateInputType = {
@@ -162,6 +189,11 @@ export type Sys_jobMinAggregateInputType = {
   is_paused?: true
   last_run_at?: true
   next_run_at?: true
+  alert_enabled?: true
+  alert_channels?: true
+  alert_receivers?: true
+  alert_threshold?: true
+  fail_count?: true
 }
 
 export type Sys_jobMaxAggregateInputType = {
@@ -186,6 +218,11 @@ export type Sys_jobMaxAggregateInputType = {
   is_paused?: true
   last_run_at?: true
   next_run_at?: true
+  alert_enabled?: true
+  alert_channels?: true
+  alert_receivers?: true
+  alert_threshold?: true
+  fail_count?: true
 }
 
 export type Sys_jobCountAggregateInputType = {
@@ -210,6 +247,11 @@ export type Sys_jobCountAggregateInputType = {
   is_paused?: true
   last_run_at?: true
   next_run_at?: true
+  alert_enabled?: true
+  alert_channels?: true
+  alert_receivers?: true
+  alert_threshold?: true
+  fail_count?: true
   _all?: true
 }
 
@@ -321,6 +363,11 @@ export type Sys_jobGroupByOutputType = {
   is_paused: number
   last_run_at: Date | null
   next_run_at: Date | null
+  alert_enabled: number
+  alert_channels: string | null
+  alert_receivers: string | null
+  alert_threshold: number
+  fail_count: number
   _count: Sys_jobCountAggregateOutputType | null
   _avg: Sys_jobAvgAggregateOutputType | null
   _sum: Sys_jobSumAggregateOutputType | null
@@ -368,6 +415,11 @@ export type sys_jobWhereInput = {
   is_paused?: Prisma.IntFilter<"sys_job"> | number
   last_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
   next_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
+  alert_enabled?: Prisma.IntFilter<"sys_job"> | number
+  alert_channels?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  alert_receivers?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  alert_threshold?: Prisma.IntFilter<"sys_job"> | number
+  fail_count?: Prisma.IntFilter<"sys_job"> | number
 }
 
 export type sys_jobOrderByWithRelationInput = {
@@ -392,6 +444,11 @@ export type sys_jobOrderByWithRelationInput = {
   is_paused?: Prisma.SortOrder
   last_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
   next_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  alert_enabled?: Prisma.SortOrder
+  alert_channels?: Prisma.SortOrderInput | Prisma.SortOrder
+  alert_receivers?: Prisma.SortOrderInput | Prisma.SortOrder
+  alert_threshold?: Prisma.SortOrder
+  fail_count?: Prisma.SortOrder
 }
 
 export type sys_jobWhereUniqueInput = Prisma.AtLeast<{
@@ -419,6 +476,11 @@ export type sys_jobWhereUniqueInput = Prisma.AtLeast<{
   is_paused?: Prisma.IntFilter<"sys_job"> | number
   last_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
   next_run_at?: Prisma.DateTimeNullableFilter<"sys_job"> | Date | string | null
+  alert_enabled?: Prisma.IntFilter<"sys_job"> | number
+  alert_channels?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  alert_receivers?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  alert_threshold?: Prisma.IntFilter<"sys_job"> | number
+  fail_count?: Prisma.IntFilter<"sys_job"> | number
 }, "job_id">
 
 export type sys_jobOrderByWithAggregationInput = {
@@ -443,6 +505,11 @@ export type sys_jobOrderByWithAggregationInput = {
   is_paused?: Prisma.SortOrder
   last_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
   next_run_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  alert_enabled?: Prisma.SortOrder
+  alert_channels?: Prisma.SortOrderInput | Prisma.SortOrder
+  alert_receivers?: Prisma.SortOrderInput | Prisma.SortOrder
+  alert_threshold?: Prisma.SortOrder
+  fail_count?: Prisma.SortOrder
   _count?: Prisma.sys_jobCountOrderByAggregateInput
   _avg?: Prisma.sys_jobAvgOrderByAggregateInput
   _max?: Prisma.sys_jobMaxOrderByAggregateInput
@@ -475,6 +542,11 @@ export type sys_jobScalarWhereWithAggregatesInput = {
   is_paused?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
   last_run_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_job"> | Date | string | null
   next_run_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_job"> | Date | string | null
+  alert_enabled?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  alert_channels?: Prisma.StringNullableWithAggregatesFilter<"sys_job"> | string | null
+  alert_receivers?: Prisma.StringNullableWithAggregatesFilter<"sys_job"> | string | null
+  alert_threshold?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  fail_count?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
 }
 
 export type sys_jobCreateInput = {
@@ -499,6 +571,11 @@ export type sys_jobCreateInput = {
   is_paused?: number
   last_run_at?: Date | string | null
   next_run_at?: Date | string | null
+  alert_enabled?: number
+  alert_channels?: string | null
+  alert_receivers?: string | null
+  alert_threshold?: number
+  fail_count?: number
 }
 
 export type sys_jobUncheckedCreateInput = {
@@ -523,6 +600,11 @@ export type sys_jobUncheckedCreateInput = {
   is_paused?: number
   last_run_at?: Date | string | null
   next_run_at?: Date | string | null
+  alert_enabled?: number
+  alert_channels?: string | null
+  alert_receivers?: string | null
+  alert_threshold?: number
+  fail_count?: number
 }
 
 export type sys_jobUpdateInput = {
@@ -547,6 +629,11 @@ export type sys_jobUpdateInput = {
   is_paused?: Prisma.IntFieldUpdateOperationsInput | number
   last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alert_enabled?: Prisma.IntFieldUpdateOperationsInput | number
+  alert_channels?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
+  fail_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_jobUncheckedUpdateInput = {
@@ -571,6 +658,11 @@ export type sys_jobUncheckedUpdateInput = {
   is_paused?: Prisma.IntFieldUpdateOperationsInput | number
   last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alert_enabled?: Prisma.IntFieldUpdateOperationsInput | number
+  alert_channels?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
+  fail_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_jobCreateManyInput = {
@@ -595,6 +687,11 @@ export type sys_jobCreateManyInput = {
   is_paused?: number
   last_run_at?: Date | string | null
   next_run_at?: Date | string | null
+  alert_enabled?: number
+  alert_channels?: string | null
+  alert_receivers?: string | null
+  alert_threshold?: number
+  fail_count?: number
 }
 
 export type sys_jobUpdateManyMutationInput = {
@@ -619,6 +716,11 @@ export type sys_jobUpdateManyMutationInput = {
   is_paused?: Prisma.IntFieldUpdateOperationsInput | number
   last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alert_enabled?: Prisma.IntFieldUpdateOperationsInput | number
+  alert_channels?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
+  fail_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_jobUncheckedUpdateManyInput = {
@@ -643,6 +745,11 @@ export type sys_jobUncheckedUpdateManyInput = {
   is_paused?: Prisma.IntFieldUpdateOperationsInput | number
   last_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   next_run_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alert_enabled?: Prisma.IntFieldUpdateOperationsInput | number
+  alert_channels?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
+  fail_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_jobCountOrderByAggregateInput = {
@@ -667,6 +774,11 @@ export type sys_jobCountOrderByAggregateInput = {
   is_paused?: Prisma.SortOrder
   last_run_at?: Prisma.SortOrder
   next_run_at?: Prisma.SortOrder
+  alert_enabled?: Prisma.SortOrder
+  alert_channels?: Prisma.SortOrder
+  alert_receivers?: Prisma.SortOrder
+  alert_threshold?: Prisma.SortOrder
+  fail_count?: Prisma.SortOrder
 }
 
 export type sys_jobAvgOrderByAggregateInput = {
@@ -677,6 +789,9 @@ export type sys_jobAvgOrderByAggregateInput = {
   retry_interval?: Prisma.SortOrder
   timeout_seconds?: Prisma.SortOrder
   is_paused?: Prisma.SortOrder
+  alert_enabled?: Prisma.SortOrder
+  alert_threshold?: Prisma.SortOrder
+  fail_count?: Prisma.SortOrder
 }
 
 export type sys_jobMaxOrderByAggregateInput = {
@@ -701,6 +816,11 @@ export type sys_jobMaxOrderByAggregateInput = {
   is_paused?: Prisma.SortOrder
   last_run_at?: Prisma.SortOrder
   next_run_at?: Prisma.SortOrder
+  alert_enabled?: Prisma.SortOrder
+  alert_channels?: Prisma.SortOrder
+  alert_receivers?: Prisma.SortOrder
+  alert_threshold?: Prisma.SortOrder
+  fail_count?: Prisma.SortOrder
 }
 
 export type sys_jobMinOrderByAggregateInput = {
@@ -725,6 +845,11 @@ export type sys_jobMinOrderByAggregateInput = {
   is_paused?: Prisma.SortOrder
   last_run_at?: Prisma.SortOrder
   next_run_at?: Prisma.SortOrder
+  alert_enabled?: Prisma.SortOrder
+  alert_channels?: Prisma.SortOrder
+  alert_receivers?: Prisma.SortOrder
+  alert_threshold?: Prisma.SortOrder
+  fail_count?: Prisma.SortOrder
 }
 
 export type sys_jobSumOrderByAggregateInput = {
@@ -735,6 +860,9 @@ export type sys_jobSumOrderByAggregateInput = {
   retry_interval?: Prisma.SortOrder
   timeout_seconds?: Prisma.SortOrder
   is_paused?: Prisma.SortOrder
+  alert_enabled?: Prisma.SortOrder
+  alert_threshold?: Prisma.SortOrder
+  fail_count?: Prisma.SortOrder
 }
 
 
@@ -761,6 +889,11 @@ export type sys_jobSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   is_paused?: boolean
   last_run_at?: boolean
   next_run_at?: boolean
+  alert_enabled?: boolean
+  alert_channels?: boolean
+  alert_receivers?: boolean
+  alert_threshold?: boolean
+  fail_count?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -785,6 +918,11 @@ export type sys_jobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   is_paused?: boolean
   last_run_at?: boolean
   next_run_at?: boolean
+  alert_enabled?: boolean
+  alert_channels?: boolean
+  alert_receivers?: boolean
+  alert_threshold?: boolean
+  fail_count?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -809,6 +947,11 @@ export type sys_jobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   is_paused?: boolean
   last_run_at?: boolean
   next_run_at?: boolean
+  alert_enabled?: boolean
+  alert_channels?: boolean
+  alert_receivers?: boolean
+  alert_threshold?: boolean
+  fail_count?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectScalar = {
@@ -833,9 +976,14 @@ export type sys_jobSelectScalar = {
   is_paused?: boolean
   last_run_at?: boolean
   next_run_at?: boolean
+  alert_enabled?: boolean
+  alert_channels?: boolean
+  alert_receivers?: boolean
+  alert_threshold?: boolean
+  fail_count?: boolean
 }
 
-export type sys_jobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"job_id" | "tenant_id" | "job_name" | "job_group" | "invoke_target" | "cron_expression" | "misfire_policy" | "concurrent" | "status" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "retry_count" | "retry_interval" | "timeout_seconds" | "is_paused" | "last_run_at" | "next_run_at", ExtArgs["result"]["sys_job"]>
+export type sys_jobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"job_id" | "tenant_id" | "job_name" | "job_group" | "invoke_target" | "cron_expression" | "misfire_policy" | "concurrent" | "status" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "retry_count" | "retry_interval" | "timeout_seconds" | "is_paused" | "last_run_at" | "next_run_at" | "alert_enabled" | "alert_channels" | "alert_receivers" | "alert_threshold" | "fail_count", ExtArgs["result"]["sys_job"]>
 
 export type $sys_jobPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_job"
@@ -862,6 +1010,11 @@ export type $sys_jobPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     is_paused: number
     last_run_at: Date | null
     next_run_at: Date | null
+    alert_enabled: number
+    alert_channels: string | null
+    alert_receivers: string | null
+    alert_threshold: number
+    fail_count: number
   }, ExtArgs["result"]["sys_job"]>
   composites: {}
 }
@@ -1306,6 +1459,11 @@ export interface sys_jobFieldRefs {
   readonly is_paused: Prisma.FieldRef<"sys_job", 'Int'>
   readonly last_run_at: Prisma.FieldRef<"sys_job", 'DateTime'>
   readonly next_run_at: Prisma.FieldRef<"sys_job", 'DateTime'>
+  readonly alert_enabled: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly alert_channels: Prisma.FieldRef<"sys_job", 'String'>
+  readonly alert_receivers: Prisma.FieldRef<"sys_job", 'String'>
+  readonly alert_threshold: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly fail_count: Prisma.FieldRef<"sys_job", 'Int'>
 }
     
 

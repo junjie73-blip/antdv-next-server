@@ -574,3 +574,19 @@ notFoundHandler / errorHandler      // ⑮ 兜底
 - API 文档：`/api/v1/docs`（运行中动态生成）
 - 健康检查：`/health/live`、`/health/ready`
 - 指标：`/metrics`
+
+当前：单体 Node.js + PostgreSQL + Redis + MinIO
+  ↓
+阶段 1：模块化单体（已基本达成）
+  - 每个业务模块独立目录、独立测试
+  - 模块间通过 Service 调用，不直接跨表
+  ↓
+阶段 2：服务拆分（按业务域）
+  - 认证服务 / 用户服务 / 消息服务 / 文件服务 / 工作流服务
+  - 通过 gRPC 或 HTTP 通信
+  - 需要：API Gateway + 服务注册
+  ↓
+阶段 3：微服务 + 事件驱动
+  - 引入 Kafka / RabbitMQ 做事件总线
+  - CQRS 读写分离
+  - 需要：分布式追踪（Jaeger）

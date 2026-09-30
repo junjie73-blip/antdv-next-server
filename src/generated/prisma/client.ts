@@ -48,12 +48,17 @@ export { Prisma }
 export type sys_tenant = Prisma.sys_tenantModel
 /**
  * Model sys_user
- * 用户表，存储系统用户信息
+ * 
  */
 export type sys_user = Prisma.sys_userModel
 /**
+ * Model sys_verify_code
+ * 验证码表（通用）
+ */
+export type sys_verify_code = Prisma.sys_verify_codeModel
+/**
  * Model sys_role
- * 角色表，存储租户内角色信息
+ * 
  */
 export type sys_role = Prisma.sys_roleModel
 /**
@@ -226,3 +231,13 @@ export type sys_approval_node = Prisma.sys_approval_nodeModel
  * 
  */
 export type sys_approval_log = Prisma.sys_approval_logModel
+/**
+ * Model sys_notice_template
+ * 
+ */
+export type sys_notice_template = Prisma.sys_notice_templateModel
+/**
+ * Model sys_file_pending_delete
+ * 
+ */
+export type sys_file_pending_delete = Prisma.sys_file_pending_deleteModel

@@ -7,6 +7,21 @@ export interface SendContext {
   receivers: string[];
   /** 渠道原始配置（解析后的 JSON） */
   config: Record<string, any>;
+  template?: {
+    templateId: string;
+    title: string | null;
+    content: string;
+    contentFormat: string;
+  };
+
+  receiverMeta?: Record<
+    string,
+    {
+      userName?: string;
+      realName?: string;
+      deptName?: string;
+    }
+  >;
 }
 
 export interface SendResult {

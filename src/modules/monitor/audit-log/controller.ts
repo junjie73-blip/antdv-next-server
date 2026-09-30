@@ -50,8 +50,14 @@ export default class AuditLogController extends BaseController<
   @ApiQuery(AuditLogExportSchema)
   async export(@Req() req: Request, @Res() res: Response) {
     try {
-      const where = this.buildListWhere(req.query as any);
-      const buffer = await this.service.exportToExcel(where);
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+      // ✅ 强制加 tenant_id
+      const where = {
+        ...this.buildListWhere(req.query as any),
+        tenant_id: tenantId,
+      };
+      const buffer = await this.service.exportToExcel(where, tenantId);
       res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -71,7 +77,6 @@ export default class AuditLogController extends BaseController<
   async detail(@Req() req: Request, @Res() res: Response) {
     try {
       const log = await this.service.findDetail(req.params.id, req.tenantId!);
-      if (!log) throw new AppError("日志不存在", 404001, 404);
       success(res, log);
     } catch (err) {
       this.handleError(res, err);

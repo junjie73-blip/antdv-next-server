@@ -89,6 +89,7 @@ export type Sys_audit_logCountAggregateOutputType = {
   error_msg: number
   created_at: number
   created_by: number
+  metadata: number
   _all: number
 }
 
@@ -156,6 +157,7 @@ export type Sys_audit_logCountAggregateInputType = {
   error_msg?: true
   created_at?: true
   created_by?: true
+  metadata?: true
   _all?: true
 }
 
@@ -262,6 +264,7 @@ export type Sys_audit_logGroupByOutputType = {
   error_msg: string | null
   created_at: Date
   created_by: string | null
+  metadata: runtime.JsonValue | null
   _count: Sys_audit_logCountAggregateOutputType | null
   _avg: Sys_audit_logAvgAggregateOutputType | null
   _sum: Sys_audit_logSumAggregateOutputType | null
@@ -304,6 +307,7 @@ export type sys_audit_logWhereInput = {
   error_msg?: Prisma.StringNullableFilter<"sys_audit_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_audit_log"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_audit_log"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"sys_audit_log">
 }
 
 export type sys_audit_logOrderByWithRelationInput = {
@@ -323,6 +327,7 @@ export type sys_audit_logOrderByWithRelationInput = {
   error_msg?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_audit_logWhereUniqueInput = Prisma.AtLeast<{
@@ -345,6 +350,7 @@ export type sys_audit_logWhereUniqueInput = Prisma.AtLeast<{
   error_msg?: Prisma.StringNullableFilter<"sys_audit_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_audit_log"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_audit_log"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"sys_audit_log">
 }, "log_id">
 
 export type sys_audit_logOrderByWithAggregationInput = {
@@ -364,6 +370,7 @@ export type sys_audit_logOrderByWithAggregationInput = {
   error_msg?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_audit_logCountOrderByAggregateInput
   _avg?: Prisma.sys_audit_logAvgOrderByAggregateInput
   _max?: Prisma.sys_audit_logMaxOrderByAggregateInput
@@ -391,6 +398,7 @@ export type sys_audit_logScalarWhereWithAggregatesInput = {
   error_msg?: Prisma.StringNullableWithAggregatesFilter<"sys_audit_log"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_audit_log"> | Date | string
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_audit_log"> | string | null
+  metadata?: Prisma.JsonNullableWithAggregatesFilter<"sys_audit_log">
 }
 
 export type sys_audit_logCreateInput = {
@@ -410,6 +418,7 @@ export type sys_audit_logCreateInput = {
   error_msg?: string | null
   created_at?: Date | string
   created_by?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type sys_audit_logUncheckedCreateInput = {
@@ -429,6 +438,7 @@ export type sys_audit_logUncheckedCreateInput = {
   error_msg?: string | null
   created_at?: Date | string
   created_by?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type sys_audit_logUpdateInput = {
@@ -448,6 +458,7 @@ export type sys_audit_logUpdateInput = {
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type sys_audit_logUncheckedUpdateInput = {
@@ -467,6 +478,7 @@ export type sys_audit_logUncheckedUpdateInput = {
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type sys_audit_logCreateManyInput = {
@@ -486,6 +498,7 @@ export type sys_audit_logCreateManyInput = {
   error_msg?: string | null
   created_at?: Date | string
   created_by?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type sys_audit_logUpdateManyMutationInput = {
@@ -505,6 +518,7 @@ export type sys_audit_logUpdateManyMutationInput = {
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type sys_audit_logUncheckedUpdateManyInput = {
@@ -524,6 +538,7 @@ export type sys_audit_logUncheckedUpdateManyInput = {
   error_msg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type sys_audit_logCountOrderByAggregateInput = {
@@ -543,6 +558,7 @@ export type sys_audit_logCountOrderByAggregateInput = {
   error_msg?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
+  metadata?: Prisma.SortOrder
 }
 
 export type sys_audit_logAvgOrderByAggregateInput = {
@@ -610,6 +626,7 @@ export type sys_audit_logSelect<ExtArgs extends runtime.Types.Extensions.Interna
   error_msg?: boolean
   created_at?: boolean
   created_by?: boolean
+  metadata?: boolean
 }, ExtArgs["result"]["sys_audit_log"]>
 
 export type sys_audit_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -629,6 +646,7 @@ export type sys_audit_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   error_msg?: boolean
   created_at?: boolean
   created_by?: boolean
+  metadata?: boolean
 }, ExtArgs["result"]["sys_audit_log"]>
 
 export type sys_audit_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -648,6 +666,7 @@ export type sys_audit_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   error_msg?: boolean
   created_at?: boolean
   created_by?: boolean
+  metadata?: boolean
 }, ExtArgs["result"]["sys_audit_log"]>
 
 export type sys_audit_logSelectScalar = {
@@ -667,9 +686,10 @@ export type sys_audit_logSelectScalar = {
   error_msg?: boolean
   created_at?: boolean
   created_by?: boolean
+  metadata?: boolean
 }
 
-export type sys_audit_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "user_id" | "username" | "operation" | "method" | "request_url" | "request_params" | "response_data" | "ip_address" | "user_agent" | "execute_time" | "status" | "error_msg" | "created_at" | "created_by", ExtArgs["result"]["sys_audit_log"]>
+export type sys_audit_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "user_id" | "username" | "operation" | "method" | "request_url" | "request_params" | "response_data" | "ip_address" | "user_agent" | "execute_time" | "status" | "error_msg" | "created_at" | "created_by" | "metadata", ExtArgs["result"]["sys_audit_log"]>
 
 export type $sys_audit_logPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_audit_log"
@@ -691,6 +711,7 @@ export type $sys_audit_logPayload<ExtArgs extends runtime.Types.Extensions.Inter
     error_msg: string | null
     created_at: Date
     created_by: string | null
+    metadata: runtime.JsonValue | null
   }, ExtArgs["result"]["sys_audit_log"]>
   composites: {}
 }
@@ -1130,6 +1151,7 @@ export interface sys_audit_logFieldRefs {
   readonly error_msg: Prisma.FieldRef<"sys_audit_log", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_audit_log", 'DateTime'>
   readonly created_by: Prisma.FieldRef<"sys_audit_log", 'String'>
+  readonly metadata: Prisma.FieldRef<"sys_audit_log", 'Json'>
 }
     
 

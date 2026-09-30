@@ -7,6 +7,7 @@ import { initWebSocketServer } from "@/platform/ws/index.js";
 import { prisma } from "@/config/database.js";
 import { redis, subRedis, blockRedis } from "@/config/redis.js";
 import { sendAlert } from "@/platform/alert/index.js";
+import { startServerSampler } from "@/modules/monitor/server/sampler.js";
 
 export interface StartServerResult {
   httpServer: HttpServer;
@@ -21,7 +22,7 @@ export interface StartServerResult {
  */
 export async function startServer(app: Express): Promise<StartServerResult> {
   const httpServer = createServer(app);
-
+  startServerSampler();
   // 关键依赖校验
   await assertDatabaseOrExit();
   const redisOk = await assertRedisOrWarn();

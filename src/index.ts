@@ -24,14 +24,13 @@ async function main(): Promise<void> {
 
   // 2) 组装 + 启动
   const app = createApp();
-  const { httpServer } = await startServer(app);
+  const { httpServer, wss } = await startServer(app);
 
   // 3) 后台订阅 + cron
   await startSubscribers();
   startScheduler();
 
   // 4) 优雅退出
-  const wss = (httpServer as any).__wss ?? { close: () => {} };
   installShutdownHandlers({ httpServer, wss });
 
   // 5) 泄漏快照（每 5 分钟）

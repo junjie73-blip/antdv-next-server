@@ -109,4 +109,38 @@ export class JobRepository extends BaseRepository<JobEntity, any, any, any> {
     });
     return rows.map((r: any) => r.job_id);
   }
+  async findLogDetail(logId: string, tenantId: string) {
+    return prisma.sys_job_log.findFirst({
+      where: { log_id: logId },
+    });
+  }
+  async updateAlertConfig(
+    jobId: string,
+    tenantId: string,
+    data: {
+      alert_enabled: number;
+      alert_channels: string | null;
+      alert_receivers: string | null;
+      alert_threshold: number;
+    },
+  ) {
+    return prisma.sys_job.updateMany({
+      where: { job_id: jobId, tenant_id: tenantId, is_deleted: 0 },
+      data: { ...data, updated_at: new Date() },
+    });
+  }
+  async incrementFailCount(jobId: string): Promise<number> {
+    const result = await prisma.sys_job.update({
+      where: { job_id: jobId },
+      data: { fail_count: { increment: 1 } },
+      select: { fail_count: true },
+    });
+    return result.fail_count;
+  }
+  async resetFailCount(jobId: string) {
+    return prisma.sys_job.updateMany({
+      where: { job_id: jobId, fail_count: { gt: 0 } },
+      data: { fail_count: 0 },
+    });
+  }
 }

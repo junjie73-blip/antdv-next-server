@@ -1,6 +1,7 @@
 import client from "prom-client";
 import type { Request, Response, NextFunction } from "express";
 import { register } from "./registry.js";
+import { qpsMonitor } from "@/modules/monitor/qps/singleton.js";
 
 export const httpRequestsTotal = new client.Counter({
   name: "http_requests_total",
@@ -42,6 +43,7 @@ export function metricsMiddleware(
   res: Response,
   next: NextFunction,
 ): void {
+  qpsMonitor.recordRequest();
   const start = Date.now();
   res.on("finish", () => {
     const labels = {

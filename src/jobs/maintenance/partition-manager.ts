@@ -7,6 +7,7 @@ interface PartitionedTable {
   table: string;
   retentionMonths: number;
 }
+const PART_NAME_RE = /^[a-z_]+_p\d{6}$/;
 
 /** ⭐ 白名单：所有表名必须在此列，防 SQL 注入 */
 const TABLES: PartitionedTable[] = [
@@ -21,6 +22,11 @@ const ALLOWED_TABLES = new Set(TABLES.map((t) => t.table));
 function assertAllowedTable(table: string): void {
   if (!ALLOWED_TABLES.has(table)) {
     throw new Error(`partition-manager: table not allowed: ${table}`);
+  }
+}
+function assertPartName(name: string): void {
+  if (!PART_NAME_RE.test(name)) {
+    throw new Error(`partition-manager: invalid partition name: ${name}`);
   }
 }
 
@@ -47,6 +53,7 @@ export async function maintainPartitions(): Promise<void> {
       const from = addMonths(monthStart(now), i);
       const to = addMonths(from, 1);
       const name = partName(table, from);
+      assertPartName(name);
       await prisma.$executeRawUnsafe(
         `CREATE TABLE IF NOT EXISTS "${name}"
          PARTITION OF "${table}"

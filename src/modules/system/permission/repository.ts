@@ -4,8 +4,6 @@ import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { AppError } from "@/middleware/http/error-handler.js";
 import { PERMISSION_RESOURCE_TYPES } from "./schema.js";
 
-/** 资源类型白名单（防 DTO 被绕过） */
-const VALID_RESOURCE_TYPES = new Set<string>(PERMISSION_RESOURCE_TYPES);
 export class PermissionRepository extends BaseRepository<any, any, any, any> {
   async findAll(tenantId: string) {
     return this.model.findMany({
@@ -14,53 +12,7 @@ export class PermissionRepository extends BaseRepository<any, any, any, any> {
   }
   protected readonly model = prisma.sys_permission;
   protected readonly primaryKey = "perm_id";
-  async beforeCreate(data: any, tenantId: string): Promise<any> {
-    // ⭐ 资源类型白名单校验
-    if (!VALID_RESOURCE_TYPES.has(data.resourceType)) {
-      throw new AppError(
-        `不支持的资源类型「${data.resourceType}」，仅支持 api / data / other。` +
-          `菜单 / 按钮权限请在「角色管理」中分配`,
-        400,
-        400,
-      );
-    }
 
-    const exist = await this.model.findFirst({
-      where: { perm_code: data.permCode, tenant_id: tenantId, is_deleted: 0 },
-    });
-    if (exist) {
-      throw new AppError(`权限编码 '${data.permCode}' 已存在`, 409, 409);
-    }
-    return data;
-  }
-
-  /**
-   * 更新前钩子：若改了资源类型则校验 + perm_code 唯一
-   */
-  async beforeUpdate(id: string, data: any, tenantId: string): Promise<any> {
-    if (data.resourceType && !VALID_RESOURCE_TYPES.has(data.resourceType)) {
-      throw new AppError(
-        `不支持的资源类型「${data.resourceType}」，仅支持 api / data / other`,
-        400,
-        400,
-      );
-    }
-
-    if (data.permCode) {
-      const exist = await this.model.findFirst({
-        where: {
-          perm_code: data.permCode,
-          tenant_id: tenantId,
-          is_deleted: 0,
-          perm_id: { not: id },
-        },
-      });
-      if (exist) {
-        throw new AppError(`权限编码 '${data.permCode}' 已存在`, 409, 409);
-      }
-    }
-    return data;
-  }
   /**
    * 检查权限编码是否已存在
    */

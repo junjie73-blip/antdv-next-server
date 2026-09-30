@@ -106,6 +106,69 @@ export default class MenuController extends BaseController<any, any, any, any> {
     }
   }
 
+  @Get("/export")
+  @ApiOperation("导出菜单")
+  async exportMenus(@Req() req: Request, @Res() res: Response) {
+    try {
+      if (!req.tenantId) {
+        return this.handleError(
+          res,
+          new AppError("缺少租户上下文", 401001, 401),
+        );
+      }
+      const buffer = await this.service.exportToExcel(req.tenantId!);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=menus_${Date.now()}.xlsx`,
+      );
+      res.send(buffer);
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  @Post("/import")
+  @ApiOperation("导入菜单")
+  async importMenus(@Req() req: Request, @Res() res: Response) {
+    try {
+      if (!req.tenantId) {
+        return this.handleError(
+          res,
+          new AppError("缺少租户上下文", 401001, 401),
+        );
+      }
+      upload.single("file")(req, res, async (err) => {
+        if (err) {
+          return this.handleError(
+            res,
+            new AppError("文件上传失败", 400001, 400),
+          );
+        }
+        if (!req.file) {
+          return this.handleError(
+            res,
+            new AppError("请上传 Excel 文件", 400001, 400),
+          );
+        }
+        try {
+          const result = await this.service.importFromExcel(
+            req.file.buffer,
+            req.tenantId!,
+            req.user?.userId,
+          );
+          success(res, result, "导入完成");
+        } catch (err) {
+          this.handleError(res, err);
+        }
+      });
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
   // ============ CRUD ============
 
   @Get("/list")
@@ -156,49 +219,4 @@ export default class MenuController extends BaseController<any, any, any, any> {
   }
 
   // ============ 导入导出 ============
-
-  @Get("/export")
-  @ApiOperation("导出菜单")
-  async exportMenus(@Req() req: Request, @Res() res: Response) {
-    try {
-      const buffer = await this.service.exportToExcel(req.tenantId!);
-      res.setHeader(
-        "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      );
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename=menus_${Date.now()}.xlsx`,
-      );
-      res.send(buffer);
-    } catch (err) {
-      this.handleError(res, err);
-    }
-  }
-
-  @Post("/import")
-  @ApiOperation("导入菜单")
-  async importMenus(@Req() req: Request, @Res() res: Response) {
-    upload.single("file")(req, res, async (err) => {
-      if (err) {
-        return this.handleError(res, new AppError("文件上传失败", 400001, 400));
-      }
-      if (!req.file) {
-        return this.handleError(
-          res,
-          new AppError("请上传 Excel 文件", 400001, 400),
-        );
-      }
-      try {
-        const result = await this.service.importFromExcel(
-          req.file.buffer,
-          req.tenantId!,
-          req.user?.userId,
-        );
-        success(res, result, "导入完成");
-      } catch (err) {
-        this.handleError(res, err);
-      }
-    });
-  }
 }

@@ -16,7 +16,76 @@ import { FileRepository } from "@/modules/infrastructure/file/repository.js";
 import { success, error } from "@/shared/http/response.js";
 import { UploadService } from "./service.js";
 import { checkUploadIdRate } from "@/middleware/security/rate-limit.js";
+import { SettingsService } from "@/modules/system/setting/service.js";
+import { UploadConfigDTO } from "@/modules/system/setting/schema.js";
+export interface NormalizedUploadCfg {
+  /** 当前存储类型 */
+  storage: "local" | "minio" | "oss" | "cos" | "s3";
 
+  /** 单文件大小上限（字节） */
+  maxSizeBytes: number;
+
+  /** 允许的扩展名（小写，不含点） */
+  allowedTypes: string[];
+
+  /** 原始配置（如需完整字段） */
+  raw: UploadConfigDTO;
+}
+const settingsService = new SettingsService();
+export async function getUploadCfg(
+  tenantId: string,
+): Promise<NormalizedUploadCfg> {
+  const cfg = await settingsService.getUploadConfig(tenantId);
+
+  return {
+    storage: (cfg.storage as NormalizedUploadCfg["storage"]) ?? "local",
+    maxSizeBytes: (cfg.maxSize || 10) * 1024 * 1024,
+    allowedTypes: (cfg.allowedTypes || "")
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean),
+    raw: cfg,
+  };
+}
+/**
+ * ⭐ 校验上传文件是否合规
+ * - 返回 null 表示通过
+ * - 返回 string 表示错误消息
+ */
+export function validateUploadFile(
+  file: { size: number; originalname: string; mimetype?: string },
+  cfg: NormalizedUploadCfg,
+): string | null {
+  // 1. 大小
+  if (file.size > cfg.maxSizeBytes) {
+    const mb = (cfg.maxSizeBytes / 1024 / 1024).toFixed(0);
+    return `文件超过 ${mb} MB 限制`;
+  }
+
+  // 2. 类型
+  if (cfg.allowedTypes.length > 0) {
+    const ext = extOf(file.originalname);
+    if (!ext) {
+      return `无法识别文件类型：${file.originalname}`;
+    }
+    if (!cfg.allowedTypes.includes(ext)) {
+      return `不支持的文件类型「.${ext}」，允许：${cfg.allowedTypes
+        .map((t) => `.${t}`)
+        .join(", ")}`;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * 取扩展名（小写，不含点）
+ */
+function extOf(filename: string): string {
+  const idx = filename.lastIndexOf(".");
+  if (idx < 0) return "";
+  return filename.slice(idx + 1).toLowerCase();
+}
 export const UPLOAD_ROOT =
   process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
 const TEMP_DIR = path.join(UPLOAD_ROOT, "temp");
@@ -81,10 +150,30 @@ export default class UploadController {
   @Post("/file")
   @ApiOperation("上传小文件", "上传到 COS 并写入文件表，返回文件ID和URL")
   @ApiResponse(200, "上传成功")
-  async uploadFile(@Req() req: Request, @Res() res: Response) {
+  async uploadFile(@Req() req, @Res() res) {
     simpleUpload.single("file")(req, res, async (err) => {
       if (err) return error(res, "上传失败：" + err.message, 400, 400);
       if (!req.file) return error(res, "请选择文件", 400, 400);
+
+      const tenantId = (req as any).tenantId;
+      const userId = (req as any).user?.userId;
+
+      // ⭐ 二次校验大小 + 类型
+      const cfg = await getUploadCfg(tenantId);
+      const errMsg = validateUploadFile(req.file, cfg);
+      if (errMsg) return error(res, errMsg, 400, 400);
+      if (req.file.size > cfg.maxSizeBytes) {
+        return error(
+          res,
+          `文件超过 ${cfg.maxSizeBytes / 1024 / 1024} MB`,
+          400,
+          400,
+        );
+      }
+      const ext = path.extname(req.file.originalname).slice(1).toLowerCase();
+      if (cfg.allowedTypes.length > 0 && !cfg.allowedTypes.includes(ext)) {
+        return error(res, `不支持的文件类型：${ext}`, 400, 400);
+      }
 
       try {
         const result = await this.service.saveSimpleFile({
@@ -92,8 +181,8 @@ export default class UploadController {
           buffer: req.file.buffer,
           mimeType: req.file.mimetype,
           size: req.file.size,
-          tenantId: (req as any).tenantId,
-          userId: (req as any).user?.userId,
+          tenantId,
+          userId,
         });
         success(res, result, "上传成功");
       } catch (e: any) {
@@ -127,9 +216,13 @@ export default class UploadController {
       if (!req.file) return error(res, "未接收到文件", 400, 400);
       const { chunkIndex, uploadId } = req.body;
 
-      const ok = await checkUploadIdRate(uploadId, 50);
-      if (!ok) {
-        return error(res, "该上传任务请求过快，请稍后重试", 429);
+      const rate = await checkUploadIdRate(uploadId, 50);
+      if (!rate.ok) {
+        return error(
+          res,
+          `该上传任务请求过快（${rate.current}/${rate.limit}），请稍后重试`,
+          429,
+        );
       }
       if (chunkIndex === undefined)
         return error(res, "缺少chunkIndex", 400, 400);
@@ -145,23 +238,37 @@ export default class UploadController {
   @ApiResponse(200, "合并成功")
   async mergeChunks(@Req() req: Request, @Res() res: Response) {
     try {
-      const {
-        uploadId,
-        filename: fileName,
-        totalChunks: total,
-        mimeType,
-      } = req.body;
-      if (!uploadId || !fileName || !total || !mimeType) {
+      const { uploadId, filename, totalChunks, mimeType, totalSize } = req.body;
+      if (!uploadId || !filename || !totalChunks || !mimeType) {
         return error(res, "缺少参数", 400, 400);
       }
+
+      const tenantId = (req as any).tenantId;
+      const cfg = await getUploadCfg(tenantId);
+
+      // ⭐ 如果前端传了 totalSize，可以提前校验
+      if (totalSize && Number(totalSize) > cfg.maxSizeBytes) {
+        const mb = (cfg.maxSizeBytes / 1024 / 1024).toFixed(0);
+        return error(res, `文件超过 ${mb} MB 限制`, 400, 400);
+      }
+
+      // ⭐ 类型校验
+      if (cfg.allowedTypes.length > 0) {
+        const ext = filename.slice(filename.lastIndexOf(".") + 1).toLowerCase();
+        if (!cfg.allowedTypes.includes(ext)) {
+          return error(res, `不支持的文件类型「.${ext}」`, 400, 400);
+        }
+      }
+
       const { taskId, status } = await this.service.triggerMerge({
         uploadId,
-        fileName,
-        totalChunks: Number(total),
-        tenantId: (req as any).tenantId,
+        fileName: filename,
+        totalChunks: Number(totalChunks),
+        tenantId,
         userId: (req as any).user?.userId,
         mimeType,
       });
+
       success(res, { taskId, status }, "任务已提交");
     } catch (err: any) {
       error(res, err?.message || "提交失败", 500, 500);
@@ -193,8 +300,13 @@ export default class UploadController {
     try {
       const { url } = req.body;
       if (!url) return error(res, "缺少url参数", 400, 400);
-      await this.service.removeFile(url);
-      const file = await this.service.findByUrl(url, (req as any).tenantId);
+
+      const tenantId = (req as any).tenantId;
+
+      // ⭐ 传 tenantId
+      await this.service.removeFile(url, tenantId);
+
+      const file = await this.service.findByUrl(url, tenantId);
       if (!file) return error(res, "文件不存在", 400, 400);
       await this.service.softDelete(file.file_id);
       success(res, null, "删除成功");
@@ -259,22 +371,17 @@ export default class UploadController {
   @Get("/preview")
   @ApiOperation("获取文件预览地址", "返回临时签名 URL，浏览器 inline 展示")
   @ApiResponse(200, "获取成功")
-  async previewFile(@Req() req: Request, @Res() res: Response) {
+  async previewFile(@Req() req, @Res() res) {
     try {
       const fileId = req.query.fileId as string;
+      if (!fileId) return error(res, "缺少 fileId", 400, 400);
 
-      if (!fileId) {
-        return error(res, "缺少 fileId", 400, 400);
-      }
-      const file = await this.service.findByFileId(
-        fileId,
-        (req as any).tenantId,
-      );
-
+      const tenantId = (req as any).tenantId;
+      const file = await this.service.findByFileId(fileId, tenantId);
       if (!file) return error(res, "文件不存在", 404, 404);
-      let targetUrl = file.url;
 
-      const previewUrl = await this.service.buildPreviewUrl(targetUrl);
+      // ⭐ 传 tenantId
+      const previewUrl = await this.service.buildPreviewUrl(file.url, tenantId);
       success(res, { url: previewUrl, expiresIn: 15 * 60 });
     } catch (err: any) {
       error(res, err?.message || "获取预览地址失败", 500, 500);
@@ -288,36 +395,26 @@ export default class UploadController {
     try {
       const fileId = req.query.fileId as string;
       const url = req.query.url as string;
+      if (!fileId && !url) return error(res, "缺少 fileId 或 url", 400, 400);
 
-      if (!fileId && !url) {
-        return error(res, "缺少 fileId 或 url", 400, 400);
-      }
-
+      const tenantId = (req as any).tenantId;
       let targetUrl = url;
       let fileName = (req.query.fileName as string) || "download";
 
       if (fileId) {
-        const file = await this.service.findByFileId(
-          fileId,
-          (req as any).tenantId,
-        );
+        const file = await this.service.findByFileId(fileId, tenantId);
         if (!file) return error(res, "文件不存在", 404, 404);
         targetUrl = file.url;
         fileName = file.filename;
       }
 
+      // ⭐ 传 tenantId
       const downloadUrl = await this.service.buildDownloadUrl(
         targetUrl,
         fileName,
+        tenantId,
       );
-
-      // 两种返回方式，选一种：
-
-      // 方式 A：返回 JSON 让前端拿 URL（推荐，前端灵活控制）
       success(res, { url: downloadUrl, fileName, expiresIn: 15 * 60 });
-
-      // 方式 B：直接 302 重定向到 COS（简单，但前端不好处理错误）
-      // res.redirect(downloadUrl);
     } catch (err: any) {
       error(res, err?.message || "获取下载地址失败", 500, 500);
     }

@@ -27,9 +27,9 @@ export class LoginLogRepository extends BaseRepository<any, any, any, any> {
     return this.paginate({ ...query, maxPageSize: 100 }, finalWhere);
   }
 
-  async findAll(where: any): Promise<any[]> {
+  async findAll(where: any, tenantId: string): Promise<any[]> {
     return this.model.findMany({
-      where,
+      where: { ...where, tenant_id: tenantId },
       orderBy: { created_at: "desc" },
     });
   }

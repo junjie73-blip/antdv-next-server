@@ -113,7 +113,6 @@ export class NoticeService extends BaseService<NoticeRepository> {
 
     const now = new Date();
 
-    // ⭐ updateMany + 条件，保证并发下只有一次成功
     const updated = await prisma.sys_notice.updateMany({
       where: {
         notice_id: noticeId,
@@ -122,10 +121,10 @@ export class NoticeService extends BaseService<NoticeRepository> {
         status: "1",
       },
       data: {
-        status: "0", // 回到草稿态，用户端不再展示
-        revoked_at: null,
-        revoked_by: null,
-        send_status: "0", // ⭐ 允许再次发送
+        status: "0",
+        revoked_at: now,
+        revoked_by: userId,
+        send_status: "0",
         send_time: null,
         updated_at: now,
       },
@@ -134,7 +133,6 @@ export class NoticeService extends BaseService<NoticeRepository> {
       throw new AppError("通知已撤回或状态已变更", 400001, 400);
     }
 
-    // ⭐ 广播撤回事件：各实例推给自己的连接，客户端重新拉取
     try {
       await publishNoticePush(noticeId, "revoke");
     } catch (err) {

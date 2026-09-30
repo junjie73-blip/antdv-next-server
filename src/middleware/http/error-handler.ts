@@ -48,6 +48,8 @@ export function notFoundHandler(req: Request, res: Response): void {
   res.status(404).json({
     code: 404001,
     message: `path ${req.method} ${req.path} not found`,
+    data: null,
+    traceId: getTraceId(),
     timestamp: Date.now(),
   });
 }

@@ -6,6 +6,7 @@ import { webhookChannel } from "./webhook.js";
 import { prisma } from "@/config/database.js";
 import { logger } from "@/platform/logger/index.js";
 import { sendAlert } from "@/platform/alert/index.js";
+import { redis } from "@/config/redis.js";
 
 const channelFailureCounter = new Map<string, number>();
 const REGISTRY: Record<string, NoticeChannel> = {
@@ -26,13 +27,55 @@ export interface DispatchInput {
   content?: string;
   channels?: string[];
   receiversByChannel?: Record<string, string[]>;
+  templateId?: string;
 }
-
+const FAIL_TTL = 24 * 3600;
+const FAIL_THRESHOLD = 5;
 export async function dispatchNotice(
   input: DispatchInput,
 ): Promise<SendResult[]> {
   const { tenantId, noticeId, title, content } = input;
+  let templateInfo: SendContext["template"] | undefined;
+  let receiverMeta: SendContext["receiverMeta"] = {};
+  let templateId = input.templateId;
+  if (!templateId && noticeId) {
+    const notice = await prisma.sys_notice.findFirst({
+      where: { notice_id: noticeId, tenant_id: tenantId, is_deleted: 0 },
+      select: { template_id: true },
+    });
+    templateId = notice?.template_id ?? undefined;
+  }
 
+  if (templateId) {
+    const tpl = await prisma.sys_notice_template.findFirst({
+      where: { template_id: templateId, tenant_id: tenantId, is_deleted: 0 },
+      select: {
+        template_id: true,
+        title: true,
+        content: true,
+        content_format: true,
+        status: true,
+      },
+    });
+    if (tpl && tpl.status === "1") {
+      templateInfo = {
+        templateId: tpl.template_id,
+        title: tpl.title,
+        content: tpl.content,
+        contentFormat: tpl.content_format ?? "markdown",
+      };
+    } else if (tpl && tpl.status !== "1") {
+      logger.warn(
+        { templateId, tenantId },
+        "[notice] 关联的模板已停用，回退默认模板",
+      );
+    } else if (!tpl) {
+      logger.warn(
+        { templateId, tenantId },
+        "[notice] 关联的模板不存在，回退默认模板",
+      );
+    }
+  }
   // 1) 查租户渠道配置
   const enabled = await prisma.sys_notice_channel.findMany({
     where: { tenant_id: tenantId, enabled: 1, is_deleted: 0 },
@@ -72,12 +115,31 @@ export async function dispatchNotice(
     if (userIds.length > 0) {
       const users = await prisma.sys_user.findMany({
         where: { user_id: { in: userIds }, tenant_id: tenantId, is_deleted: 0 },
-        select: { email: true, phone: true },
+        select: {
+          user_id: true,
+          username: true,
+          real_name: true,
+          email: true,
+          phone: true,
+          sys_user_dept: {
+            where: { is_primary: 1 },
+            select: { dept: { select: { dept_name: true } } },
+          },
+        },
       });
       fallbackReceivers = {
         email: users.map((u) => u.email).filter(Boolean) as string[],
         sms: users.map((u) => u.phone).filter(Boolean) as string[],
       };
+      for (const u of users) {
+        const meta = {
+          userName: u.username,
+          realName: u.real_name ?? u.username,
+          deptName: u.sys_user_dept?.[0]?.dept?.dept_name ?? "",
+        };
+        if (u.email) receiverMeta![u.email] = meta;
+        if (u.phone) receiverMeta![u.phone] = meta;
+      }
     }
   }
 
@@ -112,6 +174,8 @@ export async function dispatchNotice(
       content,
       receivers,
       config: cfg,
+      template: templateInfo,
+      receiverMeta,
     });
     results.push(result);
 
@@ -146,27 +210,28 @@ export async function dispatchNotice(
       }
     }
     if (result.failed > 0) {
-      const key = `${tenantId}:${ch.channel_type}`;
-      const count = (channelFailureCounter.get(key) || 0) + 1;
-      channelFailureCounter.set(key, count);
-
-      if (count >= 5) {
-        void sendAlert({
-          level: "warning",
-          title: `notice_channel_failure:${key}`,
-          message: `通知渠道「${ch.channel_type}」连续失败 ${count} 次`,
-          source: "notice",
-          data: {
-            tenantId,
-            channel: ch.channel_type,
-            failed: result.failed,
-            errors: result.errors.slice(0, 3),
-          },
-        });
-        channelFailureCounter.set(key, 0); // 重置
+      const key = `notice:channel-fail:${tenantId}:${ch.channel_type}`;
+      try {
+        const count = await redis.incr(key);
+        if (count === 1) {
+          await redis.expire(key, FAIL_TTL, "NX").catch(() => {});
+        }
+        if (count >= FAIL_THRESHOLD) {
+          void sendAlert({
+            level: "warning",
+            title: `notice_channel_failure:${tenantId}:${ch.channel_type}`,
+            message: `通知渠道「${ch.channel_type}」连续失败 ${count} 次`,
+            source: "notice",
+            data: { tenantId, channel: ch.channel_type, failed: result.failed },
+          });
+          await redis.del(key); // 重置
+        }
+      } catch (e) {
+        logger.warn({ e }, "[notice] channel fail counter error");
       }
     } else if (result.success > 0) {
-      channelFailureCounter.delete(`${tenantId}:${ch.channel_type}`);
+      const key = `notice:channel-fail:${tenantId}:${ch.channel_type}`;
+      await redis.del(key).catch(() => {});
     }
   }
 

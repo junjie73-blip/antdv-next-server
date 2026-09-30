@@ -14,3 +14,4 @@ export {
   isPasswordExpired,
 } from "./password-policy.service.js";
 export type { PasswordPolicy } from "./password-policy.service.js";
+export { EmailVerifyService } from "./email-verify.service.js";

@@ -15,6 +15,12 @@ const lru = new LRUCache<string, DataScopeContext>({
   max: 5_000,
   ttl: 10_000,
 });
+const SKIP_PATHS = [
+  "/api/v1/monitor",
+  "/api/v1/tenant", // 平台级表，无租户上下文
+  "/api/v1/dashboard", // 全局 KPI，本身无 dataScope
+  "/api/v1/workbench",
+];
 
 export function toWhereScope(ctx: DataScopeContext): Record<string, any> {
   if (ctx.deptIds === "*") return {};
@@ -164,11 +170,9 @@ export async function invalidateDataScopeCache(
  * 把 ctx + whereScope 挂到 ALS，Repository 只从 ALS 读。
  */
 export function dataScopeMiddleware() {
-  return async (
-    req: Request,
-    _res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  return async (req: Request, _res: Response, next: NextFunction) => {
+    if (SKIP_PATHS.some((p) => req.path.startsWith(p))) return next();
+
     const user = (req as any).user;
     if (!user?.userId || !user?.tenantId) return next();
 

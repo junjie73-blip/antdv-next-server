@@ -5,9 +5,10 @@ import { redis } from "@/config/redis.js";
 import { logger } from "@/platform/logger/index.js";
 import { AuthenticationError } from "@/core/errors.js";
 import { getKickedFlagCached } from "@/platform/ws/force-logout.js";
+import { error } from "@/shared/http/response.js";
 
 const ACCESS_SECRET = new TextEncoder().encode(config.JWT_SECRET);
-
+const JWT_RE = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
 export const AUTH_WHITELIST = [
   "/api/v1/auth/login",
   "/api/v1/auth/register",
@@ -22,6 +23,7 @@ export const AUTH_WHITELIST = [
   "/api/v1/auth/password-policy",
   "/api/v1/auth/captcha",
   "/api/v1/tenant/options",
+  "/api/v1/health",
 ];
 
 export function isWhitelisted(path: string): boolean {
@@ -33,10 +35,7 @@ export function isWhitelisted(path: string): boolean {
 
 function extractValidToken(rawToken: string): string | null {
   const token = rawToken.trim().replace(/^"|"$/g, "");
-  const jwtMatch = token.match(
-    /eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*/,
-  );
-  return jwtMatch ? jwtMatch[0] : token;
+  return JWT_RE.test(token) ? token : null;
 }
 
 export async function authMiddleware(
@@ -69,22 +68,12 @@ export async function authMiddleware(
       throw new AuthenticationError("Invalid token payload");
     }
 
-    // ⭐ pipeline 合并两次 Redis 查询
-    const results = await redis
-      .pipeline()
-      .get(`access:${tenantId}:${userId}:${deviceId}`)
-      .ttl(`kicked:${userId}`)
-      .exec();
-
-    const session = results?.[0]?.[1] as string | null;
-    const kickedTtl = Number(results?.[1]?.[1] ?? -2);
-
+    const session = await redis.get(`access:${tenantId}:${userId}:${deviceId}`);
     if (!session) throw new AuthenticationError("Session expired");
-    if (kickedTtl > 0) {
-      // 命中踢下线：直接返回，不再走 getKickedFlag 二次查询
-      throw new AuthenticationError("您已被强制下线");
-    }
 
+    const kicked = await getKickedFlagCached(userId);
+    if (kicked)
+      throw new AuthenticationError(kicked.reason || "您已被强制下线");
     (req as any).user = {
       userId,
       tenantId,
@@ -94,20 +83,10 @@ export async function authMiddleware(
     (req as any).tenantId = tenantId;
     (req as any).deviceId = deviceId;
 
-    // ⭐ 用带负缓存的版本（未踢用户 1s 内不查 Redis）
-    const kicked = await getKickedFlagCached(userId);
-    if (kicked)
-      throw new AuthenticationError(kicked.reason || "您已被强制下线");
-
     next();
   } catch (err) {
     logger.warn({ err, path: req.path }, "Auth failed");
-    res.status(401).json({
-      code: 401001,
-      message: "未认证或令牌无效",
-      data: null,
-      timestamp: Date.now(),
-    });
+    error(res, "未认证或令牌无效", 401001, 401);
   }
 }
 

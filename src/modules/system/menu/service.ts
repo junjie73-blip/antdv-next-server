@@ -1,5 +1,9 @@
 import { MenuRepository } from "./repository.js";
-import { MenuImportRowSchema, MenuExportColumns } from "./schema.js";
+import {
+  MenuImportRowSchema,
+  MenuExportColumns,
+  MicroAppConfigSchema,
+} from "./schema.js";
 
 import { AppError } from "@/core/errors.js";
 import { keysToCamelCase } from "@/shared/utils/case-convert.js";
@@ -243,18 +247,24 @@ export class MenuService extends BaseService<MenuRepository> {
     let successCount = 0;
 
     const rowsToInsert: MenuImportRow[] = rows.map((raw) => {
-      // ⭐ 微应用配置：Excel 里是 JSON 字符串，这里反序列化
       let microApp: MicroAppConfig | null = null;
       const rawMicro = raw["微应用配置"];
       if (rawMicro && typeof rawMicro === "string" && rawMicro.trim()) {
         try {
-          microApp = JSON.parse(rawMicro) as MicroAppConfig;
-        } catch {
-          // Schema 已经校验过，理论上不会到这里
-          microApp = null;
+          const parsed = JSON.parse(rawMicro);
+          const check = MicroAppConfigSchema.safeParse(parsed);
+          if (!check.success) {
+            throw new AppError(
+              `微应用配置结构非法：${check.error.issues.map((i) => i.message).join("; ")}`,
+              400001,
+              400,
+            );
+          }
+          microApp = check.data as MicroAppConfig;
+        } catch (e: any) {
+          throw new AppError(`微应用配置解析失败：${e?.message}`, 400001, 400);
         }
       }
-
       return {
         menuName: raw["菜单名称"] as string,
         menuType: raw["类型"] === "目录" ? 1 : raw["类型"] === "菜单" ? 2 : 3,

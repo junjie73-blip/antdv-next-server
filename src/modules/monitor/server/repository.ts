@@ -4,7 +4,8 @@ import { promisify } from "util";
 import { statfs } from "fs/promises";
 import { redis } from "@/config/redis.js";
 import { prisma } from "@/config/database.js";
-
+import si from "systeminformation";
+import { logger } from "@/platform/logger/index.js";
 const execAsync = promisify(exec);
 
 // ⚠️ 关键：history 放在 Repository 顶层，不在 Controller 里
@@ -25,6 +26,20 @@ function formatBytes(b: number): string {
 }
 
 export class ServerRepository {
+  async getSnapshot() {
+    const [cpuLoad, mem] = await Promise.all([si.currentLoad(), si.mem()]);
+
+    const heapTotal = process.memoryUsage().heapTotal;
+    const heapUsed = process.memoryUsage().heapUsed;
+
+    return {
+      cpu: Number(cpuLoad.currentLoad.toFixed(2)),
+      memory: Number(((mem.used / mem.total) * 100).toFixed(2)),
+      heap:
+        heapTotal > 0 ? Number(((heapUsed / heapTotal) * 100).toFixed(2)) : 0,
+      timestamp: Date.now(),
+    };
+  }
   async info() {
     const cpus = os.cpus();
     const totalMem = os.totalmem();
@@ -62,27 +77,13 @@ export class ServerRepository {
       memUsage.heapTotal > 0
         ? Number(((memUsage.heapUsed / memUsage.heapTotal) * 100).toFixed(1))
         : 0;
-    const currentCpu = Number(((load[0] / cpus.length) * 100).toFixed(2));
-    const currentMem = Number(((usedMem / totalMem) * 100).toFixed(2));
     if (history.length === 0) {
-      const now = Date.now();
-      for (let i = HISTORY_SIZE - 1; i >= 1; i--) {
-        // 每个点 5 秒间隔
-        const t = new Date(now - i * 5000).toISOString();
-        // 在当前值附近轻微波动（±2%），避免完全平线
-        history.push({
-          time: t,
-          cpu: Number((currentCpu + (Math.random() - 0.5) * 4).toFixed(2)),
-          memory: Number((currentMem + (Math.random() - 0.5) * 3).toFixed(2)),
-          heap: Number((heapRatio + (Math.random() - 0.5) * 5).toFixed(2)),
-        });
-      }
-      // 移除负数或超范围
-      for (const h of history) {
-        h.cpu = Math.max(0, Math.min(100, h.cpu));
-        h.memory = Math.max(0, Math.min(100, h.memory));
-        h.heap = Math.max(0, Math.min(100, h.heap));
-      }
+      history.push({
+        time: new Date().toISOString(),
+        cpu: Number(((load[0] / cpus.length) * 100).toFixed(2)),
+        memory: Number(((usedMem / totalMem) * 100).toFixed(2)),
+        heap: heapRatio,
+      });
     }
     history.push({
       time: new Date().toISOString(),
@@ -151,15 +152,19 @@ export class ServerRepository {
   }
   private async getUnixDisks(): Promise<any[]> {
     try {
-      const { stdout } = await execAsync("df -B1", { timeout: 5000 });
+      const { stdout } = await execAsync(
+        "df -B1 -x tmpfs -x devtmpfs -x squashfs",
+        { timeout: 5000 },
+      );
       const lines = stdout.trim().split("\n").slice(1);
       return lines
         .map((line) => line.trim().split(/\s+/))
-        .filter((parts) => parts.length >= 6 && parts[0].startsWith("/"))
+        .filter((parts) => parts.length >= 6)
         .map((parts) => {
           const total = Number(parts[1]);
           const used = Number(parts[2]);
           const free = Number(parts[3]);
+          if (!Number.isFinite(total) || total <= 0) return null;
           return {
             mount: parts[5],
             total,
@@ -170,9 +175,10 @@ export class ServerRepository {
             usedHuman: formatBytes(used),
             freeHuman: formatBytes(free),
           };
-        });
+        })
+        .filter((d): d is NonNullable<typeof d> => d !== null);
     } catch (e) {
-      console.warn("[server] df failed:", e);
+      logger.warn({ err: e }, "[server] df failed");
       return this.getDisksByStatfs();
     }
   }
@@ -217,9 +223,9 @@ export class ServerRepository {
           };
         });
     } catch (e) {
-      console.warn(
+      logger.warn(
+        { err: e },
         "[server] PowerShell disk failed, fallback to fs.statfs:",
-        e,
       );
       return this.getDisksByStatfs();
     }

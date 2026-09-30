@@ -30,6 +30,7 @@ export function auditMiddleware(
 
   const originalJson = res.json.bind(res);
   res.json = (body: any) => {
+    if (res.headersSent) return res;
     try {
       (req as any).__responseBody = body;
     } catch {}
@@ -38,6 +39,7 @@ export function auditMiddleware(
 
   const start = Date.now();
   res.on("finish", () => {
+    if ((req as any).__auditHandled) return;
     try {
       const user = (req as any).user;
       const tenantId = (req as any).tenantId || user?.tenantId || null;
@@ -69,6 +71,6 @@ export function auditMiddleware(
       // 永不阻塞主流程
     }
   });
-
+  (req as any).__auditHandled = false;
   next();
 }

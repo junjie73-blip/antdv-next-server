@@ -21,7 +21,10 @@ export function httpCache(opts: HttpCacheOptions = {}) {
       "Cache-Control",
       `${directive}, max-age=${maxAge}${directive === "public" ? ", s-maxage=" + maxAge : ""}`,
     );
-    res.setHeader("Vary", "Authorization, Accept-Encoding, X-Tenant-Id");
+    res.setHeader(
+      "Vary",
+      "Authorization, Accept-Encoding, X-Tenant-Id, Cookie",
+    );
 
     if (!etag) return next();
 

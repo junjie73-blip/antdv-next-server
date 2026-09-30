@@ -2,17 +2,10 @@ import { prisma } from "@/config/database.js";
 import { logger } from "@/platform/logger/index.js";
 import { createGzip } from "node:zlib";
 import { PassThrough } from "node:stream";
-import { uploadStream } from "@/platform/storge/index.js";
+import { getSystemStorage } from "@/platform/storage/system.js";
 
 const BATCH = 5_000;
 
-/**
- * 归档单个分区到 MinIO（NDJSON.gz）
- * 返回归档对象的 key；空分区返回 null
- *
- * ⭐ 前提：该分区在归档期间无写入（归档前已 detach / 无新数据）
- *    使用 keyset pagination 避免 LIMIT/OFFSET 在并发写入时漏行
- */
 export async function archivePartition(
   table: string,
   partition: string,
@@ -33,10 +26,13 @@ export async function archivePartition(
   const pass = new PassThrough();
   gz.pipe(pass);
 
-  const uploadPromise = uploadStream({
+  // ⭐ 用系统级 storage，绕过租户配置
+  const storage = getSystemStorage();
+
+  const uploadPromise = storage.putObject({
     key,
     body: pass,
-    metadata: { table, partition, rows: String(total[0].cnt) },
+    contentType: "application/gzip",
   });
 
   let lastCreatedAt: Date | null = null;
@@ -85,7 +81,7 @@ export async function archivePartition(
   await uploadPromise;
 
   logger.info(
-    { partition, rows: written, key },
+    { partition, rows: written, key, bucket: (storage as any).cfg?.bucket },
     "[archive] partition archived",
   );
   return key;

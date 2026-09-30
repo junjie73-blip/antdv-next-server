@@ -19,4 +19,10 @@ export default class ServerController {
   async info(@Req() _req: Request, @Res() res: Response) {
     success(res, await this.repository.info());
   }
+  @Get("/snapshot")
+  @ApiOperation("服务器实时快照（用于轮询）")
+  async snapshot(@Req() req: Request, @Res() res: Response) {
+    const data = await this.repository.getSnapshot();
+    return success(res, data);
+  }
 }

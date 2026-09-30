@@ -399,6 +399,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   sys_tenant: 'sys_tenant',
   sys_user: 'sys_user',
+  sys_verify_code: 'sys_verify_code',
   sys_role: 'sys_role',
   sys_dept: 'sys_dept',
   sys_menu: 'sys_menu',
@@ -433,7 +434,9 @@ export const ModelName = {
   sys_login_daily: 'sys_login_daily',
   sys_approval_request: 'sys_approval_request',
   sys_approval_node: 'sys_approval_node',
-  sys_approval_log: 'sys_approval_log'
+  sys_approval_log: 'sys_approval_log',
+  sys_notice_template: 'sys_notice_template',
+  sys_file_pending_delete: 'sys_file_pending_delete'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -449,7 +452,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily" | "sys_approval_request" | "sys_approval_node" | "sys_approval_log"
+    modelProps: "sys_tenant" | "sys_user" | "sys_verify_code" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily" | "sys_approval_request" | "sys_approval_node" | "sys_approval_log" | "sys_notice_template" | "sys_file_pending_delete"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -598,6 +601,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.sys_userCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.Sys_userCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_verify_code: {
+      payload: Prisma.$sys_verify_codePayload<ExtArgs>
+      fields: Prisma.sys_verify_codeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_verify_codeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_verify_codeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>
+        }
+        findFirst: {
+          args: Prisma.sys_verify_codeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_verify_codeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>
+        }
+        findMany: {
+          args: Prisma.sys_verify_codeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>[]
+        }
+        create: {
+          args: Prisma.sys_verify_codeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>
+        }
+        createMany: {
+          args: Prisma.sys_verify_codeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_verify_codeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>[]
+        }
+        delete: {
+          args: Prisma.sys_verify_codeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>
+        }
+        update: {
+          args: Prisma.sys_verify_codeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_verify_codeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_verify_codeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_verify_codeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_verify_codeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_verify_codePayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_verify_codeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_verify_code>
+        }
+        groupBy: {
+          args: Prisma.sys_verify_codeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_verify_codeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_verify_codeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_verify_codeCountAggregateOutputType> | number
         }
       }
     }
@@ -3191,6 +3268,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    sys_notice_template: {
+      payload: Prisma.$sys_notice_templatePayload<ExtArgs>
+      fields: Prisma.sys_notice_templateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_notice_templateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_notice_templateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>
+        }
+        findFirst: {
+          args: Prisma.sys_notice_templateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_notice_templateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>
+        }
+        findMany: {
+          args: Prisma.sys_notice_templateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>[]
+        }
+        create: {
+          args: Prisma.sys_notice_templateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>
+        }
+        createMany: {
+          args: Prisma.sys_notice_templateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_notice_templateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>[]
+        }
+        delete: {
+          args: Prisma.sys_notice_templateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>
+        }
+        update: {
+          args: Prisma.sys_notice_templateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_notice_templateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_notice_templateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_notice_templateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_notice_templateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_notice_templatePayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_notice_templateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_notice_template>
+        }
+        groupBy: {
+          args: Prisma.sys_notice_templateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_notice_templateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_notice_templateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_notice_templateCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_file_pending_delete: {
+      payload: Prisma.$sys_file_pending_deletePayload<ExtArgs>
+      fields: Prisma.sys_file_pending_deleteFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_file_pending_deleteFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_file_pending_deleteFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>
+        }
+        findFirst: {
+          args: Prisma.sys_file_pending_deleteFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_file_pending_deleteFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>
+        }
+        findMany: {
+          args: Prisma.sys_file_pending_deleteFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>[]
+        }
+        create: {
+          args: Prisma.sys_file_pending_deleteCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>
+        }
+        createMany: {
+          args: Prisma.sys_file_pending_deleteCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_file_pending_deleteCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>[]
+        }
+        delete: {
+          args: Prisma.sys_file_pending_deleteDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>
+        }
+        update: {
+          args: Prisma.sys_file_pending_deleteUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_file_pending_deleteDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_file_pending_deleteUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_file_pending_deleteUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_file_pending_deleteUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_file_pending_deletePayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_file_pending_deleteAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_file_pending_delete>
+        }
+        groupBy: {
+          args: Prisma.sys_file_pending_deleteGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_file_pending_deleteGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_file_pending_deleteCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_file_pending_deleteCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3273,11 +3498,32 @@ export const Sys_userScalarFieldEnum = {
   id_card: 'id_card',
   phone_enc: 'phone_enc',
   phone_hash: 'phone_hash',
+  cancelled_at: 'cancelled_at',
+  cancel_reason: 'cancel_reason',
+  cancel_effective: 'cancel_effective',
   id_card_enc: 'id_card_enc',
-  id_card_hash: 'id_card_hash'
+  id_card_hash: 'id_card_hash',
+  email_verified: 'email_verified',
+  email_verified_at: 'email_verified_at'
 } as const
 
 export type Sys_userScalarFieldEnum = (typeof Sys_userScalarFieldEnum)[keyof typeof Sys_userScalarFieldEnum]
+
+
+export const Sys_verify_codeScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  target: 'target',
+  code: 'code',
+  scene: 'scene',
+  expires_at: 'expires_at',
+  used_at: 'used_at',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type Sys_verify_codeScalarFieldEnum = (typeof Sys_verify_codeScalarFieldEnum)[keyof typeof Sys_verify_codeScalarFieldEnum]
 
 
 export const Sys_roleScalarFieldEnum = {
@@ -3413,6 +3659,7 @@ export const Sys_noticeScalarFieldEnum = {
   status: 'status',
   publish_time: 'publish_time',
   created_at: 'created_at',
+  template_id: 'template_id',
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
@@ -3461,7 +3708,8 @@ export const Sys_audit_logScalarFieldEnum = {
   status: 'status',
   error_msg: 'error_msg',
   created_at: 'created_at',
-  created_by: 'created_by'
+  created_by: 'created_by',
+  metadata: 'metadata'
 } as const
 
 export type Sys_audit_logScalarFieldEnum = (typeof Sys_audit_logScalarFieldEnum)[keyof typeof Sys_audit_logScalarFieldEnum]
@@ -3555,7 +3803,8 @@ export const Sys_fileScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  md5: 'md5'
 } as const
 
 export type Sys_fileScalarFieldEnum = (typeof Sys_fileScalarFieldEnum)[keyof typeof Sys_fileScalarFieldEnum]
@@ -3614,7 +3863,12 @@ export const Sys_jobScalarFieldEnum = {
   timeout_seconds: 'timeout_seconds',
   is_paused: 'is_paused',
   last_run_at: 'last_run_at',
-  next_run_at: 'next_run_at'
+  next_run_at: 'next_run_at',
+  alert_enabled: 'alert_enabled',
+  alert_channels: 'alert_channels',
+  alert_receivers: 'alert_receivers',
+  alert_threshold: 'alert_threshold',
+  fail_count: 'fail_count'
 } as const
 
 export type Sys_jobScalarFieldEnum = (typeof Sys_jobScalarFieldEnum)[keyof typeof Sys_jobScalarFieldEnum]
@@ -3908,6 +4162,41 @@ export const Sys_approval_logScalarFieldEnum = {
 export type Sys_approval_logScalarFieldEnum = (typeof Sys_approval_logScalarFieldEnum)[keyof typeof Sys_approval_logScalarFieldEnum]
 
 
+export const Sys_notice_templateScalarFieldEnum = {
+  template_id: 'template_id',
+  tenant_id: 'tenant_id',
+  template_code: 'template_code',
+  template_name: 'template_name',
+  channel_type: 'channel_type',
+  title: 'title',
+  content: 'content',
+  content_format: 'content_format',
+  remark: 'remark',
+  params: 'params',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_notice_templateScalarFieldEnum = (typeof Sys_notice_templateScalarFieldEnum)[keyof typeof Sys_notice_templateScalarFieldEnum]
+
+
+export const Sys_file_pending_deleteScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  url: 'url',
+  retry_count: 'retry_count',
+  next_retry: 'next_retry',
+  last_error: 'last_error',
+  created_at: 'created_at'
+} as const
+
+export type Sys_file_pending_deleteScalarFieldEnum = (typeof Sys_file_pending_deleteScalarFieldEnum)[keyof typeof Sys_file_pending_deleteScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4198,6 +4487,7 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   sys_tenant?: Prisma.sys_tenantOmit
   sys_user?: Prisma.sys_userOmit
+  sys_verify_code?: Prisma.sys_verify_codeOmit
   sys_role?: Prisma.sys_roleOmit
   sys_dept?: Prisma.sys_deptOmit
   sys_menu?: Prisma.sys_menuOmit
@@ -4233,6 +4523,8 @@ export type GlobalOmitConfig = {
   sys_approval_request?: Prisma.sys_approval_requestOmit
   sys_approval_node?: Prisma.sys_approval_nodeOmit
   sys_approval_log?: Prisma.sys_approval_logOmit
+  sys_notice_template?: Prisma.sys_notice_templateOmit
+  sys_file_pending_delete?: Prisma.sys_file_pending_deleteOmit
 }
 
 /* Types for Logging */

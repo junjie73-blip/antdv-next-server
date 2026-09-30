@@ -30,6 +30,7 @@ import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import { success } from "@/shared/http/response.js";
 import { RoleService } from "./service.js";
 import { upload } from "../user/controller.js";
+import { computeDataScope, toWhereScope } from "@/middleware/index.js";
 
 @Controller("/role", { tags: ["角色管理"] })
 export default class RoleController extends BaseController<any, any, any, any> {
@@ -77,7 +78,14 @@ export default class RoleController extends BaseController<any, any, any, any> {
   @ApiOperation("获取角色选项", "用于下拉选择框")
   @ApiResponse(200, "角色选项列表")
   async options(@Req() req: Request, @Res() res: Response) {
-    return this.repository.options(req.tenantId!);
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+      const data = await this.repository.options(tenantId);
+      success(res, data);
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
   @Get("/export")
   @ApiOperation("导出角色", "根据筛选条件导出角色为Excel")
@@ -347,5 +355,46 @@ export default class RoleController extends BaseController<any, any, any, any> {
         checked: checkedSet.has(item.menu_id),
         children: this.buildTreeWithChecked(items, item.menu_id, checkedSet),
       }));
+  }
+  @Post("/:id/data-scope-preview")
+  @ApiOperation("预览角色的数据权限范围")
+  async dataScopePreview(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = req.tenantId!;
+      const roleId = req.params.id;
+      const { sampleUserId } = req.body as { sampleUserId?: string };
+
+      if (!sampleUserId) throw new AppError("缺少 sampleUserId", 400001, 400);
+
+      // 校验用户属于当前租户
+      const sample = await prisma.sys_user.findFirst({
+        where: { user_id: sampleUserId, tenant_id: tenantId, is_deleted: 0 },
+        select: { user_id: true, username: true, real_name: true },
+      });
+      if (!sample) throw new AppError("样本用户不存在", 404001, 404);
+
+      const ctx = await computeDataScope(sampleUserId, tenantId);
+      const whereScope = toWhereScope(ctx);
+
+      const [sampleUsers, total] = await Promise.all([
+        prisma.sys_user.findMany({
+          where: { ...whereScope, tenant_id: tenantId, is_deleted: 0 },
+          take: 20,
+          select: { user_id: true, username: true, real_name: true },
+          orderBy: { created_at: "desc" },
+        }),
+        prisma.sys_user.count({
+          where: { ...whereScope, tenant_id: tenantId, is_deleted: 0 },
+        }),
+      ]);
+
+      success(res, {
+        ctx,
+        sampleUsers,
+        total,
+      });
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 }
