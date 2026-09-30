@@ -1,0 +1,47 @@
+{
+  "name": "@saas/auth-svc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "prisma generate && tsc -b tsconfig.json",
+    "start": "node dist/index.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "typecheck": "tsc -b tsconfig.json --dry",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:push": "prisma db push"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "catalog:",
+    "@grpc/proto-loader": "catalog:",
+    "@opentelemetry/api": "catalog:",
+    "consul": "catalog:",
+    "@opentelemetry/auto-instrumentations-node": "catalog:",
+    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
+    "@opentelemetry/resources": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "@opentelemetry/semantic-conventions": "catalog:",
+    "@prisma/client": "catalog:",
+    "@prisma/adapter-pg": "catalog:",
+    "@saas/contracts": "workspace:*",
+    "bcryptjs": "catalog:",
+    "dotenv": "catalog:",
+    "express": "catalog:",
+    "helmet": "catalog:",
+    "ioredis": "catalog:",
+    "jose": "catalog:",
+    "pino": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/express": "catalog:",
+    "@types/node": "catalog:",
+    "prisma": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "@types/consul": "catalog:",
+    "@saas/grpc-client": "workspace:*"
+  }
+}

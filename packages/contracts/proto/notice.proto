@@ -1,0 +1,36 @@
+syntax = "proto3";
+package saas.notice;
+
+import "common.proto";
+
+service NoticeService {
+  rpc SendNotice(SendNoticeRequest) returns (SendNoticeResponse);
+  rpc PublishNotice(PublishNoticeRequest) returns (saas.common.Empty);
+}
+
+message SendNoticeRequest {
+  string tenant_id = 1;
+  string title = 2;
+  string content = 3;
+  repeated string channels = 4;
+  map<string, string> receivers = 5;   // channel → comma-separated receivers
+  string template_id = 6;
+}
+
+message SendNoticeResponse {
+  bool success = 1;
+  repeated ChannelResult results = 2;
+}
+
+message ChannelResult {
+  string channel = 1;
+  int32 total = 2;
+  int32 success = 3;
+  int32 failed = 4;
+  repeated string errors = 5;
+}
+
+message PublishNoticeRequest {
+  string notice_id = 1;
+  string tenant_id = 2;
+}

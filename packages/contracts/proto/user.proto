@@ -1,0 +1,53 @@
+syntax = "proto3";
+package saas.user;
+
+import "common.proto";
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (UserProfile);
+  rpc BatchGetUsers(BatchGetUsersRequest) returns (BatchGetUsersResponse);
+  rpc GetUserOptions(GetUserOptionsRequest) returns (GetUserOptionsResponse);
+}
+
+message GetUserRequest {
+  string user_id = 1;
+  string tenant_id = 2;
+}
+
+message BatchGetUsersRequest {
+  repeated string user_ids = 1;
+  string tenant_id = 2;
+}
+
+message BatchGetUsersResponse {
+  repeated UserProfile users = 1;
+}
+
+message UserProfile {
+  string user_id = 1;
+  string tenant_id = 2;
+  string username = 3;
+  string real_name = 4;
+  string email = 5;
+  string phone = 6;
+  string avatar = 7;
+  int32 gender = 8;
+  string status = 9;
+  string dept_id = 10;
+  string dept_name = 11;
+}
+
+message GetUserOptionsRequest {
+  string tenant_id = 1;
+}
+
+message GetUserOptionsResponse {
+  repeated UserOption options = 1;
+}
+
+message UserOption {
+  string user_id = 1;
+  string username = 2;
+  string real_name = 3;
+  string label = 4;
+}

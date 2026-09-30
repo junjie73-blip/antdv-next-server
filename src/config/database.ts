@@ -8,6 +8,7 @@ import {
   dbSlowQueryTotal,
   extractOperationType,
 } from "@/platform/metrics/index.js";
+// @ts-ignore
 import { trace } from "@opentelemetry/api";
 const SLOW_QUERY_MS = 500;
 const DB_FAIL_THRESHOLD = 10;

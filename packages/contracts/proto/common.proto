@@ -1,0 +1,22 @@
+syntax = "proto3";
+package saas.common;
+
+// 通用响应包装
+message Empty {}
+
+message Pagination {
+  int32 page_num = 1;
+  int32 page_size = 2;
+}
+
+message PageInfo {
+  int64 total = 1;
+  int32 page_num = 2;
+  int32 page_size = 3;
+  int32 total_pages = 4;
+}
+
+message Meta {
+  string trace_id = 1;
+  string request_id = 2;
+}

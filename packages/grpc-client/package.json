@@ -1,0 +1,30 @@
+{
+  "name": "@saas/grpc-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "typecheck": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "catalog:",
+    "@opentelemetry/api": "catalog:",
+    "@saas/contracts": "workspace:*",
+    "consul": "catalog:"
+  },
+  "devDependencies": {
+    "@types/consul": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

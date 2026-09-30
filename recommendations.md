@@ -13,22 +13,22 @@
 
 本轮审计基于实际代码走查，覆盖以下维度：
 
-| 维度       | 关注点                    |
-| -------- | ---------------------- |
-| **正确性**  | 逻辑错误、响应缺失、并发竞态、字段名不匹配  |
-| **安全性**  | 越权访问、跨租户泄漏、SQL 注入、权限缺失 |
-| **性能**   | N+1 查询、缓存失效、慢 SQL、内存泄漏 |
-| **一致性**  | 命名风格、模块依赖、错误处理         |
-| **可维护性** | 重复代码、隐式耦合、死代码          |
+| 维度         | 关注点                                     |
+| ------------ | ------------------------------------------ |
+| **正确性**   | 逻辑错误、响应缺失、并发竞态、字段名不匹配 |
+| **安全性**   | 越权访问、跨租户泄漏、SQL 注入、权限缺失   |
+| **性能**     | N+1 查询、缓存失效、慢 SQL、内存泄漏       |
+| **一致性**   | 命名风格、模块依赖、错误处理               |
+| **可维护性** | 重复代码、隐式耦合、死代码                 |
 
 ### 1.2 问题分布
 
-| 严重等级     | 数量     | 占比       |
-| -------- | ------ | -------- |
+| 严重等级  | 数量   | 占比     |
+| --------- | ------ | -------- |
 | 🔴 P0 严重 | 22     | 25%      |
 | 🟠 P1 中等 | 31     | 36%      |
 | 🟡 P2 细节 | 34     | 39%      |
-| **合计**   | **87** | **100%** |
+| **合计**  | **87** | **100%** |
 
 ### 1.3 关键发现
 
@@ -916,42 +916,42 @@ await redis.del(...accessKeys);   // 大 key 量展开可能超限
 
 ### 2.4 细节问题（P2）
 
-| 编号     | 问题                                                                        | 位置                             | 工作量       | <br />     | <br /> |
-| ------ | ------------------------------------------------------------------------- | ------------------------------ | --------- | :--------- | :----- |
-| 2.4.1  | `normalizePath` 在中间件阶段拿不到 `req.route`，死逻辑                                 | `request-context.ts`           | 0.1       | <br />     | <br /> |
-| 2.4.2  | Express 5 中 `req.query` 是只读，`validator.ts` 直接赋值未来会抛错                      | `validator.ts`                 | 0.2       | <br />     | <br /> |
-| 2.4.3  | `audit.ts` 覆盖 `res.json` 时未做 `headersSent` 短路                             | `middleware/business/audit.ts` | 0.1       | <br />     | <br /> |
-| 2.4.4  | `data-scope.ts` `combined.size === 0` 判断重复两次                              | `data-scope.ts`                | 0.1       | <br />     | <br /> |
-| 2.4.5  | `chunkUploadRateLimit` 没走 `createProtectedLimiter`，无长期封禁                  | `rate-limit.ts`                | 0.1       | <br />     | <br /> |
-| 2.4.6  | `mfa.ts` 用 `req.body?._mfaToken`，multipart 时拿不到                           | `mfa.ts`                       | 0.1       | <br />     | <br /> |
-| 2.4.7  | `error-handler.ts` `notFoundHandler` 缺 traceId                            | `error-handler.ts`             | 0.1       | <br />     | <br /> |
-| 2.4.8  | `env.ts` 环境变量加载逻辑与注释不符                                                    | `env.ts`                       | 0.3       | <br />     | <br /> |
-| 2.4.9  | `storage.ts` 用 `@config/env.js`，其它文件用 `@/config/env.js`                   | `storage.ts`                   | 0.1       | <br />     | <br /> |
-| 2.4.10 | `database.ts` 只订阅 `query` 事件                                              | `database.ts`                  | 0.1       | <br />     | <br /> |
-| 2.4.11 | `redis.ts` 的 \`                                                           | <br />                         | ""\` 是死代码 | `redis.ts` | 0.1    |
-| 2.4.12 | `partition-manager.ts` 直接拼时间戳入 SQL                                        | `partition-manager.ts`         | 0.2       | <br />     | <br /> |
-| 2.4.13 | `online/controller.ts` `kick` 不允许踢自己                                      | `online/controller.ts`         | 0.1       | <br />     | <br /> |
-| 2.4.14 | `user/controller.ts` `useroOtions` 拼写                                     | `user/controller.ts`           | 0.1       | <br />     | <br /> |
-| 2.4.15 | `user/controller.ts` `/reset-password` 未走 schema                          | `user/controller.ts`           | 0.1       | <br />     | <br /> |
-| 2.4.16 | `tenant/schema.ts` `TenantCreate.expireTime` 与 `TenantUpdate` 类型不齐        | `tenant/schema.ts`             | 0.1       | <br />     | <br /> |
-| 2.4.17 | `database/service.ts` `version[0].v.split(",")[0]` 可能越界                   | `database/service.ts`          | 0.1       | <br />     | <br /> |
-| 2.4.18 | `server/repository.ts` `getUnixDisks` 过滤掉 tmpfs/overlay                   | `server/repository.ts`         | 0.1       | <br />     | <br /> |
-| 2.4.19 | `notice/channels/email.ts` `env?.SYSTEM_NAME` 兜底                          | `notice/channels/email.ts`     | 0.1       | <br />     | <br /> |
-| 2.4.20 | `role/repository.ts` `findPage` 与 controller 重复拼 keyword                  | `role/repository.ts`           | 0.2       | <br />     | <br /> |
-| 2.4.21 | `role/controller.ts` `getDetailRole` 解构了 `sys_role_menu` 但未用              | `role/controller.ts`           | 0.1       | <br />     | <br /> |
-| 2.4.22 | `qps/singleton.ts` `setInterval` 无 `.unref()`                             | `qps/singleton.ts`             | 0.1       | <br />     | <br /> |
-| 2.4.23 | `role/service.ts` `if (!dto.roleCode) return;` 空串也 return                 | `role/service.ts`              | 0.1       | <br />     | <br /> |
-| 2.4.24 | `cache.ts` `invalidateAndBroadcast` 使用 `redis.del(...keys)` 展开            | `setting/cache.ts`             | 0.2       | <br />     | <br /> |
-| 2.4.25 | `dept/controller.ts` 缺少 try/catch                                         | `dept/controller.ts`           | 0.2       | <br />     | <br /> |
-| 2.4.26 | `dict-data/controller.ts` 缺少 try/catch                                    | `dict-data/controller.ts`      | 0.2       | <br />     | <br /> |
-| 2.4.27 | `dict-type/controller.ts` 缺少 try/catch                                    | `dict-type/controller.ts`      | 0.2       | <br />     | <br /> |
-| 2.4.28 | `menu/controller.ts` 缺少 try/catch                                         | `menu/controller.ts`           | 0.2       | <br />     | <br /> |
-| 2.4.29 | `permission/controller.ts` 缺少 try/catch                                   | `permission/controller.ts`     | 0.2       | <br />     | <br /> |
-| 2.4.30 | `dict.service.ts` `getTree` 的 `children` 为空时返回空数组（应删字段）                   | `core/excel/dict.service.ts`   | 0.1       | <br />     | <br /> |
-| 2.4.31 | `dept/service.ts` 树构建时 `parentId` 为全零 UUID 的处理                            | `dept/service.ts`              | 0.1       | <br />     | <br /> |
-| 2.4.32 | `menu/service.ts` 导入时微应用 JSON 未做二次校验                                      | `menu/service.ts`              | 0.2       | <br />     | <br /> |
-| 2.4.33 | `menu/repository.ts` `findButtonsByParent` 未过滤 `menu_type = 3` 之外的场景      | `menu/repository.ts`           | 0.1       | <br />     | <br /> |
-| 2.4.34 | `permission/repository.ts` `beforeCreate` / `beforeUpdate` 与 service 校验重复 | `permission/repository.ts`     | 0.2       | <br />     | <br /> |
+| 编号   | 问题                                                                           | 位置                           | 工作量        | <br />     | <br /> |
+| ------ | ------------------------------------------------------------------------------ | ------------------------------ | ------------- | :--------- | :----- |
+| 2.4.1  | `normalizePath` 在中间件阶段拿不到 `req.route`，死逻辑                         | `request-context.ts`           | 0.1           | <br />     | <br /> |
+| 2.4.2  | Express 5 中 `req.query` 是只读，`validator.ts` 直接赋值未来会抛错             | `validator.ts`                 | 0.2           | <br />     | <br /> |
+| 2.4.3  | `audit.ts` 覆盖 `res.json` 时未做 `headersSent` 短路                           | `middleware/business/audit.ts` | 0.1           | <br />     | <br /> |
+| 2.4.4  | `data-scope.ts` `combined.size === 0` 判断重复两次                             | `data-scope.ts`                | 0.1           | <br />     | <br /> |
+| 2.4.5  | `chunkUploadRateLimit` 没走 `createProtectedLimiter`，无长期封禁               | `rate-limit.ts`                | 0.1           | <br />     | <br /> |
+| 2.4.6  | `mfa.ts` 用 `req.body?._mfaToken`，multipart 时拿不到                          | `mfa.ts`                       | 0.1           | <br />     | <br /> |
+| 2.4.7  | `error-handler.ts` `notFoundHandler` 缺 traceId                                | `error-handler.ts`             | 0.1           | <br />     | <br /> |
+| 2.4.8  | `env.ts` 环境变量加载逻辑与注释不符                                            | `env.ts`                       | 0.3           | <br />     | <br /> |
+| 2.4.9  | `storage.ts` 用 `@config/env.js`，其它文件用 `@/config/env.js`                 | `storage.ts`                   | 0.1           | <br />     | <br /> |
+| 2.4.10 | `database.ts` 只订阅 `query` 事件                                              | `database.ts`                  | 0.1           | <br />     | <br /> |
+| 2.4.11 | `redis.ts` 的 \`                                                               | <br />                         | ""\` 是死代码 | `redis.ts` | 0.1    |
+| 2.4.12 | `partition-manager.ts` 直接拼时间戳入 SQL                                      | `partition-manager.ts`         | 0.2           | <br />     | <br /> |
+| 2.4.13 | `online/controller.ts` `kick` 不允许踢自己                                     | `online/controller.ts`         | 0.1           | <br />     | <br /> |
+| 2.4.14 | `user/controller.ts` `useroOtions` 拼写                                        | `user/controller.ts`           | 0.1           | <br />     | <br /> |
+| 2.4.15 | `user/controller.ts` `/reset-password` 未走 schema                             | `user/controller.ts`           | 0.1           | <br />     | <br /> |
+| 2.4.16 | `tenant/schema.ts` `TenantCreate.expireTime` 与 `TenantUpdate` 类型不齐        | `tenant/schema.ts`             | 0.1           | <br />     | <br /> |
+| 2.4.17 | `database/service.ts` `version[0].v.split(",")[0]` 可能越界                    | `database/service.ts`          | 0.1           | <br />     | <br /> |
+| 2.4.18 | `server/repository.ts` `getUnixDisks` 过滤掉 tmpfs/overlay                     | `server/repository.ts`         | 0.1           | <br />     | <br /> |
+| 2.4.19 | `notice/channels/email.ts` `env?.SYSTEM_NAME` 兜底                             | `notice/channels/email.ts`     | 0.1           | <br />     | <br /> |
+| 2.4.20 | `role/repository.ts` `findPage` 与 controller 重复拼 keyword                   | `role/repository.ts`           | 0.2           | <br />     | <br /> |
+| 2.4.21 | `role/controller.ts` `getDetailRole` 解构了 `sys_role_menu` 但未用             | `role/controller.ts`           | 0.1           | <br />     | <br /> |
+| 2.4.22 | `qps/singleton.ts` `setInterval` 无 `.unref()`                                 | `qps/singleton.ts`             | 0.1           | <br />     | <br /> |
+| 2.4.23 | `role/service.ts` `if (!dto.roleCode) return;` 空串也 return                   | `role/service.ts`              | 0.1           | <br />     | <br /> |
+| 2.4.24 | `cache.ts` `invalidateAndBroadcast` 使用 `redis.del(...keys)` 展开             | `setting/cache.ts`             | 0.2           | <br />     | <br /> |
+| 2.4.25 | `dept/controller.ts` 缺少 try/catch                                            | `dept/controller.ts`           | 0.2           | <br />     | <br /> |
+| 2.4.26 | `dict-data/controller.ts` 缺少 try/catch                                       | `dict-data/controller.ts`      | 0.2           | <br />     | <br /> |
+| 2.4.27 | `dict-type/controller.ts` 缺少 try/catch                                       | `dict-type/controller.ts`      | 0.2           | <br />     | <br /> |
+| 2.4.28 | `menu/controller.ts` 缺少 try/catch                                            | `menu/controller.ts`           | 0.2           | <br />     | <br /> |
+| 2.4.29 | `permission/controller.ts` 缺少 try/catch                                      | `permission/controller.ts`     | 0.2           | <br />     | <br /> |
+| 2.4.30 | `dict.service.ts` `getTree` 的 `children` 为空时返回空数组（应删字段）         | `core/excel/dict.service.ts`   | 0.1           | <br />     | <br /> |
+| 2.4.31 | `dept/service.ts` 树构建时 `parentId` 为全零 UUID 的处理                       | `dept/service.ts`              | 0.1           | <br />     | <br /> |
+| 2.4.32 | `menu/service.ts` 导入时微应用 JSON 未做二次校验                               | `menu/service.ts`              | 0.2           | <br />     | <br /> |
+| 2.4.33 | `menu/repository.ts` `findButtonsByParent` 未过滤 `menu_type = 3` 之外的场景   | `menu/repository.ts`           | 0.1           | <br />     | <br /> |
+| 2.4.34 | `permission/repository.ts` `beforeCreate` / `beforeUpdate` 与 service 校验重复 | `permission/repository.ts`     | 0.2           | <br />     | <br /> |
 
 ***
 
@@ -1133,16 +1133,16 @@ await redis.del(...accessKeys);   // 大 key 量展开可能超限
 
 ## 五、效果评估指标
 
-| 维度       | 指标        | 当前    | 目标      |
-| -------- | --------- | ----- | ------- |
-| **性能**   | 接口平均响应时间  | 200ms | < 100ms |
-| **性能**   | P95 响应时间  | 500ms | < 300ms |
-| **安全**   | 跨租户数据泄漏事件 | ≥ 4   | 0       |
-| **安全**   | 无权限接口数    | ≥ 8   | 0       |
-| **质量**   | 审计日志重复率   | 100%  | 0%      |
-| **质量**   | 敏感数据明文落库  | ≥ 2 处 | 0       |
-| **可靠性**  | 响应挂起接口    | 3     | 0       |
-| **可观测性** | 关键路径埋点覆盖  | 60%   | 95%     |
+| 维度         | 指标               | 当前   | 目标    |
+| ------------ | ------------------ | ------ | ------- |
+| **性能**     | 接口平均响应时间   | 200ms  | < 100ms |
+| **性能**     | P95 响应时间       | 500ms  | < 300ms |
+| **安全**     | 跨租户数据泄漏事件 | ≥ 4    | 0       |
+| **安全**     | 无权限接口数       | ≥ 8    | 0       |
+| **质量**     | 审计日志重复率     | 100%   | 0%      |
+| **质量**     | 敏感数据明文落库   | ≥ 2 处 | 0       |
+| **可靠性**   | 响应挂起接口       | 3      | 0       |
+| **可观测性** | 关键路径埋点覆盖   | 60%    | 95%     |
 
 ***
 
@@ -1163,20 +1163,23 @@ await redis.del(...accessKeys);   // 大 key 量展开可能超限
 ***
 
 **附录**：详细任务清单已整合至第三章 ToDoList，可用 GitHub Issues / 飞书任务 / Jira 导入，每个条目标注了优先级、位置、预估工作量，便于排期。
-当前：单体 Node.js + PostgreSQL + Redis + MinIO
-↓
-阶段 1：模块化单体（已基本达成）
 
-- 每个业务模块独立目录、独立测试
-- 模块间通过 Service 调用，不直接跨表
-  ↓
-  阶段 2：服务拆分（按业务域）
-- 认证服务 / 用户服务 / 消息服务 / 文件服务 / 工作流服务
-- 通过 gRPC 或 HTTP 通信
-- 需要：API Gateway + 服务注册
-  ↓
-  阶段 3：微服务 + 事件驱动
-- 引入 Kafka / RabbitMQ 做事件总线
-- CQRS 读写分离
-- 需要：分布式追踪（Jaeger）
 
+┌────────────────────────────────────────────────────────────┐
+│ 阶段 1：模块化单体（已基本达成，需审计收尾）              │
+│  ├─ 模块独立目录 + 独立测试                                │
+│  ├─ Controller → Service → Repository 分层                 │
+│  └─ 跨模块只调 Service                                      │
+├────────────────────────────────────────────────────────────┤
+│ 阶段 2：服务拆分（按业务域）                               │
+│  ├─ 5 个核心服务：auth / user / notice / file / workflow   │
+│  ├─ API Gateway（Kong / 自研 Node 网关）                   │
+│  ├─ 服务注册（Consul / Nacos / K8s Service）               │
+│  └─ gRPC（内部）+ HTTP/JSON（外部）                         │
+├────────────────────────────────────────────────────────────┤
+│ 阶段 3：微服务 + 事件驱动                                  │
+│  ├─ Kafka 事件总线                                          │
+│  ├─ CQRS 读写分离                                           │
+│  ├─ Saga 分布式事务                                         │
+│  └─ Jaeger / OpenTelemetry 全链路追踪                       │
+└────────────────────────────────────────────────────────────┘

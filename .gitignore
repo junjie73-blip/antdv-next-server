@@ -10,3 +10,12 @@ dist
 
 logs/*
 uploads/*
+# Monorepo
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# 生成产物
+packages/contracts/src/proto-gen/
+services/*/src/generated/

@@ -1,5 +1,5 @@
 {
-  "name": "antdv-next-server",
+  "name": "saas-server",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -17,8 +17,11 @@
     "@aws-sdk/client-s3": "^3.1136.0",
     "@aws-sdk/lib-storage": "^3.1136.0",
     "@aws-sdk/s3-request-presigner": "^3.1136.0",
+    "@grpc/grpc-js": "^1.14.5",
+    "@grpc/proto-loader": "^0.8.1",
     "@logtail/node": "^0.5.8",
     "@logtail/pino": "^0.5.8",
+    "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/auto-instrumentations-node": "^0.80.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
     "@opentelemetry/resources": "^2.11.0",
@@ -36,6 +39,7 @@
     "body-parser": "^2.3.0",
     "bullmq": "^6.3.7",
     "compression": "^1.8.1",
+    "consul": "^2.0.1",
     "cors": "^2.8.6",
     "cos-nodejs-sdk-v5": "^3.0.0",
     "dayjs": "^1.11.23",
@@ -81,6 +85,7 @@
     "@types/archiver": "^7.0.0",
     "@types/body-parser": "^1.19.6",
     "@types/compression": "^1.8.1",
+    "@types/consul": "^2.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.0",
     "@types/multer": "^2.2.0",
@@ -116,6 +121,7 @@
     "start": "node ./dist/src/index.js",
     "dev:worker": "tsx watch src/worker.ts",
     "dev:server": "nodemon",
-    "start:worker": "node dist/src/worker.js"
+    "start:worker": "node dist/src/worker.js",
+    "catalog": "pnpx codemod pnpm/catalog"
   }
 }
