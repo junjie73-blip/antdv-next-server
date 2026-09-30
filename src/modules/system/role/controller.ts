@@ -63,15 +63,6 @@ export default class RoleController extends BaseController<any, any, any, any> {
 
   buildListWhere(query: any): any {
     const where: any = {};
-    if (query.keyword) {
-      where.OR = [
-        { role_code: { contains: query.keyword } },
-        { role_name: { contains: query.keyword } },
-      ];
-    }
-    if (query.status !== undefined) {
-      where.status = query.status;
-    }
     return where;
   }
   @Get("/options")
@@ -159,11 +150,16 @@ export default class RoleController extends BaseController<any, any, any, any> {
         req.tenantId!,
       );
       if (!role) throw new AppError("角色不存在", 404, 404);
+
       const menuIds = role.sys_role_menu.map((m: any) => m.menu_id);
       const permIds = role.sys_role_permission.map((p: any) => p.perm_id);
+
       const { sys_role_menu, sys_role_permission, ...rest } = role;
-      // @ts-ignore
-      success(res, { ...keysToCamelCase(rest), menuIds, permIds });
+      void sys_role_menu;
+      void sys_role_permission;
+
+      const data = keysToCamelCase<Record<string, unknown>>(rest);
+      success(res, { ...data, menuIds, permIds });
     } catch (err) {
       this.handleError(res, err);
     }
@@ -360,39 +356,22 @@ export default class RoleController extends BaseController<any, any, any, any> {
   @ApiOperation("预览角色的数据权限范围")
   async dataScopePreview(@Req() req: Request, @Res() res: Response) {
     try {
-      const tenantId = req.tenantId!;
-      const roleId = req.params.id;
-      const { sampleUserId } = req.body as { sampleUserId?: string };
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-      if (!sampleUserId) throw new AppError("缺少 sampleUserId", 400001, 400);
-
-      // 校验用户属于当前租户
-      const sample = await prisma.sys_user.findFirst({
-        where: { user_id: sampleUserId, tenant_id: tenantId, is_deleted: 0 },
-        select: { user_id: true, username: true, real_name: true },
+      const schema = z.object({
+        sampleUserId: z.string().uuid(),
+        sampleCount: z.number().int().min(1).max(100).default(20),
       });
-      if (!sample) throw new AppError("样本用户不存在", 404001, 404);
+      const dto = schema.parse(req.body);
 
-      const ctx = await computeDataScope(sampleUserId, tenantId);
-      const whereScope = toWhereScope(ctx);
-
-      const [sampleUsers, total] = await Promise.all([
-        prisma.sys_user.findMany({
-          where: { ...whereScope, tenant_id: tenantId, is_deleted: 0 },
-          take: 20,
-          select: { user_id: true, username: true, real_name: true },
-          orderBy: { created_at: "desc" },
-        }),
-        prisma.sys_user.count({
-          where: { ...whereScope, tenant_id: tenantId, is_deleted: 0 },
-        }),
-      ]);
-
-      success(res, {
-        ctx,
-        sampleUsers,
-        total,
-      });
+      const data = await this.service.previewDataScope(
+        // ✅ 全下沉
+        tenantId,
+        dto.sampleUserId,
+        dto.sampleCount,
+      );
+      success(res, data);
     } catch (err) {
       this.handleError(res, err);
     }

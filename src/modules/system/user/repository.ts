@@ -953,6 +953,71 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     });
     return !!existing;
   }
+  async findUserOptions(tenantId: string) {
+    return this.model.findMany({
+      where: {
+        tenant_id: tenantId,
+        status: "1",
+        is_deleted: 0,
+      },
+      select: {
+        user_id: true,
+        username: true,
+        real_name: true,
+      },
+      orderBy: { username: "asc" },
+    });
+  }
+  async findSensitiveById(userId: string, tenantId: string) {
+    return this.model.findFirst({
+      where: {
+        user_id: userId,
+        tenant_id: tenantId,
+        is_deleted: 0,
+      },
+      select: {
+        user_id: true,
+        username: true,
+        real_name: true,
+        phone: true,
+        phone_enc: true,
+        email: true,
+        id_card_enc: true,
+      },
+    });
+  }
+  async findRecentLoginLogs(userId: string, tenantId: string, take: number) {
+    return prisma.sys_login_log.findMany({
+      where: { user_id: userId, tenant_id: tenantId },
+      orderBy: { created_at: "desc" },
+      take,
+      select: {
+        log_id: true,
+        ip_address: true,
+        user_agent: true,
+        status: true,
+        message: true,
+        created_at: true,
+      },
+    });
+  }
+
+  async findRecentAuditLogs(userId: string, tenantId: string, take: number) {
+    return prisma.sys_audit_log.findMany({
+      where: { user_id: userId, tenant_id: tenantId },
+      orderBy: { created_at: "desc" },
+      take,
+      select: {
+        log_id: true,
+        operation: true,
+        method: true,
+        request_url: true,
+        status: true,
+        execute_time: true,
+        created_at: true,
+      },
+    });
+  }
 }
 /**
  * 菜单按层级排序（父菜单在前），保证 parent_id 能被正确映射

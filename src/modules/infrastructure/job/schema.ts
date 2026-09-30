@@ -57,7 +57,21 @@ export const JobLogListSchema = z.object({
   startTime: z.string().optional(),
   endTime: z.string().optional(),
 });
-
+export const JobDependencySchema = z.object({
+  dependencyJobIds: z
+    .array(z.string().uuid())
+    .max(50)
+    .default([])
+    .openapi({ description: "依赖的前置任务 ID 数组" }),
+  dependencyMode: z
+    .enum(["all", "any"])
+    .default("all")
+    .openapi({ description: "依赖满足模式：all-全部成功 any-任一成功" }),
+  onDependencyFail: z
+    .enum(["skip", "abort"])
+    .default("skip")
+    .openapi({ description: "依赖失败时的行为：skip-跳过 abort-中止" }),
+});
 export type JobCreateDTO = z.infer<typeof JobCreateSchema>;
 export type JobUpdateDTO = z.infer<typeof JobUpdateSchema>;
 export type JobLogListDTO = z.infer<typeof JobLogListSchema>;

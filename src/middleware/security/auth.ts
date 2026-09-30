@@ -16,7 +16,7 @@ export const AUTH_WHITELIST = [
   "/api/v1/auth/logout",
   "/health",
   "/api/docs",
-  "/api/docs.json",
+  "/api/docs/json",
   "/uploads/",
   "/favicon.ico",
   "/api/v1/auth/forgot-password",

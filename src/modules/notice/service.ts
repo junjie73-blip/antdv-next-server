@@ -7,6 +7,7 @@ import { BaseService } from "@/core/base/service.js";
 import { logger } from "@/platform/logger/logger.js";
 import { generateExcel, parseExcel } from "@/platform/excel/service.js";
 import { publishNoticePush } from "@/platform/ws/notice-pubsub.js";
+import { pushNotice } from "./pusher.js";
 export interface SendNoticeOptions {
   channels?: string[];
   receiversByChannel?: Record<string, string[]>;
@@ -196,5 +197,24 @@ export class NoticeService extends BaseService<NoticeRepository> {
     }
 
     return { successCount, failCount: errors.length, errors };
+  }
+  async publishDueNotices(tenantId: string): Promise<{ count: number }> {
+    const now = new Date();
+    const due = await this.repository.findDueNotices(tenantId, now);
+    if (due.length === 0) return { count: 0 };
+
+    const ids = due.map((n) => n.notice_id);
+    await this.repository.markPublished(ids);
+
+    // 发布后触发推送
+    for (const n of due) {
+      try {
+        await pushNotice(n.notice_id, tenantId);
+      } catch (err) {
+        logger.warn({ err, noticeId: n.notice_id }, "[notice] push failed");
+      }
+    }
+
+    return { count: ids.length };
   }
 }

@@ -351,4 +351,23 @@ export class NoticeRepository extends BaseRepository<any, any, any, any> {
       },
     });
   }
+  async findDueNotices(tenantId: string, before: Date) {
+    return prisma.sys_notice.findMany({
+      where: {
+        tenant_id: tenantId,
+        status: "0",
+        is_deleted: 0,
+        publish_time: { lte: before },
+      },
+      select: { notice_id: true },
+    });
+  }
+
+  async markPublished(noticeIds: string[]) {
+    if (noticeIds.length === 0) return;
+    await prisma.sys_notice.updateMany({
+      where: { notice_id: { in: noticeIds } },
+      data: { status: "1", updated_at: new Date() },
+    });
+  }
 }

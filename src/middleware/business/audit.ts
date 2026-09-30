@@ -6,7 +6,7 @@ import { summarizeRequest, summarizeResponse } from "@/platform/audit/index.js";
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 const SKIP_PATHS = [
   "/api/docs",
-  "/api/docs.json",
+  "/api/docs/json",
   "/api/v1/upload/chunk", // ⭐ 分片上传不进审计
   "/uploads/",
   "/health",
@@ -20,7 +20,13 @@ function shouldSkip(path: string): boolean {
       : path === p || path.startsWith(`${p}/`),
   );
 }
-
+export function pushBusinessAudit(
+  req: Request,
+  entry: Parameters<typeof pushAudit>[0],
+) {
+  (req as any).__auditHandled = true;
+  pushAudit(entry);
+}
 export function auditMiddleware(
   req: Request,
   res: Response,
@@ -36,7 +42,6 @@ export function auditMiddleware(
     } catch {}
     return originalJson(body);
   };
-
   const start = Date.now();
   res.on("finish", () => {
     if ((req as any).__auditHandled) return;

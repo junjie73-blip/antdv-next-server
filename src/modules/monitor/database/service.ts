@@ -48,48 +48,66 @@ export class DatabaseMonitorService {
    * 数据库基础信息
    */
   async getInfo(): Promise<DbInfo> {
-    const [version, db] = await Promise.all([
-      prisma.$queryRaw<any[]>`SELECT version() AS v`,
-      prisma.$queryRaw<any[]>`
-        SELECT current_database() AS db_name,
-               pg_database_size(current_database()) AS size
-      `,
-    ]);
+    /* ---------- 版本 / 库信息 ---------- */
+    const versionRows = await prisma.$queryRaw<Array<{ v: string }>>`
+    SELECT version() AS v
+  `;
+    const dbRows = await prisma.$queryRaw<
+      Array<{ db_name: string; size: bigint }>
+    >`
+    SELECT current_database() AS db_name,
+           pg_database_size(current_database()) AS size
+  `;
 
-    const dbName = db[0].db_name;
-    const sizeBytes = Number(db[0].size);
+    if (versionRows.length === 0 || dbRows.length === 0) {
+      throw new Error("无法获取数据库基础信息");
+    }
 
-    const [conn, setting] = await Promise.all([
-      prisma.$queryRaw<any[]>`
-        SELECT
-          COUNT(*)::int AS total,
-          COUNT(*) FILTER (WHERE state = 'active')::int AS active,
-          COUNT(*) FILTER (WHERE state = 'idle')::int AS idle
-        FROM pg_stat_activity
-        WHERE datname = current_database()
-      `,
-      prisma.$queryRaw<any[]>`
-        SELECT setting::int AS max_conn FROM pg_settings WHERE name = 'max_connections'
-      `,
-    ]);
+    const versionRaw = versionRows[0]?.v ?? "";
+    const dbName = dbRows[0]?.db_name ?? "unknown";
+    const sizeBytes = Number(dbRows[0]?.size ?? 0n);
 
-    const stat = await prisma.$queryRaw<any[]>`
-      SELECT pg_postmaster_start_time() AS start_time
-    `;
+    /* ---------- 连接数 ---------- */
+    const connRows = await prisma.$queryRaw<
+      Array<{ total: number; active: number; idle: number }>
+    >`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE state = 'active')::int AS active,
+      COUNT(*) FILTER (WHERE state = 'idle')::int AS idle
+    FROM pg_stat_activity
+    WHERE datname = current_database()
+  `;
+
+    const maxRows = await prisma.$queryRaw<Array<{ max_conn: number }>>`
+    SELECT setting::int AS max_conn FROM pg_settings WHERE name = 'max_connections'
+  `;
+
+    /* ---------- 启动时间 ---------- */
+    const statRows = await prisma.$queryRaw<Array<{ start_time: Date }>>`
+    SELECT pg_postmaster_start_time() AS start_time
+  `;
+
+    const conn = connRows[0] ?? { total: 0, active: 0, idle: 0 };
+    const maxConn = maxRows[0]?.max_conn ?? 100;
+    const startTime = statRows[0]?.start_time ?? new Date();
+
+    // ✅ 版本号安全截取
+    const version = versionRaw ? versionRaw.split(",")[0].trim() : "unknown";
 
     return {
-      version: version[0].v.split(",")[0],
+      version,
       database: dbName,
       size: this.formatBytes(sizeBytes),
       sizeBytes,
       connections: {
-        total: conn[0].total,
-        active: conn[0].active,
-        idle: conn[0].idle,
-        max: setting[0]?.max_conn ?? 100,
+        total: conn.total,
+        active: conn.active,
+        idle: conn.idle,
+        max: maxConn,
       },
-      uptime: this.formatUptime(new Date(stat[0].start_time)),
-      startTime: stat[0].start_time,
+      uptime: this.formatUptime(startTime),
+      startTime,
     };
   }
 

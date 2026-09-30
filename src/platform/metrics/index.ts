@@ -14,3 +14,9 @@ export {
   auditDroppedTotal,
 } from "./business.js";
 export { logTableSize, collectLogTableSizes } from "./log-tables.js";
+export {
+  dbSlowQueryTotal,
+  dbQueryDuration,
+  dbPoolConnections,
+  extractOperationType,
+} from "./database.js";

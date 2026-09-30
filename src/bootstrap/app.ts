@@ -116,7 +116,7 @@ export function createApp(): Express {
 
   // ⑦ 文档 / 静态资源
   if (env.NODE_ENV !== "production" || env.ENABLE_DOCS === "1") {
-    app.use("/api/v1", swaggerRouter);
+    app.use("/api/docs", swaggerRouter); // 与 ui.ts 内部 "/" 和 "/json" 组合成 /api/docs
   }
   app.use(
     "/uploads",
@@ -136,7 +136,11 @@ export function createApp(): Express {
 
   // ⑨ 限流（白名单在 limiter 内部 skip）
   app.use(...globalRateLimit);
-  app.use("/api/v1/upload/chunk", chunkByteRateLimit(), chunkUploadRateLimit);
+  app.use(
+    "/api/v1/upload/chunk",
+    chunkByteRateLimit(),
+    ...chunkUploadRateLimit,
+  );
   app.use("/api/v1/upload/file", ...fileUploadRateLimit);
   app.use("/api/v1/upload/merge", ...fileUploadRateLimit);
   app.use("/api/v1/auth/login", ...authRateLimit);

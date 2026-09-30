@@ -10,6 +10,7 @@ import {
 import { CancelAccountService } from "@/modules/auth/service/cancel-account.service.js";
 import { EmailVerifyService } from "@/modules/auth/index.js";
 import { runFileCleanupTask } from "./tasks/file-cleanup.task.js";
+import { runDbSlowQueryReviewTask } from "./tasks/db-slow-query-review.task.js";
 const LOCK_KEY = "job:lock:cancel-account-clean";
 const LOCK_TTL = 10 * 60; // 10 分钟
 const VERIFY_CODE_LOCK_KEY = "job:lock:verify-code-clean";
@@ -104,6 +105,17 @@ export function startScheduler(): ScheduledTask[] {
       await withPgLock(async () => {
         await runFileCleanupTask();
       });
+    }),
+  );
+  tasks.push(
+    cron.schedule("0 4 * * *", async () => {
+      try {
+        await withPgLock(async () => {
+          await runDbSlowQueryReviewTask();
+        });
+      } catch (err) {
+        logger.error({ err }, "[cron] slow query review failed");
+      }
     }),
   );
   logger.info({ count: tasks.length }, "[cron] scheduler started");

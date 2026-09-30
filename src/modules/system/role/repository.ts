@@ -24,46 +24,23 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
   // 分页
   // ============================================================
   async findPage(query: BaseQuery, where: any): Promise<PageResult<any>> {
-    const pageNum = Math.max(1, query.pageNum || 1);
-    const pageSize = Math.min(100, Math.max(1, query.pageSize || 10));
-    const skip = (pageNum - 1) * pageSize;
+    return this.paginate({ ...query, maxPageSize: 100 }, where, {
+      defaultOrderBy: { sort_order: "asc" },
+      extendWhere: ({ query }) => {
+        const extra: Record<string, any> = {};
 
-    const finalWhere: any = {
-      ...where,
-      tenant_id: query.tenantId,
-      is_deleted: 0,
-    };
-
-    if (query.keyword) {
-      finalWhere.OR = [
-        { role_code: { contains: query.keyword } },
-        { role_name: { contains: query.keyword } },
-      ];
-    }
-    if (query.status !== undefined) {
-      finalWhere.status = query.status;
-    }
-
-    // 数据权限合并
-    const scopedWhere = this.mergeDataScope(finalWhere);
-
-    const [list, total] = await Promise.all([
-      this.model.findMany({
-        where: scopedWhere,
-        skip,
-        take: pageSize,
-        orderBy: { sort_order: "asc" },
-      }),
-      this.model.count({ where: scopedWhere }),
-    ]);
-
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
+        if (query.keyword) {
+          extra.OR = [
+            { role_code: { contains: query.keyword } },
+            { role_name: { contains: query.keyword } },
+          ];
+        }
+        if (query.status !== undefined) {
+          extra.status = query.status;
+        }
+        return extra;
+      },
+    });
   }
 
   // ============================================================
@@ -386,6 +363,45 @@ export class RoleRepository extends BaseRepository<any, any, any, any> {
       select: { perm_id: true },
     });
     return rows.map((r) => r.perm_id);
+  }
+  /* ============================================================
+   * 下拉选项
+   * ============================================================ */
+  async findRoleOptions(tenantId: string) {
+    return this.model.findMany({
+      where: {
+        tenant_id: tenantId,
+        status: "1",
+        is_deleted: 0,
+      },
+      select: { role_id: true, role_name: true },
+      orderBy: { sort_order: "asc" },
+    });
+  }
+
+  /* ============================================================
+   * 数据权限预览：查样本用户
+   * ============================================================ */
+  async findUsersForDataScopePreview(
+    tenantId: string,
+    whereScope: Record<string, any>,
+    take: number,
+  ) {
+    return prisma.sys_user.findMany({
+      where: { ...whereScope, tenant_id: tenantId, is_deleted: 0 },
+      select: { user_id: true, username: true, real_name: true },
+      orderBy: { created_at: "desc" },
+      take,
+    });
+  }
+
+  async countUsersForDataScopePreview(
+    tenantId: string,
+    whereScope: Record<string, any>,
+  ) {
+    return prisma.sys_user.count({
+      where: { ...whereScope, tenant_id: tenantId, is_deleted: 0 },
+    });
   }
 }
 /**

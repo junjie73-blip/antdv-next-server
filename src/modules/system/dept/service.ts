@@ -8,7 +8,17 @@ import {
   parseExcel,
   importTreeData,
 } from "@/platform/excel/service.js";
+const ZERO_UUID = "00000000-0000-0000-0000-000000000000";
 
+/** 判断是否为"根节点"parentId */
+export function isRootParentId(parentId: unknown): boolean {
+  if (parentId === null || parentId === undefined) return true;
+  if (typeof parentId !== "string") return false;
+  const trimmed = parentId.trim();
+  if (trimmed === "") return true;
+  if (trimmed === ZERO_UUID) return true;
+  return false;
+}
 export class DeptService extends BaseService<DeptRepository> {
   constructor(repository: DeptRepository) {
     super(repository);
@@ -19,22 +29,25 @@ export class DeptService extends BaseService<DeptRepository> {
   // ============================================================
 
   buildTree(items: any[], parentId: string | null = null): any[] {
+    const isRootCall = parentId === null;
+
     return items
       .filter((item) => {
-        if (parentId === null) {
-          return (
-            item.parent_id === null ||
-            item.parent_id === undefined ||
-            item.parent_id === "" ||
-            item.parent_id === "00000000-0000-0000-0000-000000000000"
-          );
+        const pid = item.parent_id;
+        if (isRootCall) {
+          return isRootParentId(pid);
         }
-        return item.parent_id === parentId;
+        return pid === parentId;
       })
       .map((item) => {
         const node: any = { ...keysToCamelCase(item) };
         const children = this.buildTree(items, item.dept_id);
-        if (children.length > 0) node.children = children;
+        if (children.length > 0) {
+          node.children = children;
+        } else {
+          // ✅ 空 children 不注入
+          delete node.children;
+        }
         return node;
       });
   }

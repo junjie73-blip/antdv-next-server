@@ -3,6 +3,7 @@ import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import { AppError } from "@/middleware/http/error-handler.js";
+import { isRootParentId } from "./service.js";
 
 export class DeptRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_dept;
@@ -154,8 +155,13 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
       orderBy: { sort_order: "asc" },
     });
 
-    // 批量补 leaderName
-    const leaderIds = rows
+    // ✅ 归一化：全零 UUID / "" 都视作 null，前端更易处理
+    const normalized = rows.map((r: any) => ({
+      ...r,
+      parent_id: isRootParentId(r.parent_id) ? null : r.parent_id,
+    }));
+
+    const leaderIds = normalized
       .map((r: any) => r.leader_id)
       .filter((id: string | null): id is string => !!id);
 
@@ -164,7 +170,7 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
       tenantId,
     );
 
-    return rows.map((r: any) => {
+    return normalized.map((r: any) => {
       const user = r.leader_id ? userMap.get(r.leader_id) : null;
       return {
         ...r,

@@ -91,10 +91,18 @@ export async function archiveAndDrop(
   table: string,
   partition: string,
 ): Promise<void> {
+  if (!/^[a-z][a-z0-9_]*_p\d{6}$/.test(partition)) {
+    throw new Error(`Invalid partition name: ${partition}`);
+  }
   const key = await archivePartition(table, partition);
   if (!key) {
     await prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS "${partition}"`);
     return;
   }
   await prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS "${partition}"`);
+
+  logger.info(
+    { table, partition, key },
+    "[archive] partition archived and dropped",
+  );
 }

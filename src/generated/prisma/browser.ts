@@ -133,6 +133,11 @@ export type sys_job = Prisma.sys_jobModel
  */
 export type sys_job_log = Prisma.sys_job_logModel
 /**
+ * Model sys_job_run
+ * 
+ */
+export type sys_job_run = Prisma.sys_job_runModel
+/**
  * Model sys_todo
  * 
  */

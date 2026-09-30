@@ -2,6 +2,7 @@ import { BaseRepository } from "@/core/base/repository.js";
 import { prisma } from "@/config/database.js";
 import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToCamelCase } from "@/shared/utils/case-convert.js";
+import { AUDIT_OP_LABEL } from "@/shared/constants/audit-operation.js";
 
 export class AuditLogRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_audit_log;
@@ -53,7 +54,10 @@ export class AuditLogRepository extends BaseRepository<any, any, any, any> {
     ]);
 
     return {
-      list: list.map(keysToCamelCase),
+      list: list.map((row) => ({
+        ...keysToCamelCase(row),
+        operationLabel: AUDIT_OP_LABEL[row.operation] ?? row.operation,
+      })),
       total,
       pageNum,
       pageSize,

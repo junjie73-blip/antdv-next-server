@@ -1,19 +1,19 @@
 import { Redis } from "ioredis";
-import "@/config/env.js";
 import { logger } from "@/platform/logger/logger.js";
 import { sendAlert } from "@/platform/alert/index.js";
 import { env } from "@/config/env.js";
 
+// ✅ env schema 已保证非空，无需 `|| ""`
 const redisUrl = env.REDIS_URL;
+
 if (!redisUrl) {
-  logger.warn("[redis] REDIS_URL 未配置，Redis 相关功能将不可用");
+  // 理论上不可达，作为编译期保障
+  throw new Error("[redis] REDIS_URL 未配置");
 }
 
 const baseOptions = {
-  lazyConnect: !redisUrl,
   maxRetriesPerRequest: null,
   retryStrategy(times: number) {
-    if (!redisUrl) return null;
     return Math.min(times * 200, 5000);
   },
   commandTimeout: 5000,
@@ -21,9 +21,7 @@ const baseOptions = {
   enableOfflineQueue: true,
 } as const;
 
-export const redis = redisUrl
-  ? new Redis(redisUrl, baseOptions)
-  : new Redis({ lazyConnect: true, retryStrategy: () => null });
+export const redis = new Redis(redisUrl, baseOptions);
 
 redis.on("error", (err) => {
   logger.error({ err }, "[redis] connection error");
@@ -37,16 +35,20 @@ redis.on("error", (err) => {
 });
 redis.on("ready", () => logger.info("[redis] ready"));
 
-export const subRedis = redisUrl
-  ? new Redis(env.REDIS_URL, {
-      maxRetriesPerRequest: null,
-      enableReadyCheck: true,
-    })
-  : new Redis({ lazyConnect: true, retryStrategy: () => null });
+export const subRedis = new Redis(redisUrl, {
+  maxRetriesPerRequest: null,
+  enableReadyCheck: true,
+});
 
-export const blockRedis = redisUrl
-  ? new Redis(env.REDIS_URL, { maxRetriesPerRequest: null })
-  : new Redis({ lazyConnect: true, retryStrategy: () => null });
+subRedis.on("error", (err) => {
+  logger.warn({ err }, "[subRedis] error");
+});
+
+export const blockRedis = new Redis(redisUrl, { maxRetriesPerRequest: null });
+
+blockRedis.on("error", (err) => {
+  logger.warn({ err }, "[blockRedis] error");
+});
 
 export function createBullConnection(name: string): Redis {
   const client = new Redis(redisUrl, {

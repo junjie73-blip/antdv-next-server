@@ -10,10 +10,13 @@ import { dispatchNotice } from "@/modules/notice/channels/index.js";
 import { JobRepository } from "./repository.js";
 import { runAuditCleanTask } from "@/jobs/tasks/audit-clean.task.js";
 import { runAuditDailyTask } from "@/jobs/tasks/audit-daily.task.js";
+import { JobDependencyService } from "./dependency.service.js";
+import { JobDependencyRepository } from "./dependency.repository.js";
 
 const running = new Map<string, ScheduledTask>();
 const repo = new JobRepository();
-
+const depRepo = new JobDependencyRepository();
+const depService = new JobDependencyService(depRepo, repo);
 /* ============================================================
  * 启动时加载所有任务
  * ============================================================ */
@@ -26,6 +29,19 @@ export async function loadJobs(): Promise<number> {
   return list.length;
 }
 
+function calcLockTtl(job: {
+  timeout_seconds?: number | null;
+  retry_count?: number | null;
+  retry_interval?: number | null;
+}): number {
+  const perAttempt = (job.timeout_seconds || 300) * 1000;
+  const retries = Math.max(0, job.retry_count || 0);
+  const intervalMs = (job.retry_interval || 60) * 1000;
+
+  const worstMs = perAttempt * (retries + 1) + intervalMs * retries;
+  // 30s 缓冲，上限 2 小时
+  return Math.min(Math.ceil(worstMs / 1000) + 30, 7200);
+}
 export function startJob(job: any) {
   stopJob(job.job_id);
   if (!cron.validate(job.cron_expression)) {
@@ -33,31 +49,72 @@ export function startJob(job: any) {
     return;
   }
 
-  const perAttempt = (job.timeout_seconds || 300) * 1000;
-  const retries = job.retry_count || 0;
-  const intervalMs = (job.retry_interval || 60) * 1000;
-  const worstMs = perAttempt * (retries + 1) + intervalMs * retries;
-  const ttl = Math.min(Math.ceil(worstMs / 1000) + 30, 7200);
   const task = cron.schedule(
     job.cron_expression,
     async () => {
       const lockKey = `job:lock:${job.tenant_id}:${job.job_id}`;
+      const ttl = calcLockTtl(job);
 
       await withLock(lockKey, ttl, async () => {
         const latest = await prisma.sys_job.findUnique({
           where: { job_id: job.job_id },
         });
         if (!latest || latest.is_deleted === 1 || latest.status !== "1") {
-          logger.debug({ jobId: job.job_id }, "[job] skipped, job not active");
+          logger.debug({ jobId: job.job_id }, "[job] skipped, not active");
           return;
         }
+
+        // ✅ 依赖检查
+        const check = await depService.checkDependencies(
+          job.job_id,
+          job.tenant_id,
+        );
+        if (!check.satisfied) {
+          logger.info(
+            { jobId: job.job_id, missing: check.missing, failed: check.failed },
+            "[job] dependency not satisfied, skip",
+          );
+
+          // 记录一次 skipped run
+          const run = await depRepo.createRun({
+            tenantId: job.tenant_id,
+            jobId: job.job_id,
+            triggeredBy: "cron",
+          });
+          await depRepo.finishRun(run.run_id, "skipped", 0, "上游依赖未满足");
+          return;
+        }
+
+        // 创建 run
+        const run = await depRepo.createRun({
+          tenantId: job.tenant_id,
+          jobId: job.job_id,
+          triggeredBy: "cron",
+        });
 
         await prisma.sys_job.update({
           where: { job_id: job.job_id },
           data: { last_run_at: new Date() },
         });
 
-        await runJobWithRetry(latest);
+        const startAt = Date.now();
+        try {
+          await runJobWithRetry(latest);
+          await depRepo.finishRun(run.run_id, "success", Date.now() - startAt);
+          // ✅ 成功 → 触发下游
+          await depService.triggerDownstreams(
+            job.job_id,
+            job.tenant_id,
+            run.run_id,
+          );
+        } catch (err: any) {
+          await depRepo.finishRun(
+            run.run_id,
+            "failed",
+            Date.now() - startAt,
+            err?.message,
+          );
+        }
       });
     },
     { timezone: "Asia/Shanghai" },
@@ -389,21 +446,16 @@ async function execute(job: any): Promise<void> {
 
   switch (target) {
     case "notice:publish": {
-      const now = new Date();
-      const due = await prisma.sys_notice.findMany({
-        where: {
-          tenant_id: tenantId,
-          status: "0",
-          is_deleted: 0,
-          publish_time: { lte: now },
-        },
-      });
-      for (const n of due) {
-        await prisma.sys_notice.update({
-          where: { notice_id: n.notice_id },
-          data: { status: "1" },
-        });
-      }
+      const { NoticeService } = await import("@/modules/notice/service.js");
+      const { NoticeRepository } =
+        await import("@/modules/notice/repository.js");
+      const service = new NoticeService(new NoticeRepository());
+
+      const result = await service.publishDueNotices(tenantId);
+      logger.info(
+        { tenantId, count: result.count },
+        "[job] notice:publish done",
+      );
       break;
     }
 
@@ -503,5 +555,37 @@ async function execute(job: any): Promise<void> {
       break;
     default:
       logger.warn({ target, jobId: job.job_id }, "[job] unknown invoke_target");
+  }
+}
+export async function runJobByDependency(
+  jobId: string,
+  tenantId: string,
+  parentRunId: string,
+): Promise<void> {
+  const job = await prisma.sys_job.findFirst({
+    where: { job_id: jobId, tenant_id: tenantId, is_deleted: 0 },
+  });
+  if (!job || job.status !== "1" || job.is_paused === 1) return;
+
+  const run = await depRepo.createRun({
+    tenantId,
+    jobId,
+    triggeredBy: "dependency",
+    triggerParent: parentRunId,
+  });
+
+  const startAt = Date.now();
+  try {
+    await runJobWithRetry(job);
+    await depRepo.finishRun(run.run_id, "success", Date.now() - startAt);
+    // 递归触发更下游
+    await depService.triggerDownstreams(jobId, tenantId, run.run_id);
+  } catch (err: any) {
+    await depRepo.finishRun(
+      run.run_id,
+      "failed",
+      Date.now() - startAt,
+      err?.message,
+    );
   }
 }

@@ -15,12 +15,49 @@ const lru = new LRUCache<string, DataScopeContext>({
   max: 5_000,
   ttl: 10_000,
 });
-const SKIP_PATHS = [
-  "/api/v1/monitor",
-  "/api/v1/tenant", // 平台级表，无租户上下文
-  "/api/v1/dashboard", // 全局 KPI，本身无 dataScope
-  "/api/v1/workbench",
+/**
+ * ✅ 需要跳过数据权限的路径
+ * 分类：
+ *  1. 平台级表（sys_tenant、sys_audit_log、sys_login_log 等无 dataScope 概念）
+ *  2. 全局监控（KPI、QPS、缓存、DB）
+ *  3. 系统选项/字典（无 created_by 概念）
+ *  4. 认证/个人中心（当前用户强制 self）
+ *  5. 文件/上传（按 URL 而非数据归属）
+ *  6. 工作台（本身聚合）
+ */
+const SKIP_PATTERNS: RegExp[] = [
+  // 平台级（无 dataScope 概念）
+  /^\/api\/v1\/tenant(\/|$)/,
+  /^\/api\/v1\/monitor(\/|$)/,
+  /^\/api\/v1\/dashboard(\/|$)/,
+  /^\/api\/v1\/workbench(\/|$)/,
+
+  // 认证本身（当前用户自己的信息）
+  /^\/api\/v1\/auth\/profile(\/|$)/,
+  /^\/api\/v1\/auth\/menus(\/|$)/,
+  /^\/api\/v1\/auth\/permissions(\/|$)/,
+  /^\/api\/v1\/auth\/captcha(\/|$)/,
+  /^\/api\/v1\/auth\/password-policy(\/|$)/,
+  /^\/api\/v1\/auth\/my-devices(\/|$)/,
+  /^\/api\/v1\/auth\/tenants(\/|$)/,
+  /^\/api\/v1\/auth\/login(\/|$)/,
+  /^\/api\/v1\/auth\/register(\/|$)/,
+  /^\/api\/v1\/auth\/logout(\/|$)/,
+  /^\/api\/v1\/auth\/refresh(\/|$)/,
+  /^\/api\/v1\/auth\/switch-tenant(\/|$)/,
+
+  // 全局配置（与数据无关）
+  /^\/api\/v1\/settings(\/|$)/,
+  /^\/api\/v1\/notice-channel(\/|$)/,
+
+  // 字典（全局）
+  /^\/api\/v1\/dict-type(\/|$)/,
+  /^\/api\/v1\/dict-data\/by-code(\/|$)/,
+  /^\/api\/v1\/dict-data\/code\/tree(\/|$)/,
 ];
+function shouldSkipDataScope(path: string): boolean {
+  return SKIP_PATTERNS.some((re) => re.test(path));
+}
 
 export function toWhereScope(ctx: DataScopeContext): Record<string, any> {
   if (ctx.deptIds === "*") return {};
@@ -61,7 +98,6 @@ async function expandDeptTree(
   }
   return [...result];
 }
-
 async function computeDataScopeInternal(
   userId: string,
   tenantId: string,
@@ -113,9 +149,6 @@ async function computeDataScopeInternal(
     expanded.forEach((d) => combined.add(d));
   }
 
-  if (combined.size === 0 && hasSelf) {
-    return { userId, tenantId, deptIds: [], selfOnly: true };
-  }
   if (combined.size === 0) {
     return { userId, tenantId, deptIds: [], selfOnly: true };
   }
@@ -170,17 +203,43 @@ export async function invalidateDataScopeCache(
  * 把 ctx + whereScope 挂到 ALS，Repository 只从 ALS 读。
  */
 export function dataScopeMiddleware() {
-  return async (req: Request, _res: Response, next: NextFunction) => {
-    if (SKIP_PATHS.some((p) => req.path.startsWith(p))) return next();
-
+  return async (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     const user = (req as any).user;
-    if (!user?.userId || !user?.tenantId) return next();
+    const tenantId = (req as any).tenantId;
 
+    // 未认证：仍然设置一个"空上下文"，让后续 Repository 能读到
+    if (!user?.userId || !tenantId) {
+      const emptyCtx: DataScopeContext = {
+        userId: user?.userId ?? "",
+        tenantId: tenantId ?? "",
+        deptIds: "*", // 未认证场景一般走白名单，能到这里说明是公开接口
+        selfOnly: false,
+      };
+      return runWithDataScope(emptyCtx, {}, () => next());
+    }
+
+    // ✅ SKIP 路径：设置"全部可见"上下文，避免 Repository 抛错
+    if (shouldSkipDataScope(req.path)) {
+      const looseCtx: DataScopeContext = {
+        userId: user.userId,
+        tenantId,
+        deptIds: "*", // 平台级 / 全局配置：不做过滤
+        selfOnly: false,
+      };
+      (req as any).dataScope = looseCtx;
+      return runWithDataScope(looseCtx, {}, () => next());
+    }
+
+    // 业务路径：正常计算
     let ctx: DataScopeContext;
     try {
-      ctx = await computeDataScope(user.userId, user.tenantId);
+      ctx = await computeDataScope(user.userId, tenantId);
     } catch (err) {
-      logger.error({ err }, "computeDataScope failed");
+      logger.error({ err, path: req.path }, "computeDataScope failed");
       return next(new AppError("数据权限计算失败", 500001, 500));
     }
 

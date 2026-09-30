@@ -34,6 +34,13 @@ import { logger } from "@/platform/logger/logger.js";
 import { UserService } from "./service.js";
 import { hashField, maskPhone, maskEmail, decryptField } from "@/core/index.js";
 import { writeAuditLog } from "@/platform/audit/writer.js";
+import {
+  AUDIT_OP,
+  AUDIT_OP_LABEL,
+} from "@/shared/constants/audit-operation.js";
+import { pushBusinessAudit } from "@/middleware/business/audit.js";
+import { RoleService } from "../role/service.js";
+import { RoleRepository } from "../role/repository.js";
 
 export const upload = multer({
   storage: multer.memoryStorage(),
@@ -56,6 +63,7 @@ export default class UserController extends BaseController<any, any, any, any> {
   protected readonly createSchema = UserCreateSchema;
   protected readonly updateSchema = UserUpdateSchema;
   protected readonly querySchema = UserListSchema;
+  protected readonly roleService = new RoleService(new RoleRepository());
   async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
     dto = await super.beforeUpdate(id, dto, req);
     const repo = this.repository as UserRepository;
@@ -303,14 +311,15 @@ export default class UserController extends BaseController<any, any, any, any> {
   @ApiOperation("获取角色选项", "返回启用状态的角色列表")
   @ApiResponse(200, "查询成功")
   async options(@Req() req: Request, @Res() res: Response) {
-    const roles = await prisma.sys_role.findMany({
-      where: { tenant_id: req.tenantId!, status: "1", is_deleted: 0 },
-      select: { role_id: true, role_name: true },
-    });
-    success(
-      res,
-      roles.map((r) => ({ label: r.role_name, value: r.role_id })),
-    );
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+
+      const data = await this.roleService.getRoleOptions(tenantId);
+      success(res, data);
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
   /**
    * 获取全部用户选项（用于下拉选择）
@@ -324,21 +333,8 @@ export default class UserController extends BaseController<any, any, any, any> {
       const tenantId = req.tenantId;
       if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-      const users = await prisma.sys_user.findMany({
-        where: { tenant_id: tenantId, status: "1", is_deleted: 0 },
-        select: { user_id: true, username: true, real_name: true },
-        orderBy: { username: "asc" },
-      });
-      success(
-        res,
-        users.map((u) => ({
-          userId: u.user_id,
-          username: u.username,
-          realName: u.real_name || u.username,
-          label: u.real_name || u.username,
-          value: u.user_id,
-        })),
-      );
+      const users = await this.service.getUserOptions(tenantId);
+      success(res, users);
     } catch (err) {
       this.handleError(res, err);
     }
@@ -360,86 +356,30 @@ export default class UserController extends BaseController<any, any, any, any> {
       const startAt = Date.now();
 
       // 1) 校验目标用户归属当前租户
-      const user = await prisma.sys_user.findFirst({
-        where: {
-          user_id: targetUserId,
-          tenant_id: tenantId,
-          is_deleted: 0,
-        },
-        select: {
-          user_id: true,
-          username: true,
-          real_name: true,
-          phone: true,
-          phone_enc: true,
-          email: true,
-          id_card_enc: true,
-        },
-      });
-      if (!user) {
-        throw new AppError("用户不存在", 404001, 404);
-      }
-
-      // 2) 解密敏感字段
-      let plainPhone: string | null = null;
-      try {
-        if (user.phone_enc) {
-          plainPhone = decryptField(user.phone_enc);
-        } else if (user.phone) {
-          // 兼容尚未迁移的历史数据（明文存储）
-          plainPhone = user.phone;
-        }
-      } catch (err) {
-        logger.error(
-          { err, userId: targetUserId },
-          "[getSensitive] decrypt phone failed",
-        );
-        throw new AppError("敏感数据解密失败", 500001, 500);
-      }
-
-      let plainIdCard: string | null = null;
-      if (user.id_card_enc) {
-        try {
-          plainIdCard = decryptField(user.id_card_enc);
-        } catch (err) {
-          logger.error(
-            { err, userId: targetUserId },
-            "[getSensitive] decrypt id_card failed",
-          );
-          // 身份证解密失败不阻断，返回 null 由前端展示
-          plainIdCard = null;
-        }
-      }
-
-      const result = {
-        userId: user.user_id,
-        username: user.username,
-        realName: user.real_name,
-        phone: plainPhone,
-        idCard: plainIdCard,
-        email: user.email,
-      };
-
-      // 3) 写审计日志（异步队列，不阻塞响应）
-      await writeAuditLog({
+      const user = await this.service.getSensitiveInfo(
+        targetUserId,
         tenantId,
-        userId: operatorId,
-        username: operatorName,
-        operation: "view_sensitive_user_data",
-        method: req.method,
-        requestUrl: req.originalUrl,
-        requestParams: { targetUserId },
-        responseData: {
-          // 审计里也不存明文，只标记查了哪些字段
-          queriedFields: ["phone", "idCard", "email"],
-        },
-        ipAddress: getClientIp(req) || "unknown",
-        userAgent: req.headers["user-agent"] || "",
-        executeTime: Date.now() - startAt,
-        status: "1",
-      });
+        { userId: operatorId, username: operatorName },
+        req,
+      );
+      success(res, user, "查询成功");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+  @Get("/:id/full")
+  @ApiOperation(
+    "获取用户完整详情",
+    "包含基本信息、角色、部门、最近登录、操作记录",
+  )
+  @ApiResponse(200, "查询成功")
+  async getFullDetail(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
 
-      success(res, result, "查询成功");
+      const data = await this.service.getFullDetail(req.params.id, tenantId);
+      success(res, data);
     } catch (err) {
       this.handleError(res, err);
     }

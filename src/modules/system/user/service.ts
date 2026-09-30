@@ -4,7 +4,15 @@ import * as XLSX from "xlsx";
 import { BaseService } from "@/core/base/service.js";
 import dayjs from "dayjs";
 import { ExcelColumn, generateExcel } from "@/platform/excel/index.js";
-
+import {
+  AUDIT_OP,
+  AUDIT_OP_LABEL,
+} from "@/shared/constants/audit-operation.js";
+import { getClientIp } from "@/shared/utils/ip.js";
+import { pushBusinessAudit } from "@/middleware/business/audit.js";
+import { AppError, decryptField, NotFoundError } from "@/core/index.js";
+import { logger } from "@/platform/logger/logger.js";
+import type { Request } from "express";
 const EXPORT_COLUMNS: ExcelColumn[] = [
   { header: "用户名", key: "username", width: 16 },
   { header: "真实姓名", key: "real_name", width: 16 },
@@ -145,5 +153,108 @@ export class UserService extends BaseService<UserRepository> {
     const depts = await this.repository.findDeptsByCodes(list, tenantId);
     if (depts.length !== list.length) throw new Error("存在无效的部门编码");
     return depts.map((d: any) => d.dept_id);
+  }
+  async getUserOptions(tenantId: string) {
+    const users = await this.repository.findUserOptions(tenantId);
+    return users.map((u: any) => ({
+      userId: u.user_id,
+      username: u.username,
+      realName: u.real_name || u.username,
+      label: u.real_name || u.username,
+      value: u.user_id,
+    }));
+  }
+  async getSensitiveInfo(
+    targetUserId: string,
+    tenantId: string,
+    operator: { userId: string; username: string },
+    req: Request,
+  ) {
+    const startAt = Date.now();
+
+    // 1) 校验目标用户归属
+    const user = await this.repository.findSensitiveById(
+      targetUserId,
+      tenantId,
+    );
+    if (!user) throw new NotFoundError("用户不存在");
+
+    // 2) 解密敏感字段
+    let plainPhone: string | null = null;
+    try {
+      if (user.phone_enc) {
+        plainPhone = decryptField(user.phone_enc);
+      } else if (user.phone) {
+        // 兼容历史明文数据
+        plainPhone = user.phone;
+      }
+    } catch (err) {
+      logger.error(
+        { err, userId: targetUserId },
+        "[user] decrypt phone failed",
+      );
+      throw new AppError("敏感数据解密失败", 500001, 500);
+    }
+
+    let plainIdCard: string | null = null;
+    if (user.id_card_enc) {
+      try {
+        plainIdCard = decryptField(user.id_card_enc);
+      } catch (err) {
+        logger.error(
+          { err, userId: targetUserId },
+          "[user] decrypt id_card failed",
+        );
+        // 身份证解密失败不阻断，返回 null
+        plainIdCard = null;
+      }
+    }
+
+    // 3) 审计日志
+    await pushBusinessAudit(req, {
+      tenantId,
+      userId: operator.userId,
+      username: operator.username,
+      operation: AUDIT_OP.USER_VIEW_SENSITIVE,
+      method: req.method,
+      requestUrl: req.originalUrl,
+      requestParams: { targetUserId },
+      responseData: { queriedFields: ["phone", "idCard", "email"] },
+      ipAddress: getClientIp(req) || "unknown",
+      userAgent: req.headers["user-agent"] || "",
+      executeTime: Date.now() - startAt,
+      status: "1",
+      metadata: { label: AUDIT_OP_LABEL[AUDIT_OP.USER_VIEW_SENSITIVE] },
+    });
+
+    return {
+      userId: user.user_id,
+      username: user.username,
+      realName: user.real_name,
+      phone: plainPhone,
+      idCard: plainIdCard,
+      email: user.email,
+    };
+  }
+  async getFullDetail(userId: string, tenantId: string) {
+    const [basic, roles, depts, recentLogins, recentAudits] = await Promise.all(
+      [
+        this.repository.findUserDetail(userId, tenantId),
+        this.repository.findUserRoles(userId, tenantId),
+        this.repository.findUserDepts(userId, tenantId),
+        this.repository.findRecentLoginLogs(userId, tenantId, 10),
+        this.repository.findRecentAuditLogs(userId, tenantId, 10),
+      ],
+    );
+
+    if (!basic) throw new NotFoundError("用户不存在");
+
+    return {
+      basic,
+      roles,
+      depts,
+      recentLogins,
+      recentAudits,
+    };
   }
 }

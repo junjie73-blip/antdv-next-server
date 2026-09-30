@@ -78,19 +78,32 @@ export class DictService extends BaseService<DictTypeRepository> {
       tenantId,
     );
 
-    return types.map((type: any) => ({
-      dictTypeId: type.dict_type_id,
-      dictCode: type.dict_code,
-      dictName: type.dict_name,
-      children: dataList
-        .filter((d: any) => d.dict_type_id === type.dict_type_id)
-        .map((d: any) => ({
-          dictDataId: d.dict_data_id,
-          dictLabel: d.dict_label,
-          dictValue: d.dict_value,
-          sortOrder: d.sort_order,
-        })),
-    }));
+    return types
+      .map((type: any) => ({
+        dictTypeId: type.dict_type_id,
+        dictCode: type.dict_code,
+        dictName: type.dict_name,
+        children: dataList
+          .filter((d: any) => d.dict_type_id === type.dict_type_id)
+          .map((d: any) => ({
+            dictDataId: d.dict_data_id,
+            dictLabel: d.dict_label,
+            dictValue: d.dict_value,
+            sortOrder: d.sort_order,
+          })),
+      }))
+      .map((node: any) => {
+        const children = Array.isArray(node.children)
+          ? node.children.filter((c: any) => c && c.dictDataId)
+          : [];
+        const result: Record<string, unknown> = { ...node };
+        if (children.length > 0) {
+          result.children = children;
+        } else {
+          delete result.children;
+        }
+        return result;
+      });
   }
 
   // ============================================================

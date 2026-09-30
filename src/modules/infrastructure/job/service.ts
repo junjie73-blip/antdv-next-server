@@ -4,7 +4,13 @@ import { JobImportRowSchema, JobExportColumns } from "./schema.js";
 import { startJob, stopJob } from "./scheduler.js";
 import { BaseService } from "@/core/base/service.js";
 import { generateExcel, parseExcel } from "@/platform/excel/service.js";
-
+import { AppError } from "@/middleware/http/index.js";
+import { prisma } from "@/config/index.js";
+export interface UpdateDependenciesInput {
+  dependencyJobIds: string[];
+  dependencyMode: "all" | "any";
+  onDependencyFail: "skip" | "abort";
+}
 export class JobService extends BaseService<JobRepository> {
   private readonly logRepo: JobLogRepository;
 
@@ -112,5 +118,61 @@ export class JobService extends BaseService<JobRepository> {
     }
 
     return { successCount, failCount: errors.length, errors };
+  }
+  async updateDependencies(
+    jobId: string,
+    dto: UpdateDependenciesInput,
+    tenantId: string,
+  ): Promise<void> {
+    const job = await this.repository.findById(jobId, tenantId);
+    if (!job) throw new AppError("任务不存在", 404001, 404);
+
+    await prisma.sys_job.updateMany({
+      where: { job_id: jobId, tenant_id: tenantId, is_deleted: 0 },
+      data: {
+        dependency_job_ids: dto.dependencyJobIds as any, // Prisma Json 类型
+        dependency_mode: dto.dependencyMode,
+        on_dependency_fail: dto.onDependencyFail,
+        updated_at: new Date(),
+      },
+    });
+
+    // 依赖变更后重启任务（下次触发重新检查依赖）
+    if (job.status === "1") {
+      stopJob(jobId);
+      const fresh = await this.repository.findById(jobId, tenantId);
+      if (fresh) startJob(fresh);
+    }
+  }
+  async findRunHistory(jobId: string, tenantId: string, limit = 20) {
+    const job = await this.repository.findById(jobId, tenantId);
+    if (!job) throw new AppError("任务不存在", 404001, 404);
+
+    const runs = await prisma.sys_job_run.findMany({
+      where: { job_id: jobId, tenant_id: tenantId },
+      orderBy: { started_at: "desc" },
+      take: Math.min(limit, 100),
+      select: {
+        run_id: true,
+        triggered_by: true,
+        trigger_parent: true,
+        status: true,
+        started_at: true,
+        finished_at: true,
+        duration_ms: true,
+        error_msg: true,
+      },
+    });
+
+    return runs.map((r) => ({
+      runId: r.run_id,
+      triggeredBy: r.triggered_by,
+      triggerParent: r.trigger_parent,
+      status: r.status,
+      startedAt: r.started_at,
+      finishedAt: r.finished_at,
+      durationMs: r.duration_ms,
+      errorMsg: r.error_msg,
+    }));
   }
 }

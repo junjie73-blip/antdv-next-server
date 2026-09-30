@@ -74,6 +74,7 @@ export const ModelName = {
   sys_config: 'sys_config',
   sys_job: 'sys_job',
   sys_job_log: 'sys_job_log',
+  sys_job_run: 'sys_job_run',
   sys_todo: 'sys_todo',
   sys_ip_rule: 'sys_ip_rule',
   sys_notice_channel: 'sys_notice_channel',
@@ -522,7 +523,11 @@ export const Sys_jobScalarFieldEnum = {
   alert_channels: 'alert_channels',
   alert_receivers: 'alert_receivers',
   alert_threshold: 'alert_threshold',
-  fail_count: 'fail_count'
+  fail_count: 'fail_count',
+  dependency_job_ids: 'dependency_job_ids',
+  dependency_mode: 'dependency_mode',
+  on_dependency_fail: 'on_dependency_fail',
+  run_after_success: 'run_after_success'
 } as const
 
 export type Sys_jobScalarFieldEnum = (typeof Sys_jobScalarFieldEnum)[keyof typeof Sys_jobScalarFieldEnum]
@@ -543,6 +548,22 @@ export const Sys_job_logScalarFieldEnum = {
 } as const
 
 export type Sys_job_logScalarFieldEnum = (typeof Sys_job_logScalarFieldEnum)[keyof typeof Sys_job_logScalarFieldEnum]
+
+
+export const Sys_job_runScalarFieldEnum = {
+  run_id: 'run_id',
+  tenant_id: 'tenant_id',
+  job_id: 'job_id',
+  triggered_by: 'triggered_by',
+  trigger_parent: 'trigger_parent',
+  status: 'status',
+  started_at: 'started_at',
+  finished_at: 'finished_at',
+  duration_ms: 'duration_ms',
+  error_msg: 'error_msg'
+} as const
+
+export type Sys_job_runScalarFieldEnum = (typeof Sys_job_runScalarFieldEnum)[keyof typeof Sys_job_runScalarFieldEnum]
 
 
 export const Sys_todoScalarFieldEnum = {

@@ -19,51 +19,58 @@ export class PermissionService extends BaseService<PermissionRepository> {
     super(repository);
   }
 
-  async checkBeforeCreate(data: any, tenantId: string): Promise<any> {
-    // ⭐ 资源类型白名单校验
-    if (!VALID_RESOURCE_TYPES.has(data.resourceType)) {
+  /**
+   * ✅ 创建前校验（唯一性 + 资源类型白名单）
+   */
+  async checkBeforeCreate(dto: any, tenantId: string): Promise<void> {
+    // 1) 资源类型白名单
+    if (!VALID_RESOURCE_TYPES.has(dto.resourceType)) {
       throw new AppError(
-        `不支持的资源类型「${data.resourceType}」，仅支持 api / data / other。` +
-          `菜单 / 按钮权限请在「角色管理」中分配`,
-        400,
+        `不支持的资源类型「${dto.resourceType}」，仅支持 ${[...VALID_RESOURCE_TYPES].join(" / ")}`,
+        400001,
         400,
       );
     }
 
-    const exist = await this.repository.findByPermCode(data.permCode, tenantId);
-    if (exist) {
-      throw new AppError(`权限编码 '${data.permCode}' 已存在`, 409, 409);
-    }
-    return data;
+    // 2) perm_code 唯一性
+    await this.assertUnique(
+      () => this.repository.findByPermCode(dto.permCode, tenantId),
+      "权限编码",
+      dto.permCode,
+    );
   }
 
   /**
-   * 更新前钩子：若改了资源类型则校验 + perm_code 唯一
+   * ✅ 更新前校验
    */
   async checkBeforeUpdate(
     id: string,
-    data: any,
+    dto: any,
     tenantId: string,
-  ): Promise<any> {
-    if (data.resourceType && !VALID_RESOURCE_TYPES.has(data.resourceType)) {
-      throw new AppError(
-        `不支持的资源类型「${data.resourceType}」，仅支持 api / data / other`,
-        400,
-        400,
-      );
+  ): Promise<void> {
+    if (dto.resourceType !== undefined) {
+      if (!VALID_RESOURCE_TYPES.has(dto.resourceType)) {
+        throw new AppError(
+          `不支持的资源类型「${dto.resourceType}」`,
+          400001,
+          400,
+        );
+      }
     }
 
-    if (data.permCode) {
-      const exist = await this.repository.findByPermCode(
-        data.permCode,
+    if (dto.permCode !== undefined) {
+      if (dto.permCode === null || dto.permCode === "") {
+        throw new AppError("权限编码不能为空", 400001, 400);
+      }
+      const existing = await this.repository.findByPermCode(
+        dto.permCode,
         tenantId,
         id,
       );
-      if (exist) {
-        throw new AppError(`权限编码 '${data.permCode}' 已存在`, 409, 409);
+      if (existing) {
+        throw new AppError(`权限编码 '${dto.permCode}' 已存在`, 409001, 409);
       }
     }
-    return data;
   }
   async exportToExcel(tenantId: string): Promise<Buffer> {
     const perms = await this.repository.findAllForExport(tenantId);

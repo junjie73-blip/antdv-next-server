@@ -11,6 +11,13 @@ import {
 } from "@/modules/notice/template/renderer.js";
 import { env } from "@/config/env.js";
 
+/** ✅ 统一系统名兜底 */
+const DEFAULT_SYSTEM_NAME = "通知中心";
+
+function getSystemName(fallback?: string): string {
+  return fallback || env?.SYSTEM_NAME || env?.APP_NAME || DEFAULT_SYSTEM_NAME;
+}
+
 export const emailChannel: NoticeChannel = {
   type: "email",
   isReady: (cfg) => parseSmtpConfig(cfg) !== null,
@@ -33,9 +40,9 @@ export const emailChannel: NoticeChannel = {
     const errors: SendResult["errors"] = [];
     let success = 0;
     const baseContext = buildDefaultContext();
+    const systemName = getSystemName(ctx.config?.systemName); // ✅
 
     for (const to of ctx.receivers) {
-      // ⭐ per-receiver 上下文
       const meta = ctx.receiverMeta?.[to] ?? {};
       const renderContext = {
         ...baseContext,
@@ -48,7 +55,6 @@ export const emailChannel: NoticeChannel = {
       let subject: string;
 
       if (ctx.template) {
-        // ⭐ 使用消息模板
         const tplTitle = ctx.template.title
           ? replaceVars(ctx.template.title, renderContext)
           : ctx.title;
@@ -64,12 +70,11 @@ export const emailChannel: NoticeChannel = {
           contentHtml,
           noticeType: ctx.config?.noticeType ?? 1,
           publishTime: ctx.config?.publishTime ?? new Date(),
-          systemName: env?.SYSTEM_NAME ?? "通知中心",
+          systemName, // ✅
           brandColor: ctx.config?.brandColor ?? "#0F172A",
           receiverName: meta.realName ?? meta.userName,
         });
       } else {
-        // ⭐ 默认模板
         const title = replaceVars(ctx.title, renderContext);
         const content = ctx.content
           ? replaceVars(ctx.content, renderContext)
@@ -81,19 +86,13 @@ export const emailChannel: NoticeChannel = {
           content,
           noticeType: ctx.config?.noticeType,
           publishTime: ctx.config?.publishTime,
-          systemName: env?.SYSTEM_NAME ?? "通知中心",
+          systemName, // ✅
           brandColor: ctx.config?.brandColor ?? "#0F172A",
           receiverName: meta.realName ?? meta.userName,
         });
       }
 
-      const ok = await sendMail({
-        to,
-        subject,
-        html,
-        smtp,
-      } as any);
-
+      const ok = await sendMail({ to, subject, html, smtp } as any);
       if (ok) success++;
       else errors.push({ receiver: to, reason: "SMTP send failed" });
     }

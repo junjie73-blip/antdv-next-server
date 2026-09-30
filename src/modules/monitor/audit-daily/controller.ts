@@ -13,7 +13,11 @@ import { z } from "zod";
 import { error, success } from "@/shared/http/response.js";
 import { AppError } from "@/core/errors.js";
 import { AuditDailyService } from "./service.js";
-import { AggregateSchema, DailyQuerySchema } from "./schema.js";
+import {
+  AggregateSchema,
+  DailyQuerySchema,
+  TopOperationsQuerySchema,
+} from "./schema.js";
 import { logger } from "@/platform/logger/logger.js";
 
 interface AuthUser {
@@ -69,8 +73,8 @@ export default class AuditDailyController {
   async topOperations(@Req() req: Request, @Res() res: Response) {
     try {
       const { tenantId } = req.user as AuthUser;
-      const dto = DailyQuerySchema.parse(req.query);
-      const limit = dto.pageSize;
+      const dto = TopOperationsQuerySchema.parse(req.query);
+      const limit = dto.limit ?? 20;
       return success(
         res,
         await this.service.getTopOperations(tenantId, dto, limit),

@@ -7,7 +7,6 @@ interface PartitionedTable {
   table: string;
   retentionMonths: number;
 }
-const PART_NAME_RE = /^[a-z_]+_p\d{6}$/;
 
 /** ⭐ 白名单：所有表名必须在此列，防 SQL 注入 */
 const TABLES: PartitionedTable[] = [
@@ -19,21 +18,41 @@ const TABLES: PartitionedTable[] = [
 
 const ALLOWED_TABLES = new Set(TABLES.map((t) => t.table));
 
+/** ✅ 表名白名单 */
 function assertAllowedTable(table: string): void {
   if (!ALLOWED_TABLES.has(table)) {
     throw new Error(`partition-manager: table not allowed: ${table}`);
   }
 }
+
+/** ✅ 分区名格式：{table}_p{YYYY}{MM} */
+const PART_NAME_RE = /^[a-z][a-z0-9_]*_p\d{6}$/;
+
 function assertPartName(name: string): void {
   if (!PART_NAME_RE.test(name)) {
     throw new Error(`partition-manager: invalid partition name: ${name}`);
   }
 }
 
+/** ✅ 日期合法性校验：年份在合理区间，月份 1-12 */
+function assertValidDate(d: Date): void {
+  if (Number.isNaN(d.getTime())) {
+    throw new Error(`partition-manager: invalid date: ${d}`);
+  }
+  const y = d.getUTCFullYear();
+  if (y < 2000 || y > 2100) {
+    throw new Error(`partition-manager: year out of range: ${y}`);
+  }
+}
+
 function partName(table: string, d: Date): string {
+  assertAllowedTable(table);
+  assertValidDate(d);
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  return `${table}_p${y}${m}`;
+  const name = `${table}_p${y}${m}`;
+  assertPartName(name);
+  return name;
 }
 
 function monthStart(d: Date): Date {
@@ -53,11 +72,15 @@ export async function maintainPartitions(): Promise<void> {
       const from = addMonths(monthStart(now), i);
       const to = addMonths(from, 1);
       const name = partName(table, from);
-      assertPartName(name);
+
+      // ✅ 时间戳使用 toISOString，且经 assertValidDate 校验
+      const fromIso = from.toISOString();
+      const toIso = to.toISOString();
+
       await prisma.$executeRawUnsafe(
         `CREATE TABLE IF NOT EXISTS "${name}"
          PARTITION OF "${table}"
-         FOR VALUES FROM ('${from.toISOString()}') TO ('${to.toISOString()}')`,
+         FOR VALUES FROM ('${fromIso}') TO ('${toIso}')`,
       );
     }
   }
@@ -83,9 +106,22 @@ export async function archiveExpiredPartitions(): Promise<void> {
     );
 
     for (const { relname } of rows) {
+      // ✅ 分区名正则校验
+      if (!PART_NAME_RE.test(relname)) {
+        logger.warn({ relname, table }, "[partitions] skip invalid part name");
+        continue;
+      }
       const m = /_p(\d{4})(\d{2})$/.exec(relname);
       if (!m) continue;
-      const partDate = new Date(Date.UTC(+m[1], +m[2] - 1, 1));
+
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      if (mo < 1 || mo > 12) {
+        logger.warn({ relname, month: mo }, "[partitions] invalid month");
+        continue;
+      }
+
+      const partDate = new Date(Date.UTC(y, mo - 1, 1));
       if (partDate >= cutoff) continue;
 
       if (storageEnabled) {

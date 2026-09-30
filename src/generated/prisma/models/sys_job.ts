@@ -79,6 +79,9 @@ export type Sys_jobMinAggregateOutputType = {
   alert_receivers: string | null
   alert_threshold: number | null
   fail_count: number | null
+  dependency_mode: string | null
+  on_dependency_fail: string | null
+  run_after_success: boolean | null
 }
 
 export type Sys_jobMaxAggregateOutputType = {
@@ -108,6 +111,9 @@ export type Sys_jobMaxAggregateOutputType = {
   alert_receivers: string | null
   alert_threshold: number | null
   fail_count: number | null
+  dependency_mode: string | null
+  on_dependency_fail: string | null
+  run_after_success: boolean | null
 }
 
 export type Sys_jobCountAggregateOutputType = {
@@ -137,6 +143,10 @@ export type Sys_jobCountAggregateOutputType = {
   alert_receivers: number
   alert_threshold: number
   fail_count: number
+  dependency_job_ids: number
+  dependency_mode: number
+  on_dependency_fail: number
+  run_after_success: number
   _all: number
 }
 
@@ -194,6 +204,9 @@ export type Sys_jobMinAggregateInputType = {
   alert_receivers?: true
   alert_threshold?: true
   fail_count?: true
+  dependency_mode?: true
+  on_dependency_fail?: true
+  run_after_success?: true
 }
 
 export type Sys_jobMaxAggregateInputType = {
@@ -223,6 +236,9 @@ export type Sys_jobMaxAggregateInputType = {
   alert_receivers?: true
   alert_threshold?: true
   fail_count?: true
+  dependency_mode?: true
+  on_dependency_fail?: true
+  run_after_success?: true
 }
 
 export type Sys_jobCountAggregateInputType = {
@@ -252,6 +268,10 @@ export type Sys_jobCountAggregateInputType = {
   alert_receivers?: true
   alert_threshold?: true
   fail_count?: true
+  dependency_job_ids?: true
+  dependency_mode?: true
+  on_dependency_fail?: true
+  run_after_success?: true
   _all?: true
 }
 
@@ -368,6 +388,10 @@ export type Sys_jobGroupByOutputType = {
   alert_receivers: string | null
   alert_threshold: number
   fail_count: number
+  dependency_job_ids: runtime.JsonValue | null
+  dependency_mode: string | null
+  on_dependency_fail: string | null
+  run_after_success: boolean
   _count: Sys_jobCountAggregateOutputType | null
   _avg: Sys_jobAvgAggregateOutputType | null
   _sum: Sys_jobSumAggregateOutputType | null
@@ -420,6 +444,10 @@ export type sys_jobWhereInput = {
   alert_receivers?: Prisma.StringNullableFilter<"sys_job"> | string | null
   alert_threshold?: Prisma.IntFilter<"sys_job"> | number
   fail_count?: Prisma.IntFilter<"sys_job"> | number
+  dependency_job_ids?: Prisma.JsonNullableFilter<"sys_job">
+  dependency_mode?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  on_dependency_fail?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  run_after_success?: Prisma.BoolFilter<"sys_job"> | boolean
 }
 
 export type sys_jobOrderByWithRelationInput = {
@@ -449,6 +477,10 @@ export type sys_jobOrderByWithRelationInput = {
   alert_receivers?: Prisma.SortOrderInput | Prisma.SortOrder
   alert_threshold?: Prisma.SortOrder
   fail_count?: Prisma.SortOrder
+  dependency_job_ids?: Prisma.SortOrderInput | Prisma.SortOrder
+  dependency_mode?: Prisma.SortOrderInput | Prisma.SortOrder
+  on_dependency_fail?: Prisma.SortOrderInput | Prisma.SortOrder
+  run_after_success?: Prisma.SortOrder
 }
 
 export type sys_jobWhereUniqueInput = Prisma.AtLeast<{
@@ -481,6 +513,10 @@ export type sys_jobWhereUniqueInput = Prisma.AtLeast<{
   alert_receivers?: Prisma.StringNullableFilter<"sys_job"> | string | null
   alert_threshold?: Prisma.IntFilter<"sys_job"> | number
   fail_count?: Prisma.IntFilter<"sys_job"> | number
+  dependency_job_ids?: Prisma.JsonNullableFilter<"sys_job">
+  dependency_mode?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  on_dependency_fail?: Prisma.StringNullableFilter<"sys_job"> | string | null
+  run_after_success?: Prisma.BoolFilter<"sys_job"> | boolean
 }, "job_id">
 
 export type sys_jobOrderByWithAggregationInput = {
@@ -510,6 +546,10 @@ export type sys_jobOrderByWithAggregationInput = {
   alert_receivers?: Prisma.SortOrderInput | Prisma.SortOrder
   alert_threshold?: Prisma.SortOrder
   fail_count?: Prisma.SortOrder
+  dependency_job_ids?: Prisma.SortOrderInput | Prisma.SortOrder
+  dependency_mode?: Prisma.SortOrderInput | Prisma.SortOrder
+  on_dependency_fail?: Prisma.SortOrderInput | Prisma.SortOrder
+  run_after_success?: Prisma.SortOrder
   _count?: Prisma.sys_jobCountOrderByAggregateInput
   _avg?: Prisma.sys_jobAvgOrderByAggregateInput
   _max?: Prisma.sys_jobMaxOrderByAggregateInput
@@ -547,6 +587,10 @@ export type sys_jobScalarWhereWithAggregatesInput = {
   alert_receivers?: Prisma.StringNullableWithAggregatesFilter<"sys_job"> | string | null
   alert_threshold?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
   fail_count?: Prisma.IntWithAggregatesFilter<"sys_job"> | number
+  dependency_job_ids?: Prisma.JsonNullableWithAggregatesFilter<"sys_job">
+  dependency_mode?: Prisma.StringNullableWithAggregatesFilter<"sys_job"> | string | null
+  on_dependency_fail?: Prisma.StringNullableWithAggregatesFilter<"sys_job"> | string | null
+  run_after_success?: Prisma.BoolWithAggregatesFilter<"sys_job"> | boolean
 }
 
 export type sys_jobCreateInput = {
@@ -576,6 +620,10 @@ export type sys_jobCreateInput = {
   alert_receivers?: string | null
   alert_threshold?: number
   fail_count?: number
+  dependency_job_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dependency_mode?: string | null
+  on_dependency_fail?: string | null
+  run_after_success?: boolean
 }
 
 export type sys_jobUncheckedCreateInput = {
@@ -605,6 +653,10 @@ export type sys_jobUncheckedCreateInput = {
   alert_receivers?: string | null
   alert_threshold?: number
   fail_count?: number
+  dependency_job_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dependency_mode?: string | null
+  on_dependency_fail?: string | null
+  run_after_success?: boolean
 }
 
 export type sys_jobUpdateInput = {
@@ -634,6 +686,10 @@ export type sys_jobUpdateInput = {
   alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
   fail_count?: Prisma.IntFieldUpdateOperationsInput | number
+  dependency_job_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dependency_mode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  on_dependency_fail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  run_after_success?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type sys_jobUncheckedUpdateInput = {
@@ -663,6 +719,10 @@ export type sys_jobUncheckedUpdateInput = {
   alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
   fail_count?: Prisma.IntFieldUpdateOperationsInput | number
+  dependency_job_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dependency_mode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  on_dependency_fail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  run_after_success?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type sys_jobCreateManyInput = {
@@ -692,6 +752,10 @@ export type sys_jobCreateManyInput = {
   alert_receivers?: string | null
   alert_threshold?: number
   fail_count?: number
+  dependency_job_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dependency_mode?: string | null
+  on_dependency_fail?: string | null
+  run_after_success?: boolean
 }
 
 export type sys_jobUpdateManyMutationInput = {
@@ -721,6 +785,10 @@ export type sys_jobUpdateManyMutationInput = {
   alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
   fail_count?: Prisma.IntFieldUpdateOperationsInput | number
+  dependency_job_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dependency_mode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  on_dependency_fail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  run_after_success?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type sys_jobUncheckedUpdateManyInput = {
@@ -750,6 +818,10 @@ export type sys_jobUncheckedUpdateManyInput = {
   alert_receivers?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   alert_threshold?: Prisma.IntFieldUpdateOperationsInput | number
   fail_count?: Prisma.IntFieldUpdateOperationsInput | number
+  dependency_job_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dependency_mode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  on_dependency_fail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  run_after_success?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type sys_jobCountOrderByAggregateInput = {
@@ -779,6 +851,10 @@ export type sys_jobCountOrderByAggregateInput = {
   alert_receivers?: Prisma.SortOrder
   alert_threshold?: Prisma.SortOrder
   fail_count?: Prisma.SortOrder
+  dependency_job_ids?: Prisma.SortOrder
+  dependency_mode?: Prisma.SortOrder
+  on_dependency_fail?: Prisma.SortOrder
+  run_after_success?: Prisma.SortOrder
 }
 
 export type sys_jobAvgOrderByAggregateInput = {
@@ -821,6 +897,9 @@ export type sys_jobMaxOrderByAggregateInput = {
   alert_receivers?: Prisma.SortOrder
   alert_threshold?: Prisma.SortOrder
   fail_count?: Prisma.SortOrder
+  dependency_mode?: Prisma.SortOrder
+  on_dependency_fail?: Prisma.SortOrder
+  run_after_success?: Prisma.SortOrder
 }
 
 export type sys_jobMinOrderByAggregateInput = {
@@ -850,6 +929,9 @@ export type sys_jobMinOrderByAggregateInput = {
   alert_receivers?: Prisma.SortOrder
   alert_threshold?: Prisma.SortOrder
   fail_count?: Prisma.SortOrder
+  dependency_mode?: Prisma.SortOrder
+  on_dependency_fail?: Prisma.SortOrder
+  run_after_success?: Prisma.SortOrder
 }
 
 export type sys_jobSumOrderByAggregateInput = {
@@ -894,6 +976,10 @@ export type sys_jobSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   alert_receivers?: boolean
   alert_threshold?: boolean
   fail_count?: boolean
+  dependency_job_ids?: boolean
+  dependency_mode?: boolean
+  on_dependency_fail?: boolean
+  run_after_success?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -923,6 +1009,10 @@ export type sys_jobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   alert_receivers?: boolean
   alert_threshold?: boolean
   fail_count?: boolean
+  dependency_job_ids?: boolean
+  dependency_mode?: boolean
+  on_dependency_fail?: boolean
+  run_after_success?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -952,6 +1042,10 @@ export type sys_jobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   alert_receivers?: boolean
   alert_threshold?: boolean
   fail_count?: boolean
+  dependency_job_ids?: boolean
+  dependency_mode?: boolean
+  on_dependency_fail?: boolean
+  run_after_success?: boolean
 }, ExtArgs["result"]["sys_job"]>
 
 export type sys_jobSelectScalar = {
@@ -981,9 +1075,13 @@ export type sys_jobSelectScalar = {
   alert_receivers?: boolean
   alert_threshold?: boolean
   fail_count?: boolean
+  dependency_job_ids?: boolean
+  dependency_mode?: boolean
+  on_dependency_fail?: boolean
+  run_after_success?: boolean
 }
 
-export type sys_jobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"job_id" | "tenant_id" | "job_name" | "job_group" | "invoke_target" | "cron_expression" | "misfire_policy" | "concurrent" | "status" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "retry_count" | "retry_interval" | "timeout_seconds" | "is_paused" | "last_run_at" | "next_run_at" | "alert_enabled" | "alert_channels" | "alert_receivers" | "alert_threshold" | "fail_count", ExtArgs["result"]["sys_job"]>
+export type sys_jobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"job_id" | "tenant_id" | "job_name" | "job_group" | "invoke_target" | "cron_expression" | "misfire_policy" | "concurrent" | "status" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "retry_count" | "retry_interval" | "timeout_seconds" | "is_paused" | "last_run_at" | "next_run_at" | "alert_enabled" | "alert_channels" | "alert_receivers" | "alert_threshold" | "fail_count" | "dependency_job_ids" | "dependency_mode" | "on_dependency_fail" | "run_after_success", ExtArgs["result"]["sys_job"]>
 
 export type $sys_jobPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_job"
@@ -1015,6 +1113,10 @@ export type $sys_jobPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     alert_receivers: string | null
     alert_threshold: number
     fail_count: number
+    dependency_job_ids: runtime.JsonValue | null
+    dependency_mode: string | null
+    on_dependency_fail: string | null
+    run_after_success: boolean
   }, ExtArgs["result"]["sys_job"]>
   composites: {}
 }
@@ -1464,6 +1566,10 @@ export interface sys_jobFieldRefs {
   readonly alert_receivers: Prisma.FieldRef<"sys_job", 'String'>
   readonly alert_threshold: Prisma.FieldRef<"sys_job", 'Int'>
   readonly fail_count: Prisma.FieldRef<"sys_job", 'Int'>
+  readonly dependency_job_ids: Prisma.FieldRef<"sys_job", 'Json'>
+  readonly dependency_mode: Prisma.FieldRef<"sys_job", 'String'>
+  readonly on_dependency_fail: Prisma.FieldRef<"sys_job", 'String'>
+  readonly run_after_success: Prisma.FieldRef<"sys_job", 'Boolean'>
 }
     
 

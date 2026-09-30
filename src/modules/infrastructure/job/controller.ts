@@ -20,8 +20,12 @@ import { JobService } from "./service.js";
 import { AppError } from "@/core/errors.js";
 import { success } from "@/shared/http/response.js";
 import { upload } from "../../system/user/controller.js";
-import { JobCreateSchema, JobUpdateSchema } from "./schema.js";
-
+import {
+  JobCreateSchema,
+  JobDependencySchema,
+  JobUpdateSchema,
+} from "./schema.js";
+import { JobDependencyService } from "./dependency.service.js";
 @Controller("/job", { tags: ["定时任务"] })
 export default class JobController extends BaseController<any, any, any, any> {
   protected readonly repository = new JobRepository();
@@ -52,7 +56,7 @@ export default class JobController extends BaseController<any, any, any, any> {
       .optional()
       .openapi({ description: "查询字段，逗号分隔" }),
   });
-
+  private depService = new JobDependencyService();
   protected buildListWhere(q: any) {
     const where: any = {};
     if (q.jobName) where.job_name = { contains: q.jobName };
@@ -176,5 +180,45 @@ export default class JobController extends BaseController<any, any, any, any> {
         this.handleError(res, err);
       }
     });
+  }
+  @Put("/:id/dependencies")
+  @ApiOperation("更新任务依赖")
+  @ApiBody(JobDependencySchema)
+  async updateDependencies(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+
+      const dto = JobDependencySchema.parse(req.body);
+      await this.depService.validateDependencies(
+        req.params.id,
+        dto.dependencyJobIds,
+        tenantId,
+      );
+      await this.service.updateDependencies(req.params.id, dto, tenantId);
+
+      success(res, null, "依赖配置已更新");
+    } catch (err) {
+      this.handleError(res, err);
+    }
+  }
+
+  @Get("/:id/run-history")
+  @ApiOperation("查询任务运行历史")
+  async runHistory(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = req.tenantId;
+      if (!tenantId) throw new AppError("缺少租户上下文", 401001, 401);
+      const limit = Math.min(Number(req.query.limit) || 20, 100);
+
+      const data = await this.service.findRunHistory(
+        req.params.id,
+        tenantId,
+        limit,
+      );
+      success(res, data);
+    } catch (err) {
+      this.handleError(res, err);
+    }
   }
 }

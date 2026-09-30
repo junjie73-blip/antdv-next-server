@@ -17,12 +17,14 @@ export const dataScopeStorage = new AsyncLocalStorage<Store>();
 
 export function getDataScope(): DataScopeContext {
   const s = dataScopeStorage.getStore();
+  console.log(s, "getDataScope");
   if (!s) throw new AppError("数据权限上下文缺失", 500001, 500);
   return s.dataScope;
 }
 
 export function getDataScopeWhere(): Record<string, unknown> {
   const s = dataScopeStorage.getStore();
+  console.log(dataScopeStorage, "getDataScopeWhere");
   if (!s) throw new AppError("数据权限上下文缺失", 500001, 500);
   return s.whereScope;
 }

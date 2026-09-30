@@ -14,8 +14,10 @@ import {
   trackTimers,
   watchListenerLeak,
 } from "./core/diagnostics/index.js";
+import { startTracing } from "./platform/observability/tracing.js";
 
 async function main(): Promise<void> {
+  startTracing();
   // 1) 诊断探针
   watchListenerLeak(process, "process", 50);
   watchListenerLeak(redis, "redis", 20);

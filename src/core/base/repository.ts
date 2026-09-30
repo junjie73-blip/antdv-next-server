@@ -10,6 +10,8 @@ import { AppError } from "@/core/errors.js";
 import { SCAN_MAX_KEYS } from "@/config/constants.js";
 import { scanAll } from "../cache/redis-client.js";
 import dayjs from "dayjs";
+import { getDataScope } from "../context/data-scope.js";
+import { toWhereScope } from "@/middleware/index.js";
 
 export const SOFT_DELETE_FLAG = { NORMAL: 0, DELETED: 1 } as const;
 
@@ -74,10 +76,45 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
   protected isSoftDeleteTable(): boolean {
     return true;
   }
+  protected requiresDataScope(): boolean {
+    return true;
+  }
   protected mergeDataScope<W extends Record<string, any>>(where: W): W {
-    if (!this.dataScopeWhere || Object.keys(this.dataScopeWhere).length === 0)
+    if (!this.requiresDataScope()) {
       return where;
-    return { ...where, ...this.dataScopeWhere };
+    }
+
+    const ctx = getDataScope();
+
+    // ✅ 上下文缺失 → 明确报错，便于定位
+    if (!ctx) {
+      throw new AppError(
+        "数据权限上下文缺失（请检查 dataScopeMiddleware 是否挂载）",
+        500001,
+        500,
+      );
+    }
+
+    // 全部可见：不加过滤
+    if (ctx.deptIds === "*") {
+      return where;
+    }
+
+    // 仅本人
+    if (ctx.selfOnly) {
+      return { ...where, created_by: ctx.userId } as W;
+    }
+
+    // 部门列表为空：永假条件
+    if (Array.isArray(ctx.deptIds) && ctx.deptIds.length === 0) {
+      return { ...where, id: { equals: "__never_match__" } } as W;
+    }
+
+    // 部门过滤
+    return {
+      ...where,
+      ...toWhereScope(ctx),
+    } as W;
   }
 
   // ============ Total Cache（版本号方案）============

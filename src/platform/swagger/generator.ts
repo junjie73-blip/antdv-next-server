@@ -8,9 +8,8 @@ export function generateOpenAPIDoc() {
     info: {
       version: "1.0.0",
       title: "Antdv Next Admin API",
-      description:
-        "Multi-tenant Antdv Next Admin Backend API with RBAC, MFA, and Audit Logging",
+      description: "Multi-tenant backend API",
     },
-    servers: [{ url: "/api/v1" }],
+    servers: [{ url: "/api/v1", description: "业务 API" }],
   });
 }

@@ -420,6 +420,7 @@ export const ModelName = {
   sys_config: 'sys_config',
   sys_job: 'sys_job',
   sys_job_log: 'sys_job_log',
+  sys_job_run: 'sys_job_run',
   sys_todo: 'sys_todo',
   sys_ip_rule: 'sys_ip_rule',
   sys_notice_channel: 'sys_notice_channel',
@@ -452,7 +453,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_verify_code" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily" | "sys_approval_request" | "sys_approval_node" | "sys_approval_log" | "sys_notice_template" | "sys_file_pending_delete"
+    modelProps: "sys_tenant" | "sys_user" | "sys_verify_code" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_job_run" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily" | "sys_approval_request" | "sys_approval_node" | "sys_approval_log" | "sys_notice_template" | "sys_file_pending_delete"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2155,6 +2156,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.sys_job_logCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.Sys_job_logCountAggregateOutputType> | number
+        }
+      }
+    }
+    sys_job_run: {
+      payload: Prisma.$sys_job_runPayload<ExtArgs>
+      fields: Prisma.sys_job_runFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_job_runFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_job_runFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_job_runFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_job_runFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>
+        }
+        findMany: {
+          args: Prisma.sys_job_runFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>[]
+        }
+        create: {
+          args: Prisma.sys_job_runCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>
+        }
+        createMany: {
+          args: Prisma.sys_job_runCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_job_runCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_job_runDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>
+        }
+        update: {
+          args: Prisma.sys_job_runUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_job_runDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_job_runUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_job_runUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_job_runUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_job_runPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_job_runAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_job_run>
+        }
+        groupBy: {
+          args: Prisma.sys_job_runGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_job_runGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_job_runCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_job_runCountAggregateOutputType> | number
         }
       }
     }
@@ -3868,7 +3943,11 @@ export const Sys_jobScalarFieldEnum = {
   alert_channels: 'alert_channels',
   alert_receivers: 'alert_receivers',
   alert_threshold: 'alert_threshold',
-  fail_count: 'fail_count'
+  fail_count: 'fail_count',
+  dependency_job_ids: 'dependency_job_ids',
+  dependency_mode: 'dependency_mode',
+  on_dependency_fail: 'on_dependency_fail',
+  run_after_success: 'run_after_success'
 } as const
 
 export type Sys_jobScalarFieldEnum = (typeof Sys_jobScalarFieldEnum)[keyof typeof Sys_jobScalarFieldEnum]
@@ -3889,6 +3968,22 @@ export const Sys_job_logScalarFieldEnum = {
 } as const
 
 export type Sys_job_logScalarFieldEnum = (typeof Sys_job_logScalarFieldEnum)[keyof typeof Sys_job_logScalarFieldEnum]
+
+
+export const Sys_job_runScalarFieldEnum = {
+  run_id: 'run_id',
+  tenant_id: 'tenant_id',
+  job_id: 'job_id',
+  triggered_by: 'triggered_by',
+  trigger_parent: 'trigger_parent',
+  status: 'status',
+  started_at: 'started_at',
+  finished_at: 'finished_at',
+  duration_ms: 'duration_ms',
+  error_msg: 'error_msg'
+} as const
+
+export type Sys_job_runScalarFieldEnum = (typeof Sys_job_runScalarFieldEnum)[keyof typeof Sys_job_runScalarFieldEnum]
 
 
 export const Sys_todoScalarFieldEnum = {
@@ -4508,6 +4603,7 @@ export type GlobalOmitConfig = {
   sys_config?: Prisma.sys_configOmit
   sys_job?: Prisma.sys_jobOmit
   sys_job_log?: Prisma.sys_job_logOmit
+  sys_job_run?: Prisma.sys_job_runOmit
   sys_todo?: Prisma.sys_todoOmit
   sys_ip_rule?: Prisma.sys_ip_ruleOmit
   sys_notice_channel?: Prisma.sys_notice_channelOmit
