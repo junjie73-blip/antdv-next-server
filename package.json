@@ -19,6 +19,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1136.0",
     "@logtail/node": "^0.5.8",
     "@logtail/pino": "^0.5.8",
+    "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/auto-instrumentations-node": "^0.80.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
     "@opentelemetry/resources": "^2.11.0",

@@ -8,7 +8,7 @@ import { startScheduler } from "@/jobs/index.js";
 import { logger } from "@/platform/logger/index.js";
 import { sendAlert } from "@/platform/alert/index.js";
 
-import { redis, subRedis } from "@/config/redis.js";
+import { blockRedis, redis, subRedis } from "@/config/redis.js";
 import {
   snapshotTimers,
   trackTimers,
@@ -22,6 +22,8 @@ async function main(): Promise<void> {
   watchListenerLeak(process, "process", 50);
   watchListenerLeak(redis, "redis", 20);
   watchListenerLeak(subRedis, "subRedis", 20);
+  watchListenerLeak(blockRedis, "blockRedis", 20);
+
   trackTimers();
 
   // 2) 组装 + 启动

@@ -136,6 +136,7 @@ export function createApp(): Express {
 
   // ⑨ 限流（白名单在 limiter 内部 skip）
   app.use(...globalRateLimit);
+  app.use("/api/v1/auth/login", ...authRateLimit);
   app.use(
     "/api/v1/upload/chunk",
     chunkByteRateLimit(),

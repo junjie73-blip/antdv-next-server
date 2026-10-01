@@ -41,7 +41,7 @@ export default class AuditDailyController {
       const dto = DailyQuerySchema.parse(req.query);
       return success(res, await this.service.getOverview(tenantId, dto));
     } catch (err) {
-      this.handleError(res, err);
+      this.handleError(res, err as any);
     }
   }
 
@@ -57,7 +57,7 @@ export default class AuditDailyController {
       const dto = DailyQuerySchema.parse(req.query);
       return success(res, await this.service.getTrend(tenantId, dto));
     } catch (err) {
-      this.handleError(res, err);
+      this.handleError(res, err as any);
     }
   }
 
@@ -80,7 +80,7 @@ export default class AuditDailyController {
         await this.service.getTopOperations(tenantId, dto, limit),
       );
     } catch (err) {
-      this.handleError(res, err);
+      this.handleError(res, err as any);
     }
   }
 
@@ -94,7 +94,7 @@ export default class AuditDailyController {
       const { tenantId } = req.user as AuthUser;
       return success(res, await this.service.listOperations(tenantId));
     } catch (err) {
-      this.handleError(res, err);
+      this.handleError(res, err as any);
     }
   }
 
@@ -116,7 +116,7 @@ export default class AuditDailyController {
       const result = await this.service.aggregateDate(date, tenantId);
       return success(res, result, "聚合完成");
     } catch (err) {
-      this.handleError(res, err);
+      this.handleError(res, err as any);
     }
   }
 
@@ -131,7 +131,7 @@ export default class AuditDailyController {
       const result = await this.service.cleanExpired(tenantId);
       return success(res, result, "清理完成");
     } catch (err) {
-      this.handleError(res, err);
+      this.handleError(res, err as any);
     }
   }
   handleError(res: Response, err: AppError) {

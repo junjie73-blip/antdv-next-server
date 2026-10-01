@@ -129,6 +129,10 @@ const envSchema = z.object({
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
   OTEL_SERVICE_NAME: z.string().optional(),
   APP_VERSION: z.string().optional().default("1.0.0"),
+  REDIS_HOST: z.string().default("localhost"),
+  REDIS_PORT: z.string().default("6379"),
+  REDIS_DB: z.string().default("0"),
+  REDIS_PASSWORD: z.string().optional(),
 });
 
 // ✅ 使用 safeParse 输出更友好的错误信息

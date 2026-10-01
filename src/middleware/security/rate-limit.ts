@@ -34,6 +34,7 @@ export const RULES = {
   chunkUploadUser: { windowMs: 10_000, max: 2000, blockSec: 0 },
   fileUpload: { windowMs: 60_000, max: 60, blockSec: 0 },
   auth: { windowMs: 60_000, max: 20, blockSec: 600 },
+  api: { windowMs: 60_000, max: 200, blockSec: 600 },
 } satisfies Record<string, LimitRule>;
 
 const IP_WHITELIST = new Set(
@@ -168,6 +169,8 @@ function createLimiter(
       res.setHeader("Retry-After", String(Math.ceil(rule.windowMs / 1000)));
       return error(res, "请求过快，请稍后重试", 429);
     },
+    message: "请求过于频繁，请稍后再试",
+    passOnStoreError: true,
   });
 }
 
@@ -196,7 +199,8 @@ export const fileUploadRateLimit = createProtectedLimiter(
   RULES.fileUpload,
   "file",
 );
-
+export const apiLimiter = createProtectedLimiter("both", RULES.api, "api");
+export const loginLimiter = createProtectedLimiter("both", RULES.auth, "login");
 export const authRateLimit: [
   ReturnType<typeof blockCheck>,
   RateLimitRequestHandler,
