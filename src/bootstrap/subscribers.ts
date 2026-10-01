@@ -4,6 +4,8 @@ import {
   startNoticeSubscriber,
   startForceLogoutSubscriber,
   startUploadNotifySubscriber,
+  startWorkflowNotifySubscriber,
+  startReportNotifySubscriber,
 } from "@/platform/ws/index.js";
 
 /**
@@ -16,6 +18,8 @@ export async function startSubscribers(): Promise<void> {
     { name: "force-logout", fn: startForceLogoutSubscriber },
     { name: "upload-notify", fn: startUploadNotifySubscriber },
     { name: "config", fn: startConfigSubscriber },
+    { name: "workflow-notify", fn: startWorkflowNotifySubscriber },
+    { name: "report-notify", fn: startReportNotifySubscriber },
   ];
 
   const results = await Promise.allSettled(tasks.map((t) => t.fn()));

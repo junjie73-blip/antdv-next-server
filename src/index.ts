@@ -1,3 +1,4 @@
+import { startTracing } from "./platform/observability/tracing/tracing.js";
 import {
   createApp,
   startServer,
@@ -14,10 +15,16 @@ import {
   trackTimers,
   watchListenerLeak,
 } from "./core/diagnostics/index.js";
-import { startTracing } from "./platform/observability/tracing.js";
+import { env } from "./config/env.js";
 
 async function main(): Promise<void> {
-  startTracing();
+  startTracing({
+    enabled: env.OTEL_ENABLED,
+    serviceName: env.OTEL_SERVICE_NAME || "antdv",
+    serviceVersion: env.APP_VERSION,
+    environment: env.NODE_ENV,
+    exporterUrl: env.OTEL_EXPORTER_URL,
+  });
   // 1) 诊断探针
   watchListenerLeak(process, "process", 50);
   watchListenerLeak(redis, "redis", 20);

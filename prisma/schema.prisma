@@ -918,3 +918,405 @@ model sys_file_pending_delete {
 
   @@index([next_retry])
 }
+
+/// ==================== 流程定义 ====================
+model wf_definition {
+  def_id         String   @id @default(uuid()) @db.Uuid
+  tenant_id      String   @db.Uuid
+  def_key        String   @db.VarChar(64) /// 流程唯一标识
+  def_name       String   @db.VarChar(128)
+  version        Int      @default(1) /// 版本号
+  category       String?  @db.VarChar(64) /// 分类
+  description    String?  @db.VarChar(512)
+  definition     Json /// BPMN JSON 定义
+  definition_xml String?  @db.Text /// BPMN XML 原文（画布还原用）
+  /**
+   * 表单配置 [{ field, label, type, required }]
+   */
+  form_schema    Json?
+  /**
+   * 变量定义 [{ name, type, defaultValue }]
+   */
+  var_schema     Json?
+  status         String   @default("1") @db.VarChar(10) /// 0-草稿 1-已发布 2-已停用
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime @updatedAt @db.Timestamptz(6)
+  created_by     String?  @db.Uuid
+  updated_by     String?  @db.Uuid
+  is_deleted     Int      @default(0) @db.SmallInt
+
+  instances wf_instance[]
+
+  @@unique([tenant_id, def_key, version])
+  @@index([tenant_id, status])
+  @@index([is_deleted])
+  @@map("wf_definition")
+}
+
+/// ==================== 流程实例 ====================
+model wf_instance {
+  instance_id         String            @id @default(uuid()) @db.Uuid
+  tenant_id           String            @db.Uuid
+  def_id              String            @db.Uuid
+  def_key             String            @db.VarChar(64)
+  def_version         Int
+  business_key        String?           @db.VarChar(128) /// 业务单号
+  title               String            @db.VarChar(256)
+  initiator_id        String            @db.Uuid /// 发起人
+  initiator_dept_id   String?           @db.Uuid /// 发起人部门
+  variables           Json /// 流程变量快照
+  /**
+   * 当前活跃节点列表（支持并行）
+   */
+  active_nodes        Json              @default("[]")
+  status              String            @default("0") @db.VarChar(20)
+  /**
+   * 0-运行中 1-已完成 2-已终止 3-已挂起
+   */
+  start_at            DateTime          @default(now()) @db.Timestamptz(6)
+  end_at              DateTime?         @db.Timestamptz(6)
+  duration_ms         Int? /// 总耗时
+  parent_instance_id  String?           @db.Uuid /// 子流程场景
+  created_at          DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime          @updatedAt @db.Timestamptz(6)
+  is_deleted          Int               @default(0) @db.SmallInt
+  priority            Int?              @default(0) /// 优先级
+  def                 wf_definition     @relation(fields: [def_id], references: [def_id])
+  tasks               wf_task[]
+  variables_log       wf_variable_log[]
+  history             wf_history[]
+  /// 超时通知时间（避免重复通知）
+  timeout_notified_at DateTime?         @db.Timestamptz(6)
+  /// 最后超时扫描时间
+  last_scanned_at     DateTime?         @db.Timestamptz(6)
+
+  @@index([tenant_id, status])
+  @@index([tenant_id, initiator_id])
+  @@index([tenant_id, business_key])
+  @@index([parent_instance_id])
+  @@index([tenant_id, def_key, status])
+  @@index([tenant_id, start_at(sort: Desc)])
+  @@map("wf_instance")
+}
+
+/// ==================== 任务 ====================
+model wf_task {
+  task_id       String      @id @default(uuid()) @db.Uuid
+  tenant_id     String      @db.Uuid
+  instance_id   String      @db.Uuid
+  node_id       String      @db.VarChar(64) /// 节点 ID
+  node_name     String      @db.VarChar(128)
+  node_type     String      @db.VarChar(32) /// userTask | countersign | orSign
+  assignee_id   String?     @db.Uuid /// 审批人
+  assignee_type String      @db.VarChar(32) /// user | role | dept | initiator
+  candidate_ids Json? /// 候选用户列表（多签场景）
+  sign_type     String?     @db.VarChar(20) /// all-会签 any-或签 sequential-顺序
+  sign_strategy Json? /// { percent: 60 } 比例通过
+  completed_ids Json?       @default("[]") /// 已签署用户
+  status        String      @default("0") @db.VarChar(20)
+  /// 0-待处理 1-已完成 2-已取消 3-已超时
+  action        String?     @db.VarChar(32) /// approve | reject | ...
+  comment       String?     @db.Text
+  /**
+   * 表单提交数据
+   */
+  form_data     Json?
+  due_at        DateTime?   @db.Timestamptz(6)
+  claimed_at    DateTime?   @db.Timestamptz(6)
+  completed_at  DateTime?   @db.Timestamptz(6)
+  duration_ms   Int?
+  created_at    DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime    @updatedAt @db.Timestamptz(6)
+  is_deleted    Int         @default(0) @db.SmallInt
+  priority      Int?        @default(0) /// 优先级
+  instance      wf_instance @relation(fields: [instance_id], references: [instance_id])
+
+  @@index([tenant_id, assignee_id, status])
+  @@index([tenant_id, instance_id])
+  @@index([tenant_id, node_id, status])
+  @@index([tenant_id, due_at])
+  @@index([due_at])
+  @@index([tenant_id, assignee_id, status, priority])
+  @@map("wf_task")
+}
+
+/// ==================== 流程历史 ====================
+model wf_history {
+  history_id    String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  instance_id   String   @db.Uuid
+  node_id       String   @db.VarChar(64)
+  node_name     String   @db.VarChar(128)
+  node_type     String   @db.VarChar(32)
+  event_type    String   @db.VarChar(32)
+  /// start | complete | reject | terminate | assign | unassign
+  operator_id   String?  @db.Uuid
+  operator_name String?  @db.VarChar(64)
+  comment       String?  @db.Text
+  variables     Json?
+  duration_ms   Int?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  instance wf_instance @relation(fields: [instance_id], references: [instance_id])
+
+  @@index([tenant_id, instance_id])
+  @@index([created_at])
+  @@map("wf_history")
+}
+
+/// ==================== 变量历史 ====================
+model wf_variable_log {
+  log_id              String      @id @default(uuid()) @db.Uuid
+  tenant_id           String      @db.Uuid
+  instance_id         String      @db.Uuid
+  task_id             String?     @db.Uuid
+  key                 String      @db.VarChar(64)
+  value               Json?
+  created_at          DateTime    @default(now()) @db.Timestamptz(6)
+  created_by          String?     @db.Uuid
+  timeout_notified_at DateTime?   @db.Timestamptz(6)
+  last_scanned_at     DateTime?   @db.Timestamptz(6)
+  instance            wf_instance @relation(fields: [instance_id], references: [instance_id])
+
+  @@index([tenant_id, instance_id])
+  @@map("wf_variable_log")
+}
+
+/// ==================== 数据集 ====================
+model rp_dataset {
+  dataset_id    String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  dataset_code  String   @db.VarChar(64)
+  dataset_name  String   @db.VarChar(128)
+  description   String?  @db.VarChar(512)
+  category      String?  @db.VarChar(64)
+  /**
+   * 数据集类型：sql | api | json
+   */
+  dataset_type  String   @default("sql") @db.VarChar(20)
+  /**
+   * SQL 数据源配置：{ sql, timeout, maxRows }
+   */
+  source_config Json
+  /**
+   * 参数定义 [{ name, type, required, defaultValue }]
+   */
+  params        Json?
+  /**
+   * 字段元信息 [{ name, type, label }]
+   */
+  fields        Json?
+  status        String   @default("1") @db.VarChar(10)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @updatedAt @db.Timestamptz(6)
+  created_by    String?  @db.Uuid
+  updated_by    String?  @db.Uuid
+  is_deleted    Int      @default(0) @db.SmallInt
+
+  reports rp_report[]
+
+  @@unique([tenant_id, dataset_code])
+  @@index([tenant_id, category])
+  @@map("rp_dataset")
+}
+
+/// ==================== 报表 ====================
+model rp_report {
+  report_id     String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  report_code   String   @db.VarChar(64)
+  report_name   String   @db.VarChar(128)
+  description   String?  @db.VarChar(512)
+  category      String?  @db.VarChar(64)
+  dataset_id    String   @db.Uuid
+  /**
+   * 报表配置：{ chartType, columns, layout, colors }
+   */
+  config        Json?
+  /**
+   * 报表参数（覆盖数据集参数）
+   */
+  params        Json?
+  /**
+   * 权限控制：允许访问的角色列表
+   */
+  allowed_roles Json?
+  status        String   @default("1") @db.VarChar(10)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @updatedAt @db.Timestamptz(6)
+  created_by    String?  @db.Uuid
+  updated_by    String?  @db.Uuid
+  is_deleted    Int      @default(0) @db.SmallInt
+
+  dataset rp_dataset      @relation(fields: [dataset_id], references: [dataset_id])
+  logs    rp_report_log[]
+
+  @@unique([tenant_id, report_code])
+  @@index([tenant_id, category])
+  @@map("rp_report")
+}
+
+/// ==================== 报表执行日志 ====================
+model rp_report_log {
+  log_id      String   @id @default(uuid()) @db.Uuid
+  tenant_id   String   @db.Uuid
+  report_id   String   @db.Uuid
+  report_code String   @db.VarChar(64)
+  params      Json?
+  row_count   Int      @default(0)
+  duration_ms Int      @default(0)
+  /**
+   * 1-成功 0-失败
+   */
+  status      String   @default("1") @db.VarChar(10)
+  error_msg   String?  @db.Text
+  export_type String?  @db.VarChar(20) /// excel | pdf | html
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  created_by  String?  @db.Uuid
+
+  report rp_report @relation(fields: [report_id], references: [report_id])
+
+  @@index([tenant_id, report_id])
+  @@index([created_at])
+  @@index([tenant_id, export_type, created_at(sort: Desc)])
+  @@map("rp_report_log")
+}
+
+/// ==================== 报表收藏 ====================
+model rp_report_favorite {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenant_id  String   @db.Uuid
+  user_id    String   @db.Uuid
+  report_id  String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([user_id, report_id])
+  @@index([tenant_id, user_id])
+  @@map("rp_report_favorite")
+}
+
+/// ==================== 报表异步导出任务 ====================
+model rp_export_task {
+  task_id       String    @id @default(uuid()) @db.Uuid
+  tenant_id     String    @db.Uuid
+  user_id       String    @db.Uuid
+  report_code   String    @db.VarChar(64)
+  export_type   String    @db.VarChar(20) /// excel | pdf | html | csv
+  params        Json?
+  /// pending | processing | completed | failed | cancelled
+  status        String    @default("pending") @db.VarChar(20)
+  /// 进度 0-100
+  progress      Int       @default(0) @db.SmallInt
+  row_count     Int       @default(0)
+  /// 文件信息
+  file_url      String?   @db.VarChar(512)
+  file_name     String?   @db.VarChar(256)
+  file_size     BigInt?
+  /// 失败信息
+  error_msg     String?   @db.Text
+  /// 重试计数
+  retry_count   Int       @default(0) @db.SmallInt
+  duration_ms   Int?
+  /// BullMQ Job ID（用于取消/查询）
+  job_id        String?   @db.VarChar(64)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @updatedAt @db.Timestamptz(6)
+  started_at    DateTime? @db.Timestamptz(6)
+  completed_at  DateTime? @db.Timestamptz(6)
+  expires_at    DateTime? @db.Timestamptz(6) /// 文件过期时间
+  max_retries   Int       @default(3) @db.SmallInt
+  /**
+   * 下次重试时间
+   */
+  next_retry_at DateTime? @db.Timestamptz(6)
+  /**
+   * 最后一次错误类型
+   */
+  error_type    String?   @db.VarChar(20)
+  /**
+   * 完整错误堆栈（截断）
+   */
+  error_stack   String?   @db.Text
+
+  @@index([tenant_id, user_id, status, created_at(sort: Desc)])
+  @@index([status, created_at])
+  @@index([expires_at])
+  @@index([status, next_retry_at])
+  @@map("rp_export_task")
+}
+
+/// ==================== 工作流通知日志 ====================
+model wf_notification {
+  notification_id String    @id @default(uuid()) @db.Uuid
+  tenant_id       String    @db.Uuid
+  instance_id     String    @db.Uuid
+  task_id         String?   @db.Uuid
+  node_id         String?   @db.VarChar(64)
+  /// assign | complete | reject | timeout | terminate | cc | start
+  event_type      String    @db.VarChar(32)
+  /// email | sms | webhook | in_app | wechat_work | dingtalk
+  channel_type    String    @db.VarChar(32)
+  receiver_id     String?   @db.Uuid
+  receiver_addr   String?   @db.VarChar(256)
+  template_code   String?   @db.VarChar(64)
+  title           String?   @db.VarChar(256)
+  content         String?   @db.Text
+  /// 0-待发送 1-已发送 2-发送失败 3-已跳过
+  status          String    @default("0") @db.VarChar(10)
+  error_msg       String?   @db.Text
+  retry_count     Int       @default(0) @db.SmallInt
+  sent_at         DateTime? @db.Timestamptz(6)
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([tenant_id, instance_id])
+  @@index([tenant_id, task_id])
+  @@index([status, created_at])
+  @@index([event_type, created_at])
+  @@map("wf_notification")
+}
+
+/// ==================== 报表预热配置 ====================
+model rp_cache_warm_config {
+  config_id       String    @id @default(uuid()) @db.Uuid
+  tenant_id       String    @db.Uuid
+  report_code     String    @db.VarChar(64)
+  /**
+   * 预热参数 JSON
+   */
+  warm_params     Json?
+  /**
+   * 预热频率：cron 表达式
+   */
+  cron_expression String    @default("0 */30 * * * ?") @db.VarChar(64)
+  /**
+   * 是否启用
+   */
+  enabled         Int       @default(1) @db.SmallInt
+  /**
+   * 缓存 TTL（秒）
+   */
+  cache_ttl       Int       @default(1800)
+  /**
+   * 最后预热时间
+   */
+  last_warm_at    DateTime? @db.Timestamptz(6)
+  /**
+   * 最后预热状态 1-成功 0-失败
+   */
+  last_status     String?   @db.VarChar(10)
+  /**
+   * 最后错误信息
+   */
+  last_error      String?   @db.Text
+  remark          String?   @db.VarChar(512)
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(6)
+  created_by      String?   @db.Uuid
+  updated_by      String?   @db.Uuid
+  is_deleted      Int       @default(0) @db.SmallInt
+
+  @@unique([tenant_id, report_code])
+  @@index([tenant_id, enabled])
+  @@index([last_warm_at])
+  @@map("rp_cache_warm_config")
+}

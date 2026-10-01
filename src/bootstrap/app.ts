@@ -27,6 +27,8 @@ import {
   chunkByteRateLimit,
   fileUploadRateLimit,
   authRateLimit,
+  csrfGuard,
+  issueCsrfToken,
 } from "@/middleware/security/index.js";
 import { auditMiddleware } from "@/middleware/business/index.js";
 
@@ -34,7 +36,8 @@ import { controllers } from "@/modules/index.js";
 import { getClientIp } from "@/shared/utils/ip.js";
 import { DecoratorRouter } from "@/core/decorator/router.js";
 import { ControllerScanner } from "@/core/decorator/scanner.js";
-
+import cookieParser from "cookie-parser";
+import { traceMiddleware } from "@/platform/observability/tracing/index.js";
 const METRICS_ALLOW = new Set(
   (env.METRICS_WHITELIST || "127.0.0.1,::1")
     .split(",")
@@ -47,10 +50,20 @@ export function createApp(): Express {
 
   // 反向代理配置
   app.set("trust proxy", env.NODE_ENV === "production" ? 1 : false);
-
+  app.use(traceMiddleware);
   // ① 请求上下文（traceId + 耗时 + 指标）
   app.use(requestContext());
+  app.use(cookieParser());
+  // 每次请求时确保有 CSRF Token
+  app.use((req, res, next) => {
+    if (!req.cookies?.["_csrf_token"]) {
+      issueCsrfToken(res);
+    }
+    next();
+  });
 
+  // 校验
+  app.use(csrfGuard);
   // ② CORS
   const allowedOrigins = env.FRONTEND_URL.split(",")
     .map((s) => s.trim())

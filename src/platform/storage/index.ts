@@ -9,4 +9,6 @@ export {
   invalidateStorage,
   uploadStream,
   deleteFileByUrl,
+  uploadBuffer,
+  getStorageForTenant,
 } from "./factory.js";

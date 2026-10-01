@@ -222,3 +222,63 @@ export type sys_notice_template = Prisma.sys_notice_templateModel
  * 
  */
 export type sys_file_pending_delete = Prisma.sys_file_pending_deleteModel
+/**
+ * Model wf_definition
+ * ==================== 流程定义 ====================
+ */
+export type wf_definition = Prisma.wf_definitionModel
+/**
+ * Model wf_instance
+ * ==================== 流程实例 ====================
+ */
+export type wf_instance = Prisma.wf_instanceModel
+/**
+ * Model wf_task
+ * ==================== 任务 ====================
+ */
+export type wf_task = Prisma.wf_taskModel
+/**
+ * Model wf_history
+ * ==================== 流程历史 ====================
+ */
+export type wf_history = Prisma.wf_historyModel
+/**
+ * Model wf_variable_log
+ * ==================== 变量历史 ====================
+ */
+export type wf_variable_log = Prisma.wf_variable_logModel
+/**
+ * Model rp_dataset
+ * ==================== 数据集 ====================
+ */
+export type rp_dataset = Prisma.rp_datasetModel
+/**
+ * Model rp_report
+ * ==================== 报表 ====================
+ */
+export type rp_report = Prisma.rp_reportModel
+/**
+ * Model rp_report_log
+ * ==================== 报表执行日志 ====================
+ */
+export type rp_report_log = Prisma.rp_report_logModel
+/**
+ * Model rp_report_favorite
+ * ==================== 报表收藏 ====================
+ */
+export type rp_report_favorite = Prisma.rp_report_favoriteModel
+/**
+ * Model rp_export_task
+ * ==================== 报表异步导出任务 ====================
+ */
+export type rp_export_task = Prisma.rp_export_taskModel
+/**
+ * Model wf_notification
+ * ==================== 工作流通知日志 ====================
+ */
+export type wf_notification = Prisma.wf_notificationModel
+/**
+ * Model rp_cache_warm_config
+ * ==================== 报表预热配置 ====================
+ */
+export type rp_cache_warm_config = Prisma.rp_cache_warm_configModel

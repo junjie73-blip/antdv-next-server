@@ -1,7 +1,15 @@
-import { startMergeWorker, installWorkerShutdown } from "@/bootstrap/index.js";
+import { startAllWorkers, installWorkerShutdown } from "@/bootstrap/index.js";
 import { logger } from "@/platform/logger/index.js";
 
-const worker = startMergeWorker();
-installWorkerShutdown(worker);
+/**
+ * Worker 进程入口
+ * - 启动所有队列的 Worker：merge / report-export / wf-notify / cache-warm
+ * - 统一优雅退出
+ */
+const bundle = startAllWorkers();
+installWorkerShutdown(bundle.all);
 
-logger.info("[worker] merge worker started");
+logger.info(
+  { queues: bundle.all.map((w) => w.name) },
+  "[worker] process ready",
+);

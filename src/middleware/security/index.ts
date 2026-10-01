@@ -27,3 +27,4 @@ export {
   RULES,
 } from "./rate-limit.js";
 export type { LimitRule } from "./rate-limit.js";
+export { csrfGuard, issueCsrfToken } from "./csrf.js";

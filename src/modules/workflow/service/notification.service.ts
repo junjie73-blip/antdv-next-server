@@ -1,0 +1,144 @@
+import { prisma } from "@/config/database.js";
+import { logger } from "@/platform/logger/index.js";
+import { wfNotifyQueue } from "@/platform/queue/queues.js";
+
+export type WfEventType =
+  | "assign"
+  | "complete"
+  | "reject"
+  | "timeout"
+  | "terminate"
+  | "cc"
+  | "start";
+
+export interface WfNotifyParams {
+  tenantId: string;
+  instanceId: string;
+  taskId?: string;
+  nodeId?: string;
+  eventType: WfEventType;
+  receiverIds: string[];
+  extra?: Record<string, any>;
+}
+
+const TEMPLATE_MAP: Record<WfEventType, { title: string; template: string }> = {
+  assign: {
+    title: "【待办】{{instanceTitle}}",
+    template:
+      "您有一条新的待办任务：{{instanceTitle}}\n节点：{{nodeName}}\n发起人：{{initiatorName}}",
+  },
+  complete: {
+    title: "【已办】{{instanceTitle}}",
+    template: "您审批的「{{instanceTitle}}」已通过。",
+  },
+  reject: {
+    title: "【驳回】{{instanceTitle}}",
+    template: "您审批的「{{instanceTitle}}」已被驳回。\n原因：{{comment}}",
+  },
+  timeout: {
+    title: "【超时】{{instanceTitle}}",
+    template: "您有一条待办任务已超时：{{instanceTitle}}\n节点：{{nodeName}}",
+  },
+  terminate: {
+    title: "【终止】{{instanceTitle}}",
+    template: "流程「{{instanceTitle}}」已终止。\n原因：{{reason}}",
+  },
+  cc: {
+    title: "【抄送】{{instanceTitle}}",
+    template: "您收到一份抄送：{{instanceTitle}}",
+  },
+  start: {
+    title: "【发起】{{instanceTitle}}",
+    template: "流程「{{instanceTitle}}」已发起。",
+  },
+};
+
+export class WfNotificationService {
+  async notify(params: WfNotifyParams): Promise<void> {
+    if (!params.receiverIds?.length) return;
+
+    try {
+      const instance = await prisma.wf_instance.findUnique({
+        where: { instance_id: params.instanceId },
+        select: {
+          title: true,
+          def_key: true,
+          initiator_id: true,
+          variables: true,
+        },
+      });
+      if (!instance) return;
+
+      const initiator = await prisma.sys_user.findUnique({
+        where: { user_id: instance.initiator_id },
+        select: { real_name: true, username: true },
+      });
+      const initiatorName =
+        initiator?.real_name ?? initiator?.username ?? "未知";
+
+      // 查节点名
+      let nodeName = "";
+      if (params.nodeId) {
+        const def = await prisma.wf_definition.findFirst({
+          where: {
+            tenant_id: params.tenantId,
+            def_key: instance.def_key,
+            status: "1",
+            is_deleted: 0,
+          },
+          select: { definition: true },
+          orderBy: { version: "desc" },
+        });
+        const nodes = ((def?.definition as any)?.nodes ?? []) as Array<{
+          id: string;
+          name?: string;
+        }>;
+        nodeName =
+          nodes.find((n) => n.id === params.nodeId)?.name ?? params.nodeId;
+      }
+
+      const tpl = TEMPLATE_MAP[params.eventType];
+      const vars: Record<string, any> = {
+        instanceTitle: instance.title,
+        defKey: instance.def_key,
+        initiatorName,
+        nodeName,
+        ...(instance.variables as Record<string, any>),
+        ...(params.extra ?? {}),
+      };
+
+      const title = this.render(tpl.title, vars);
+      const content = this.render(tpl.template, vars);
+
+      await wfNotifyQueue.add(
+        "notify",
+        {
+          tenantId: params.tenantId,
+          instanceId: params.instanceId,
+          taskId: params.taskId,
+          nodeId: params.nodeId,
+          eventType: params.eventType,
+          receiverIds: [...new Set(params.receiverIds)],
+          title,
+          content,
+        },
+        {
+          jobId: `wf-notify-${params.eventType}-${params.taskId ?? params.instanceId}-${Date.now()}`,
+        },
+      );
+    } catch (err: any) {
+      logger.error(
+        { err, instanceId: params.instanceId, eventType: params.eventType },
+        "[wf-notify] 入队失败",
+      );
+    }
+  }
+
+  private render(template: string, vars: Record<string, any>): string {
+    return template.replace(/\{\{(\w+)\}\}/g, (_, key) =>
+      vars[key] !== undefined && vars[key] !== null ? String(vars[key]) : "",
+    );
+  }
+}
+
+export const wfNotificationService = new WfNotificationService();

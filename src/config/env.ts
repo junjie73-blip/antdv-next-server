@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import { existsSync } from "fs";
 import { resolve } from "path";
 import { z } from "zod";
+import { decryptEnv } from "@/platform/secrets/env-decrypt.js";
 
 const cwd = process.cwd();
 const basePath = resolve(cwd, ".env");
@@ -37,7 +38,7 @@ const boolStr = (def: "true" | "false") =>
     .enum(["true", "false"])
     .default(def)
     .transform((v) => v === "true");
-
+const decryptedEnv = decryptEnv(process.env);
 const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
@@ -127,16 +128,23 @@ const envSchema = z.object({
   TEMPLATE_TENANT_ID: z.string().min(1),
   ALLOW_SELF_KICK: boolStr("false"),
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
-  OTEL_SERVICE_NAME: z.string().optional(),
+  OTEL_SERVICE_NAME: z.string().default("antdv"),
+
   APP_VERSION: z.string().optional().default("1.0.0"),
+
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.string().default("6379"),
   REDIS_DB: z.string().default("0"),
+
   REDIS_PASSWORD: z.string().optional(),
+  SECRET_MASTER_KEY: z.string().optional(),
+
+  OTEL_ENABLED: boolStr("true"),
+  OTEL_EXPORTER_URL: z.string().url().optional(),
+  OTEL_ENVIRONMENT: z.string().optional(),
 });
 
-// ✅ 使用 safeParse 输出更友好的错误信息
-const parsed = envSchema.safeParse(process.env);
+const parsed = envSchema.safeParse(decryptedEnv);
 if (!parsed.success) {
   console.error("❌ 环境变量校验失败：");
   for (const issue of parsed.error.issues) {
@@ -146,3 +154,7 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+
+if (env.NODE_ENV === "production" && !env.SECRET_MASTER_KEY) {
+  throw new Error("生产环境必须配置 SECRET_MASTER_KEY");
+}

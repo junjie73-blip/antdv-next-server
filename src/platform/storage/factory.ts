@@ -4,29 +4,27 @@ import { MinioStorage } from "./minio.js";
 import { OssStorage } from "./oss.js";
 import { CosStorage } from "./cos.js";
 import { S3Storage } from "./s3.js";
-import type { IStorage, StorageConfig } from "./types.js";
+import type { IStorage, StorageConfig, PutObjectInput } from "./types.js";
 import { env } from "@/config/env.js";
 import { AppError } from "@/middleware/http/index.js";
 import { createReadStream } from "fs";
+
 export interface UploadStreamInput {
   tenantId?: string;
   key: string;
-  /** 本地文件路径 或 Readable 流 */
   filePath?: string;
   stream?: NodeJS.ReadableStream;
   contentType?: string;
   contentLength?: number;
-  /** 或者直接传 storage 实例（避免重复查配置） */
   storage?: IStorage;
 }
+
 /* ============================================================
  * 租户级存储实例缓存
- * key: tenantId，value: { storage, configHash }
  * ============================================================ */
 const cache = new Map<string, { storage: IStorage; hash: string }>();
 
 function hashCode(cfg: StorageConfig): string {
-  // 简单 hash，配置变化时重建
   return JSON.stringify({
     s: cfg.storage,
     e: cfg.endpoint,
@@ -39,6 +37,7 @@ function hashCode(cfg: StorageConfig): string {
     ssl: cfg.useSSL,
   });
 }
+
 export function createStorage(tenantId: string, cfg: StorageConfig): IStorage {
   const hash = hashCode(cfg);
   const hit = cache.get(tenantId);
@@ -55,7 +54,6 @@ export function createStorage(tenantId: string, cfg: StorageConfig): IStorage {
       break;
 
     case "minio":
-      console.log(cfg, "minio cfg");
       storage = new MinioStorage({
         endpoint: cfg.endpoint ?? "",
         port: cfg.port ?? 9000,
@@ -111,31 +109,15 @@ export function createStorage(tenantId: string, cfg: StorageConfig): IStorage {
   return storage;
 }
 
-/** 配置变更时调用，清掉缓存 */
 export function invalidateStorage(tenantId: string): void {
   cache.delete(tenantId);
   logger.debug({ tenantId }, "[storage] cache invalidated");
 }
 
 /**
- * 按 URL 删除物理文件（自动匹配存储后端）
- * ⚠️ 需要 tenantId，从 URL 反解 key 后删除
+ * ⭐ 新增：对外暴露，供 Worker / Service 使用
  */
-export async function deleteFileByUrl(
-  tenantId: string,
-  url: string,
-): Promise<void> {
-  const storage = await getStorageForTenant(tenantId);
-  const key = storage.keyFromUrl(url);
-  if (!key) return; // 解析失败静默跳过
-  await storage.deleteObject(key);
-}
-
-/**
- * 内部：按租户查配置并创建 storage 实例
- * 供 factory 内部和外部使用
- */
-async function getStorageForTenant(tenantId: string): Promise<IStorage> {
+export async function getStorageForTenant(tenantId: string): Promise<IStorage> {
   const { SettingsService } =
     await import("@/modules/system/setting/service.js");
   const settingsService = new SettingsService();
@@ -167,6 +149,42 @@ async function getStorageForTenant(tenantId: string): Promise<IStorage> {
       cfg.cosCustomDomain ||
       cfg.s3CustomDomain,
   });
+}
+
+/**
+ * ⭐ 新增：Buffer 上传，返回 URL
+ * 供 Worker / 异步任务使用
+ */
+export async function uploadBuffer(input: {
+  tenantId: string;
+  key: string;
+  body: Buffer;
+  contentType?: string;
+}): Promise<{ url: string; key: string; size: number }> {
+  const storage = await getStorageForTenant(input.tenantId);
+
+  await storage.putObject({
+    key: input.key,
+    body: input.body,
+    contentType: input.contentType,
+    contentLength: input.body.length,
+  });
+
+  return {
+    url: storage.buildPublicUrl(input.key),
+    key: input.key,
+    size: input.body.length,
+  };
+}
+
+export async function deleteFileByUrl(
+  tenantId: string,
+  url: string,
+): Promise<void> {
+  const storage = await getStorageForTenant(tenantId);
+  const key = storage.keyFromUrl(url);
+  if (!key) return;
+  await storage.deleteObject(key);
 }
 
 export async function uploadStream(input: UploadStreamInput): Promise<void> {

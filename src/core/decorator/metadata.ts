@@ -45,7 +45,20 @@ export interface SwaggerMetadata {
   description?: string;
   requestBody?: any;
   responses?: Record<number | string, any>;
-  query?: any;
+  query?: any; // 保留兼容
+  /** ⭐ 新增：累积的 query 输入 */
+  _queryInputs?: Array<{
+    schema?: any;
+    params: Array<{
+      name: string;
+      required?: boolean;
+      description?: string;
+      type?: string;
+      default?: unknown;
+      enum?: readonly string[];
+      example?: unknown;
+    }>;
+  }>;
   params?: any;
   tags?: string[];
   deprecated?: boolean;

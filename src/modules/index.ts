@@ -35,6 +35,9 @@ import NoticeController from "./notice/controller.js";
 import NoticeMyNoticeController from "./notice/my-notice.controller.js";
 import RbacPermissionController from "./rbac/controller/permission.controller.js";
 import RbacRoleController from "./rbac/controller/role.controller.js";
+import ReportDatasetController from "./report/controller/dataset.controller.js";
+import ReportExportTaskController from "./report/controller/export-task.controller.js";
+import ReportReportController from "./report/controller/report.controller.js";
 import SystemDeptController from "./system/dept/controller.js";
 import SystemDictDataController from "./system/dict-data/controller.js";
 import SystemDictTypeController from "./system/dict-type/controller.js";
@@ -46,6 +49,10 @@ import SystemRoleController from "./system/role/controller.js";
 import SystemSettingController from "./system/setting/controller.js";
 import SystemTenantController from "./system/tenant/controller.js";
 import SystemUserController from "./system/user/controller.js";
+import WorkflowCenterCenterController from "./workflow-center/controller/center.controller.js";
+import WorkflowDefinitionController from "./workflow/controller/definition.controller.js";
+import WorkflowInstanceController from "./workflow/controller/instance.controller.js";
+import WorkflowTaskController from "./workflow/controller/task.controller.js";
 
 export const controllers = [
   ApprovalFlowController,
@@ -81,6 +88,9 @@ export const controllers = [
   NoticeMyNoticeController,
   RbacPermissionController,
   RbacRoleController,
+  ReportDatasetController,
+  ReportExportTaskController,
+  ReportReportController,
   SystemDeptController,
   SystemDictDataController,
   SystemDictTypeController,
@@ -92,4 +102,8 @@ export const controllers = [
   SystemSettingController,
   SystemTenantController,
   SystemUserController,
+  WorkflowCenterCenterController,
+  WorkflowDefinitionController,
+  WorkflowInstanceController,
+  WorkflowTaskController,
 ] as const;

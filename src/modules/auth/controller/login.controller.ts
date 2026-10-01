@@ -13,6 +13,7 @@ import { AppError } from "@/core/errors.js";
 import { logger } from "@/platform/logger/index.js";
 import { AuthService } from "../service/index.js";
 import { LoginSchema, RefreshTokenSchema } from "../schema.js";
+import { issueCsrfToken } from "@/middleware/index.js";
 
 @Controller("/auth", { tags: ["认证"] })
 export default class AuthLoginController {
@@ -29,6 +30,7 @@ export default class AuthLoginController {
         clientIp: getClientIp(req) || "",
         userAgent: req.headers["user-agent"] || "",
       });
+      issueCsrfToken(res);
       success(
         res,
         data,

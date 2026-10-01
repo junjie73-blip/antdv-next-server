@@ -52,31 +52,31 @@ export interface ApprovalNodeVO {
 }
 
 export interface ApprovalFlowVO {
-  request_id: string;
+  requestId: string;
   title: string;
   content: string | null;
   status: string;
-  status_label: string;
-  applicant_id: string;
-  applicant_name: string | null;
-  current_dept_id: string;
-  current_dept_name: string | null;
-  created_at: Date;
-  updated_at: Date;
+  statusLabel: string;
+  applicantId: string;
+  applicantName: string | null;
+  currentDeptId: string;
+  currentDeptName: string | null;
+  createdAt: Date;
+  updatedAt: Date;
   nodes: ApprovalNodeVO[];
 }
 
 export interface ApprovalLogVO {
-  log_id: string;
-  request_id: string;
-  request_title: string | null;
-  operator_id: string;
-  operator_name: string | null;
+  logId: string;
+  requestId: string;
+  requestTitle: string | null;
+  operatorId: string;
+  operatorName: string | null;
   action: string;
-  action_label: string;
-  from_status: string | null;
-  to_status: string | null;
+  actionLabel: string;
+  fromStatus: string | null;
+  toStatus: string | null;
   remark: string | null;
-  reason_type: string | null;
-  created_at: Date;
+  reasonType: string | null;
+  createdAt: Date;
 }

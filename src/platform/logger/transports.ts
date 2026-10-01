@@ -16,15 +16,16 @@ export const createRotatingStream = (filename: string): RotatingFileStream =>
 export const errorStream = createRotatingStream("error.log");
 export const combinedStream = createRotatingStream("combined.log");
 export const auditFileStream = createRotatingStream("audit.log");
-
 export const consoleTransport =
   config.NODE_ENV === "development"
     ? {
         target: "pino-pretty",
         options: {
           colorize: true,
-          translateTime: "SYS:standard",
-          ignore: "pid,hostname",
+          translateTime: "SYS:yyyy-mm-dd HH:MM:ss.l",
+          ignore: "pid,hostname,service,env,spanId,traceId",
+          singleLine: false,
+          messageFormat: "{msg}",
         },
       }
     : undefined;

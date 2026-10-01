@@ -91,7 +91,19 @@ export const ModelName = {
   sys_approval_node: 'sys_approval_node',
   sys_approval_log: 'sys_approval_log',
   sys_notice_template: 'sys_notice_template',
-  sys_file_pending_delete: 'sys_file_pending_delete'
+  sys_file_pending_delete: 'sys_file_pending_delete',
+  wf_definition: 'wf_definition',
+  wf_instance: 'wf_instance',
+  wf_task: 'wf_task',
+  wf_history: 'wf_history',
+  wf_variable_log: 'wf_variable_log',
+  rp_dataset: 'rp_dataset',
+  rp_report: 'rp_report',
+  rp_report_log: 'rp_report_log',
+  rp_report_favorite: 'rp_report_favorite',
+  rp_export_task: 'rp_export_task',
+  wf_notification: 'wf_notification',
+  rp_cache_warm_config: 'rp_cache_warm_config'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -872,6 +884,271 @@ export const Sys_file_pending_deleteScalarFieldEnum = {
 export type Sys_file_pending_deleteScalarFieldEnum = (typeof Sys_file_pending_deleteScalarFieldEnum)[keyof typeof Sys_file_pending_deleteScalarFieldEnum]
 
 
+export const Wf_definitionScalarFieldEnum = {
+  def_id: 'def_id',
+  tenant_id: 'tenant_id',
+  def_key: 'def_key',
+  def_name: 'def_name',
+  version: 'version',
+  category: 'category',
+  description: 'description',
+  definition: 'definition',
+  definition_xml: 'definition_xml',
+  form_schema: 'form_schema',
+  var_schema: 'var_schema',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Wf_definitionScalarFieldEnum = (typeof Wf_definitionScalarFieldEnum)[keyof typeof Wf_definitionScalarFieldEnum]
+
+
+export const Wf_instanceScalarFieldEnum = {
+  instance_id: 'instance_id',
+  tenant_id: 'tenant_id',
+  def_id: 'def_id',
+  def_key: 'def_key',
+  def_version: 'def_version',
+  business_key: 'business_key',
+  title: 'title',
+  initiator_id: 'initiator_id',
+  initiator_dept_id: 'initiator_dept_id',
+  variables: 'variables',
+  active_nodes: 'active_nodes',
+  status: 'status',
+  start_at: 'start_at',
+  end_at: 'end_at',
+  duration_ms: 'duration_ms',
+  parent_instance_id: 'parent_instance_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted',
+  priority: 'priority',
+  timeout_notified_at: 'timeout_notified_at',
+  last_scanned_at: 'last_scanned_at'
+} as const
+
+export type Wf_instanceScalarFieldEnum = (typeof Wf_instanceScalarFieldEnum)[keyof typeof Wf_instanceScalarFieldEnum]
+
+
+export const Wf_taskScalarFieldEnum = {
+  task_id: 'task_id',
+  tenant_id: 'tenant_id',
+  instance_id: 'instance_id',
+  node_id: 'node_id',
+  node_name: 'node_name',
+  node_type: 'node_type',
+  assignee_id: 'assignee_id',
+  assignee_type: 'assignee_type',
+  candidate_ids: 'candidate_ids',
+  sign_type: 'sign_type',
+  sign_strategy: 'sign_strategy',
+  completed_ids: 'completed_ids',
+  status: 'status',
+  action: 'action',
+  comment: 'comment',
+  form_data: 'form_data',
+  due_at: 'due_at',
+  claimed_at: 'claimed_at',
+  completed_at: 'completed_at',
+  duration_ms: 'duration_ms',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted',
+  priority: 'priority'
+} as const
+
+export type Wf_taskScalarFieldEnum = (typeof Wf_taskScalarFieldEnum)[keyof typeof Wf_taskScalarFieldEnum]
+
+
+export const Wf_historyScalarFieldEnum = {
+  history_id: 'history_id',
+  tenant_id: 'tenant_id',
+  instance_id: 'instance_id',
+  node_id: 'node_id',
+  node_name: 'node_name',
+  node_type: 'node_type',
+  event_type: 'event_type',
+  operator_id: 'operator_id',
+  operator_name: 'operator_name',
+  comment: 'comment',
+  variables: 'variables',
+  duration_ms: 'duration_ms',
+  created_at: 'created_at'
+} as const
+
+export type Wf_historyScalarFieldEnum = (typeof Wf_historyScalarFieldEnum)[keyof typeof Wf_historyScalarFieldEnum]
+
+
+export const Wf_variable_logScalarFieldEnum = {
+  log_id: 'log_id',
+  tenant_id: 'tenant_id',
+  instance_id: 'instance_id',
+  task_id: 'task_id',
+  key: 'key',
+  value: 'value',
+  created_at: 'created_at',
+  created_by: 'created_by',
+  timeout_notified_at: 'timeout_notified_at',
+  last_scanned_at: 'last_scanned_at'
+} as const
+
+export type Wf_variable_logScalarFieldEnum = (typeof Wf_variable_logScalarFieldEnum)[keyof typeof Wf_variable_logScalarFieldEnum]
+
+
+export const Rp_datasetScalarFieldEnum = {
+  dataset_id: 'dataset_id',
+  tenant_id: 'tenant_id',
+  dataset_code: 'dataset_code',
+  dataset_name: 'dataset_name',
+  description: 'description',
+  category: 'category',
+  dataset_type: 'dataset_type',
+  source_config: 'source_config',
+  params: 'params',
+  fields: 'fields',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Rp_datasetScalarFieldEnum = (typeof Rp_datasetScalarFieldEnum)[keyof typeof Rp_datasetScalarFieldEnum]
+
+
+export const Rp_reportScalarFieldEnum = {
+  report_id: 'report_id',
+  tenant_id: 'tenant_id',
+  report_code: 'report_code',
+  report_name: 'report_name',
+  description: 'description',
+  category: 'category',
+  dataset_id: 'dataset_id',
+  config: 'config',
+  params: 'params',
+  allowed_roles: 'allowed_roles',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Rp_reportScalarFieldEnum = (typeof Rp_reportScalarFieldEnum)[keyof typeof Rp_reportScalarFieldEnum]
+
+
+export const Rp_report_logScalarFieldEnum = {
+  log_id: 'log_id',
+  tenant_id: 'tenant_id',
+  report_id: 'report_id',
+  report_code: 'report_code',
+  params: 'params',
+  row_count: 'row_count',
+  duration_ms: 'duration_ms',
+  status: 'status',
+  error_msg: 'error_msg',
+  export_type: 'export_type',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type Rp_report_logScalarFieldEnum = (typeof Rp_report_logScalarFieldEnum)[keyof typeof Rp_report_logScalarFieldEnum]
+
+
+export const Rp_report_favoriteScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  report_id: 'report_id',
+  created_at: 'created_at'
+} as const
+
+export type Rp_report_favoriteScalarFieldEnum = (typeof Rp_report_favoriteScalarFieldEnum)[keyof typeof Rp_report_favoriteScalarFieldEnum]
+
+
+export const Rp_export_taskScalarFieldEnum = {
+  task_id: 'task_id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  report_code: 'report_code',
+  export_type: 'export_type',
+  params: 'params',
+  status: 'status',
+  progress: 'progress',
+  row_count: 'row_count',
+  file_url: 'file_url',
+  file_name: 'file_name',
+  file_size: 'file_size',
+  error_msg: 'error_msg',
+  retry_count: 'retry_count',
+  duration_ms: 'duration_ms',
+  job_id: 'job_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  started_at: 'started_at',
+  completed_at: 'completed_at',
+  expires_at: 'expires_at',
+  max_retries: 'max_retries',
+  next_retry_at: 'next_retry_at',
+  error_type: 'error_type',
+  error_stack: 'error_stack'
+} as const
+
+export type Rp_export_taskScalarFieldEnum = (typeof Rp_export_taskScalarFieldEnum)[keyof typeof Rp_export_taskScalarFieldEnum]
+
+
+export const Wf_notificationScalarFieldEnum = {
+  notification_id: 'notification_id',
+  tenant_id: 'tenant_id',
+  instance_id: 'instance_id',
+  task_id: 'task_id',
+  node_id: 'node_id',
+  event_type: 'event_type',
+  channel_type: 'channel_type',
+  receiver_id: 'receiver_id',
+  receiver_addr: 'receiver_addr',
+  template_code: 'template_code',
+  title: 'title',
+  content: 'content',
+  status: 'status',
+  error_msg: 'error_msg',
+  retry_count: 'retry_count',
+  sent_at: 'sent_at',
+  created_at: 'created_at'
+} as const
+
+export type Wf_notificationScalarFieldEnum = (typeof Wf_notificationScalarFieldEnum)[keyof typeof Wf_notificationScalarFieldEnum]
+
+
+export const Rp_cache_warm_configScalarFieldEnum = {
+  config_id: 'config_id',
+  tenant_id: 'tenant_id',
+  report_code: 'report_code',
+  warm_params: 'warm_params',
+  cron_expression: 'cron_expression',
+  enabled: 'enabled',
+  cache_ttl: 'cache_ttl',
+  last_warm_at: 'last_warm_at',
+  last_status: 'last_status',
+  last_error: 'last_error',
+  remark: 'remark',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Rp_cache_warm_configScalarFieldEnum = (typeof Rp_cache_warm_configScalarFieldEnum)[keyof typeof Rp_cache_warm_configScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -886,6 +1163,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

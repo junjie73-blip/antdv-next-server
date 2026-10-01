@@ -237,6 +237,10 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
     tenantId: string,
     tx?: TxClient,
   ): Promise<T | null> {
+    if (!tenantId) {
+      throw new AppError("缺少租户上下文", 401001, 401);
+    }
+
     const base = this.buildWhereWithTenant(
       { [this.primaryKey]: id } as WhereInput,
       tenantId,

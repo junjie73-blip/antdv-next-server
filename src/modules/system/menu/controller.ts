@@ -66,11 +66,11 @@ export default class MenuController extends BaseController<any, any, any, any> {
   // ============ 自定义路由 ============
 
   @Get("/tree")
-  @ApiQuery({
-    menuType: z.string().optional().openapi({
-      description: "菜单类型，逗号分隔，如 '1,2'；不传默认返回目录+菜单",
+  @ApiQuery(
+    z.object({
+      menuType: z.string().optional(),
     }),
-  })
+  )
   @ApiOperation("获取菜单树", "返回树形结构菜单")
   @ApiResponse(200, "查询成功")
   async tree(@Req() req: Request, @Res() res: Response) {
