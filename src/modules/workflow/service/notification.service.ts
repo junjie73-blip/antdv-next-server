@@ -54,6 +54,35 @@ const TEMPLATE_MAP: Record<WfEventType, { title: string; template: string }> = {
 };
 
 export class WfNotificationService {
+  async notifyStart(params: {
+    tenantId: string;
+    instanceId: string;
+    initiatorId: string;
+  }): Promise<void> {
+    return this.notify({
+      tenantId: params.tenantId,
+      instanceId: params.instanceId,
+      eventType: "start",
+      receiverIds: [params.initiatorId],
+    });
+  }
+
+  /** ⭐ 流程完成时通知发起人 */
+  async notifyComplete(params: {
+    tenantId: string;
+    instanceId: string;
+    initiatorId: string;
+    result: "approved" | "rejected";
+    comment?: string;
+  }): Promise<void> {
+    return this.notify({
+      tenantId: params.tenantId,
+      instanceId: params.instanceId,
+      eventType: params.result === "approved" ? "complete" : "reject",
+      receiverIds: [params.initiatorId],
+      extra: { comment: params.comment ?? "" },
+    });
+  }
   async notify(params: WfNotifyParams): Promise<void> {
     if (!params.receiverIds?.length) return;
 

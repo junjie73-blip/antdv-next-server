@@ -18,7 +18,7 @@ export class RpDatasetService {
     pageNum: number;
     pageSize: number;
   }) {
-    return this.repo.findPage(params);
+    return this.repo.findPage(params, {});
   }
 
   async detail(id: string, tenantId: string) {

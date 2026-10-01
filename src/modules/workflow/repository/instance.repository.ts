@@ -20,55 +20,6 @@ export class WfInstanceRepository extends BaseRepository<any, any, any, any> {
   protected readonly tenantField = "tenant_id";
 
   /* ============================================================
-   * 列表
-   * ============================================================ */
-  async findPage(params: InstanceListParams) {
-    const {
-      tenantId,
-      initiatorId,
-      defKey,
-      status,
-      keyword,
-      startTime,
-      endTime,
-      pageNum,
-      pageSize,
-    } = params;
-
-    const where: Prisma.wf_instanceWhereInput = {
-      tenant_id: tenantId,
-      is_deleted: 0,
-    };
-    if (initiatorId) where.initiator_id = initiatorId;
-    if (defKey) where.def_key = defKey;
-    if (status) where.status = status;
-    if (keyword) where.title = { contains: keyword };
-    if (startTime || endTime) {
-      where.start_at = {};
-      if (startTime) where.start_at.gte = startTime;
-      if (endTime) where.start_at.lte = endTime;
-    }
-
-    const [list, total] = await Promise.all([
-      this.model.findMany({
-        where,
-        orderBy: { start_at: "desc" },
-        skip: (pageNum - 1) * pageSize,
-        take: pageSize,
-      }),
-      this.model.count({ where }),
-    ]);
-
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
-  }
-
-  /* ============================================================
    * 详情
    * ============================================================ */
   async findById(instanceId: string, tenantId: string) {

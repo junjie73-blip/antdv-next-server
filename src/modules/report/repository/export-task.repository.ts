@@ -16,35 +16,6 @@ export class RpExportTaskRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "task_id";
   protected readonly tenantField = "tenant_id";
 
-  async findPage(params: ExportTaskListParams) {
-    const { tenantId, userId, status, reportCode, pageNum, pageSize } = params;
-
-    const where: Prisma.rp_export_taskWhereInput = {
-      tenant_id: tenantId,
-      user_id: userId,
-    };
-    if (status) where.status = status;
-    if (reportCode) where.report_code = reportCode;
-
-    const [list, total] = await Promise.all([
-      this.model.findMany({
-        where,
-        orderBy: { created_at: "desc" },
-        skip: (pageNum - 1) * pageSize,
-        take: pageSize,
-      }),
-      this.model.count({ where }),
-    ]);
-
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
-  }
-
   async findById(taskId: string, tenantId: string) {
     return this.model.findFirst({
       where: { task_id: taskId, tenant_id: tenantId },

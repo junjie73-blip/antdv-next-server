@@ -271,14 +271,17 @@ export default class ReportController {
     const { tenantId } = req.user as AuthUser;
     const dto = ReportLogListSchema.parse(req.query);
 
-    const result = await this.logRepo.findPage({
-      tenantId,
-      reportCode: dto.reportCode,
-      exportType: dto.exportType,
-      status: dto.status,
-      pageNum: dto.pageNum,
-      pageSize: dto.pageSize,
-    });
+    const result = await this.logRepo.findPage(
+      {
+        tenantId,
+        reportCode: dto.reportCode,
+        exportType: dto.exportType,
+        status: dto.status,
+        pageNum: dto.pageNum,
+        pageSize: dto.pageSize,
+      },
+      {},
+    );
 
     return pageSuccess(
       res,

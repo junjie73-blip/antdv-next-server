@@ -67,16 +67,16 @@ export interface ApprovalFlowVO {
 }
 
 export interface ApprovalLogVO {
-  logId: string;
-  requestId: string;
-  requestTitle: string | null;
-  operatorId: string;
-  operatorName: string | null;
+  log_id: string;
+  request_id: string;
+  request_title: string | null;
+  operator_id: string;
+  operator_name: string | null;
   action: string;
-  actionLabel: string;
-  fromStatus: string | null;
-  toStatus: string | null;
+  action_label: string;
+  from_status: string | null;
+  to_status: string | null;
   remark: string | null;
-  reasonType: string | null;
-  createdAt: Date;
+  reason_type: string | null;
+  created_at: Date;
 }

@@ -16,41 +16,6 @@ export class RpDatasetRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "dataset_id";
   protected readonly tenantField = "tenant_id";
 
-  async findPage(params: DatasetListParams) {
-    const { tenantId, keyword, category, status, pageNum, pageSize } = params;
-
-    const where: Prisma.rp_datasetWhereInput = {
-      tenant_id: tenantId,
-      is_deleted: 0,
-    };
-    if (keyword) {
-      where.OR = [
-        { dataset_name: { contains: keyword } },
-        { dataset_code: { contains: keyword } },
-      ];
-    }
-    if (category) where.category = category;
-    if (status) where.status = status;
-
-    const [list, total] = await Promise.all([
-      this.model.findMany({
-        where,
-        orderBy: { updated_at: "desc" },
-        skip: (pageNum - 1) * pageSize,
-        take: pageSize,
-      }),
-      this.model.count({ where }),
-    ]);
-
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
-  }
-
   async findById(id: string, tenantId: string) {
     return this.model.findFirst({
       where: { dataset_id: id, tenant_id: tenantId, is_deleted: 0 },

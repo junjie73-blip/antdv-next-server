@@ -49,6 +49,8 @@ export const WfCompleteTaskSchema = z
 export const WfTaskListSchema = z
   .object({
     keyword: z.string().optional(),
+    defKey: z.string().max(64).optional(),
+    priority: z.coerce.number().int().min(0).max(2).optional(),
     pageNum: z.coerce.number().int().min(1).default(1),
     pageSize: z.coerce.number().int().min(1).max(100).default(10),
   })

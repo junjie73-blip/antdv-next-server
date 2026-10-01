@@ -16,57 +16,6 @@ export class RpReportRepository extends BaseRepository<any, any, any, any> {
   protected readonly primaryKey = "report_id";
   protected readonly tenantField = "tenant_id";
 
-  async findPage(params: ReportListParams) {
-    const { tenantId, userId, keyword, category, pageNum, pageSize } = params;
-
-    const where: Prisma.rp_reportWhereInput = {
-      tenant_id: tenantId,
-      status: "1",
-      is_deleted: 0,
-    };
-    if (keyword) {
-      where.OR = [
-        { report_name: { contains: keyword } },
-        { report_code: { contains: keyword } },
-      ];
-    }
-    if (category) where.category = category;
-
-    const [list, total] = await Promise.all([
-      this.model.findMany({
-        where,
-        orderBy: { updated_at: "desc" },
-        skip: (pageNum - 1) * pageSize,
-        take: pageSize,
-      }),
-      this.model.count({ where }),
-    ]);
-
-    // 收藏状态
-    let favoriteSet = new Set<string>();
-    if (userId && list.length > 0) {
-      const favorites = await prisma.rp_report_favorite.findMany({
-        where: {
-          user_id: userId,
-          report_id: { in: list.map((r) => r.report_id) },
-        },
-        select: { report_id: true },
-      });
-      favoriteSet = new Set(favorites.map((f) => f.report_id));
-    }
-
-    return {
-      list: list.map((r) => ({
-        ...r,
-        isFavorite: favoriteSet.has(r.report_id),
-      })),
-      total,
-      pageNum,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
-  }
-
   async findById(id: string, tenantId: string) {
     return this.model.findFirst({
       where: { report_id: id, tenant_id: tenantId, is_deleted: 0 },

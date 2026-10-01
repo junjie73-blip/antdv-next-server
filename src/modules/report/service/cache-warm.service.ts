@@ -12,13 +12,13 @@ export interface WarmTask {
 }
 
 export interface WarmResult {
-  report_name?: string;
   reportCode: string;
   tenantId: string;
   status: "success" | "failed";
   duration: number;
   rowCount: number;
   error?: string;
+  reportName?: string;
 }
 
 export class CacheWarmService {

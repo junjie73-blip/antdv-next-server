@@ -91,7 +91,7 @@ export async function reportCacheWarmTask(): Promise<void> {
             .notifyWarmFailed({
               tenantId: config.tenant_id,
               reportCode: config.report_code,
-              reportName: result.report_name,
+              reportName: result.reportName as string,
               error: result.error ?? "未知错误",
               adminUserIds: admins.map((a) => a.user_id),
             })

@@ -388,7 +388,7 @@ export class WorkflowCenterFacade {
         where: { user_id: detail.initiator_id },
         select: { real_name: true, username: true },
       });
-      initiatorName = user?.real_name ?? user?.username ?? null;
+      initiatorName = user?.real_name ?? user?.username ?? undefined;
     }
     const nodeStatus: Record<string, string> = {};
     const activeNodes = (detail.active_nodes as string[]) ?? [];
