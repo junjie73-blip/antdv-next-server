@@ -3,7 +3,7 @@ import { mergeQueue } from "@/modules/infrastructure/upload/queue.js";
 import { Queue } from "bullmq";
 
 /** 报表导出队列 */
-export const exportQueue = new Queue("report-export", {
+export const reportExportQueue = new Queue("report-export", {
   connection: createBullConnection("report-export"),
   defaultJobOptions: {
     attempts: 3,
@@ -32,10 +32,19 @@ export const cacheWarmQueue = new Queue("cache-warm", {
     removeOnComplete: { age: 3600, count: 50 },
   },
 });
-
+export const exportQueue = new Queue("export", {
+  connection: createBullConnection("export-queue"),
+  defaultJobOptions: {
+    removeOnComplete: 100,
+    removeOnFail: 500,
+    attempts: 3,
+    backoff: { type: "exponential", delay: 30_000 },
+  },
+});
 export const queueList: Queue[] = [
-  exportQueue,
+  reportExportQueue,
   mergeQueue,
   wfNotifyQueue,
   cacheWarmQueue,
+  exportQueue,
 ];

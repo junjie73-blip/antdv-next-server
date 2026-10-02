@@ -9,6 +9,11 @@ import { fieldMaskService } from "@/modules/field-mask/service/field-mask.servic
  * - 优先从请求上下文读取 userId/tenantId
  * - 需要调用方明确传入 resource（通过 res.locals.maskResource 设置）
  */
+
+function bigintSafeReplacer(_key: string, value: unknown): unknown {
+  if (typeof value === "bigint") return value.toString();
+  return value;
+}
 export async function success<T = any>(
   res: Response,
   data: T,
@@ -32,7 +37,9 @@ export async function success<T = any>(
     data: _data,
     timestamp: new Date().getTime(),
   };
-  res.status(code >= 200 && code < 300 ? code : 200).json(response);
+  res
+    .status(code >= 200 && code < 300 ? code : 200)
+    .json(JSON.parse(JSON.stringify(response, bigintSafeReplacer)));
 }
 
 export function error(
@@ -79,5 +86,7 @@ export async function pageSuccess<T>(
     },
     timestamp: new Date().getTime(),
   };
-  res.status(200).json(response);
+  res
+    .status(200)
+    .json(JSON.parse(JSON.stringify(response, bigintSafeReplacer)));
 }

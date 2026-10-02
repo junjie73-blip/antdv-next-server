@@ -30,12 +30,14 @@ export type Sys_feature_flagAvgAggregateOutputType = {
   default_on: number | null
   rollout_pct: number | null
   is_deleted: number | null
+  version: number | null
 }
 
 export type Sys_feature_flagSumAggregateOutputType = {
   default_on: number | null
   rollout_pct: number | null
   is_deleted: number | null
+  version: number | null
 }
 
 export type Sys_feature_flagMinAggregateOutputType = {
@@ -52,6 +54,9 @@ export type Sys_feature_flagMinAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  owner: string | null
+  group_name: string | null
+  version: number | null
 }
 
 export type Sys_feature_flagMaxAggregateOutputType = {
@@ -68,6 +73,9 @@ export type Sys_feature_flagMaxAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  owner: string | null
+  group_name: string | null
+  version: number | null
 }
 
 export type Sys_feature_flagCountAggregateOutputType = {
@@ -85,6 +93,9 @@ export type Sys_feature_flagCountAggregateOutputType = {
   created_by: number
   updated_by: number
   is_deleted: number
+  owner: number
+  group_name: number
+  version: number
   _all: number
 }
 
@@ -93,12 +104,14 @@ export type Sys_feature_flagAvgAggregateInputType = {
   default_on?: true
   rollout_pct?: true
   is_deleted?: true
+  version?: true
 }
 
 export type Sys_feature_flagSumAggregateInputType = {
   default_on?: true
   rollout_pct?: true
   is_deleted?: true
+  version?: true
 }
 
 export type Sys_feature_flagMinAggregateInputType = {
@@ -115,6 +128,9 @@ export type Sys_feature_flagMinAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  owner?: true
+  group_name?: true
+  version?: true
 }
 
 export type Sys_feature_flagMaxAggregateInputType = {
@@ -131,6 +147,9 @@ export type Sys_feature_flagMaxAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  owner?: true
+  group_name?: true
+  version?: true
 }
 
 export type Sys_feature_flagCountAggregateInputType = {
@@ -148,6 +167,9 @@ export type Sys_feature_flagCountAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  owner?: true
+  group_name?: true
+  version?: true
   _all?: true
 }
 
@@ -252,6 +274,9 @@ export type Sys_feature_flagGroupByOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number
+  owner: string | null
+  group_name: string | null
+  version: number
   _count: Sys_feature_flagCountAggregateOutputType | null
   _avg: Sys_feature_flagAvgAggregateOutputType | null
   _sum: Sys_feature_flagSumAggregateOutputType | null
@@ -292,6 +317,9 @@ export type sys_feature_flagWhereInput = {
   created_by?: Prisma.UuidNullableFilter<"sys_feature_flag"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_feature_flag"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_feature_flag"> | number
+  owner?: Prisma.StringNullableFilter<"sys_feature_flag"> | string | null
+  group_name?: Prisma.StringNullableFilter<"sys_feature_flag"> | string | null
+  version?: Prisma.IntFilter<"sys_feature_flag"> | number
   rules?: Prisma.Sys_feature_flag_ruleListRelationFilter
 }
 
@@ -310,6 +338,9 @@ export type sys_feature_flagOrderByWithRelationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  owner?: Prisma.SortOrderInput | Prisma.SortOrder
+  group_name?: Prisma.SortOrderInput | Prisma.SortOrder
+  version?: Prisma.SortOrder
   rules?: Prisma.sys_feature_flag_ruleOrderByRelationAggregateInput
 }
 
@@ -331,6 +362,9 @@ export type sys_feature_flagWhereUniqueInput = Prisma.AtLeast<{
   created_by?: Prisma.UuidNullableFilter<"sys_feature_flag"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_feature_flag"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_feature_flag"> | number
+  owner?: Prisma.StringNullableFilter<"sys_feature_flag"> | string | null
+  group_name?: Prisma.StringNullableFilter<"sys_feature_flag"> | string | null
+  version?: Prisma.IntFilter<"sys_feature_flag"> | number
   rules?: Prisma.Sys_feature_flag_ruleListRelationFilter
 }, "flag_id" | "flag_key">
 
@@ -349,6 +383,9 @@ export type sys_feature_flagOrderByWithAggregationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  owner?: Prisma.SortOrderInput | Prisma.SortOrder
+  group_name?: Prisma.SortOrderInput | Prisma.SortOrder
+  version?: Prisma.SortOrder
   _count?: Prisma.sys_feature_flagCountOrderByAggregateInput
   _avg?: Prisma.sys_feature_flagAvgOrderByAggregateInput
   _max?: Prisma.sys_feature_flagMaxOrderByAggregateInput
@@ -374,6 +411,9 @@ export type sys_feature_flagScalarWhereWithAggregatesInput = {
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_feature_flag"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_feature_flag"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_feature_flag"> | number
+  owner?: Prisma.StringNullableWithAggregatesFilter<"sys_feature_flag"> | string | null
+  group_name?: Prisma.StringNullableWithAggregatesFilter<"sys_feature_flag"> | string | null
+  version?: Prisma.IntWithAggregatesFilter<"sys_feature_flag"> | number
 }
 
 export type sys_feature_flagCreateInput = {
@@ -391,6 +431,9 @@ export type sys_feature_flagCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  owner?: string | null
+  group_name?: string | null
+  version?: number
   rules?: Prisma.sys_feature_flag_ruleCreateNestedManyWithoutFlagInput
 }
 
@@ -409,6 +452,9 @@ export type sys_feature_flagUncheckedCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  owner?: string | null
+  group_name?: string | null
+  version?: number
   rules?: Prisma.sys_feature_flag_ruleUncheckedCreateNestedManyWithoutFlagInput
 }
 
@@ -427,6 +473,9 @@ export type sys_feature_flagUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  owner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  group_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   rules?: Prisma.sys_feature_flag_ruleUpdateManyWithoutFlagNestedInput
 }
 
@@ -445,6 +494,9 @@ export type sys_feature_flagUncheckedUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  owner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  group_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   rules?: Prisma.sys_feature_flag_ruleUncheckedUpdateManyWithoutFlagNestedInput
 }
 
@@ -463,6 +515,9 @@ export type sys_feature_flagCreateManyInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  owner?: string | null
+  group_name?: string | null
+  version?: number
 }
 
 export type sys_feature_flagUpdateManyMutationInput = {
@@ -480,6 +535,9 @@ export type sys_feature_flagUpdateManyMutationInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  owner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  group_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_feature_flagUncheckedUpdateManyInput = {
@@ -497,6 +555,9 @@ export type sys_feature_flagUncheckedUpdateManyInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  owner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  group_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_feature_flagCountOrderByAggregateInput = {
@@ -514,12 +575,16 @@ export type sys_feature_flagCountOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  owner?: Prisma.SortOrder
+  group_name?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type sys_feature_flagAvgOrderByAggregateInput = {
   default_on?: Prisma.SortOrder
   rollout_pct?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type sys_feature_flagMaxOrderByAggregateInput = {
@@ -536,6 +601,9 @@ export type sys_feature_flagMaxOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  owner?: Prisma.SortOrder
+  group_name?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type sys_feature_flagMinOrderByAggregateInput = {
@@ -552,12 +620,16 @@ export type sys_feature_flagMinOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  owner?: Prisma.SortOrder
+  group_name?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type sys_feature_flagSumOrderByAggregateInput = {
   default_on?: Prisma.SortOrder
   rollout_pct?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type Sys_feature_flagScalarRelationFilter = {
@@ -594,6 +666,9 @@ export type sys_feature_flagCreateWithoutRulesInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  owner?: string | null
+  group_name?: string | null
+  version?: number
 }
 
 export type sys_feature_flagUncheckedCreateWithoutRulesInput = {
@@ -611,6 +686,9 @@ export type sys_feature_flagUncheckedCreateWithoutRulesInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  owner?: string | null
+  group_name?: string | null
+  version?: number
 }
 
 export type sys_feature_flagCreateOrConnectWithoutRulesInput = {
@@ -644,6 +722,9 @@ export type sys_feature_flagUpdateWithoutRulesInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  owner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  group_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_feature_flagUncheckedUpdateWithoutRulesInput = {
@@ -661,6 +742,9 @@ export type sys_feature_flagUncheckedUpdateWithoutRulesInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  owner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  group_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -709,6 +793,9 @@ export type sys_feature_flagSelect<ExtArgs extends runtime.Types.Extensions.Inte
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  owner?: boolean
+  group_name?: boolean
+  version?: boolean
   rules?: boolean | Prisma.sys_feature_flag$rulesArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_feature_flagCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_feature_flag"]>
@@ -728,6 +815,9 @@ export type sys_feature_flagSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  owner?: boolean
+  group_name?: boolean
+  version?: boolean
 }, ExtArgs["result"]["sys_feature_flag"]>
 
 export type sys_feature_flagSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -745,6 +835,9 @@ export type sys_feature_flagSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  owner?: boolean
+  group_name?: boolean
+  version?: boolean
 }, ExtArgs["result"]["sys_feature_flag"]>
 
 export type sys_feature_flagSelectScalar = {
@@ -762,9 +855,12 @@ export type sys_feature_flagSelectScalar = {
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  owner?: boolean
+  group_name?: boolean
+  version?: boolean
 }
 
-export type sys_feature_flagOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"flag_id" | "flag_key" | "flag_name" | "description" | "default_on" | "rollout_pct" | "status" | "expire_at" | "tags" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_feature_flag"]>
+export type sys_feature_flagOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"flag_id" | "flag_key" | "flag_name" | "description" | "default_on" | "rollout_pct" | "status" | "expire_at" | "tags" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "owner" | "group_name" | "version", ExtArgs["result"]["sys_feature_flag"]>
 export type sys_feature_flagInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   rules?: boolean | Prisma.sys_feature_flag$rulesArgs<ExtArgs>
   _count?: boolean | Prisma.Sys_feature_flagCountOutputTypeDefaultArgs<ExtArgs>
@@ -810,6 +906,15 @@ export type $sys_feature_flagPayload<ExtArgs extends runtime.Types.Extensions.In
     created_by: string | null
     updated_by: string | null
     is_deleted: number
+    owner: string | null
+    /**
+     * ⭐ 新增：逻辑分组，如 "workflow" / "billing"
+     */
+    group_name: string | null
+    /**
+     * ⭐ 新增：变更计数（便于前端判断缓存是否失效）
+     */
+    version: number
   }, ExtArgs["result"]["sys_feature_flag"]>
   composites: {}
 }
@@ -1248,6 +1353,9 @@ export interface sys_feature_flagFieldRefs {
   readonly created_by: Prisma.FieldRef<"sys_feature_flag", 'String'>
   readonly updated_by: Prisma.FieldRef<"sys_feature_flag", 'String'>
   readonly is_deleted: Prisma.FieldRef<"sys_feature_flag", 'Int'>
+  readonly owner: Prisma.FieldRef<"sys_feature_flag", 'String'>
+  readonly group_name: Prisma.FieldRef<"sys_feature_flag", 'String'>
+  readonly version: Prisma.FieldRef<"sys_feature_flag", 'Int'>
 }
     
 

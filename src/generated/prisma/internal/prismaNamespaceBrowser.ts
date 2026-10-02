@@ -128,6 +128,7 @@ export const ModelName = {
   sys_backup_policy: 'sys_backup_policy',
   sys_export_task: 'sys_export_task',
   sys_tenant_isolation_scan: 'sys_tenant_isolation_scan',
+  sys_tenant_isolation_run: 'sys_tenant_isolation_run',
   sys_org_history: 'sys_org_history',
   sys_role_field_policy: 'sys_role_field_policy'
 } as const
@@ -1150,7 +1151,8 @@ export const Rp_export_taskScalarFieldEnum = {
   max_retries: 'max_retries',
   next_retry_at: 'next_retry_at',
   error_type: 'error_type',
-  error_stack: 'error_stack'
+  error_stack: 'error_stack',
+  is_deleted: 'is_deleted'
 } as const
 
 export type Rp_export_taskScalarFieldEnum = (typeof Rp_export_taskScalarFieldEnum)[keyof typeof Rp_export_taskScalarFieldEnum]
@@ -1533,6 +1535,7 @@ export const Sys_api_versionScalarFieldEnum = {
   version_name: 'version_name',
   status: 'status',
   release_at: 'release_at',
+  is_default: 'is_default',
   deprecated_at: 'deprecated_at',
   sunset_at: 'sunset_at',
   description: 'description',
@@ -1561,7 +1564,10 @@ export const Sys_feature_flagScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  owner: 'owner',
+  group_name: 'group_name',
+  version: 'version'
 } as const
 
 export type Sys_feature_flagScalarFieldEnum = (typeof Sys_feature_flagScalarFieldEnum)[keyof typeof Sys_feature_flagScalarFieldEnum]
@@ -1579,7 +1585,10 @@ export const Sys_feature_flag_ruleScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   created_by: 'created_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  effective_from: 'effective_from',
+  effective_until: 'effective_until',
+  expire_at: 'expire_at'
 } as const
 
 export type Sys_feature_flag_ruleScalarFieldEnum = (typeof Sys_feature_flag_ruleScalarFieldEnum)[keyof typeof Sys_feature_flag_ruleScalarFieldEnum]
@@ -1654,7 +1663,11 @@ export const Sys_export_taskScalarFieldEnum = {
   duration_ms: 'duration_ms',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  error_type: 'error_type',
+  error_stack: 'error_stack',
+  download_count: 'download_count',
+  last_download_ip: 'last_download_ip'
 } as const
 
 export type Sys_export_taskScalarFieldEnum = (typeof Sys_export_taskScalarFieldEnum)[keyof typeof Sys_export_taskScalarFieldEnum]
@@ -1681,6 +1694,27 @@ export const Sys_tenant_isolation_scanScalarFieldEnum = {
 } as const
 
 export type Sys_tenant_isolation_scanScalarFieldEnum = (typeof Sys_tenant_isolation_scanScalarFieldEnum)[keyof typeof Sys_tenant_isolation_scanScalarFieldEnum]
+
+
+export const Sys_tenant_isolation_runScalarFieldEnum = {
+  run_id: 'run_id',
+  trigger_type: 'trigger_type',
+  triggered_by: 'triggered_by',
+  status: 'status',
+  critical_count: 'critical_count',
+  warning_count: 'warning_count',
+  info_count: 'info_count',
+  new_count: 'new_count',
+  resolved_count: 'resolved_count',
+  scanned_tables: 'scanned_tables',
+  scanned_files: 'scanned_files',
+  duration_ms: 'duration_ms',
+  error_msg: 'error_msg',
+  started_at: 'started_at',
+  finished_at: 'finished_at'
+} as const
+
+export type Sys_tenant_isolation_runScalarFieldEnum = (typeof Sys_tenant_isolation_runScalarFieldEnum)[keyof typeof Sys_tenant_isolation_runScalarFieldEnum]
 
 
 export const Sys_org_historyScalarFieldEnum = {

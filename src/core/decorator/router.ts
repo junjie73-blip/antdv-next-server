@@ -15,28 +15,36 @@ import { checkUserPermissions } from "@/modules/rbac/index.js";
 export class DecoratorRouter {
   private router = Router();
   private scanner: ControllerScanner;
-
-  constructor(scanner: ControllerScanner) {
+  private defaultVersions: string[];
+  constructor(scanner: ControllerScanner, defaultVersions: string[]) {
     this.scanner = scanner;
+    this.defaultVersions = defaultVersions;
+  }
+  buildForVersion(version: string): Router {
+    const router = Router();
+    const controllers = this.scanner.scan();
+
+    for (const ctrl of controllers) {
+      const versions = ctrl.versions ?? this.defaultVersions;
+      if (!versions.includes(version)) continue;
+      this.registerController(router, ctrl);
+    }
+    return router;
   }
 
   build(): Router {
-    const controllers = this.scanner.scan();
-    for (const ctrl of controllers) {
-      this.registerController(ctrl);
-    }
-    return this.router;
+    return this.buildForVersion(this.defaultVersions[0]);
   }
 
-  private registerController(ctrl: ScannedController): void {
-    const { prefix, instance, routes, classMiddlewares, tags } = ctrl;
+  private registerController(router: Router, ctrl: ScannedController): void {
+    const { prefix, instance, routes, classMiddlewares, tags, versions } = ctrl;
     for (const route of routes) {
       const { method, path, propertyKey, middlewares, swagger, validate } =
         route;
       const fullPath = this.joinPaths(prefix, path);
       const handler = this.buildHandler(instance, propertyKey, validate);
       const allMiddlewares = [...classMiddlewares, ...middlewares];
-      (this.router as any)[method](fullPath, ...allMiddlewares, handler);
+      (router as any)[method](fullPath, ...allMiddlewares, handler);
       this.registerSwagger(fullPath, method, route, tags);
       logger.debug(
         {

@@ -257,4 +257,58 @@ export const SYSTEM_PERMISSIONS = [
     resource_type: "api",
     action: "manage",
   },
+  {
+    perm_code: "system:backup:list",
+    perm_name: "备份列表",
+    resource_type: "system",
+    action: "list",
+  },
+  {
+    perm_code: "system:backup:trigger",
+    perm_name: "触发备份",
+    resource_type: "system",
+    action: "create",
+  },
+  {
+    perm_code: "system:backup:download",
+    perm_name: "下载备份",
+    resource_type: "system",
+    action: "read",
+  },
+  {
+    perm_code: "system:backup:delete",
+    perm_name: "删除备份",
+    resource_type: "system",
+    action: "delete",
+  },
+  {
+    perm_code: "system:backup:policy",
+    perm_name: "备份策略",
+    resource_type: "system",
+    action: "manage",
+  },
+  {
+    perm_code: "system:feature-flag:list",
+    perm_name: "特性开关列表",
+    resource_type: "system",
+    action: "read",
+  },
+  {
+    perm_code: "system:feature-flag:manage",
+    perm_name: "特性开关管理",
+    resource_type: "system",
+    action: "manage",
+  },
+  {
+    perm_code: "system:export:list",
+    perm_name: "导出记录",
+    resource_type: "system",
+    action: "read",
+  },
+  {
+    perm_code: "system:export:submit",
+    perm_name: "提交导出",
+    resource_type: "system",
+    action: "create",
+  },
 ] as const;

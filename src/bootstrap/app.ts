@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import express, { type Express } from "express";
+import express, { Router, type Express } from "express";
 import path from "path";
 import helmet from "helmet";
 import cors from "cors";
@@ -39,6 +39,15 @@ import { ControllerScanner } from "@/core/decorator/scanner.js";
 import cookieParser from "cookie-parser";
 import { traceMiddleware } from "@/platform/observability/tracing/index.js";
 import { buildQueueDashboardRouter } from "@/platform/queue/dashboard.js";
+import { apiVersionContext } from "@/middleware/http/api-version.js";
+import {
+  getDefaultVersions,
+  getMountableVersions,
+  loadApiVersions,
+} from "@/platform/api-version/registry.js";
+import { apiVersionLifecycle } from "@/platform/api-version/lifecycle.js";
+import { recordApiVersionRequest } from "@/platform/metrics/api-version.js";
+import { tenantProbeContext } from "@/middleware/http/tenant-probe-context.js";
 const METRICS_ALLOW = new Set(
   (env.METRICS_WHITELIST || "127.0.0.1,::1")
     .split(",")
@@ -46,7 +55,7 @@ const METRICS_ALLOW = new Set(
     .filter(Boolean),
 );
 
-export function createApp(): Express {
+export async function createApp(): Promise<Express> {
   const app = express();
 
   // 反向代理配置
@@ -145,7 +154,10 @@ export function createApp(): Express {
 
   // ⑧ 健康检查 / 指标
   registerHealthRoutes(app);
-
+  app.use(apiVersionContext());
+  const allVersions = await loadApiVersions();
+  const mountable = getMountableVersions(allVersions);
+  const defaultVersions = getDefaultVersions(allVersions);
   // ⑨ 限流（白名单在 limiter 内部 skip）
   app.use(...globalRateLimit);
   app.use("/api/v1/auth/login", ...authRateLimit);
@@ -154,25 +166,41 @@ export function createApp(): Express {
     chunkByteRateLimit(),
     ...chunkUploadRateLimit,
   );
-  app.use("/api/v1/upload/file", ...fileUploadRateLimit);
-  app.use("/api/v1/upload/merge", ...fileUploadRateLimit);
-  app.use("/api/v1/auth/login", ...authRateLimit);
-  app.use("/api/v1/auth/register", ...authRateLimit);
-  app.use("/api/v1/auth/sms", ...authRateLimit);
-  app.use("/api/v1/auth/forgot-password", ...authRateLimit);
+  for (const v of defaultVersions) {
+    app.use(`/api/${v}/upload/chunk`, ...fileUploadRateLimit);
+    app.use(`/api/${v}/upload/merge`, ...fileUploadRateLimit);
+    app.use(`/api/${v}/auth/login`, ...authRateLimit);
+    app.use(`/api/${v}/auth/register`, ...authRateLimit);
+    app.use(`/api/${v}/auth/sms`, ...authRateLimit);
+    app.use(`/api/${v}/auth/forgot-password`, ...authRateLimit);
+  }
 
   // ⑩ 认证链
   app.use(authMiddleware);
   app.use(tenantResolver);
+  app.use(tenantProbeContext());
   app.use(dataScopeMiddleware());
-  const queueDashboard = buildQueueDashboardRouter();
-  if (queueDashboard) {
-    app.use("/api/v1/monitor/queue", queueDashboard);
-  }
   // ⑪ 业务路由（装饰器扫描）
   const scanner = new ControllerScanner();
   scanner.register(...(controllers as any));
-  app.use("/api/v1", new DecoratorRouter(scanner).build());
+  const router = new DecoratorRouter(scanner, defaultVersions);
+  for (const v of mountable) {
+    const queueDashboard = buildQueueDashboardRouter();
+    if (queueDashboard) {
+      app.use(`/api/${v.code}/monitor/queue`, queueDashboard);
+    }
+
+    const versionRouter = Router();
+    versionRouter.use(apiVersionLifecycle(v.code));
+    versionRouter.use((req, res, next) => {
+      res.on("finish", () => recordApiVersionRequest(v.code, res.statusCode));
+      next();
+    });
+    // versionRouter.use();
+    app.use(`/api/${v.code}`, router.buildForVersion(v.code));
+
+    logger.info({ version: v.code, status: v.status }, "[api-version] mounted");
+  }
   // 校验
   app.use(csrfGuard);
   // ⑫ Sentry 错误捕获（生产）

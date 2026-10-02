@@ -1268,6 +1268,7 @@ model rp_export_task {
    * 完整错误堆栈（截断）
    */
   error_stack   String?   @db.Text
+  is_deleted    Int       @default(0) @db.SmallInt
 
   @@index([status, tenant_id])
   @@index([tenant_id, user_id, status, created_at(sort: Desc)])
@@ -1748,6 +1749,7 @@ model sys_api_version {
   version_name  String    @db.VarChar(64) /// 展示名
   status        String    @default("active") @db.VarChar(16) /// active | deprecated | sunset
   release_at    DateTime  @db.Timestamptz(6)
+  is_default    Int       @default(0) @db.SmallInt
   deprecated_at DateTime? @db.Timestamptz(6) /// 开始标记废弃
   sunset_at     DateTime? @db.Timestamptz(6) /// 停止服务时间
   description   String?   @db.VarChar(512)
@@ -1759,31 +1761,36 @@ model sys_api_version {
   updated_by    String?   @db.Uuid
 
   @@index([status])
+  @@index([is_default])
   @@map("sys_api_version")
 }
 
 /// ==================== 特性开关 ====================
 model sys_feature_flag {
-  flag_id     String    @id @default(uuid()) @db.Uuid
-  flag_key    String    @unique @db.VarChar(128) /// 唯一标识，如 "new-workflow-editor"
-  flag_name   String    @db.VarChar(128)
-  description String?   @db.VarChar(512)
+  flag_id     String                  @id @default(uuid()) @db.Uuid
+  flag_key    String                  @unique @db.VarChar(128) /// 唯一标识，如 "new-workflow-editor"
+  flag_name   String                  @db.VarChar(128)
+  description String?                 @db.VarChar(512)
   /// 默认状态：0-关闭 1-开启
-  default_on  Int       @default(0) @db.SmallInt
+  default_on  Int                     @default(0) @db.SmallInt
   /// 全局灰度百分比 0-100
-  rollout_pct Int       @default(0) @db.SmallInt
+  rollout_pct Int                     @default(0) @db.SmallInt
   /// 状态：1-启用 0-停用（停用后走 default_on）
-  status      String    @default("1") @db.VarChar(10)
+  status      String                  @default("1") @db.VarChar(10)
   /// 计划下线时间（提醒清理）
-  expire_at   DateTime? @db.Timestamptz(6)
+  expire_at   DateTime?               @db.Timestamptz(6)
   tags        Json? /// ["experimental", "billing"]
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime  @updatedAt @db.Timestamptz(6)
-  created_by  String?   @db.Uuid
-  updated_by  String?   @db.Uuid
-  is_deleted  Int       @default(0) @db.SmallInt
-
-  rules sys_feature_flag_rule[]
+  created_at  DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime                @updatedAt @db.Timestamptz(6)
+  created_by  String?                 @db.Uuid
+  updated_by  String?                 @db.Uuid
+  is_deleted  Int                     @default(0) @db.SmallInt
+  owner       String?                 @db.VarChar(128)
+  /// ⭐ 新增：逻辑分组，如 "workflow" / "billing"
+  group_name  String?                 @db.VarChar(64)
+  /// ⭐ 新增：变更计数（便于前端判断缓存是否失效）
+  version     Int                     @default(1)
+  rules       sys_feature_flag_rule[]
 
   @@index([status])
   @@index([expire_at])
@@ -1792,24 +1799,27 @@ model sys_feature_flag {
 
 /// ==================== 特性开关灰度规则 ====================
 model sys_feature_flag_rule {
-  rule_id    String   @id @default(uuid()) @db.Uuid
-  flag_id    String   @db.Uuid
-  tenant_id  String?  @db.Uuid /// null 表示全局规则
+  rule_id         String           @id @default(uuid()) @db.Uuid
+  flag_id         String           @db.Uuid
+  tenant_id       String?          @db.Uuid /// null 表示全局规则
   /// 规则类型：tenant | user | role | percentage
-  rule_type  String   @db.VarChar(16)
+  rule_type       String           @db.VarChar(16)
   /// 目标值（tenant_id / user_id / role_id 或百分比数字）
-  target     String   @db.VarChar(128)
+  target          String           @db.VarChar(128)
   /// 0-关闭 1-开启
-  enabled    Int      @default(1) @db.SmallInt
+  enabled         Int              @default(1) @db.SmallInt
   /// 优先级（数值越大越优先）
-  priority   Int      @default(0)
-  remark     String?  @db.VarChar(256)
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @updatedAt @db.Timestamptz(6)
-  created_by String?  @db.Uuid
-  is_deleted Int      @default(0) @db.SmallInt
-
-  flag sys_feature_flag @relation(fields: [flag_id], references: [flag_id], onDelete: Cascade)
+  priority        Int              @default(0)
+  remark          String?          @db.VarChar(256)
+  created_at      DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime         @updatedAt @db.Timestamptz(6)
+  created_by      String?          @db.Uuid
+  is_deleted      Int              @default(0) @db.SmallInt
+  effective_from  DateTime?        @db.Timestamptz(6)
+  effective_until DateTime?        @db.Timestamptz(6)
+  /// ⭐ 新增：过期自动清理
+  expire_at       DateTime?        @db.Timestamptz(6)
+  flag            sys_feature_flag @relation(fields: [flag_id], references: [flag_id], onDelete: Cascade)
 
   @@index([flag_id])
   @@index([tenant_id])
@@ -1889,40 +1899,44 @@ model sys_backup_policy {
 
 /// ==================== 通用导出任务 ====================
 model sys_export_task {
-  task_id       String    @id @default(uuid()) @db.Uuid
-  tenant_id     String    @db.Uuid
-  user_id       String    @db.Uuid
+  task_id          String    @id @default(uuid()) @db.Uuid
+  tenant_id        String    @db.Uuid
+  user_id          String    @db.Uuid
   /// 业务类型：user | audit_log | login_log | notice | ... 
-  biz_type      String    @db.VarChar(64)
+  biz_type         String    @db.VarChar(64)
   /// 导出格式：xlsx | csv | json
-  export_format String    @default("xlsx") @db.VarChar(16)
+  export_format    String    @default("xlsx") @db.VarChar(16)
   /// 查询条件 JSON（前端传什么存什么）
-  query_params  Json?
+  query_params     Json?
   /// 请求字段（列筛选）
-  columns       Json?
+  columns          Json?
   /// 状态：pending | processing | completed | failed | cancelled | expired
-  status        String    @default("pending") @db.VarChar(20)
-  progress      Int       @default(0) @db.SmallInt /// 0-100
-  row_count     Int       @default(0)
+  status           String    @default("pending") @db.VarChar(20)
+  progress         Int       @default(0) @db.SmallInt /// 0-100
+  row_count        Int       @default(0)
   /// 文件信息
-  file_url      String?   @db.VarChar(512)
-  file_name     String?   @db.VarChar(256)
-  file_size     BigInt?
+  file_url         String?   @db.VarChar(512)
+  file_name        String?   @db.VarChar(256)
+  file_size        BigInt?
   /// 失败信息
-  error_msg     String?   @db.Text
+  error_msg        String?   @db.Text
   /// BullMQ Job ID
-  job_id        String?   @db.VarChar(64)
+  job_id           String?   @db.VarChar(64)
   /// 重试
-  retry_count   Int       @default(0) @db.SmallInt
-  max_retries   Int       @default(3) @db.SmallInt
+  retry_count      Int       @default(0) @db.SmallInt
+  max_retries      Int       @default(3) @db.SmallInt
   /// 时间戳
-  started_at    DateTime? @db.Timestamptz(6)
-  completed_at  DateTime? @db.Timestamptz(6)
-  expires_at    DateTime? @db.Timestamptz(6)
-  duration_ms   Int?
-  created_at    DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime  @updatedAt @db.Timestamptz(6)
-  is_deleted    Int       @default(0) @db.SmallInt
+  started_at       DateTime? @db.Timestamptz(6)
+  completed_at     DateTime? @db.Timestamptz(6)
+  expires_at       DateTime? @db.Timestamptz(6)
+  duration_ms      Int?
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime  @updatedAt @db.Timestamptz(6)
+  is_deleted       Int       @default(0) @db.SmallInt
+  error_type       String?   @db.VarChar(32)
+  error_stack      String?   @db.Text
+  download_count   Int       @default(0) @db.SmallInt
+  last_download_ip String?   @db.VarChar(64)
 
   @@index([tenant_id, user_id, status, created_at(sort: Desc)])
   @@index([status, created_at])
@@ -1967,6 +1981,36 @@ model sys_tenant_isolation_scan {
   @@index([resolved])
   @@index([last_seen_at])
   @@map("sys_tenant_isolation_scan")
+}
+
+/// ==================== 隔离审计的扫描批次 ====================
+model sys_tenant_isolation_run {
+  run_id         String    @id @default(uuid()) @db.Uuid
+  /// 触发方式：ci | manual | cron | startup
+  trigger_type   String    @db.VarChar(16)
+  /// 触发者（cron 为 null）
+  triggered_by   String?   @db.Uuid
+  /// 状态：running | completed | failed
+  status         String    @default("running") @db.VarChar(16)
+  /// 各类违规计数
+  critical_count Int       @default(0)
+  warning_count  Int       @default(0)
+  info_count     Int       @default(0)
+  /// 新增 / 已修复
+  new_count      Int       @default(0)
+  resolved_count Int       @default(0)
+  /// 扫描了哪些（快照）
+  scanned_tables Int       @default(0)
+  scanned_files  Int       @default(0)
+  /// 耗时
+  duration_ms    Int?
+  error_msg      String?   @db.Text
+  started_at     DateTime  @default(now()) @db.Timestamptz(6)
+  finished_at    DateTime? @db.Timestamptz(6)
+
+  @@index([trigger_type, started_at(sort: Desc)])
+  @@index([status])
+  @@map("sys_tenant_isolation_run")
 }
 
 /// ==================== 组织架构变更历史 ====================

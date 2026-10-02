@@ -8,6 +8,9 @@ import { CancelAccountService } from "@/modules/auth/service/cancel-account.serv
 import { EmailVerifyService } from "@/modules/auth/index.js";
 import { runJob } from "./registry.js";
 import { archivePolicyService } from "@/modules/archive-policy/index.js";
+import { runTenantIsolationScan } from "@/modules/system/tenant-isolation/scheduler.js";
+import { BACKUP_JOBS } from "./tasks/backup.task.js";
+import { EXPORT_JOBS } from "./tasks/export.task.js";
 
 const tasks: ScheduledTask[] = [];
 
@@ -204,6 +207,14 @@ const CRON_TASKS: CronTaskDef[] = [
     cron: "*/2 * * * *",
     handler: () => runJob("storageHealthJob"),
   },
+  {
+    name: "tenant-isolation-scan",
+    cron: "0 3 * * *", // 每日 3:00
+    locked: true,
+    handler: runTenantIsolationScan,
+  },
+  ...BACKUP_JOBS,
+  ...EXPORT_JOBS,
 ];
 
 /* ============================================================

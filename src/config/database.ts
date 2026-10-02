@@ -1,4 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { PrismaClient } from "@/generated/prisma/client.js";
 import { logger } from "@/platform/logger/logger.js";
 import { sendAlert } from "@/platform/alert/index.js";
@@ -11,19 +12,21 @@ import {
 import { trace } from "@opentelemetry/api";
 import { getDataScope } from "@/core/index.js";
 import { slowQueryCollector } from "@/modules/monitor/slow-query/index.js";
+import { attachDbPoolMetrics } from "@/platform/metrics/pool-collector.js";
 const SLOW_QUERY_MS = 500;
 const DB_FAIL_THRESHOLD = 10;
 
 let consecutiveFailures = 0;
 
 function createPrismaClient() {
-  const connectionString = env.DATABASE_URL;
-  const adapter = new PrismaPg({
-    connectionString,
+  const pool = new Pool({
+    connectionString: env.DATABASE_URL,
     max: Number(env.DB_POOL_MAX),
     idleTimeoutMillis: Number(env.DB_IDLE_TIMEOUT_MS),
     connectionTimeoutMillis: Number(env.DB_CONNECT_TIMEOUT_MS),
   });
+  attachDbPoolMetrics(pool);
+  const adapter = new PrismaPg(pool);
 
   return new PrismaClient({
     adapter,

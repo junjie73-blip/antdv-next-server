@@ -2,7 +2,7 @@ export interface AlertPayload {
   level: "info" | "warning" | "error" | "critical";
   title?: string;
   message: string;
-  data?: Record<string, unknown>;
+  data?: any;
   source?: string;
 }
 

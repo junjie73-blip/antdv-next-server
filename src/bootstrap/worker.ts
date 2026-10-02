@@ -11,6 +11,7 @@ import {
 import cacheWarmWorker from "@/workers/cache-warm.worker.js";
 import reportExportWorker from "@/workers/report-export.worker.js";
 import wfNotifyWorker from "@/workers/wf-notify.worker.js";
+import exportWorker from "@/workers/export.worker.js";
 
 const uploadService = new UploadService(new FileRepository());
 
@@ -24,6 +25,7 @@ export interface WorkerBundle {
   wfNotify: Worker;
   /** 缓存预热 worker */
   cacheWarm: Worker;
+  exportWorker: Worker;
   /** 全部 worker（用于统一关闭） */
   all: Worker[];
 }
@@ -41,6 +43,7 @@ export function startAllWorkers(): WorkerBundle {
     reportExportWorker,
     wfNotifyWorker,
     cacheWarmWorker,
+    exportWorker,
   ];
 
   // 统一注册事件（只注册一次）
@@ -61,6 +64,7 @@ export function startAllWorkers(): WorkerBundle {
     reportExport: reportExportWorker,
     wfNotify: wfNotifyWorker,
     cacheWarm: cacheWarmWorker,
+    exportWorker: exportWorker,
     all,
   };
 }

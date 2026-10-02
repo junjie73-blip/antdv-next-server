@@ -12,6 +12,7 @@ export const METADATA_KEYS = {
   INJECTABLE: "injectable:token",
   DESIGN_PARAM_TYPES: "design:paramtypes",
   REQUIRE_MFA: "controller:require-mfa",
+  CONTROLLER_VERSIONS: "controller:versions",
 } as const;
 
 export type HttpMethod =
@@ -38,6 +39,7 @@ export interface ControllerMetadata {
   prefix: string;
   tags?: string[];
   middlewares: Array<(req: any, res: any, next: any) => any>;
+  versions?: string[];
 }
 
 export interface SwaggerMetadata {

@@ -27,7 +27,7 @@ export async function archivePartition(
   gz.pipe(pass);
 
   // ⭐ 用系统级 storage，绕过租户配置
-  const storage = getSystemStorage();
+  const storage = await getSystemStorage();
 
   const uploadPromise = storage.putObject({
     key,

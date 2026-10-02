@@ -33,6 +33,7 @@ export type Rp_export_taskAvgAggregateOutputType = {
   retry_count: number | null
   duration_ms: number | null
   max_retries: number | null
+  is_deleted: number | null
 }
 
 export type Rp_export_taskSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type Rp_export_taskSumAggregateOutputType = {
   retry_count: number | null
   duration_ms: number | null
   max_retries: number | null
+  is_deleted: number | null
 }
 
 export type Rp_export_taskMinAggregateOutputType = {
@@ -69,6 +71,7 @@ export type Rp_export_taskMinAggregateOutputType = {
   next_retry_at: Date | null
   error_type: string | null
   error_stack: string | null
+  is_deleted: number | null
 }
 
 export type Rp_export_taskMaxAggregateOutputType = {
@@ -96,6 +99,7 @@ export type Rp_export_taskMaxAggregateOutputType = {
   next_retry_at: Date | null
   error_type: string | null
   error_stack: string | null
+  is_deleted: number | null
 }
 
 export type Rp_export_taskCountAggregateOutputType = {
@@ -124,6 +128,7 @@ export type Rp_export_taskCountAggregateOutputType = {
   next_retry_at: number
   error_type: number
   error_stack: number
+  is_deleted: number
   _all: number
 }
 
@@ -135,6 +140,7 @@ export type Rp_export_taskAvgAggregateInputType = {
   retry_count?: true
   duration_ms?: true
   max_retries?: true
+  is_deleted?: true
 }
 
 export type Rp_export_taskSumAggregateInputType = {
@@ -144,6 +150,7 @@ export type Rp_export_taskSumAggregateInputType = {
   retry_count?: true
   duration_ms?: true
   max_retries?: true
+  is_deleted?: true
 }
 
 export type Rp_export_taskMinAggregateInputType = {
@@ -171,6 +178,7 @@ export type Rp_export_taskMinAggregateInputType = {
   next_retry_at?: true
   error_type?: true
   error_stack?: true
+  is_deleted?: true
 }
 
 export type Rp_export_taskMaxAggregateInputType = {
@@ -198,6 +206,7 @@ export type Rp_export_taskMaxAggregateInputType = {
   next_retry_at?: true
   error_type?: true
   error_stack?: true
+  is_deleted?: true
 }
 
 export type Rp_export_taskCountAggregateInputType = {
@@ -226,6 +235,7 @@ export type Rp_export_taskCountAggregateInputType = {
   next_retry_at?: true
   error_type?: true
   error_stack?: true
+  is_deleted?: true
   _all?: true
 }
 
@@ -341,6 +351,7 @@ export type Rp_export_taskGroupByOutputType = {
   next_retry_at: Date | null
   error_type: string | null
   error_stack: string | null
+  is_deleted: number
   _count: Rp_export_taskCountAggregateOutputType | null
   _avg: Rp_export_taskAvgAggregateOutputType | null
   _sum: Rp_export_taskSumAggregateOutputType | null
@@ -392,6 +403,7 @@ export type rp_export_taskWhereInput = {
   next_retry_at?: Prisma.DateTimeNullableFilter<"rp_export_task"> | Date | string | null
   error_type?: Prisma.StringNullableFilter<"rp_export_task"> | string | null
   error_stack?: Prisma.StringNullableFilter<"rp_export_task"> | string | null
+  is_deleted?: Prisma.IntFilter<"rp_export_task"> | number
 }
 
 export type rp_export_taskOrderByWithRelationInput = {
@@ -420,6 +432,7 @@ export type rp_export_taskOrderByWithRelationInput = {
   next_retry_at?: Prisma.SortOrderInput | Prisma.SortOrder
   error_type?: Prisma.SortOrderInput | Prisma.SortOrder
   error_stack?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
 }
 
 export type rp_export_taskWhereUniqueInput = Prisma.AtLeast<{
@@ -451,6 +464,7 @@ export type rp_export_taskWhereUniqueInput = Prisma.AtLeast<{
   next_retry_at?: Prisma.DateTimeNullableFilter<"rp_export_task"> | Date | string | null
   error_type?: Prisma.StringNullableFilter<"rp_export_task"> | string | null
   error_stack?: Prisma.StringNullableFilter<"rp_export_task"> | string | null
+  is_deleted?: Prisma.IntFilter<"rp_export_task"> | number
 }, "task_id">
 
 export type rp_export_taskOrderByWithAggregationInput = {
@@ -479,6 +493,7 @@ export type rp_export_taskOrderByWithAggregationInput = {
   next_retry_at?: Prisma.SortOrderInput | Prisma.SortOrder
   error_type?: Prisma.SortOrderInput | Prisma.SortOrder
   error_stack?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
   _count?: Prisma.rp_export_taskCountOrderByAggregateInput
   _avg?: Prisma.rp_export_taskAvgOrderByAggregateInput
   _max?: Prisma.rp_export_taskMaxOrderByAggregateInput
@@ -515,6 +530,7 @@ export type rp_export_taskScalarWhereWithAggregatesInput = {
   next_retry_at?: Prisma.DateTimeNullableWithAggregatesFilter<"rp_export_task"> | Date | string | null
   error_type?: Prisma.StringNullableWithAggregatesFilter<"rp_export_task"> | string | null
   error_stack?: Prisma.StringNullableWithAggregatesFilter<"rp_export_task"> | string | null
+  is_deleted?: Prisma.IntWithAggregatesFilter<"rp_export_task"> | number
 }
 
 export type rp_export_taskCreateInput = {
@@ -543,6 +559,7 @@ export type rp_export_taskCreateInput = {
   next_retry_at?: Date | string | null
   error_type?: string | null
   error_stack?: string | null
+  is_deleted?: number
 }
 
 export type rp_export_taskUncheckedCreateInput = {
@@ -571,6 +588,7 @@ export type rp_export_taskUncheckedCreateInput = {
   next_retry_at?: Date | string | null
   error_type?: string | null
   error_stack?: string | null
+  is_deleted?: number
 }
 
 export type rp_export_taskUpdateInput = {
@@ -599,6 +617,7 @@ export type rp_export_taskUpdateInput = {
   next_retry_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type rp_export_taskUncheckedUpdateInput = {
@@ -627,6 +646,7 @@ export type rp_export_taskUncheckedUpdateInput = {
   next_retry_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type rp_export_taskCreateManyInput = {
@@ -655,6 +675,7 @@ export type rp_export_taskCreateManyInput = {
   next_retry_at?: Date | string | null
   error_type?: string | null
   error_stack?: string | null
+  is_deleted?: number
 }
 
 export type rp_export_taskUpdateManyMutationInput = {
@@ -683,6 +704,7 @@ export type rp_export_taskUpdateManyMutationInput = {
   next_retry_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type rp_export_taskUncheckedUpdateManyInput = {
@@ -711,6 +733,7 @@ export type rp_export_taskUncheckedUpdateManyInput = {
   next_retry_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type rp_export_taskCountOrderByAggregateInput = {
@@ -739,6 +762,7 @@ export type rp_export_taskCountOrderByAggregateInput = {
   next_retry_at?: Prisma.SortOrder
   error_type?: Prisma.SortOrder
   error_stack?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
 }
 
 export type rp_export_taskAvgOrderByAggregateInput = {
@@ -748,6 +772,7 @@ export type rp_export_taskAvgOrderByAggregateInput = {
   retry_count?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
   max_retries?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
 }
 
 export type rp_export_taskMaxOrderByAggregateInput = {
@@ -775,6 +800,7 @@ export type rp_export_taskMaxOrderByAggregateInput = {
   next_retry_at?: Prisma.SortOrder
   error_type?: Prisma.SortOrder
   error_stack?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
 }
 
 export type rp_export_taskMinOrderByAggregateInput = {
@@ -802,6 +828,7 @@ export type rp_export_taskMinOrderByAggregateInput = {
   next_retry_at?: Prisma.SortOrder
   error_type?: Prisma.SortOrder
   error_stack?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
 }
 
 export type rp_export_taskSumOrderByAggregateInput = {
@@ -811,6 +838,7 @@ export type rp_export_taskSumOrderByAggregateInput = {
   retry_count?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
   max_retries?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
 }
 
 
@@ -841,6 +869,7 @@ export type rp_export_taskSelect<ExtArgs extends runtime.Types.Extensions.Intern
   next_retry_at?: boolean
   error_type?: boolean
   error_stack?: boolean
+  is_deleted?: boolean
 }, ExtArgs["result"]["rp_export_task"]>
 
 export type rp_export_taskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -869,6 +898,7 @@ export type rp_export_taskSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   next_retry_at?: boolean
   error_type?: boolean
   error_stack?: boolean
+  is_deleted?: boolean
 }, ExtArgs["result"]["rp_export_task"]>
 
 export type rp_export_taskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -897,6 +927,7 @@ export type rp_export_taskSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   next_retry_at?: boolean
   error_type?: boolean
   error_stack?: boolean
+  is_deleted?: boolean
 }, ExtArgs["result"]["rp_export_task"]>
 
 export type rp_export_taskSelectScalar = {
@@ -925,9 +956,10 @@ export type rp_export_taskSelectScalar = {
   next_retry_at?: boolean
   error_type?: boolean
   error_stack?: boolean
+  is_deleted?: boolean
 }
 
-export type rp_export_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "tenant_id" | "user_id" | "report_code" | "export_type" | "params" | "status" | "progress" | "row_count" | "file_url" | "file_name" | "file_size" | "error_msg" | "retry_count" | "duration_ms" | "job_id" | "created_at" | "updated_at" | "started_at" | "completed_at" | "expires_at" | "max_retries" | "next_retry_at" | "error_type" | "error_stack", ExtArgs["result"]["rp_export_task"]>
+export type rp_export_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "tenant_id" | "user_id" | "report_code" | "export_type" | "params" | "status" | "progress" | "row_count" | "file_url" | "file_name" | "file_size" | "error_msg" | "retry_count" | "duration_ms" | "job_id" | "created_at" | "updated_at" | "started_at" | "completed_at" | "expires_at" | "max_retries" | "next_retry_at" | "error_type" | "error_stack" | "is_deleted", ExtArgs["result"]["rp_export_task"]>
 
 export type $rp_export_taskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "rp_export_task"
@@ -994,6 +1026,7 @@ export type $rp_export_taskPayload<ExtArgs extends runtime.Types.Extensions.Inte
      *    * 完整错误堆栈（截断）
      */
     error_stack: string | null
+    is_deleted: number
   }, ExtArgs["result"]["rp_export_task"]>
   composites: {}
 }
@@ -1442,6 +1475,7 @@ export interface rp_export_taskFieldRefs {
   readonly next_retry_at: Prisma.FieldRef<"rp_export_task", 'DateTime'>
   readonly error_type: Prisma.FieldRef<"rp_export_task", 'String'>
   readonly error_stack: Prisma.FieldRef<"rp_export_task", 'String'>
+  readonly is_deleted: Prisma.FieldRef<"rp_export_task", 'Int'>
 }
     
 

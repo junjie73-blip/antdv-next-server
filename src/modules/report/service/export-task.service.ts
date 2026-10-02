@@ -1,7 +1,7 @@
 import { prisma } from "@/config/database.js";
 import { AppError } from "@/core/errors.js";
 import { logger } from "@/platform/logger/index.js";
-import { exportQueue } from "@/platform/queue/queues.js";
+import { reportExportQueue } from "@/platform/queue/queues.js";
 import { RpExportTaskRepository } from "../repository/export-task.repository.js";
 import type { ExportType } from "../types.js";
 import { deleteFileByUrl } from "@/platform/storage/factory.js";
@@ -34,7 +34,7 @@ export class RpExportTaskService {
     });
 
     // 2. 入队
-    const job = await exportQueue.add(
+    const job = await reportExportQueue.add(
       "export",
       {
         taskId: task.task_id,
@@ -103,7 +103,7 @@ export class RpExportTaskService {
 
     // 移除队列 job
     if (task.job_id) {
-      const job = await exportQueue.getJob(task.job_id);
+      const job = await reportExportQueue.getJob(task.job_id);
       if (job) await job.remove().catch(() => undefined);
     }
 
@@ -138,7 +138,7 @@ export class RpExportTaskService {
       completed_at: null,
     });
 
-    await exportQueue.add(
+    await reportExportQueue.add(
       "export",
       {
         taskId: task.task_id,

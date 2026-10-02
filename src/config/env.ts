@@ -146,6 +146,23 @@ const envSchema = z.object({
   FIELD_MASK_ENABLED: boolStr("true"),
   LOKI_URL: z.string().url().optional(),
   ENABLE_QUEUE_DASHBOARD: z.string().default("0"),
+  REDIS_METRICS_COMMAND_LEVEL: boolStr("true"),
+  API_VERSIONING_ENABLED: boolStr("false"),
+  API_DEFAULT_VERSIONS: z.string().default("v1"),
+  SYSTEM_STORAGE_TYPE: z
+    .enum(["local", "minio", "oss", "cos", "s3"])
+    .optional(),
+  SYSTEM_STORAGE_ENDPOINT: z.string().optional(),
+  SYSTEM_STORAGE_PORT: z.string().optional(),
+  SYSTEM_STORAGE_USE_SSL: boolStr("false"),
+  SYSTEM_STORAGE_REGION: z.string().optional(),
+  SYSTEM_STORAGE_BUCKET: z.string().optional(),
+  SYSTEM_STORAGE_ACCESS_KEY_ID: z.string().optional(),
+  SYSTEM_STORAGE_ACCESS_KEY_SECRET: z.string().optional(),
+  SYSTEM_STORAGE_CUSTOM_DOMAIN: z.string().optional(),
+  SYSTEM_STORAGE_LOCAL_PATH: z.string().optional(),
+  SYSTEM_STORAGE_LOCAL_URL: z.string().optional(),
+  TENANT_PROBE_ENABLED: boolStr("false"),
 });
 
 const parsed = envSchema.safeParse(decryptedEnv);

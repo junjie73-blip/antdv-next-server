@@ -11,6 +11,7 @@ export interface ScannedController {
   instance: any;
   prefix: string;
   tags: string[];
+  versions?: string[];
   routes: RouteMetadata[];
   classMiddlewares: Array<(req: any, res: any, next: any) => any>;
 }
@@ -33,6 +34,10 @@ export class ControllerScanner {
         Reflect.getMetadata(METADATA_KEYS.ROUTES, target) || [];
       const classMiddlewares =
         Reflect.getMetadata(METADATA_KEYS.MIDDLEWARES, target) || [];
+      const versions = Reflect.getMetadata(
+        METADATA_KEYS.CONTROLLER_VERSIONS,
+        target,
+      ) as string[] | undefined;
       const instance = new target();
 
       logger.debug(
@@ -40,7 +45,15 @@ export class ControllerScanner {
         "Controller scanned",
       );
 
-      return { target, instance, prefix, tags, routes, classMiddlewares };
+      return {
+        target,
+        instance,
+        prefix,
+        tags,
+        versions,
+        routes,
+        classMiddlewares,
+      };
     });
   }
 }

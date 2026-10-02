@@ -287,7 +287,7 @@ export class ArchiveExecutorService {
     const pass = new PassThrough();
     gz.pipe(pass);
 
-    const storage = getSystemStorage();
+    const storage = await getSystemStorage();
     const uploadPromise = storage.putObject({
       key,
       body: pass,

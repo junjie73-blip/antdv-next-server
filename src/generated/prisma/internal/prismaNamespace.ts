@@ -474,6 +474,7 @@ export const ModelName = {
   sys_backup_policy: 'sys_backup_policy',
   sys_export_task: 'sys_export_task',
   sys_tenant_isolation_scan: 'sys_tenant_isolation_scan',
+  sys_tenant_isolation_run: 'sys_tenant_isolation_run',
   sys_org_history: 'sys_org_history',
   sys_role_field_policy: 'sys_role_field_policy'
 } as const
@@ -491,7 +492,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "sys_tenant" | "sys_user" | "sys_verify_code" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_job_run" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily" | "sys_approval_request" | "sys_approval_node" | "sys_approval_log" | "sys_notice_template" | "sys_file_pending_delete" | "wf_definition" | "wf_instance" | "wf_task" | "wf_history" | "wf_variable_log" | "rp_dataset" | "rp_report" | "rp_report_log" | "rp_report_favorite" | "rp_export_task" | "wf_notification" | "rp_cache_warm_config" | "sys_user_group" | "sys_user_group_member" | "sys_user_group_role" | "sys_privilege_grant" | "wf_cc_record" | "sys_wf_delegate" | "wf_task_transfer_log" | "sys_message" | "sys_user_notice_preference" | "sys_archive_policy" | "sys_archive_log" | "sys_cache_operation_log" | "sys_storage_backend" | "sys_field_mask_policy" | "sys_slow_query_log" | "gen_template" | "gen_template_version" | "sys_api_version" | "sys_feature_flag" | "sys_feature_flag_rule" | "sys_backup_record" | "sys_backup_policy" | "sys_export_task" | "sys_tenant_isolation_scan" | "sys_org_history" | "sys_role_field_policy"
+    modelProps: "sys_tenant" | "sys_user" | "sys_verify_code" | "sys_role" | "sys_dept" | "sys_menu" | "sys_permission" | "sys_dict_type" | "sys_dict_data" | "sys_notice" | "sys_notice_user" | "sys_audit_log" | "sys_user_role" | "sys_user_dept" | "sys_role_menu" | "sys_role_permission" | "sys_role_dept" | "sys_mfa_config" | "sys_file" | "sys_login_log" | "sys_config" | "sys_job" | "sys_job_log" | "sys_job_run" | "sys_todo" | "sys_ip_rule" | "sys_notice_channel" | "sys_notice_send_log" | "sys_password_history" | "sys_todo_group" | "sys_user_tenant" | "gen_table" | "gen_table_column" | "sys_upload_task" | "sys_audit_daily" | "sys_login_daily" | "sys_approval_request" | "sys_approval_node" | "sys_approval_log" | "sys_notice_template" | "sys_file_pending_delete" | "wf_definition" | "wf_instance" | "wf_task" | "wf_history" | "wf_variable_log" | "rp_dataset" | "rp_report" | "rp_report_log" | "rp_report_favorite" | "rp_export_task" | "wf_notification" | "rp_cache_warm_config" | "sys_user_group" | "sys_user_group_member" | "sys_user_group_role" | "sys_privilege_grant" | "wf_cc_record" | "sys_wf_delegate" | "wf_task_transfer_log" | "sys_message" | "sys_user_notice_preference" | "sys_archive_policy" | "sys_archive_log" | "sys_cache_operation_log" | "sys_storage_backend" | "sys_field_mask_policy" | "sys_slow_query_log" | "gen_template" | "gen_template_version" | "sys_api_version" | "sys_feature_flag" | "sys_feature_flag_rule" | "sys_backup_record" | "sys_backup_policy" | "sys_export_task" | "sys_tenant_isolation_scan" | "sys_tenant_isolation_run" | "sys_org_history" | "sys_role_field_policy"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -6193,6 +6194,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    sys_tenant_isolation_run: {
+      payload: Prisma.$sys_tenant_isolation_runPayload<ExtArgs>
+      fields: Prisma.sys_tenant_isolation_runFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.sys_tenant_isolation_runFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.sys_tenant_isolation_runFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>
+        }
+        findFirst: {
+          args: Prisma.sys_tenant_isolation_runFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.sys_tenant_isolation_runFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>
+        }
+        findMany: {
+          args: Prisma.sys_tenant_isolation_runFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>[]
+        }
+        create: {
+          args: Prisma.sys_tenant_isolation_runCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>
+        }
+        createMany: {
+          args: Prisma.sys_tenant_isolation_runCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.sys_tenant_isolation_runCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>[]
+        }
+        delete: {
+          args: Prisma.sys_tenant_isolation_runDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>
+        }
+        update: {
+          args: Prisma.sys_tenant_isolation_runUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>
+        }
+        deleteMany: {
+          args: Prisma.sys_tenant_isolation_runDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.sys_tenant_isolation_runUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.sys_tenant_isolation_runUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>[]
+        }
+        upsert: {
+          args: Prisma.sys_tenant_isolation_runUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$sys_tenant_isolation_runPayload>
+        }
+        aggregate: {
+          args: Prisma.Sys_tenant_isolation_runAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSys_tenant_isolation_run>
+        }
+        groupBy: {
+          args: Prisma.sys_tenant_isolation_runGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_tenant_isolation_runGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.sys_tenant_isolation_runCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Sys_tenant_isolation_runCountAggregateOutputType> | number
+        }
+      }
+    }
     sys_org_history: {
       payload: Prisma.$sys_org_historyPayload<ExtArgs>
       fields: Prisma.sys_org_historyFieldRefs
@@ -7382,7 +7457,8 @@ export const Rp_export_taskScalarFieldEnum = {
   max_retries: 'max_retries',
   next_retry_at: 'next_retry_at',
   error_type: 'error_type',
-  error_stack: 'error_stack'
+  error_stack: 'error_stack',
+  is_deleted: 'is_deleted'
 } as const
 
 export type Rp_export_taskScalarFieldEnum = (typeof Rp_export_taskScalarFieldEnum)[keyof typeof Rp_export_taskScalarFieldEnum]
@@ -7765,6 +7841,7 @@ export const Sys_api_versionScalarFieldEnum = {
   version_name: 'version_name',
   status: 'status',
   release_at: 'release_at',
+  is_default: 'is_default',
   deprecated_at: 'deprecated_at',
   sunset_at: 'sunset_at',
   description: 'description',
@@ -7793,7 +7870,10 @@ export const Sys_feature_flagScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  owner: 'owner',
+  group_name: 'group_name',
+  version: 'version'
 } as const
 
 export type Sys_feature_flagScalarFieldEnum = (typeof Sys_feature_flagScalarFieldEnum)[keyof typeof Sys_feature_flagScalarFieldEnum]
@@ -7811,7 +7891,10 @@ export const Sys_feature_flag_ruleScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   created_by: 'created_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  effective_from: 'effective_from',
+  effective_until: 'effective_until',
+  expire_at: 'expire_at'
 } as const
 
 export type Sys_feature_flag_ruleScalarFieldEnum = (typeof Sys_feature_flag_ruleScalarFieldEnum)[keyof typeof Sys_feature_flag_ruleScalarFieldEnum]
@@ -7886,7 +7969,11 @@ export const Sys_export_taskScalarFieldEnum = {
   duration_ms: 'duration_ms',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  error_type: 'error_type',
+  error_stack: 'error_stack',
+  download_count: 'download_count',
+  last_download_ip: 'last_download_ip'
 } as const
 
 export type Sys_export_taskScalarFieldEnum = (typeof Sys_export_taskScalarFieldEnum)[keyof typeof Sys_export_taskScalarFieldEnum]
@@ -7913,6 +8000,27 @@ export const Sys_tenant_isolation_scanScalarFieldEnum = {
 } as const
 
 export type Sys_tenant_isolation_scanScalarFieldEnum = (typeof Sys_tenant_isolation_scanScalarFieldEnum)[keyof typeof Sys_tenant_isolation_scanScalarFieldEnum]
+
+
+export const Sys_tenant_isolation_runScalarFieldEnum = {
+  run_id: 'run_id',
+  trigger_type: 'trigger_type',
+  triggered_by: 'triggered_by',
+  status: 'status',
+  critical_count: 'critical_count',
+  warning_count: 'warning_count',
+  info_count: 'info_count',
+  new_count: 'new_count',
+  resolved_count: 'resolved_count',
+  scanned_tables: 'scanned_tables',
+  scanned_files: 'scanned_files',
+  duration_ms: 'duration_ms',
+  error_msg: 'error_msg',
+  started_at: 'started_at',
+  finished_at: 'finished_at'
+} as const
+
+export type Sys_tenant_isolation_runScalarFieldEnum = (typeof Sys_tenant_isolation_runScalarFieldEnum)[keyof typeof Sys_tenant_isolation_runScalarFieldEnum]
 
 
 export const Sys_org_historyScalarFieldEnum = {
@@ -8327,6 +8435,7 @@ export type GlobalOmitConfig = {
   sys_backup_policy?: Prisma.sys_backup_policyOmit
   sys_export_task?: Prisma.sys_export_taskOmit
   sys_tenant_isolation_scan?: Prisma.sys_tenant_isolation_scanOmit
+  sys_tenant_isolation_run?: Prisma.sys_tenant_isolation_runOmit
   sys_org_history?: Prisma.sys_org_historyOmit
   sys_role_field_policy?: Prisma.sys_role_field_policyOmit
 }

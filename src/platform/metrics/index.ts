@@ -28,3 +28,6 @@ export {
   wfNotificationPending,
 } from "./workflow-notify.js";
 export * from "./workflow.js";
+export * from "./pool.js";
+export { attachDbPoolMetrics, attachRedisMetrics } from "./pool-collector.js";
+export * from "./backup.js";

@@ -1,6 +1,6 @@
 import { prisma } from "@/config/database.js";
 import { logger } from "@/platform/logger/index.js";
-import { exportQueue } from "@/platform/queue/queues.js";
+import { reportExportQueue } from "@/platform/queue/queues.js";
 
 const BATCH_SIZE = 100;
 
@@ -34,8 +34,8 @@ export async function exportRetryTask(): Promise<void> {
       const paramsData = task.params as any;
 
       // 重新入队
-      await exportQueue.add(
-        "export",
+      await reportExportQueue.add(
+        "report-export",
         {
           taskId: task.task_id,
           tenantId: task.tenant_id,

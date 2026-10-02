@@ -34,7 +34,7 @@ async function main(): Promise<void> {
   trackTimers();
 
   // 2) 组装 + 启动
-  const app = createApp();
+  const app = await createApp();
   const { httpServer, wss } = await startServer(app);
 
   // 3) 后台订阅 + cron

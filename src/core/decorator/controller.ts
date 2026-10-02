@@ -4,7 +4,11 @@ import { ExpressMiddleware } from "./types.js";
 
 export function Controller(
   prefix: string,
-  options?: { tags?: string[]; middlewares?: ExpressMiddleware[] },
+  options?: {
+    tags?: string[];
+    middlewares?: ExpressMiddleware[];
+    versions?: string[];
+  },
 ): ClassDecorator {
   return (target: any) => {
     const existingRoutes =
@@ -13,6 +17,7 @@ export function Controller(
       prefix: prefix.startsWith("/") ? prefix : `/${prefix}`,
       tags: options?.tags || [target.name.replace("Controller", "")],
       middlewares: options?.middlewares || [],
+      versions: normalizeVersions(options?.versions || []),
     };
     Reflect.defineMetadata(
       METADATA_KEYS.CONTROLLER_PREFIX,
@@ -33,4 +38,11 @@ export function Controller(
       );
     }
   };
+}
+function normalizeVersions(
+  v: string | string[] | undefined,
+): string[] | undefined {
+  if (!v) return undefined;
+  const arr = Array.isArray(v) ? v : [v];
+  return arr.map((s) => s.trim().toLowerCase()).filter(Boolean);
 }

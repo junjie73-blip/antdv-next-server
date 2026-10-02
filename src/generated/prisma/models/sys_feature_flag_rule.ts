@@ -51,6 +51,9 @@ export type Sys_feature_flag_ruleMinAggregateOutputType = {
   updated_at: Date | null
   created_by: string | null
   is_deleted: number | null
+  effective_from: Date | null
+  effective_until: Date | null
+  expire_at: Date | null
 }
 
 export type Sys_feature_flag_ruleMaxAggregateOutputType = {
@@ -66,6 +69,9 @@ export type Sys_feature_flag_ruleMaxAggregateOutputType = {
   updated_at: Date | null
   created_by: string | null
   is_deleted: number | null
+  effective_from: Date | null
+  effective_until: Date | null
+  expire_at: Date | null
 }
 
 export type Sys_feature_flag_ruleCountAggregateOutputType = {
@@ -81,6 +87,9 @@ export type Sys_feature_flag_ruleCountAggregateOutputType = {
   updated_at: number
   created_by: number
   is_deleted: number
+  effective_from: number
+  effective_until: number
+  expire_at: number
   _all: number
 }
 
@@ -110,6 +119,9 @@ export type Sys_feature_flag_ruleMinAggregateInputType = {
   updated_at?: true
   created_by?: true
   is_deleted?: true
+  effective_from?: true
+  effective_until?: true
+  expire_at?: true
 }
 
 export type Sys_feature_flag_ruleMaxAggregateInputType = {
@@ -125,6 +137,9 @@ export type Sys_feature_flag_ruleMaxAggregateInputType = {
   updated_at?: true
   created_by?: true
   is_deleted?: true
+  effective_from?: true
+  effective_until?: true
+  expire_at?: true
 }
 
 export type Sys_feature_flag_ruleCountAggregateInputType = {
@@ -140,6 +155,9 @@ export type Sys_feature_flag_ruleCountAggregateInputType = {
   updated_at?: true
   created_by?: true
   is_deleted?: true
+  effective_from?: true
+  effective_until?: true
+  expire_at?: true
   _all?: true
 }
 
@@ -242,6 +260,9 @@ export type Sys_feature_flag_ruleGroupByOutputType = {
   updated_at: Date
   created_by: string | null
   is_deleted: number
+  effective_from: Date | null
+  effective_until: Date | null
+  expire_at: Date | null
   _count: Sys_feature_flag_ruleCountAggregateOutputType | null
   _avg: Sys_feature_flag_ruleAvgAggregateOutputType | null
   _sum: Sys_feature_flag_ruleSumAggregateOutputType | null
@@ -280,6 +301,9 @@ export type sys_feature_flag_ruleWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"sys_feature_flag_rule"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_feature_flag_rule"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_feature_flag_rule"> | number
+  effective_from?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
+  effective_until?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
+  expire_at?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
   flag?: Prisma.XOR<Prisma.Sys_feature_flagScalarRelationFilter, Prisma.sys_feature_flagWhereInput>
 }
 
@@ -296,6 +320,9 @@ export type sys_feature_flag_ruleOrderByWithRelationInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  effective_from?: Prisma.SortOrderInput | Prisma.SortOrder
+  effective_until?: Prisma.SortOrderInput | Prisma.SortOrder
+  expire_at?: Prisma.SortOrderInput | Prisma.SortOrder
   flag?: Prisma.sys_feature_flagOrderByWithRelationInput
 }
 
@@ -315,6 +342,9 @@ export type sys_feature_flag_ruleWhereUniqueInput = Prisma.AtLeast<{
   updated_at?: Prisma.DateTimeFilter<"sys_feature_flag_rule"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_feature_flag_rule"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_feature_flag_rule"> | number
+  effective_from?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
+  effective_until?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
+  expire_at?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
   flag?: Prisma.XOR<Prisma.Sys_feature_flagScalarRelationFilter, Prisma.sys_feature_flagWhereInput>
 }, "rule_id">
 
@@ -331,6 +361,9 @@ export type sys_feature_flag_ruleOrderByWithAggregationInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  effective_from?: Prisma.SortOrderInput | Prisma.SortOrder
+  effective_until?: Prisma.SortOrderInput | Prisma.SortOrder
+  expire_at?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_feature_flag_ruleCountOrderByAggregateInput
   _avg?: Prisma.sys_feature_flag_ruleAvgOrderByAggregateInput
   _max?: Prisma.sys_feature_flag_ruleMaxOrderByAggregateInput
@@ -354,6 +387,9 @@ export type sys_feature_flag_ruleScalarWhereWithAggregatesInput = {
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_feature_flag_rule"> | Date | string
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_feature_flag_rule"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_feature_flag_rule"> | number
+  effective_from?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_feature_flag_rule"> | Date | string | null
+  effective_until?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_feature_flag_rule"> | Date | string | null
+  expire_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_feature_flag_rule"> | Date | string | null
 }
 
 export type sys_feature_flag_ruleCreateInput = {
@@ -368,6 +404,9 @@ export type sys_feature_flag_ruleCreateInput = {
   updated_at?: Date | string
   created_by?: string | null
   is_deleted?: number
+  effective_from?: Date | string | null
+  effective_until?: Date | string | null
+  expire_at?: Date | string | null
   flag: Prisma.sys_feature_flagCreateNestedOneWithoutRulesInput
 }
 
@@ -384,6 +423,9 @@ export type sys_feature_flag_ruleUncheckedCreateInput = {
   updated_at?: Date | string
   created_by?: string | null
   is_deleted?: number
+  effective_from?: Date | string | null
+  effective_until?: Date | string | null
+  expire_at?: Date | string | null
 }
 
 export type sys_feature_flag_ruleUpdateInput = {
@@ -398,6 +440,9 @@ export type sys_feature_flag_ruleUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  effective_from?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  effective_until?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   flag?: Prisma.sys_feature_flagUpdateOneRequiredWithoutRulesNestedInput
 }
 
@@ -414,6 +459,9 @@ export type sys_feature_flag_ruleUncheckedUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  effective_from?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  effective_until?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_feature_flag_ruleCreateManyInput = {
@@ -429,6 +477,9 @@ export type sys_feature_flag_ruleCreateManyInput = {
   updated_at?: Date | string
   created_by?: string | null
   is_deleted?: number
+  effective_from?: Date | string | null
+  effective_until?: Date | string | null
+  expire_at?: Date | string | null
 }
 
 export type sys_feature_flag_ruleUpdateManyMutationInput = {
@@ -443,6 +494,9 @@ export type sys_feature_flag_ruleUpdateManyMutationInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  effective_from?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  effective_until?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_feature_flag_ruleUncheckedUpdateManyInput = {
@@ -458,6 +512,9 @@ export type sys_feature_flag_ruleUncheckedUpdateManyInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  effective_from?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  effective_until?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type Sys_feature_flag_ruleListRelationFilter = {
@@ -483,6 +540,9 @@ export type sys_feature_flag_ruleCountOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  effective_from?: Prisma.SortOrder
+  effective_until?: Prisma.SortOrder
+  expire_at?: Prisma.SortOrder
 }
 
 export type sys_feature_flag_ruleAvgOrderByAggregateInput = {
@@ -504,6 +564,9 @@ export type sys_feature_flag_ruleMaxOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  effective_from?: Prisma.SortOrder
+  effective_until?: Prisma.SortOrder
+  expire_at?: Prisma.SortOrder
 }
 
 export type sys_feature_flag_ruleMinOrderByAggregateInput = {
@@ -519,6 +582,9 @@ export type sys_feature_flag_ruleMinOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  effective_from?: Prisma.SortOrder
+  effective_until?: Prisma.SortOrder
+  expire_at?: Prisma.SortOrder
 }
 
 export type sys_feature_flag_ruleSumOrderByAggregateInput = {
@@ -581,6 +647,9 @@ export type sys_feature_flag_ruleCreateWithoutFlagInput = {
   updated_at?: Date | string
   created_by?: string | null
   is_deleted?: number
+  effective_from?: Date | string | null
+  effective_until?: Date | string | null
+  expire_at?: Date | string | null
 }
 
 export type sys_feature_flag_ruleUncheckedCreateWithoutFlagInput = {
@@ -595,6 +664,9 @@ export type sys_feature_flag_ruleUncheckedCreateWithoutFlagInput = {
   updated_at?: Date | string
   created_by?: string | null
   is_deleted?: number
+  effective_from?: Date | string | null
+  effective_until?: Date | string | null
+  expire_at?: Date | string | null
 }
 
 export type sys_feature_flag_ruleCreateOrConnectWithoutFlagInput = {
@@ -639,6 +711,9 @@ export type sys_feature_flag_ruleScalarWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"sys_feature_flag_rule"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_feature_flag_rule"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_feature_flag_rule"> | number
+  effective_from?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
+  effective_until?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
+  expire_at?: Prisma.DateTimeNullableFilter<"sys_feature_flag_rule"> | Date | string | null
 }
 
 export type sys_feature_flag_ruleCreateManyFlagInput = {
@@ -653,6 +728,9 @@ export type sys_feature_flag_ruleCreateManyFlagInput = {
   updated_at?: Date | string
   created_by?: string | null
   is_deleted?: number
+  effective_from?: Date | string | null
+  effective_until?: Date | string | null
+  expire_at?: Date | string | null
 }
 
 export type sys_feature_flag_ruleUpdateWithoutFlagInput = {
@@ -667,6 +745,9 @@ export type sys_feature_flag_ruleUpdateWithoutFlagInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  effective_from?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  effective_until?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_feature_flag_ruleUncheckedUpdateWithoutFlagInput = {
@@ -681,6 +762,9 @@ export type sys_feature_flag_ruleUncheckedUpdateWithoutFlagInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  effective_from?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  effective_until?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type sys_feature_flag_ruleUncheckedUpdateManyWithoutFlagInput = {
@@ -695,6 +779,9 @@ export type sys_feature_flag_ruleUncheckedUpdateManyWithoutFlagInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  effective_from?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  effective_until?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -712,6 +799,9 @@ export type sys_feature_flag_ruleSelect<ExtArgs extends runtime.Types.Extensions
   updated_at?: boolean
   created_by?: boolean
   is_deleted?: boolean
+  effective_from?: boolean
+  effective_until?: boolean
+  expire_at?: boolean
   flag?: boolean | Prisma.sys_feature_flagDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_feature_flag_rule"]>
 
@@ -728,6 +818,9 @@ export type sys_feature_flag_ruleSelectCreateManyAndReturn<ExtArgs extends runti
   updated_at?: boolean
   created_by?: boolean
   is_deleted?: boolean
+  effective_from?: boolean
+  effective_until?: boolean
+  expire_at?: boolean
   flag?: boolean | Prisma.sys_feature_flagDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_feature_flag_rule"]>
 
@@ -744,6 +837,9 @@ export type sys_feature_flag_ruleSelectUpdateManyAndReturn<ExtArgs extends runti
   updated_at?: boolean
   created_by?: boolean
   is_deleted?: boolean
+  effective_from?: boolean
+  effective_until?: boolean
+  expire_at?: boolean
   flag?: boolean | Prisma.sys_feature_flagDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sys_feature_flag_rule"]>
 
@@ -760,9 +856,12 @@ export type sys_feature_flag_ruleSelectScalar = {
   updated_at?: boolean
   created_by?: boolean
   is_deleted?: boolean
+  effective_from?: boolean
+  effective_until?: boolean
+  expire_at?: boolean
 }
 
-export type sys_feature_flag_ruleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"rule_id" | "flag_id" | "tenant_id" | "rule_type" | "target" | "enabled" | "priority" | "remark" | "created_at" | "updated_at" | "created_by" | "is_deleted", ExtArgs["result"]["sys_feature_flag_rule"]>
+export type sys_feature_flag_ruleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"rule_id" | "flag_id" | "tenant_id" | "rule_type" | "target" | "enabled" | "priority" | "remark" | "created_at" | "updated_at" | "created_by" | "is_deleted" | "effective_from" | "effective_until" | "expire_at", ExtArgs["result"]["sys_feature_flag_rule"]>
 export type sys_feature_flag_ruleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   flag?: boolean | Prisma.sys_feature_flagDefaultArgs<ExtArgs>
 }
@@ -806,6 +905,12 @@ export type $sys_feature_flag_rulePayload<ExtArgs extends runtime.Types.Extensio
     updated_at: Date
     created_by: string | null
     is_deleted: number
+    effective_from: Date | null
+    effective_until: Date | null
+    /**
+     * ⭐ 新增：过期自动清理
+     */
+    expire_at: Date | null
   }, ExtArgs["result"]["sys_feature_flag_rule"]>
   composites: {}
 }
@@ -1242,6 +1347,9 @@ export interface sys_feature_flag_ruleFieldRefs {
   readonly updated_at: Prisma.FieldRef<"sys_feature_flag_rule", 'DateTime'>
   readonly created_by: Prisma.FieldRef<"sys_feature_flag_rule", 'String'>
   readonly is_deleted: Prisma.FieldRef<"sys_feature_flag_rule", 'Int'>
+  readonly effective_from: Prisma.FieldRef<"sys_feature_flag_rule", 'DateTime'>
+  readonly effective_until: Prisma.FieldRef<"sys_feature_flag_rule", 'DateTime'>
+  readonly expire_at: Prisma.FieldRef<"sys_feature_flag_rule", 'DateTime'>
 }
     
 

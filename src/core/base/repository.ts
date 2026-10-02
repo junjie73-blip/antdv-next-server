@@ -12,6 +12,8 @@ import { scanAll } from "../cache/redis-client.js";
 import dayjs from "dayjs";
 import { getDataScope } from "../context/data-scope.js";
 import { toWhereScope } from "@/middleware/index.js";
+import { probeCrossTenant } from "@/modules/system/tenant-isolation/scanners/runtime.js";
+import { recordRuntimeViolation } from "@/modules/system/tenant-isolation/scanners/runtime-recorder.js";
 
 export const SOFT_DELETE_FLAG = { NORMAL: 0, DELETED: 1 } as const;
 
@@ -211,6 +213,7 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
       this.model.findMany(findArgs),
       this.countWithCache(finalWhere),
     ]);
+    this.probeAndRecord(_list, "paginate");
     const list = _list.map((item) => {
       if (item[this.createdAtField])
         item[this.createdAtField] = dayjs(item[this.createdAtField]).format(
@@ -231,7 +234,24 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
       totalPages: Math.ceil(total / pageSize),
     };
   }
+  protected probeAndRecord(rows: unknown, method: string): void {
+    // 快速短路：未启用探针直接 return
+    if (process.env.TENANT_PROBE_ENABLED !== "true") return;
 
+    const probe = probeCrossTenant(rows);
+    if (!probe.leaked) return;
+
+    const tenantId = getDataScope()?.tenantId ?? "";
+    if (!tenantId) return;
+
+    void recordRuntimeViolation({
+      tableName: this.constructor.name,
+      method,
+      tenantId,
+      leakedCount: probe.count,
+      samples: probe.samples,
+    });
+  }
   async findById(
     id: string,
     tenantId: string,
@@ -245,7 +265,11 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
       { [this.primaryKey]: id } as WhereInput,
       tenantId,
     );
-    return (tx ?? this.model).findFirst({ where: this.mergeDataScope(base) });
+    const res = await (tx ?? this.model).findFirst({
+      where: this.mergeDataScope(base),
+    });
+    this.probeAndRecord(res, "findById");
+    return res;
   }
 
   async findOne(
@@ -254,7 +278,11 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
     tx?: TxClient,
   ): Promise<T | null> {
     const base = this.buildWhereWithTenant(where, tenantId);
-    return (tx ?? this.model).findFirst({ where: this.mergeDataScope(base) });
+    const res = await (tx ?? this.model).findFirst({
+      where: this.mergeDataScope(base),
+    });
+    this.probeAndRecord(res, "findOne");
+    return res;
   }
 
   async findMany(
@@ -266,13 +294,15 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
     const base: any = { ...where };
     if (this.isSoftDeleteTable())
       base[this.softDeleteField] = SOFT_DELETE_FLAG.NORMAL;
-    return (tx ?? this.model).findMany({
+    const res = await (tx ?? this.model).findMany({
       where: this.mergeDataScope(base),
       skip,
       take,
       orderBy,
       include,
     });
+    this.probeAndRecord(res, "findMany");
+    return res;
   }
 
   async findPage(query: BaseQuery, where: WhereInput): Promise<PageResult<T>> {

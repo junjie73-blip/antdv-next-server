@@ -17,6 +17,7 @@ import BusinessDashboardController from "./business/dashboard/controller.js";
 import BusinessTodoGroupController from "./business/todo-group/controller.js";
 import BusinessTodoController from "./business/todo/controller.js";
 import BusinessWorkbenchController from "./business/workbench/controller.js";
+import ExportController from "./export/controller.js";
 import FieldMaskFieldMaskController from "./field-mask/controller/field-mask.controller.js";
 import GeneratorController from "./generator/controller.js";
 import GeneratorTemplateTemplateController from "./generator/template/controller/template.controller.js";
@@ -48,15 +49,18 @@ import ReportDatasetController from "./report/controller/dataset.controller.js";
 import ReportExportTaskController from "./report/controller/export-task.controller.js";
 import ReportReportController from "./report/controller/report.controller.js";
 import StorageBackendStorageBackendController from "./storage-backend/controller/storage-backend.controller.js";
+import SystemBackupController from "./system/backup/controller.js";
 import SystemDeptController from "./system/dept/controller.js";
 import SystemDictDataController from "./system/dict-data/controller.js";
 import SystemDictTypeController from "./system/dict-type/controller.js";
+import SystemFeatureFlagController from "./system/feature-flag/controller.js";
 import SystemIpRuleController from "./system/ip-rule/controller.js";
 import SystemMenuController from "./system/menu/controller.js";
 import SystemMfaController from "./system/mfa/controller.js";
 import SystemPermissionController from "./system/permission/controller.js";
 import SystemRoleController from "./system/role/controller.js";
 import SystemSettingController from "./system/setting/controller.js";
+import SystemTenantIsolationController from "./system/tenant-isolation/controller.js";
 import SystemTenantController from "./system/tenant/controller.js";
 import SystemUserController from "./system/user/controller.js";
 import TemplateController from "./template/controller.js";
@@ -86,6 +90,7 @@ export const controllers = [
   BusinessTodoGroupController,
   BusinessTodoController,
   BusinessWorkbenchController,
+  ExportController,
   FieldMaskFieldMaskController,
   GeneratorController,
   GeneratorTemplateTemplateController,
@@ -117,15 +122,18 @@ export const controllers = [
   ReportExportTaskController,
   ReportReportController,
   StorageBackendStorageBackendController,
+  SystemBackupController,
   SystemDeptController,
   SystemDictDataController,
   SystemDictTypeController,
+  SystemFeatureFlagController,
   SystemIpRuleController,
   SystemMenuController,
   SystemMfaController,
   SystemPermissionController,
   SystemRoleController,
   SystemSettingController,
+  SystemTenantIsolationController,
   SystemTenantController,
   SystemUserController,
   TemplateController,

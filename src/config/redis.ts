@@ -2,6 +2,7 @@ import { Redis, RedisOptions } from "ioredis";
 import { logger } from "@/platform/logger/logger.js";
 import { sendAlert } from "@/platform/alert/index.js";
 import { env } from "@/config/env.js";
+import { attachRedisMetrics } from "@/platform/metrics/pool-collector.js";
 
 // ✅ env schema 已保证非空，无需 `|| ""`
 const redisUrl = env.REDIS_URL;
@@ -73,6 +74,14 @@ export const blockRedis = new Redis(redisUrl, {
   maxRetriesPerRequest: null,
 });
 
+const enableCommandMetrics = env.REDIS_METRICS_COMMAND_LEVEL;
+
+attachRedisMetrics([
+  { name: "main", client: redis, instrumentCommands: enableCommandMetrics },
+  { name: "sub", client: subRedis },
+  { name: "block", client: blockRedis },
+]);
+
 /* ============================================================
  * BullMQ 专用连接（要求 maxRetriesPerRequest: null）
  * ============================================================ */
@@ -86,6 +95,7 @@ export function createBullConnection(name: string): Redis {
   });
 
   attachListeners(conn, `bull:${name}`);
+  attachRedisMetrics([{ name: `bull:${name}`, client: conn }]);
   return conn;
 }
 

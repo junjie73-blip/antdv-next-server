@@ -27,10 +27,12 @@ export type AggregateSys_api_version = {
 }
 
 export type Sys_api_versionAvgAggregateOutputType = {
+  is_default: number | null
   is_deleted: number | null
 }
 
 export type Sys_api_versionSumAggregateOutputType = {
+  is_default: number | null
   is_deleted: number | null
 }
 
@@ -40,6 +42,7 @@ export type Sys_api_versionMinAggregateOutputType = {
   version_name: string | null
   status: string | null
   release_at: Date | null
+  is_default: number | null
   deprecated_at: Date | null
   sunset_at: Date | null
   description: string | null
@@ -56,6 +59,7 @@ export type Sys_api_versionMaxAggregateOutputType = {
   version_name: string | null
   status: string | null
   release_at: Date | null
+  is_default: number | null
   deprecated_at: Date | null
   sunset_at: Date | null
   description: string | null
@@ -72,6 +76,7 @@ export type Sys_api_versionCountAggregateOutputType = {
   version_name: number
   status: number
   release_at: number
+  is_default: number
   deprecated_at: number
   sunset_at: number
   description: number
@@ -86,10 +91,12 @@ export type Sys_api_versionCountAggregateOutputType = {
 
 
 export type Sys_api_versionAvgAggregateInputType = {
+  is_default?: true
   is_deleted?: true
 }
 
 export type Sys_api_versionSumAggregateInputType = {
+  is_default?: true
   is_deleted?: true
 }
 
@@ -99,6 +106,7 @@ export type Sys_api_versionMinAggregateInputType = {
   version_name?: true
   status?: true
   release_at?: true
+  is_default?: true
   deprecated_at?: true
   sunset_at?: true
   description?: true
@@ -115,6 +123,7 @@ export type Sys_api_versionMaxAggregateInputType = {
   version_name?: true
   status?: true
   release_at?: true
+  is_default?: true
   deprecated_at?: true
   sunset_at?: true
   description?: true
@@ -131,6 +140,7 @@ export type Sys_api_versionCountAggregateInputType = {
   version_name?: true
   status?: true
   release_at?: true
+  is_default?: true
   deprecated_at?: true
   sunset_at?: true
   description?: true
@@ -235,6 +245,7 @@ export type Sys_api_versionGroupByOutputType = {
   version_name: string
   status: string
   release_at: Date
+  is_default: number
   deprecated_at: Date | null
   sunset_at: Date | null
   description: string | null
@@ -275,6 +286,7 @@ export type sys_api_versionWhereInput = {
   version_name?: Prisma.StringFilter<"sys_api_version"> | string
   status?: Prisma.StringFilter<"sys_api_version"> | string
   release_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
+  is_default?: Prisma.IntFilter<"sys_api_version"> | number
   deprecated_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
   sunset_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
   description?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
@@ -292,6 +304,7 @@ export type sys_api_versionOrderByWithRelationInput = {
   version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   release_at?: Prisma.SortOrder
+  is_default?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrderInput | Prisma.SortOrder
   sunset_at?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -312,6 +325,7 @@ export type sys_api_versionWhereUniqueInput = Prisma.AtLeast<{
   version_name?: Prisma.StringFilter<"sys_api_version"> | string
   status?: Prisma.StringFilter<"sys_api_version"> | string
   release_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
+  is_default?: Prisma.IntFilter<"sys_api_version"> | number
   deprecated_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
   sunset_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
   description?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
@@ -329,6 +343,7 @@ export type sys_api_versionOrderByWithAggregationInput = {
   version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   release_at?: Prisma.SortOrder
+  is_default?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrderInput | Prisma.SortOrder
   sunset_at?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -354,6 +369,7 @@ export type sys_api_versionScalarWhereWithAggregatesInput = {
   version_name?: Prisma.StringWithAggregatesFilter<"sys_api_version"> | string
   status?: Prisma.StringWithAggregatesFilter<"sys_api_version"> | string
   release_at?: Prisma.DateTimeWithAggregatesFilter<"sys_api_version"> | Date | string
+  is_default?: Prisma.IntWithAggregatesFilter<"sys_api_version"> | number
   deprecated_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_api_version"> | Date | string | null
   sunset_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_api_version"> | Date | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"sys_api_version"> | string | null
@@ -371,6 +387,7 @@ export type sys_api_versionCreateInput = {
   version_name: string
   status?: string
   release_at: Date | string
+  is_default?: number
   deprecated_at?: Date | string | null
   sunset_at?: Date | string | null
   description?: string | null
@@ -388,6 +405,7 @@ export type sys_api_versionUncheckedCreateInput = {
   version_name: string
   status?: string
   release_at: Date | string
+  is_default?: number
   deprecated_at?: Date | string | null
   sunset_at?: Date | string | null
   description?: string | null
@@ -405,6 +423,7 @@ export type sys_api_versionUpdateInput = {
   version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  is_default?: Prisma.IntFieldUpdateOperationsInput | number
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -422,6 +441,7 @@ export type sys_api_versionUncheckedUpdateInput = {
   version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  is_default?: Prisma.IntFieldUpdateOperationsInput | number
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -439,6 +459,7 @@ export type sys_api_versionCreateManyInput = {
   version_name: string
   status?: string
   release_at: Date | string
+  is_default?: number
   deprecated_at?: Date | string | null
   sunset_at?: Date | string | null
   description?: string | null
@@ -456,6 +477,7 @@ export type sys_api_versionUpdateManyMutationInput = {
   version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  is_default?: Prisma.IntFieldUpdateOperationsInput | number
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -473,6 +495,7 @@ export type sys_api_versionUncheckedUpdateManyInput = {
   version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  is_default?: Prisma.IntFieldUpdateOperationsInput | number
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -490,6 +513,7 @@ export type sys_api_versionCountOrderByAggregateInput = {
   version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   release_at?: Prisma.SortOrder
+  is_default?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrder
   sunset_at?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -502,6 +526,7 @@ export type sys_api_versionCountOrderByAggregateInput = {
 }
 
 export type sys_api_versionAvgOrderByAggregateInput = {
+  is_default?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
 }
 
@@ -511,6 +536,7 @@ export type sys_api_versionMaxOrderByAggregateInput = {
   version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   release_at?: Prisma.SortOrder
+  is_default?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrder
   sunset_at?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -527,6 +553,7 @@ export type sys_api_versionMinOrderByAggregateInput = {
   version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   release_at?: Prisma.SortOrder
+  is_default?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrder
   sunset_at?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -538,6 +565,7 @@ export type sys_api_versionMinOrderByAggregateInput = {
 }
 
 export type sys_api_versionSumOrderByAggregateInput = {
+  is_default?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
 }
 
@@ -549,6 +577,7 @@ export type sys_api_versionSelect<ExtArgs extends runtime.Types.Extensions.Inter
   version_name?: boolean
   status?: boolean
   release_at?: boolean
+  is_default?: boolean
   deprecated_at?: boolean
   sunset_at?: boolean
   description?: boolean
@@ -566,6 +595,7 @@ export type sys_api_versionSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   version_name?: boolean
   status?: boolean
   release_at?: boolean
+  is_default?: boolean
   deprecated_at?: boolean
   sunset_at?: boolean
   description?: boolean
@@ -583,6 +613,7 @@ export type sys_api_versionSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   version_name?: boolean
   status?: boolean
   release_at?: boolean
+  is_default?: boolean
   deprecated_at?: boolean
   sunset_at?: boolean
   description?: boolean
@@ -600,6 +631,7 @@ export type sys_api_versionSelectScalar = {
   version_name?: boolean
   status?: boolean
   release_at?: boolean
+  is_default?: boolean
   deprecated_at?: boolean
   sunset_at?: boolean
   description?: boolean
@@ -611,7 +643,7 @@ export type sys_api_versionSelectScalar = {
   updated_by?: boolean
 }
 
-export type sys_api_versionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"version_id" | "version_code" | "version_name" | "status" | "release_at" | "deprecated_at" | "sunset_at" | "description" | "changelog" | "is_deleted" | "created_at" | "updated_at" | "created_by" | "updated_by", ExtArgs["result"]["sys_api_version"]>
+export type sys_api_versionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"version_id" | "version_code" | "version_name" | "status" | "release_at" | "is_default" | "deprecated_at" | "sunset_at" | "description" | "changelog" | "is_deleted" | "created_at" | "updated_at" | "created_by" | "updated_by", ExtArgs["result"]["sys_api_version"]>
 
 export type $sys_api_versionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_api_version"
@@ -631,6 +663,7 @@ export type $sys_api_versionPayload<ExtArgs extends runtime.Types.Extensions.Int
      */
     status: string
     release_at: Date
+    is_default: number
     /**
      * 开始标记废弃
      */
@@ -1074,6 +1107,7 @@ export interface sys_api_versionFieldRefs {
   readonly version_name: Prisma.FieldRef<"sys_api_version", 'String'>
   readonly status: Prisma.FieldRef<"sys_api_version", 'String'>
   readonly release_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
+  readonly is_default: Prisma.FieldRef<"sys_api_version", 'Int'>
   readonly deprecated_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
   readonly sunset_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
   readonly description: Prisma.FieldRef<"sys_api_version", 'String'>

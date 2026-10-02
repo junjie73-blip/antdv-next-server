@@ -80,6 +80,15 @@ export async function getStorageFor(tenantId: string): Promise<unknown> {
 }
 
 export function buildClient(type: string, cfg: any): IStorage {
+  const VALID = ["local", "minio", "oss", "cos", "s3"] as const;
+  if (!VALID.includes(type as any)) {
+    throw new AppError(
+      `不支持的存储类型：type=${type}, cfg.storage=${cfg?.storage}`,
+      400001,
+      400,
+    );
+  }
+
   let storage: IStorage;
 
   switch (type) {
@@ -155,7 +164,7 @@ export async function getStorageForTenant(tenantId: string): Promise<IStorage> {
   const settingsService = new SettingsService();
   const cfg = await settingsService.getUploadConfigRaw(tenantId);
 
-  return buildClient(tenantId, {
+  return buildClient(cfg.storage, {
     storage: cfg.storage as any,
     localPath: cfg.localPath,
     localUrl: cfg.localUrl,

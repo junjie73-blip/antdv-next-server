@@ -427,6 +427,11 @@ export type sys_export_task = Prisma.sys_export_taskModel
  */
 export type sys_tenant_isolation_scan = Prisma.sys_tenant_isolation_scanModel
 /**
+ * Model sys_tenant_isolation_run
+ * ==================== 隔离审计的扫描批次 ====================
+ */
+export type sys_tenant_isolation_run = Prisma.sys_tenant_isolation_runModel
+/**
  * Model sys_org_history
  * ==================== 组织架构变更历史 ====================
  */

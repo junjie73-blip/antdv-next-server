@@ -41,6 +41,7 @@ import {
 import { pushBusinessAudit } from "@/middleware/business/audit.js";
 import { RoleService } from "../role/service.js";
 import { RoleRepository } from "../role/repository.js";
+import { ExportService } from "@/modules/export/index.js";
 
 export const upload = multer({
   storage: multer.memoryStorage(),
@@ -134,6 +135,7 @@ export default class UserController extends BaseController<any, any, any, any> {
 
     return dto;
   }
+  private exportService = new ExportService();
   // ========== CRUD 路由 ==========
   @Get("/list")
   @ApiOperation("获取用户分页列表")
@@ -197,16 +199,14 @@ export default class UserController extends BaseController<any, any, any, any> {
   async exportUsers(@Req() req: Request, @Res() res: Response) {
     try {
       const where = this.buildListWhere(req.query);
-      const buffer = await this.service.exportToExcel(where, req.tenantId!);
-      res.setHeader(
-        "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      );
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename=users_${Date.now()}.xlsx`,
-      );
-      res.send(buffer);
+      const result = await this.exportService.submit({
+        tenantId: req.tenantId!,
+        userId: req.user!.userId,
+        bizType: "user",
+        exportFormat: "xlsx",
+        queryParams: where as Record<string, unknown>, //
+      });
+      return success(res, result, "导出任务已提交");
     } catch (err) {
       this.handleError(res, err);
     }

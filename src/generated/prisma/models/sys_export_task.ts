@@ -34,6 +34,7 @@ export type Sys_export_taskAvgAggregateOutputType = {
   max_retries: number | null
   duration_ms: number | null
   is_deleted: number | null
+  download_count: number | null
 }
 
 export type Sys_export_taskSumAggregateOutputType = {
@@ -44,6 +45,7 @@ export type Sys_export_taskSumAggregateOutputType = {
   max_retries: number | null
   duration_ms: number | null
   is_deleted: number | null
+  download_count: number | null
 }
 
 export type Sys_export_taskMinAggregateOutputType = {
@@ -69,6 +71,10 @@ export type Sys_export_taskMinAggregateOutputType = {
   created_at: Date | null
   updated_at: Date | null
   is_deleted: number | null
+  error_type: string | null
+  error_stack: string | null
+  download_count: number | null
+  last_download_ip: string | null
 }
 
 export type Sys_export_taskMaxAggregateOutputType = {
@@ -94,6 +100,10 @@ export type Sys_export_taskMaxAggregateOutputType = {
   created_at: Date | null
   updated_at: Date | null
   is_deleted: number | null
+  error_type: string | null
+  error_stack: string | null
+  download_count: number | null
+  last_download_ip: string | null
 }
 
 export type Sys_export_taskCountAggregateOutputType = {
@@ -121,6 +131,10 @@ export type Sys_export_taskCountAggregateOutputType = {
   created_at: number
   updated_at: number
   is_deleted: number
+  error_type: number
+  error_stack: number
+  download_count: number
+  last_download_ip: number
   _all: number
 }
 
@@ -133,6 +147,7 @@ export type Sys_export_taskAvgAggregateInputType = {
   max_retries?: true
   duration_ms?: true
   is_deleted?: true
+  download_count?: true
 }
 
 export type Sys_export_taskSumAggregateInputType = {
@@ -143,6 +158,7 @@ export type Sys_export_taskSumAggregateInputType = {
   max_retries?: true
   duration_ms?: true
   is_deleted?: true
+  download_count?: true
 }
 
 export type Sys_export_taskMinAggregateInputType = {
@@ -168,6 +184,10 @@ export type Sys_export_taskMinAggregateInputType = {
   created_at?: true
   updated_at?: true
   is_deleted?: true
+  error_type?: true
+  error_stack?: true
+  download_count?: true
+  last_download_ip?: true
 }
 
 export type Sys_export_taskMaxAggregateInputType = {
@@ -193,6 +213,10 @@ export type Sys_export_taskMaxAggregateInputType = {
   created_at?: true
   updated_at?: true
   is_deleted?: true
+  error_type?: true
+  error_stack?: true
+  download_count?: true
+  last_download_ip?: true
 }
 
 export type Sys_export_taskCountAggregateInputType = {
@@ -220,6 +244,10 @@ export type Sys_export_taskCountAggregateInputType = {
   created_at?: true
   updated_at?: true
   is_deleted?: true
+  error_type?: true
+  error_stack?: true
+  download_count?: true
+  last_download_ip?: true
   _all?: true
 }
 
@@ -334,6 +362,10 @@ export type Sys_export_taskGroupByOutputType = {
   created_at: Date
   updated_at: Date
   is_deleted: number
+  error_type: string | null
+  error_stack: string | null
+  download_count: number
+  last_download_ip: string | null
   _count: Sys_export_taskCountAggregateOutputType | null
   _avg: Sys_export_taskAvgAggregateOutputType | null
   _sum: Sys_export_taskSumAggregateOutputType | null
@@ -384,6 +416,10 @@ export type sys_export_taskWhereInput = {
   created_at?: Prisma.DateTimeFilter<"sys_export_task"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_export_task"> | Date | string
   is_deleted?: Prisma.IntFilter<"sys_export_task"> | number
+  error_type?: Prisma.StringNullableFilter<"sys_export_task"> | string | null
+  error_stack?: Prisma.StringNullableFilter<"sys_export_task"> | string | null
+  download_count?: Prisma.IntFilter<"sys_export_task"> | number
+  last_download_ip?: Prisma.StringNullableFilter<"sys_export_task"> | string | null
 }
 
 export type sys_export_taskOrderByWithRelationInput = {
@@ -411,6 +447,10 @@ export type sys_export_taskOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  error_type?: Prisma.SortOrderInput | Prisma.SortOrder
+  error_stack?: Prisma.SortOrderInput | Prisma.SortOrder
+  download_count?: Prisma.SortOrder
+  last_download_ip?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_export_taskWhereUniqueInput = Prisma.AtLeast<{
@@ -441,6 +481,10 @@ export type sys_export_taskWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"sys_export_task"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_export_task"> | Date | string
   is_deleted?: Prisma.IntFilter<"sys_export_task"> | number
+  error_type?: Prisma.StringNullableFilter<"sys_export_task"> | string | null
+  error_stack?: Prisma.StringNullableFilter<"sys_export_task"> | string | null
+  download_count?: Prisma.IntFilter<"sys_export_task"> | number
+  last_download_ip?: Prisma.StringNullableFilter<"sys_export_task"> | string | null
 }, "task_id">
 
 export type sys_export_taskOrderByWithAggregationInput = {
@@ -468,6 +512,10 @@ export type sys_export_taskOrderByWithAggregationInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  error_type?: Prisma.SortOrderInput | Prisma.SortOrder
+  error_stack?: Prisma.SortOrderInput | Prisma.SortOrder
+  download_count?: Prisma.SortOrder
+  last_download_ip?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_export_taskCountOrderByAggregateInput
   _avg?: Prisma.sys_export_taskAvgOrderByAggregateInput
   _max?: Prisma.sys_export_taskMaxOrderByAggregateInput
@@ -503,6 +551,10 @@ export type sys_export_taskScalarWhereWithAggregatesInput = {
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_export_task"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_export_task"> | Date | string
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_export_task"> | number
+  error_type?: Prisma.StringNullableWithAggregatesFilter<"sys_export_task"> | string | null
+  error_stack?: Prisma.StringNullableWithAggregatesFilter<"sys_export_task"> | string | null
+  download_count?: Prisma.IntWithAggregatesFilter<"sys_export_task"> | number
+  last_download_ip?: Prisma.StringNullableWithAggregatesFilter<"sys_export_task"> | string | null
 }
 
 export type sys_export_taskCreateInput = {
@@ -530,6 +582,10 @@ export type sys_export_taskCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   is_deleted?: number
+  error_type?: string | null
+  error_stack?: string | null
+  download_count?: number
+  last_download_ip?: string | null
 }
 
 export type sys_export_taskUncheckedCreateInput = {
@@ -557,6 +613,10 @@ export type sys_export_taskUncheckedCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   is_deleted?: number
+  error_type?: string | null
+  error_stack?: string | null
+  download_count?: number
+  last_download_ip?: string | null
 }
 
 export type sys_export_taskUpdateInput = {
@@ -584,6 +644,10 @@ export type sys_export_taskUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  download_count?: Prisma.IntFieldUpdateOperationsInput | number
+  last_download_ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_export_taskUncheckedUpdateInput = {
@@ -611,6 +675,10 @@ export type sys_export_taskUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  download_count?: Prisma.IntFieldUpdateOperationsInput | number
+  last_download_ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_export_taskCreateManyInput = {
@@ -638,6 +706,10 @@ export type sys_export_taskCreateManyInput = {
   created_at?: Date | string
   updated_at?: Date | string
   is_deleted?: number
+  error_type?: string | null
+  error_stack?: string | null
+  download_count?: number
+  last_download_ip?: string | null
 }
 
 export type sys_export_taskUpdateManyMutationInput = {
@@ -665,6 +737,10 @@ export type sys_export_taskUpdateManyMutationInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  download_count?: Prisma.IntFieldUpdateOperationsInput | number
+  last_download_ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_export_taskUncheckedUpdateManyInput = {
@@ -692,6 +768,10 @@ export type sys_export_taskUncheckedUpdateManyInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  error_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  error_stack?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  download_count?: Prisma.IntFieldUpdateOperationsInput | number
+  last_download_ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_export_taskCountOrderByAggregateInput = {
@@ -719,6 +799,10 @@ export type sys_export_taskCountOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  error_type?: Prisma.SortOrder
+  error_stack?: Prisma.SortOrder
+  download_count?: Prisma.SortOrder
+  last_download_ip?: Prisma.SortOrder
 }
 
 export type sys_export_taskAvgOrderByAggregateInput = {
@@ -729,6 +813,7 @@ export type sys_export_taskAvgOrderByAggregateInput = {
   max_retries?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  download_count?: Prisma.SortOrder
 }
 
 export type sys_export_taskMaxOrderByAggregateInput = {
@@ -754,6 +839,10 @@ export type sys_export_taskMaxOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  error_type?: Prisma.SortOrder
+  error_stack?: Prisma.SortOrder
+  download_count?: Prisma.SortOrder
+  last_download_ip?: Prisma.SortOrder
 }
 
 export type sys_export_taskMinOrderByAggregateInput = {
@@ -779,6 +868,10 @@ export type sys_export_taskMinOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  error_type?: Prisma.SortOrder
+  error_stack?: Prisma.SortOrder
+  download_count?: Prisma.SortOrder
+  last_download_ip?: Prisma.SortOrder
 }
 
 export type sys_export_taskSumOrderByAggregateInput = {
@@ -789,6 +882,7 @@ export type sys_export_taskSumOrderByAggregateInput = {
   max_retries?: Prisma.SortOrder
   duration_ms?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  download_count?: Prisma.SortOrder
 }
 
 
@@ -818,6 +912,10 @@ export type sys_export_taskSelect<ExtArgs extends runtime.Types.Extensions.Inter
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  error_type?: boolean
+  error_stack?: boolean
+  download_count?: boolean
+  last_download_ip?: boolean
 }, ExtArgs["result"]["sys_export_task"]>
 
 export type sys_export_taskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -845,6 +943,10 @@ export type sys_export_taskSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  error_type?: boolean
+  error_stack?: boolean
+  download_count?: boolean
+  last_download_ip?: boolean
 }, ExtArgs["result"]["sys_export_task"]>
 
 export type sys_export_taskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -872,6 +974,10 @@ export type sys_export_taskSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  error_type?: boolean
+  error_stack?: boolean
+  download_count?: boolean
+  last_download_ip?: boolean
 }, ExtArgs["result"]["sys_export_task"]>
 
 export type sys_export_taskSelectScalar = {
@@ -899,9 +1005,13 @@ export type sys_export_taskSelectScalar = {
   created_at?: boolean
   updated_at?: boolean
   is_deleted?: boolean
+  error_type?: boolean
+  error_stack?: boolean
+  download_count?: boolean
+  last_download_ip?: boolean
 }
 
-export type sys_export_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "tenant_id" | "user_id" | "biz_type" | "export_format" | "query_params" | "columns" | "status" | "progress" | "row_count" | "file_url" | "file_name" | "file_size" | "error_msg" | "job_id" | "retry_count" | "max_retries" | "started_at" | "completed_at" | "expires_at" | "duration_ms" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["sys_export_task"]>
+export type sys_export_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "tenant_id" | "user_id" | "biz_type" | "export_format" | "query_params" | "columns" | "status" | "progress" | "row_count" | "file_url" | "file_name" | "file_size" | "error_msg" | "job_id" | "retry_count" | "max_retries" | "started_at" | "completed_at" | "expires_at" | "duration_ms" | "created_at" | "updated_at" | "is_deleted" | "error_type" | "error_stack" | "download_count" | "last_download_ip", ExtArgs["result"]["sys_export_task"]>
 
 export type $sys_export_taskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_export_task"
@@ -964,6 +1074,10 @@ export type $sys_export_taskPayload<ExtArgs extends runtime.Types.Extensions.Int
     created_at: Date
     updated_at: Date
     is_deleted: number
+    error_type: string | null
+    error_stack: string | null
+    download_count: number
+    last_download_ip: string | null
   }, ExtArgs["result"]["sys_export_task"]>
   composites: {}
 }
@@ -1411,6 +1525,10 @@ export interface sys_export_taskFieldRefs {
   readonly created_at: Prisma.FieldRef<"sys_export_task", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"sys_export_task", 'DateTime'>
   readonly is_deleted: Prisma.FieldRef<"sys_export_task", 'Int'>
+  readonly error_type: Prisma.FieldRef<"sys_export_task", 'String'>
+  readonly error_stack: Prisma.FieldRef<"sys_export_task", 'String'>
+  readonly download_count: Prisma.FieldRef<"sys_export_task", 'Int'>
+  readonly last_download_ip: Prisma.FieldRef<"sys_export_task", 'String'>
 }
     
 
