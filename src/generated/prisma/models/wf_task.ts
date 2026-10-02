@@ -30,12 +30,18 @@ export type Wf_taskAvgAggregateOutputType = {
   duration_ms: number | null
   is_deleted: number | null
   priority: number | null
+  is_add_sign: number | null
+  escalation_level: number | null
+  node_visit_count: number | null
 }
 
 export type Wf_taskSumAggregateOutputType = {
   duration_ms: number | null
   is_deleted: number | null
   priority: number | null
+  is_add_sign: number | null
+  escalation_level: number | null
+  node_visit_count: number | null
 }
 
 export type Wf_taskMinAggregateOutputType = {
@@ -59,6 +65,18 @@ export type Wf_taskMinAggregateOutputType = {
   updated_at: Date | null
   is_deleted: number | null
   priority: number | null
+  original_assignee_id: string | null
+  is_add_sign: number | null
+  add_sign_type: string | null
+  add_sign_parent_id: string | null
+  transferred_from_id: string | null
+  transferred_at: Date | null
+  escalation_level: number | null
+  escalated_at: Date | null
+  escalated_to: string | null
+  add_sign_chain_root_id: string | null
+  rollback_from_task_id: string | null
+  node_visit_count: number | null
 }
 
 export type Wf_taskMaxAggregateOutputType = {
@@ -82,6 +100,18 @@ export type Wf_taskMaxAggregateOutputType = {
   updated_at: Date | null
   is_deleted: number | null
   priority: number | null
+  original_assignee_id: string | null
+  is_add_sign: number | null
+  add_sign_type: string | null
+  add_sign_parent_id: string | null
+  transferred_from_id: string | null
+  transferred_at: Date | null
+  escalation_level: number | null
+  escalated_at: Date | null
+  escalated_to: string | null
+  add_sign_chain_root_id: string | null
+  rollback_from_task_id: string | null
+  node_visit_count: number | null
 }
 
 export type Wf_taskCountAggregateOutputType = {
@@ -109,6 +139,18 @@ export type Wf_taskCountAggregateOutputType = {
   updated_at: number
   is_deleted: number
   priority: number
+  original_assignee_id: number
+  is_add_sign: number
+  add_sign_type: number
+  add_sign_parent_id: number
+  transferred_from_id: number
+  transferred_at: number
+  escalation_level: number
+  escalated_at: number
+  escalated_to: number
+  add_sign_chain_root_id: number
+  rollback_from_task_id: number
+  node_visit_count: number
   _all: number
 }
 
@@ -117,12 +159,18 @@ export type Wf_taskAvgAggregateInputType = {
   duration_ms?: true
   is_deleted?: true
   priority?: true
+  is_add_sign?: true
+  escalation_level?: true
+  node_visit_count?: true
 }
 
 export type Wf_taskSumAggregateInputType = {
   duration_ms?: true
   is_deleted?: true
   priority?: true
+  is_add_sign?: true
+  escalation_level?: true
+  node_visit_count?: true
 }
 
 export type Wf_taskMinAggregateInputType = {
@@ -146,6 +194,18 @@ export type Wf_taskMinAggregateInputType = {
   updated_at?: true
   is_deleted?: true
   priority?: true
+  original_assignee_id?: true
+  is_add_sign?: true
+  add_sign_type?: true
+  add_sign_parent_id?: true
+  transferred_from_id?: true
+  transferred_at?: true
+  escalation_level?: true
+  escalated_at?: true
+  escalated_to?: true
+  add_sign_chain_root_id?: true
+  rollback_from_task_id?: true
+  node_visit_count?: true
 }
 
 export type Wf_taskMaxAggregateInputType = {
@@ -169,6 +229,18 @@ export type Wf_taskMaxAggregateInputType = {
   updated_at?: true
   is_deleted?: true
   priority?: true
+  original_assignee_id?: true
+  is_add_sign?: true
+  add_sign_type?: true
+  add_sign_parent_id?: true
+  transferred_from_id?: true
+  transferred_at?: true
+  escalation_level?: true
+  escalated_at?: true
+  escalated_to?: true
+  add_sign_chain_root_id?: true
+  rollback_from_task_id?: true
+  node_visit_count?: true
 }
 
 export type Wf_taskCountAggregateInputType = {
@@ -196,6 +268,18 @@ export type Wf_taskCountAggregateInputType = {
   updated_at?: true
   is_deleted?: true
   priority?: true
+  original_assignee_id?: true
+  is_add_sign?: true
+  add_sign_type?: true
+  add_sign_parent_id?: true
+  transferred_from_id?: true
+  transferred_at?: true
+  escalation_level?: true
+  escalated_at?: true
+  escalated_to?: true
+  add_sign_chain_root_id?: true
+  rollback_from_task_id?: true
+  node_visit_count?: true
   _all?: true
 }
 
@@ -310,6 +394,18 @@ export type Wf_taskGroupByOutputType = {
   updated_at: Date
   is_deleted: number
   priority: number | null
+  original_assignee_id: string | null
+  is_add_sign: number
+  add_sign_type: string | null
+  add_sign_parent_id: string | null
+  transferred_from_id: string | null
+  transferred_at: Date | null
+  escalation_level: number
+  escalated_at: Date | null
+  escalated_to: string | null
+  add_sign_chain_root_id: string | null
+  rollback_from_task_id: string | null
+  node_visit_count: number
   _count: Wf_taskCountAggregateOutputType | null
   _avg: Wf_taskAvgAggregateOutputType | null
   _sum: Wf_taskSumAggregateOutputType | null
@@ -360,6 +456,18 @@ export type wf_taskWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"wf_task"> | Date | string
   is_deleted?: Prisma.IntFilter<"wf_task"> | number
   priority?: Prisma.IntNullableFilter<"wf_task"> | number | null
+  original_assignee_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  is_add_sign?: Prisma.IntFilter<"wf_task"> | number
+  add_sign_type?: Prisma.StringNullableFilter<"wf_task"> | string | null
+  add_sign_parent_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  transferred_from_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  transferred_at?: Prisma.DateTimeNullableFilter<"wf_task"> | Date | string | null
+  escalation_level?: Prisma.IntFilter<"wf_task"> | number
+  escalated_at?: Prisma.DateTimeNullableFilter<"wf_task"> | Date | string | null
+  escalated_to?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  add_sign_chain_root_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  rollback_from_task_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  node_visit_count?: Prisma.IntFilter<"wf_task"> | number
   instance?: Prisma.XOR<Prisma.Wf_instanceScalarRelationFilter, Prisma.wf_instanceWhereInput>
 }
 
@@ -388,6 +496,18 @@ export type wf_taskOrderByWithRelationInput = {
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrderInput | Prisma.SortOrder
+  original_assignee_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_add_sign?: Prisma.SortOrder
+  add_sign_type?: Prisma.SortOrderInput | Prisma.SortOrder
+  add_sign_parent_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  transferred_from_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  transferred_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalation_level?: Prisma.SortOrder
+  escalated_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalated_to?: Prisma.SortOrderInput | Prisma.SortOrder
+  add_sign_chain_root_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  rollback_from_task_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  node_visit_count?: Prisma.SortOrder
   instance?: Prisma.wf_instanceOrderByWithRelationInput
 }
 
@@ -419,6 +539,18 @@ export type wf_taskWhereUniqueInput = Prisma.AtLeast<{
   updated_at?: Prisma.DateTimeFilter<"wf_task"> | Date | string
   is_deleted?: Prisma.IntFilter<"wf_task"> | number
   priority?: Prisma.IntNullableFilter<"wf_task"> | number | null
+  original_assignee_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  is_add_sign?: Prisma.IntFilter<"wf_task"> | number
+  add_sign_type?: Prisma.StringNullableFilter<"wf_task"> | string | null
+  add_sign_parent_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  transferred_from_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  transferred_at?: Prisma.DateTimeNullableFilter<"wf_task"> | Date | string | null
+  escalation_level?: Prisma.IntFilter<"wf_task"> | number
+  escalated_at?: Prisma.DateTimeNullableFilter<"wf_task"> | Date | string | null
+  escalated_to?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  add_sign_chain_root_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  rollback_from_task_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  node_visit_count?: Prisma.IntFilter<"wf_task"> | number
   instance?: Prisma.XOR<Prisma.Wf_instanceScalarRelationFilter, Prisma.wf_instanceWhereInput>
 }, "task_id">
 
@@ -447,6 +579,18 @@ export type wf_taskOrderByWithAggregationInput = {
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrderInput | Prisma.SortOrder
+  original_assignee_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_add_sign?: Prisma.SortOrder
+  add_sign_type?: Prisma.SortOrderInput | Prisma.SortOrder
+  add_sign_parent_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  transferred_from_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  transferred_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalation_level?: Prisma.SortOrder
+  escalated_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalated_to?: Prisma.SortOrderInput | Prisma.SortOrder
+  add_sign_chain_root_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  rollback_from_task_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  node_visit_count?: Prisma.SortOrder
   _count?: Prisma.wf_taskCountOrderByAggregateInput
   _avg?: Prisma.wf_taskAvgOrderByAggregateInput
   _max?: Prisma.wf_taskMaxOrderByAggregateInput
@@ -482,6 +626,18 @@ export type wf_taskScalarWhereWithAggregatesInput = {
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"wf_task"> | Date | string
   is_deleted?: Prisma.IntWithAggregatesFilter<"wf_task"> | number
   priority?: Prisma.IntNullableWithAggregatesFilter<"wf_task"> | number | null
+  original_assignee_id?: Prisma.UuidNullableWithAggregatesFilter<"wf_task"> | string | null
+  is_add_sign?: Prisma.IntWithAggregatesFilter<"wf_task"> | number
+  add_sign_type?: Prisma.StringNullableWithAggregatesFilter<"wf_task"> | string | null
+  add_sign_parent_id?: Prisma.UuidNullableWithAggregatesFilter<"wf_task"> | string | null
+  transferred_from_id?: Prisma.UuidNullableWithAggregatesFilter<"wf_task"> | string | null
+  transferred_at?: Prisma.DateTimeNullableWithAggregatesFilter<"wf_task"> | Date | string | null
+  escalation_level?: Prisma.IntWithAggregatesFilter<"wf_task"> | number
+  escalated_at?: Prisma.DateTimeNullableWithAggregatesFilter<"wf_task"> | Date | string | null
+  escalated_to?: Prisma.UuidNullableWithAggregatesFilter<"wf_task"> | string | null
+  add_sign_chain_root_id?: Prisma.UuidNullableWithAggregatesFilter<"wf_task"> | string | null
+  rollback_from_task_id?: Prisma.UuidNullableWithAggregatesFilter<"wf_task"> | string | null
+  node_visit_count?: Prisma.IntWithAggregatesFilter<"wf_task"> | number
 }
 
 export type wf_taskCreateInput = {
@@ -508,6 +664,18 @@ export type wf_taskCreateInput = {
   updated_at?: Date | string
   is_deleted?: number
   priority?: number | null
+  original_assignee_id?: string | null
+  is_add_sign?: number
+  add_sign_type?: string | null
+  add_sign_parent_id?: string | null
+  transferred_from_id?: string | null
+  transferred_at?: Date | string | null
+  escalation_level?: number
+  escalated_at?: Date | string | null
+  escalated_to?: string | null
+  add_sign_chain_root_id?: string | null
+  rollback_from_task_id?: string | null
+  node_visit_count?: number
   instance: Prisma.wf_instanceCreateNestedOneWithoutTasksInput
 }
 
@@ -536,6 +704,18 @@ export type wf_taskUncheckedCreateInput = {
   updated_at?: Date | string
   is_deleted?: number
   priority?: number | null
+  original_assignee_id?: string | null
+  is_add_sign?: number
+  add_sign_type?: string | null
+  add_sign_parent_id?: string | null
+  transferred_from_id?: string | null
+  transferred_at?: Date | string | null
+  escalation_level?: number
+  escalated_at?: Date | string | null
+  escalated_to?: string | null
+  add_sign_chain_root_id?: string | null
+  rollback_from_task_id?: string | null
+  node_visit_count?: number
 }
 
 export type wf_taskUpdateInput = {
@@ -562,6 +742,18 @@ export type wf_taskUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  original_assignee_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_add_sign?: Prisma.IntFieldUpdateOperationsInput | number
+  add_sign_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_from_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalation_level?: Prisma.IntFieldUpdateOperationsInput | number
+  escalated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalated_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_chain_root_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rollback_from_task_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  node_visit_count?: Prisma.IntFieldUpdateOperationsInput | number
   instance?: Prisma.wf_instanceUpdateOneRequiredWithoutTasksNestedInput
 }
 
@@ -590,6 +782,18 @@ export type wf_taskUncheckedUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  original_assignee_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_add_sign?: Prisma.IntFieldUpdateOperationsInput | number
+  add_sign_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_from_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalation_level?: Prisma.IntFieldUpdateOperationsInput | number
+  escalated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalated_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_chain_root_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rollback_from_task_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  node_visit_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type wf_taskCreateManyInput = {
@@ -617,6 +821,18 @@ export type wf_taskCreateManyInput = {
   updated_at?: Date | string
   is_deleted?: number
   priority?: number | null
+  original_assignee_id?: string | null
+  is_add_sign?: number
+  add_sign_type?: string | null
+  add_sign_parent_id?: string | null
+  transferred_from_id?: string | null
+  transferred_at?: Date | string | null
+  escalation_level?: number
+  escalated_at?: Date | string | null
+  escalated_to?: string | null
+  add_sign_chain_root_id?: string | null
+  rollback_from_task_id?: string | null
+  node_visit_count?: number
 }
 
 export type wf_taskUpdateManyMutationInput = {
@@ -643,6 +859,18 @@ export type wf_taskUpdateManyMutationInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  original_assignee_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_add_sign?: Prisma.IntFieldUpdateOperationsInput | number
+  add_sign_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_from_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalation_level?: Prisma.IntFieldUpdateOperationsInput | number
+  escalated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalated_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_chain_root_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rollback_from_task_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  node_visit_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type wf_taskUncheckedUpdateManyInput = {
@@ -670,6 +898,18 @@ export type wf_taskUncheckedUpdateManyInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  original_assignee_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_add_sign?: Prisma.IntFieldUpdateOperationsInput | number
+  add_sign_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_from_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalation_level?: Prisma.IntFieldUpdateOperationsInput | number
+  escalated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalated_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_chain_root_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rollback_from_task_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  node_visit_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type Wf_taskListRelationFilter = {
@@ -707,12 +947,27 @@ export type wf_taskCountOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  original_assignee_id?: Prisma.SortOrder
+  is_add_sign?: Prisma.SortOrder
+  add_sign_type?: Prisma.SortOrder
+  add_sign_parent_id?: Prisma.SortOrder
+  transferred_from_id?: Prisma.SortOrder
+  transferred_at?: Prisma.SortOrder
+  escalation_level?: Prisma.SortOrder
+  escalated_at?: Prisma.SortOrder
+  escalated_to?: Prisma.SortOrder
+  add_sign_chain_root_id?: Prisma.SortOrder
+  rollback_from_task_id?: Prisma.SortOrder
+  node_visit_count?: Prisma.SortOrder
 }
 
 export type wf_taskAvgOrderByAggregateInput = {
   duration_ms?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  is_add_sign?: Prisma.SortOrder
+  escalation_level?: Prisma.SortOrder
+  node_visit_count?: Prisma.SortOrder
 }
 
 export type wf_taskMaxOrderByAggregateInput = {
@@ -736,6 +991,18 @@ export type wf_taskMaxOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  original_assignee_id?: Prisma.SortOrder
+  is_add_sign?: Prisma.SortOrder
+  add_sign_type?: Prisma.SortOrder
+  add_sign_parent_id?: Prisma.SortOrder
+  transferred_from_id?: Prisma.SortOrder
+  transferred_at?: Prisma.SortOrder
+  escalation_level?: Prisma.SortOrder
+  escalated_at?: Prisma.SortOrder
+  escalated_to?: Prisma.SortOrder
+  add_sign_chain_root_id?: Prisma.SortOrder
+  rollback_from_task_id?: Prisma.SortOrder
+  node_visit_count?: Prisma.SortOrder
 }
 
 export type wf_taskMinOrderByAggregateInput = {
@@ -759,12 +1026,27 @@ export type wf_taskMinOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  original_assignee_id?: Prisma.SortOrder
+  is_add_sign?: Prisma.SortOrder
+  add_sign_type?: Prisma.SortOrder
+  add_sign_parent_id?: Prisma.SortOrder
+  transferred_from_id?: Prisma.SortOrder
+  transferred_at?: Prisma.SortOrder
+  escalation_level?: Prisma.SortOrder
+  escalated_at?: Prisma.SortOrder
+  escalated_to?: Prisma.SortOrder
+  add_sign_chain_root_id?: Prisma.SortOrder
+  rollback_from_task_id?: Prisma.SortOrder
+  node_visit_count?: Prisma.SortOrder
 }
 
 export type wf_taskSumOrderByAggregateInput = {
   duration_ms?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  is_add_sign?: Prisma.SortOrder
+  escalation_level?: Prisma.SortOrder
+  node_visit_count?: Prisma.SortOrder
 }
 
 export type wf_taskCreateNestedManyWithoutInstanceInput = {
@@ -833,6 +1115,18 @@ export type wf_taskCreateWithoutInstanceInput = {
   updated_at?: Date | string
   is_deleted?: number
   priority?: number | null
+  original_assignee_id?: string | null
+  is_add_sign?: number
+  add_sign_type?: string | null
+  add_sign_parent_id?: string | null
+  transferred_from_id?: string | null
+  transferred_at?: Date | string | null
+  escalation_level?: number
+  escalated_at?: Date | string | null
+  escalated_to?: string | null
+  add_sign_chain_root_id?: string | null
+  rollback_from_task_id?: string | null
+  node_visit_count?: number
 }
 
 export type wf_taskUncheckedCreateWithoutInstanceInput = {
@@ -859,6 +1153,18 @@ export type wf_taskUncheckedCreateWithoutInstanceInput = {
   updated_at?: Date | string
   is_deleted?: number
   priority?: number | null
+  original_assignee_id?: string | null
+  is_add_sign?: number
+  add_sign_type?: string | null
+  add_sign_parent_id?: string | null
+  transferred_from_id?: string | null
+  transferred_at?: Date | string | null
+  escalation_level?: number
+  escalated_at?: Date | string | null
+  escalated_to?: string | null
+  add_sign_chain_root_id?: string | null
+  rollback_from_task_id?: string | null
+  node_visit_count?: number
 }
 
 export type wf_taskCreateOrConnectWithoutInstanceInput = {
@@ -915,6 +1221,18 @@ export type wf_taskScalarWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"wf_task"> | Date | string
   is_deleted?: Prisma.IntFilter<"wf_task"> | number
   priority?: Prisma.IntNullableFilter<"wf_task"> | number | null
+  original_assignee_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  is_add_sign?: Prisma.IntFilter<"wf_task"> | number
+  add_sign_type?: Prisma.StringNullableFilter<"wf_task"> | string | null
+  add_sign_parent_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  transferred_from_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  transferred_at?: Prisma.DateTimeNullableFilter<"wf_task"> | Date | string | null
+  escalation_level?: Prisma.IntFilter<"wf_task"> | number
+  escalated_at?: Prisma.DateTimeNullableFilter<"wf_task"> | Date | string | null
+  escalated_to?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  add_sign_chain_root_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  rollback_from_task_id?: Prisma.UuidNullableFilter<"wf_task"> | string | null
+  node_visit_count?: Prisma.IntFilter<"wf_task"> | number
 }
 
 export type wf_taskCreateManyInstanceInput = {
@@ -941,6 +1259,18 @@ export type wf_taskCreateManyInstanceInput = {
   updated_at?: Date | string
   is_deleted?: number
   priority?: number | null
+  original_assignee_id?: string | null
+  is_add_sign?: number
+  add_sign_type?: string | null
+  add_sign_parent_id?: string | null
+  transferred_from_id?: string | null
+  transferred_at?: Date | string | null
+  escalation_level?: number
+  escalated_at?: Date | string | null
+  escalated_to?: string | null
+  add_sign_chain_root_id?: string | null
+  rollback_from_task_id?: string | null
+  node_visit_count?: number
 }
 
 export type wf_taskUpdateWithoutInstanceInput = {
@@ -967,6 +1297,18 @@ export type wf_taskUpdateWithoutInstanceInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  original_assignee_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_add_sign?: Prisma.IntFieldUpdateOperationsInput | number
+  add_sign_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_from_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalation_level?: Prisma.IntFieldUpdateOperationsInput | number
+  escalated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalated_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_chain_root_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rollback_from_task_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  node_visit_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type wf_taskUncheckedUpdateWithoutInstanceInput = {
@@ -993,6 +1335,18 @@ export type wf_taskUncheckedUpdateWithoutInstanceInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  original_assignee_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_add_sign?: Prisma.IntFieldUpdateOperationsInput | number
+  add_sign_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_from_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalation_level?: Prisma.IntFieldUpdateOperationsInput | number
+  escalated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalated_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_chain_root_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rollback_from_task_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  node_visit_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type wf_taskUncheckedUpdateManyWithoutInstanceInput = {
@@ -1019,6 +1373,18 @@ export type wf_taskUncheckedUpdateManyWithoutInstanceInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  original_assignee_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_add_sign?: Prisma.IntFieldUpdateOperationsInput | number
+  add_sign_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_from_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferred_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalation_level?: Prisma.IntFieldUpdateOperationsInput | number
+  escalated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalated_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  add_sign_chain_root_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rollback_from_task_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  node_visit_count?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -1048,6 +1414,18 @@ export type wf_taskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updated_at?: boolean
   is_deleted?: boolean
   priority?: boolean
+  original_assignee_id?: boolean
+  is_add_sign?: boolean
+  add_sign_type?: boolean
+  add_sign_parent_id?: boolean
+  transferred_from_id?: boolean
+  transferred_at?: boolean
+  escalation_level?: boolean
+  escalated_at?: boolean
+  escalated_to?: boolean
+  add_sign_chain_root_id?: boolean
+  rollback_from_task_id?: boolean
+  node_visit_count?: boolean
   instance?: boolean | Prisma.wf_instanceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wf_task"]>
 
@@ -1076,6 +1454,18 @@ export type wf_taskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updated_at?: boolean
   is_deleted?: boolean
   priority?: boolean
+  original_assignee_id?: boolean
+  is_add_sign?: boolean
+  add_sign_type?: boolean
+  add_sign_parent_id?: boolean
+  transferred_from_id?: boolean
+  transferred_at?: boolean
+  escalation_level?: boolean
+  escalated_at?: boolean
+  escalated_to?: boolean
+  add_sign_chain_root_id?: boolean
+  rollback_from_task_id?: boolean
+  node_visit_count?: boolean
   instance?: boolean | Prisma.wf_instanceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wf_task"]>
 
@@ -1104,6 +1494,18 @@ export type wf_taskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updated_at?: boolean
   is_deleted?: boolean
   priority?: boolean
+  original_assignee_id?: boolean
+  is_add_sign?: boolean
+  add_sign_type?: boolean
+  add_sign_parent_id?: boolean
+  transferred_from_id?: boolean
+  transferred_at?: boolean
+  escalation_level?: boolean
+  escalated_at?: boolean
+  escalated_to?: boolean
+  add_sign_chain_root_id?: boolean
+  rollback_from_task_id?: boolean
+  node_visit_count?: boolean
   instance?: boolean | Prisma.wf_instanceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wf_task"]>
 
@@ -1132,9 +1534,21 @@ export type wf_taskSelectScalar = {
   updated_at?: boolean
   is_deleted?: boolean
   priority?: boolean
+  original_assignee_id?: boolean
+  is_add_sign?: boolean
+  add_sign_type?: boolean
+  add_sign_parent_id?: boolean
+  transferred_from_id?: boolean
+  transferred_at?: boolean
+  escalation_level?: boolean
+  escalated_at?: boolean
+  escalated_to?: boolean
+  add_sign_chain_root_id?: boolean
+  rollback_from_task_id?: boolean
+  node_visit_count?: boolean
 }
 
-export type wf_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "tenant_id" | "instance_id" | "node_id" | "node_name" | "node_type" | "assignee_id" | "assignee_type" | "candidate_ids" | "sign_type" | "sign_strategy" | "completed_ids" | "status" | "action" | "comment" | "form_data" | "due_at" | "claimed_at" | "completed_at" | "duration_ms" | "created_at" | "updated_at" | "is_deleted" | "priority", ExtArgs["result"]["wf_task"]>
+export type wf_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "tenant_id" | "instance_id" | "node_id" | "node_name" | "node_type" | "assignee_id" | "assignee_type" | "candidate_ids" | "sign_type" | "sign_strategy" | "completed_ids" | "status" | "action" | "comment" | "form_data" | "due_at" | "claimed_at" | "completed_at" | "duration_ms" | "created_at" | "updated_at" | "is_deleted" | "priority" | "original_assignee_id" | "is_add_sign" | "add_sign_type" | "add_sign_parent_id" | "transferred_from_id" | "transferred_at" | "escalation_level" | "escalated_at" | "escalated_to" | "add_sign_chain_root_id" | "rollback_from_task_id" | "node_visit_count", ExtArgs["result"]["wf_task"]>
 export type wf_taskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   instance?: boolean | Prisma.wf_instanceDefaultArgs<ExtArgs>
 }
@@ -1210,6 +1624,27 @@ export type $wf_taskPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
      * 优先级
      */
     priority: number | null
+    /**
+     * 加签前原审批人
+     */
+    original_assignee_id: string | null
+    is_add_sign: number
+    /**
+     * before | after
+     */
+    add_sign_type: string | null
+    add_sign_parent_id: string | null
+    transferred_from_id: string | null
+    transferred_at: Date | null
+    /**
+     * 已升级次数
+     */
+    escalation_level: number
+    escalated_at: Date | null
+    escalated_to: string | null
+    add_sign_chain_root_id: string | null
+    rollback_from_task_id: string | null
+    node_visit_count: number
   }, ExtArgs["result"]["wf_task"]>
   composites: {}
 }
@@ -1658,6 +2093,18 @@ export interface wf_taskFieldRefs {
   readonly updated_at: Prisma.FieldRef<"wf_task", 'DateTime'>
   readonly is_deleted: Prisma.FieldRef<"wf_task", 'Int'>
   readonly priority: Prisma.FieldRef<"wf_task", 'Int'>
+  readonly original_assignee_id: Prisma.FieldRef<"wf_task", 'String'>
+  readonly is_add_sign: Prisma.FieldRef<"wf_task", 'Int'>
+  readonly add_sign_type: Prisma.FieldRef<"wf_task", 'String'>
+  readonly add_sign_parent_id: Prisma.FieldRef<"wf_task", 'String'>
+  readonly transferred_from_id: Prisma.FieldRef<"wf_task", 'String'>
+  readonly transferred_at: Prisma.FieldRef<"wf_task", 'DateTime'>
+  readonly escalation_level: Prisma.FieldRef<"wf_task", 'Int'>
+  readonly escalated_at: Prisma.FieldRef<"wf_task", 'DateTime'>
+  readonly escalated_to: Prisma.FieldRef<"wf_task", 'String'>
+  readonly add_sign_chain_root_id: Prisma.FieldRef<"wf_task", 'String'>
+  readonly rollback_from_task_id: Prisma.FieldRef<"wf_task", 'String'>
+  readonly node_visit_count: Prisma.FieldRef<"wf_task", 'Int'>
 }
     
 

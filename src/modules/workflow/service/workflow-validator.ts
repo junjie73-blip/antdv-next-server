@@ -133,24 +133,55 @@ export class WorkflowValidator {
         case "start":
         case "end":
           break;
+        case "ccTask": {
+          if (!node.assignee) {
+            throw new AppError(
+              `抄送节点「${node.name ?? node.id}」缺少抄送人配置`,
+              400001,
+              400,
+            );
+          }
+          this.checkAssignee(node.assignee, node);
+          break;
+        }
       }
 
       // 超时校验
-      if (node.timeout) {
-        if (!/^\d+[smhd]$/.test(node.timeout.duration)) {
+      if (node.timeout?.action.includes("escalate")) {
+        const esc = node.timeout.escalateTo;
+        if (!esc || !esc.type) {
           throw new AppError(
-            `节点「${node.name ?? node.id}」超时格式错误（示例：30m / 2h / 1d）`,
+            `节点「${node.name ?? node.id}」超时升级缺少 escalateTo`,
             400001,
             400,
           );
         }
-        const value = parseInt(node.timeout.duration, 10);
-        if (value <= 0 || value > 365 * 24 * 60) {
+        const validTypes = ["deptLeader", "initiatorLeader", "user", "role"];
+        if (!validTypes.includes(esc.type)) {
           throw new AppError(
-            `节点「${node.name ?? node.id}」超时时长超出范围`,
+            `节点「${node.name ?? node.id}」超时升级类型无效：${esc.type}`,
             400001,
             400,
           );
+        }
+        if (["user", "role"].includes(esc.type) && !esc.value) {
+          throw new AppError(
+            `节点「${node.name ?? node.id}」超时升级缺少 value`,
+            400001,
+            400,
+          );
+        }
+        if (node.timeout.maxEscalateLevel !== undefined) {
+          if (
+            node.timeout.maxEscalateLevel < 1 ||
+            node.timeout.maxEscalateLevel > 10
+          ) {
+            throw new AppError(
+              `节点「${node.name ?? node.id}」maxEscalateLevel 必须在 1-10`,
+              400001,
+              400,
+            );
+          }
         }
       }
     }
@@ -237,6 +268,25 @@ export class WorkflowValidator {
           400001,
           400,
         );
+      }
+    }
+    for (const node of def.nodes) {
+      if (node.type === "ccTask") {
+        const outgoing = (def.edges ?? []).filter((e) => e.source === node.id);
+        if (outgoing.length === 0) {
+          throw new AppError(
+            `抄送节点「${node.name ?? node.id}」必须有出边`,
+            400001,
+            400,
+          );
+        }
+        if (outgoing.length > 1) {
+          throw new AppError(
+            `抄送节点「${node.name ?? node.id}」只能有 1 条出边`,
+            400001,
+            400,
+          );
+        }
       }
     }
   }

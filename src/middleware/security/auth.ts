@@ -24,6 +24,7 @@ export const AUTH_WHITELIST = [
   "/api/v1/auth/captcha",
   "/api/v1/tenant/options",
   "/api/v1/health",
+  "/admin/queues",
 ];
 
 export function isWhitelisted(path: string): boolean {

@@ -22,9 +22,10 @@ import {
   isQueryCandidate,
 } from "./utils/type-mapper.js";
 import { buildCreateTableDdl } from "./utils/db-ddl-builder.js";
-import { renderTemplate } from "./utils/template-engine.js";
+import { renderContent, renderTemplate } from "./utils/template-engine.js";
 import { tableExists } from "./utils/db-metadata.js";
 import { keysToSnakeCase } from "@/shared/utils/case-convert.js";
+import { genTemplateService } from "./template/service/template.service.js";
 
 type CreateInput = z.infer<typeof GenTableCreateSchema>;
 type UpdateInput = z.infer<typeof GenTableUpdateSchema>;
@@ -90,6 +91,10 @@ export class GenTableService extends BaseService<GenTableRepository> {
    *  3. 事务存元数据
    *  4. 执行 DDL（失败则标记 pending，可重试）
    */
+  async loadDbTemplates(tenantId: string): Promise<Map<string, string>> {
+    const list = await genTemplateService.loadForGenerator(tenantId);
+    return new Map(list.map((t) => [t.templateKey, t.content]));
+  }
   async createWithTable(
     dto: CreateInput,
     tenantId: string,
@@ -141,16 +146,17 @@ export class GenTableService extends BaseService<GenTableRepository> {
   // ---------- 生成 ----------
 
   /** 预览单个模板 */
-  async preview(
-    tableId: string,
-    tenantId: string,
-    templateKey: string,
-  ): Promise<string> {
-    const relPath = TEMPLATE_MAP[templateKey];
-    if (!relPath) throw new ValidationError(`未知模板: ${templateKey}`);
-
+  async preview(tableId, tenantId, templateKey) {
     const table = await this.repository.findWithColumns(tableId, tenantId);
     const ctx = this.buildTemplateContext(keysToSnakeCase(table));
+    const dbTemplates = await this.loadDbTemplates(tenantId);
+    const dbContent = dbTemplates.get(templateKey);
+    if (dbContent) {
+      return renderContent(dbContent, ctx); // 用 Handlebars 编译字符串
+    }
+    // 回退磁盘
+    const relPath = TEMPLATE_MAP[templateKey];
+    if (!relPath) throw new ValidationError(`未知模板: ${templateKey}`);
     return renderTemplate(relPath, ctx);
   }
 
@@ -162,7 +168,7 @@ export class GenTableService extends BaseService<GenTableRepository> {
   ): Promise<void> {
     const table = await this.repository.findWithColumns(tableId, tenantId);
     const ctx = this.buildTemplateContext(keysToSnakeCase(table));
-    const files = this.renderAll(ctx);
+    const files = await this.renderAll(ctx, tenantId);
 
     const archive = archiver("zip", { zlib: { level: 9 } });
     archive.on("error", (err) => {
@@ -287,28 +293,22 @@ export class GenTableService extends BaseService<GenTableRepository> {
     return data;
   }
 
-  private renderAll(ctx: Record<string, unknown>): Map<string, string> {
+  async renderAll(ctx, tenantId) {
+    const dbTemplates = await this.loadDbTemplates(tenantId);
     const files = new Map<string, string>();
 
     for (const [key, relPath] of Object.entries(TEMPLATE_MAP)) {
       try {
-        const content = renderTemplate(relPath, ctx);
-        const outputPath = OUTPUT_PATH_MAP[key](ctx as Record<string, string>);
+        const tpl = dbTemplates.get(key);
+        const content = tpl
+          ? renderContent(tpl, ctx)
+          : renderTemplate(relPath, ctx);
+        const outputPath = OUTPUT_PATH_MAP[key](ctx);
         files.set(outputPath, content);
-        logger.debug(
-          { key, outputPath, size: content.length },
-          "[generator] file rendered",
-        );
       } catch (err) {
-        logger.error({ err, key, relPath }, "[generator] render failed");
-        // 单个模板失败不影响其他模板
+        logger.error({ err, key }, "[generator] render failed");
       }
     }
-
-    logger.info(
-      { total: files.size, keys: Array.from(files.keys()) },
-      "[generator] renderAll complete",
-    );
     return files;
   }
 

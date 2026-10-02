@@ -50,6 +50,8 @@ export type Sys_notice_templateMinAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  editor_type: string | null
+  preview_html: string | null
 }
 
 export type Sys_notice_templateMaxAggregateOutputType = {
@@ -68,6 +70,8 @@ export type Sys_notice_templateMaxAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  editor_type: string | null
+  preview_html: string | null
 }
 
 export type Sys_notice_templateCountAggregateOutputType = {
@@ -87,6 +91,8 @@ export type Sys_notice_templateCountAggregateOutputType = {
   created_by: number
   updated_by: number
   is_deleted: number
+  editor_type: number
+  preview_html: number
   _all: number
 }
 
@@ -115,6 +121,8 @@ export type Sys_notice_templateMinAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  editor_type?: true
+  preview_html?: true
 }
 
 export type Sys_notice_templateMaxAggregateInputType = {
@@ -133,6 +141,8 @@ export type Sys_notice_templateMaxAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  editor_type?: true
+  preview_html?: true
 }
 
 export type Sys_notice_templateCountAggregateInputType = {
@@ -152,6 +162,8 @@ export type Sys_notice_templateCountAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  editor_type?: true
+  preview_html?: true
   _all?: true
 }
 
@@ -258,6 +270,8 @@ export type Sys_notice_templateGroupByOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number
+  editor_type: string
+  preview_html: string | null
   _count: Sys_notice_templateCountAggregateOutputType | null
   _avg: Sys_notice_templateAvgAggregateOutputType | null
   _sum: Sys_notice_templateSumAggregateOutputType | null
@@ -300,6 +314,8 @@ export type sys_notice_templateWhereInput = {
   created_by?: Prisma.UuidNullableFilter<"sys_notice_template"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_notice_template"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_notice_template"> | number
+  editor_type?: Prisma.StringFilter<"sys_notice_template"> | string
+  preview_html?: Prisma.StringNullableFilter<"sys_notice_template"> | string | null
 }
 
 export type sys_notice_templateOrderByWithRelationInput = {
@@ -319,6 +335,8 @@ export type sys_notice_templateOrderByWithRelationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  editor_type?: Prisma.SortOrder
+  preview_html?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_notice_templateWhereUniqueInput = Prisma.AtLeast<{
@@ -342,6 +360,8 @@ export type sys_notice_templateWhereUniqueInput = Prisma.AtLeast<{
   created_by?: Prisma.UuidNullableFilter<"sys_notice_template"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_notice_template"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_notice_template"> | number
+  editor_type?: Prisma.StringFilter<"sys_notice_template"> | string
+  preview_html?: Prisma.StringNullableFilter<"sys_notice_template"> | string | null
 }, "template_id" | "tenant_id_template_code">
 
 export type sys_notice_templateOrderByWithAggregationInput = {
@@ -361,6 +381,8 @@ export type sys_notice_templateOrderByWithAggregationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  editor_type?: Prisma.SortOrder
+  preview_html?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_notice_templateCountOrderByAggregateInput
   _avg?: Prisma.sys_notice_templateAvgOrderByAggregateInput
   _max?: Prisma.sys_notice_templateMaxOrderByAggregateInput
@@ -388,6 +410,8 @@ export type sys_notice_templateScalarWhereWithAggregatesInput = {
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_notice_template"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_notice_template"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"sys_notice_template"> | number
+  editor_type?: Prisma.StringWithAggregatesFilter<"sys_notice_template"> | string
+  preview_html?: Prisma.StringNullableWithAggregatesFilter<"sys_notice_template"> | string | null
 }
 
 export type sys_notice_templateCreateInput = {
@@ -407,6 +431,8 @@ export type sys_notice_templateCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  editor_type?: string
+  preview_html?: string | null
 }
 
 export type sys_notice_templateUncheckedCreateInput = {
@@ -426,6 +452,8 @@ export type sys_notice_templateUncheckedCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  editor_type?: string
+  preview_html?: string | null
 }
 
 export type sys_notice_templateUpdateInput = {
@@ -445,6 +473,8 @@ export type sys_notice_templateUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  editor_type?: Prisma.StringFieldUpdateOperationsInput | string
+  preview_html?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_templateUncheckedUpdateInput = {
@@ -464,6 +494,8 @@ export type sys_notice_templateUncheckedUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  editor_type?: Prisma.StringFieldUpdateOperationsInput | string
+  preview_html?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_templateCreateManyInput = {
@@ -483,6 +515,8 @@ export type sys_notice_templateCreateManyInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  editor_type?: string
+  preview_html?: string | null
 }
 
 export type sys_notice_templateUpdateManyMutationInput = {
@@ -502,6 +536,8 @@ export type sys_notice_templateUpdateManyMutationInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  editor_type?: Prisma.StringFieldUpdateOperationsInput | string
+  preview_html?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_templateUncheckedUpdateManyInput = {
@@ -521,6 +557,8 @@ export type sys_notice_templateUncheckedUpdateManyInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  editor_type?: Prisma.StringFieldUpdateOperationsInput | string
+  preview_html?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_notice_templateTenant_idTemplate_codeCompoundUniqueInput = {
@@ -545,6 +583,8 @@ export type sys_notice_templateCountOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  editor_type?: Prisma.SortOrder
+  preview_html?: Prisma.SortOrder
 }
 
 export type sys_notice_templateAvgOrderByAggregateInput = {
@@ -567,6 +607,8 @@ export type sys_notice_templateMaxOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  editor_type?: Prisma.SortOrder
+  preview_html?: Prisma.SortOrder
 }
 
 export type sys_notice_templateMinOrderByAggregateInput = {
@@ -585,6 +627,8 @@ export type sys_notice_templateMinOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  editor_type?: Prisma.SortOrder
+  preview_html?: Prisma.SortOrder
 }
 
 export type sys_notice_templateSumOrderByAggregateInput = {
@@ -610,6 +654,8 @@ export type sys_notice_templateSelect<ExtArgs extends runtime.Types.Extensions.I
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  editor_type?: boolean
+  preview_html?: boolean
 }, ExtArgs["result"]["sys_notice_template"]>
 
 export type sys_notice_templateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -629,6 +675,8 @@ export type sys_notice_templateSelectCreateManyAndReturn<ExtArgs extends runtime
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  editor_type?: boolean
+  preview_html?: boolean
 }, ExtArgs["result"]["sys_notice_template"]>
 
 export type sys_notice_templateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -648,6 +696,8 @@ export type sys_notice_templateSelectUpdateManyAndReturn<ExtArgs extends runtime
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  editor_type?: boolean
+  preview_html?: boolean
 }, ExtArgs["result"]["sys_notice_template"]>
 
 export type sys_notice_templateSelectScalar = {
@@ -667,9 +717,11 @@ export type sys_notice_templateSelectScalar = {
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  editor_type?: boolean
+  preview_html?: boolean
 }
 
-export type sys_notice_templateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"template_id" | "tenant_id" | "template_code" | "template_name" | "channel_type" | "title" | "content" | "content_format" | "remark" | "params" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_notice_template"]>
+export type sys_notice_templateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"template_id" | "tenant_id" | "template_code" | "template_name" | "channel_type" | "title" | "content" | "content_format" | "remark" | "params" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "editor_type" | "preview_html", ExtArgs["result"]["sys_notice_template"]>
 
 export type $sys_notice_templatePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_notice_template"
@@ -691,6 +743,14 @@ export type $sys_notice_templatePayload<ExtArgs extends runtime.Types.Extensions
     created_by: string | null
     updated_by: string | null
     is_deleted: number
+    /**
+     * markdown | richtext | html
+     */
+    editor_type: string
+    /**
+     * 可视化编辑的 HTML 快照
+     */
+    preview_html: string | null
   }, ExtArgs["result"]["sys_notice_template"]>
   composites: {}
 }
@@ -1130,6 +1190,8 @@ export interface sys_notice_templateFieldRefs {
   readonly created_by: Prisma.FieldRef<"sys_notice_template", 'String'>
   readonly updated_by: Prisma.FieldRef<"sys_notice_template", 'String'>
   readonly is_deleted: Prisma.FieldRef<"sys_notice_template", 'Int'>
+  readonly editor_type: Prisma.FieldRef<"sys_notice_template", 'String'>
+  readonly preview_html: Prisma.FieldRef<"sys_notice_template", 'String'>
 }
     
 

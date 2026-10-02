@@ -112,7 +112,6 @@ class WebSocketManager {
       if (ws.readyState === WebSocket.OPEN) ws.send(message);
     });
   }
-
   sendToUsers(userIds: string[], data: any): void {
     userIds.forEach((id) => this.sendToUser(id, data));
   }
@@ -149,6 +148,14 @@ class WebSocketManager {
         [...this.connectionsByType.entries()].map(([k, v]) => [k, v.size]),
       ),
     };
+  }
+  broadcast(payload: {
+    type: string;
+    data: { noticeId: string };
+    timestamp: number;
+  }) {
+    // 广播在线所有用户
+    this.sendToUsers(Object.keys(this.connectionsByUser), payload);
   }
 }
 

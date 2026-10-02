@@ -6,6 +6,7 @@ export interface DataScopeContext {
   tenantId: string;
   deptIds: string[] | "*";
   selfOnly: boolean;
+  roles?: string[];
 }
 
 interface Store {

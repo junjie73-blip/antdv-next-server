@@ -10,6 +10,7 @@ import {
 } from "@/config/constants.js";
 import { assertSafeKey, assertSafePrefix } from "./prefix-guard.js";
 import { logger } from "@/platform/logger/index.js";
+import { prisma } from "@/config/index.js";
 
 export interface CacheInfo {
   redisVersion: string;
@@ -367,5 +368,49 @@ export class CacheRepository {
   /** ⚠️ clearAll 已禁用：只允许按组清理，禁止 flushdb */
   async clearAll(): Promise<void> {
     throw new Error("clearAll 已禁用，请使用 clearByPrefix 按组清理");
+  }
+  async log(data: {
+    tenantId: string;
+    operatorId?: string;
+    operatorName?: string;
+    operation: string;
+    target: string;
+    keyCount?: number;
+    durationMs?: number;
+    status: string;
+    errorMsg?: string;
+  }): Promise<void> {
+    try {
+      await prisma.sys_cache_operation_log.create({
+        data: {
+          tenant_id: data.tenantId,
+          operator_id: data.operatorId ?? null,
+          operator_name: data.operatorName ?? null,
+          operation: data.operation,
+          target: data.target.slice(0, 256),
+          key_count: data.keyCount ?? 0,
+          duration_ms: data.durationMs ?? 0,
+          status: data.status,
+          error_msg: data.errorMsg ?? null,
+        },
+      });
+    } catch {
+      // fail-soft：日志失败不影响主流程
+    }
+  }
+
+  async findPage(tenantId: string, pageNum: number, pageSize: number) {
+    const skip = (pageNum - 1) * pageSize;
+    const where = { tenant_id: tenantId };
+    const [list, total] = await Promise.all([
+      prisma.sys_cache_operation_log.findMany({
+        where,
+        orderBy: { created_at: "desc" },
+        skip,
+        take: pageSize,
+      }),
+      prisma.sys_cache_operation_log.count({ where }),
+    ]);
+    return { list, total, pageNum, pageSize };
   }
 }

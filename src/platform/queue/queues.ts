@@ -1,4 +1,5 @@
 import { createBullConnection } from "@/config/redis.js";
+import { mergeQueue } from "@/modules/infrastructure/upload/queue.js";
 import { Queue } from "bullmq";
 
 /** 报表导出队列 */
@@ -31,3 +32,10 @@ export const cacheWarmQueue = new Queue("cache-warm", {
     removeOnComplete: { age: 3600, count: 50 },
   },
 });
+
+export const queueList: Queue[] = [
+  exportQueue,
+  mergeQueue,
+  wfNotifyQueue,
+  cacheWarmQueue,
+];

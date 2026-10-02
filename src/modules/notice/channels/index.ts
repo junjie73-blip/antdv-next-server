@@ -7,6 +7,7 @@ import { prisma } from "@/config/database.js";
 import { logger } from "@/platform/logger/index.js";
 import { sendAlert } from "@/platform/alert/index.js";
 import { redis } from "@/config/redis.js";
+import { noticePreferenceService } from "@/modules/notice-preference/service/preference.service.js";
 
 const channelFailureCounter = new Map<string, number>();
 const REGISTRY: Record<string, NoticeChannel> = {
@@ -157,13 +158,37 @@ export async function dispatchNotice(
       continue;
     }
 
-    const receivers =
+    let receivers =
       input.receiversByChannel?.[ch.channel_type] ??
       fallbackReceivers[ch.channel_type] ??
-      (ch.channel_type === "webhook" && cfg.url ? [cfg.url] : []);
+      [];
+
+    // ⭐ 偏好过滤（只针对用户级渠道）
+    if (
+      receivers.length > 0 &&
+      ["in_app", "email", "sms"].includes(ch.channel_type) &&
+      noticeId // 只对有 noticeId 的场景（能查到用户）
+    ) {
+      // 反查这些 receiver 对应的 userId（email/phone → userId）
+      const { allowed, filtered } = await filterReceiversByPreference(
+        receivers,
+        tenantId,
+        ch.channel_type,
+        "notice", // eventType，可按通知类型细分
+      );
+      if (filtered.length > 0) {
+        logger.debug(
+          { channel: ch.channel_type, filtered: filtered.length },
+          "[notice] receivers filtered by preference",
+        );
+      }
+      receivers = allowed;
+    }
 
     if (receivers.length === 0 && ch.channel_type !== "in_app") {
-      results.push(skipResult(ch.channel_type, "no receivers"));
+      results.push(
+        skipResult(ch.channel_type, "no receivers after preference"),
+      );
       continue;
     }
 
@@ -255,4 +280,70 @@ function skipResult(channel: string, reason: string): SendResult {
     skipped: true, // ⭐ 前端可区分“跳过”和“成功 0”
     errors: [{ receiver: "*", reason }],
   } as SendResult;
+}
+async function filterReceiversByPreference(
+  receivers: string[],
+  tenantId: string,
+  channel: string,
+  eventType: string,
+): Promise<{ allowed: string[]; filtered: string[] }> {
+  // 简单实现：查 sys_user 里 email/phone 匹配的用户
+  const users = await prisma.sys_user.findMany({
+    where: {
+      tenant_id: tenantId,
+      is_deleted: 0,
+      OR:
+        channel === "email"
+          ? [{ email: { in: receivers } }]
+          : [{ phone: { in: receivers } }],
+    },
+    select: { user_id: true, email: true, phone: true },
+  });
+
+  const userMap = new Map<string, string>(); // receiver → userId
+  for (const u of users) {
+    if (channel === "email" && u.email) userMap.set(u.email, u.user_id);
+    if (channel === "sms" && u.phone) userMap.set(u.phone, u.user_id);
+  }
+
+  const userIds = receivers
+    .map((r) => userMap.get(r))
+    .filter((x): x is string => !!x);
+
+  // 没有 userId 的（比如未注册邮箱）默认放行
+  const unknownReceivers = receivers.filter((r) => !userMap.has(r));
+
+  if (userIds.length === 0) {
+    return { allowed: receivers, filtered: [] };
+  }
+
+  const { allowed: allowedUserIds, filtered: filteredUserIds } =
+    await noticePreferenceService.filterAllowed(
+      userIds,
+      tenantId,
+      channel,
+      eventType,
+    );
+
+  const allowedSet = new Set(
+    allowedUserIds
+      .map((uid) => {
+        const u = users.find((x) => x.user_id === uid);
+        return channel === "email" ? u?.email : u?.phone;
+      })
+      .filter((x): x is string => !!x),
+  );
+  const filteredSet = new Set(
+    filteredUserIds
+      .map((uid) => {
+        const u = users.find((x) => x.user_id === uid);
+        return channel === "email" ? u?.email : u?.phone;
+      })
+      .filter((x): x is string => !!x),
+  );
+
+  return {
+    allowed: [...unknownReceivers, ...allowedSet],
+    filtered: [...filteredSet],
+  };
 }

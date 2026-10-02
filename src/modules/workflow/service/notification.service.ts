@@ -1,25 +1,9 @@
 import { prisma } from "@/config/database.js";
 import { logger } from "@/platform/logger/index.js";
 import { wfNotifyQueue } from "@/platform/queue/queues.js";
-
-export type WfEventType =
-  | "assign"
-  | "complete"
-  | "reject"
-  | "timeout"
-  | "terminate"
-  | "cc"
-  | "start";
-
-export interface WfNotifyParams {
-  tenantId: string;
-  instanceId: string;
-  taskId?: string;
-  nodeId?: string;
-  eventType: WfEventType;
-  receiverIds: string[];
-  extra?: Record<string, any>;
-}
+import { WfEventType, WfNotifyParams } from "../types.js";
+import { messagePushService } from "@/modules/message/service/message-push.service.js";
+import { publishWorkflowNotify } from "@/platform/ws/index.js";
 
 const TEMPLATE_MAP: Record<WfEventType, { title: string; template: string }> = {
   assign: {
@@ -54,6 +38,69 @@ const TEMPLATE_MAP: Record<WfEventType, { title: string; template: string }> = {
 };
 
 export class WfNotificationService {
+  async notifyCc(params: {
+    tenantId: string;
+    instanceId: string;
+    nodeId: string;
+    nodeName: string;
+    receiverIds: string[];
+    title: string;
+    content: string;
+    realtime: boolean;
+    pushMessage: boolean;
+  }): Promise<void> {
+    if (params.receiverIds.length === 0) return;
+
+    // 1) 实时推送（走 workflow ws channel）
+    if (params.realtime) {
+      for (const userId of params.receiverIds) {
+        await publishWorkflowNotify({
+          userId,
+          tenantId: params.tenantId,
+          instanceId: params.instanceId,
+          nodeId: params.nodeId,
+          eventType: "cc",
+          title: params.title,
+          content: params.content,
+        }).catch((err) => {
+          logger.warn(
+            { err, userId, instanceId: params.instanceId },
+            "[wf-notify] cc ws push failed",
+          );
+        });
+      }
+    }
+
+    // 2) 消息中心
+    if (params.pushMessage) {
+      await messagePushService
+        .push({
+          tenantId: params.tenantId,
+          userIds: params.receiverIds,
+          bizType: "workflow",
+          bizId: params.instanceId,
+          title: params.title,
+          content: params.content,
+          priority: 0,
+          realtime: false, // 上面已经 WS 推了，避免重复
+        })
+        .catch((err) => {
+          logger.warn(
+            { err, instanceId: params.instanceId },
+            "[wf-notify] cc message push failed",
+          );
+        });
+    }
+
+    logger.debug(
+      {
+        instanceId: params.instanceId,
+        nodeId: params.nodeId,
+        count: params.receiverIds.length,
+      },
+      "[wf-notify] cc done",
+    );
+  }
   async notifyStart(params: {
     tenantId: string;
     instanceId: string;

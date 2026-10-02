@@ -330,7 +330,9 @@ model sys_audit_log {
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   created_by     String?  @db.Uuid
   metadata       Json?
+  trace_id       String?  @db.VarChar(64)
 
+  @@index([trace_id])
   @@index([log_id, created_at])
   @@index([tenant_id, created_at(sort: Desc)])
   @@index([tenant_id, user_id, created_at])
@@ -471,17 +473,26 @@ model sys_file {
 
 // ==================== 登录日志表 ====================
 model sys_login_log {
-  log_id     String   @id @default(uuid()) @db.Uuid
-  tenant_id  String   @db.Uuid
-  user_id    String?  @db.Uuid
-  username   String   @db.VarChar(64)
-  ip_address String   @db.VarChar(64)
-  user_agent String?  @db.VarChar(512)
-  status     String   @default("1") @db.VarChar(10)
-  message    String?  @db.VarChar(256)
-  created_at DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
-  created_by String?  @db.Uuid /// 创建人ID
+  log_id          String   @id @default(uuid()) @db.Uuid
+  tenant_id       String   @db.Uuid
+  user_id         String?  @db.Uuid
+  username        String   @db.VarChar(64)
+  ip_address      String   @db.VarChar(64)
+  user_agent      String?  @db.VarChar(512)
+  status          String   @default("1") @db.VarChar(10)
+  message         String?  @db.VarChar(256)
+  created_at      DateTime @default(now()) @db.Timestamptz(6) /// 创建时间
+  created_by      String?  @db.Uuid /// 创建人ID
+  is_abnormal     Int      @default(0) @db.SmallInt /// 0-正常 1-异常
+  abnormal_reason String?  @db.VarChar(256) /// 异常原因描述
+  abnormal_type   String?  @db.VarChar(32) /// new_ip | new_device | impossible_travel | unusual_time
+  country         String?  @db.VarChar(64)
+  province        String?  @db.VarChar(64)
+  city            String?  @db.VarChar(64)
+  isp             String?  @db.VarChar(64)
+  notify_status   Int      @default(0) @db.SmallInt /// 0-未通知 1-已通知
 
+  @@index([tenant_id, is_abnormal, created_at(sort: Desc)])
   @@index([tenant_id])
   @@index([user_id])
   @@index([created_at])
@@ -700,27 +711,27 @@ model sys_user_tenant {
 }
 
 model gen_table {
-  table_id        String   @id @default(uuid()) @db.Uuid
-  table_name      String   @unique @db.VarChar(200)
-  table_comment   String?  @db.VarChar(500)
-  class_name      String   @db.VarChar(100)
-  tpl_category    String   @default("crud") @db.VarChar(20)
-  package_name    String?  @db.VarChar(100)
-  module_name     String?  @db.VarChar(30)
-  business_name   String?  @db.VarChar(30)
-  function_name   String?  @db.VarChar(50)
-  function_author String?  @db.VarChar(50)
-  table_status    String   @default("pending") @db.VarChar(20) // pending / created / altered
+  table_id         String             @id @default(uuid()) @db.Uuid
+  table_name       String             @unique @db.VarChar(200)
+  table_comment    String?            @db.VarChar(500)
+  class_name       String             @db.VarChar(100)
+  tpl_category     String             @default("crud") @db.VarChar(20)
+  package_name     String?            @db.VarChar(100)
+  module_name      String?            @db.VarChar(30)
+  business_name    String?            @db.VarChar(30)
+  function_name    String?            @db.VarChar(50)
+  function_author  String?            @db.VarChar(50)
+  table_status     String             @default("pending") @db.VarChar(20) // pending / created / altered
   // 规范字段
-  tenant_id       String   @db.Uuid
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
-  created_by      String?  @db.Uuid
-  updated_by      String?  @db.Uuid
-  is_deleted      Int      @default(0) @db.SmallInt
-
+  tenant_id        String             @db.Uuid
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  created_by       String?            @db.Uuid
+  updated_by       String?            @db.Uuid
+  is_deleted       Int                @default(0) @db.SmallInt
+  template_version Int                @default(1)
   // 无数据库外键，应用层维护
-  columns gen_table_column[]
+  columns          gen_table_column[]
 
   @@index([tenant_id])
   @@index([is_deleted])
@@ -902,6 +913,8 @@ model sys_notice_template {
   created_by     String?  @db.Uuid
   updated_by     String?  @db.Uuid
   is_deleted     Int      @default(0) @db.SmallInt
+  editor_type    String   @default("markdown") @db.VarChar(16) /// markdown | richtext | html
+  preview_html   String?  @db.Text /// 可视化编辑的 HTML 快照
 
   @@unique([tenant_id, template_code])
   @@map("sys_notice_template")
@@ -1001,36 +1014,52 @@ model wf_instance {
 
 /// ==================== 任务 ====================
 model wf_task {
-  task_id       String      @id @default(uuid()) @db.Uuid
-  tenant_id     String      @db.Uuid
-  instance_id   String      @db.Uuid
-  node_id       String      @db.VarChar(64) /// 节点 ID
-  node_name     String      @db.VarChar(128)
-  node_type     String      @db.VarChar(32) /// userTask | countersign | orSign
-  assignee_id   String?     @db.Uuid /// 审批人
-  assignee_type String      @db.VarChar(32) /// user | role | dept | initiator
-  candidate_ids Json? /// 候选用户列表（多签场景）
-  sign_type     String?     @db.VarChar(20) /// all-会签 any-或签 sequential-顺序
-  sign_strategy Json? /// { percent: 60 } 比例通过
-  completed_ids Json?       @default("[]") /// 已签署用户
-  status        String      @default("0") @db.VarChar(20)
+  task_id                String      @id @default(uuid()) @db.Uuid
+  tenant_id              String      @db.Uuid
+  instance_id            String      @db.Uuid
+  node_id                String      @db.VarChar(64) /// 节点 ID
+  node_name              String      @db.VarChar(128)
+  node_type              String      @db.VarChar(32) /// userTask | countersign | orSign
+  assignee_id            String?     @db.Uuid /// 审批人
+  assignee_type          String      @db.VarChar(32) /// user | role | dept | initiator
+  candidate_ids          Json? /// 候选用户列表（多签场景）
+  sign_type              String?     @db.VarChar(20) /// all-会签 any-或签 sequential-顺序
+  sign_strategy          Json? /// { percent: 60 } 比例通过
+  completed_ids          Json?       @default("[]") /// 已签署用户
+  status                 String      @default("0") @db.VarChar(20)
   /// 0-待处理 1-已完成 2-已取消 3-已超时
-  action        String?     @db.VarChar(32) /// approve | reject | ...
-  comment       String?     @db.Text
+  action                 String?     @db.VarChar(32) /// approve | reject | ...
+  comment                String?     @db.Text
   /**
    * 表单提交数据
    */
-  form_data     Json?
-  due_at        DateTime?   @db.Timestamptz(6)
-  claimed_at    DateTime?   @db.Timestamptz(6)
-  completed_at  DateTime?   @db.Timestamptz(6)
-  duration_ms   Int?
-  created_at    DateTime    @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime    @updatedAt @db.Timestamptz(6)
-  is_deleted    Int         @default(0) @db.SmallInt
-  priority      Int?        @default(0) /// 优先级
-  instance      wf_instance @relation(fields: [instance_id], references: [instance_id])
+  form_data              Json?
+  due_at                 DateTime?   @db.Timestamptz(6)
+  claimed_at             DateTime?   @db.Timestamptz(6)
+  completed_at           DateTime?   @db.Timestamptz(6)
+  duration_ms            Int?
+  created_at             DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime    @updatedAt @db.Timestamptz(6)
+  is_deleted             Int         @default(0) @db.SmallInt
+  priority               Int?        @default(0) /// 优先级
+  instance               wf_instance @relation(fields: [instance_id], references: [instance_id])
+  original_assignee_id   String?     @db.Uuid /// 加签前原审批人
+  is_add_sign            Int         @default(0) @db.SmallInt
+  add_sign_type          String?     @db.VarChar(16) /// before | after
+  add_sign_parent_id     String?     @db.Uuid
+  transferred_from_id    String?     @db.Uuid
+  transferred_at         DateTime?   @db.Timestamptz(6)
+  escalation_level       Int         @default(0) @db.SmallInt /// 已升级次数
+  escalated_at           DateTime?   @db.Timestamptz(6)
+  escalated_to           String?     @db.Uuid
+  add_sign_chain_root_id String?     @db.Uuid
+  rollback_from_task_id  String?     @db.Uuid
+  node_visit_count       Int         @default(1) @db.Integer
 
+  @@index([original_assignee_id])
+  @@index([add_sign_chain_root_id])
+  @@index([rollback_from_task_id])
+  @@index([add_sign_parent_id])
   @@index([tenant_id, assignee_id, status])
   @@index([tenant_id, instance_id])
   @@index([tenant_id, node_id, status])
@@ -1319,4 +1348,405 @@ model rp_cache_warm_config {
   @@index([tenant_id, enabled])
   @@index([last_warm_at])
   @@map("rp_cache_warm_config")
+}
+
+// ==================== 用户组 ====================
+/// 用户组：跨部门、可批量授权的用户集合
+model sys_user_group {
+  group_id    String   @id @default(uuid()) @db.Uuid
+  tenant_id   String   @db.Uuid
+  group_code  String   @db.VarChar(64)
+  group_name  String   @db.VarChar(128)
+  description String?  @db.VarChar(512)
+  group_type  String   @default("custom") @db.VarChar(32) /// custom | department | project
+  sort_order  Int      @default(0)
+  status      String   @default("1") @db.VarChar(10)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @updatedAt @db.Timestamptz(6)
+  created_by  String?  @db.Uuid
+  updated_by  String?  @db.Uuid
+  is_deleted  Int      @default(0) @db.SmallInt
+
+  members sys_user_group_member[]
+  roles   sys_user_group_role[]
+
+  @@unique([tenant_id, group_code])
+  @@index([tenant_id])
+  @@index([tenant_id, status])
+  @@index([is_deleted])
+  @@map("sys_user_group")
+}
+
+/// 用户组成员
+model sys_user_group_member {
+  id         String   @id @default(uuid()) @db.Uuid
+  group_id   String   @db.Uuid
+  user_id    String   @db.Uuid
+  tenant_id  String   @db.Uuid
+  joined_at  DateTime @default(now()) @db.Timestamptz(6)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_by String?  @db.Uuid
+
+  group sys_user_group @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+
+  @@unique([group_id, user_id])
+  @@index([tenant_id, user_id])
+  @@index([tenant_id, group_id])
+  @@map("sys_user_group_member")
+}
+
+/// 用户组角色绑定
+model sys_user_group_role {
+  id         String   @id @default(uuid()) @db.Uuid
+  group_id   String   @db.Uuid
+  role_id    String   @db.Uuid
+  tenant_id  String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  created_by String?  @db.Uuid
+
+  group sys_user_group @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+
+  @@unique([group_id, role_id])
+  @@index([tenant_id, group_id])
+  @@index([tenant_id, role_id])
+  @@map("sys_user_group_role")
+}
+
+// ==================== 权限申请 ====================
+/// 临时权限授权（可走工作流审批）
+model sys_privilege_grant {
+  grant_id             String    @id @default(uuid()) @db.Uuid
+  tenant_id            String    @db.Uuid
+  user_id              String    @db.Uuid
+  role_id              String?   @db.Uuid /// 申请授予的角色
+  perm_ids             Json? /// 申请的权限ID列表（可选，更细粒度）
+  reason               String    @db.VarChar(512)
+  status               String    @default("0") @db.VarChar(20) /// 0-待审批 1-已批准 2-已拒绝 3-已撤销 4-已过期
+  workflow_instance_id String?   @db.Uuid /// 关联工作流实例
+  granted_by           String?   @db.Uuid
+  granted_at           DateTime? @db.Timestamptz(6)
+  effective_at         DateTime? @db.Timestamptz(6)
+  expire_at            DateTime? @db.Timestamptz(6)
+  revoke_at            DateTime? @db.Timestamptz(6)
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime  @updatedAt @db.Timestamptz(6)
+  created_by           String?   @db.Uuid
+  updated_by           String?   @db.Uuid
+  is_deleted           Int       @default(0) @db.SmallInt
+
+  @@index([tenant_id, user_id, status])
+  @@index([tenant_id, status, expire_at])
+  @@index([workflow_instance_id])
+  @@map("sys_privilege_grant")
+}
+
+// ==================== 抄送记录 ====================
+/// 工作流抄送记录（跟踪已读）
+model wf_cc_record {
+  cc_id       String    @id @default(uuid()) @db.Uuid
+  tenant_id   String    @db.Uuid
+  instance_id String    @db.Uuid
+  task_id     String?   @db.Uuid
+  node_id     String    @db.VarChar(64)
+  node_name   String    @db.VarChar(128)
+  receiver_id String    @db.Uuid
+  is_read     Int       @default(0) @db.SmallInt
+  read_at     DateTime? @db.Timestamptz(6)
+  title       String?   @db.VarChar(256)
+  content     String?   @db.Text
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  cc_type     String    @default("cc") @db.VarChar(16) // cc-手动抄送 auto-节点抄送
+
+  @@index([tenant_id, receiver_id, is_read])
+  @@index([tenant_id, instance_id])
+  @@map("wf_cc_record")
+}
+
+// ==================== 工作流委托 ====================
+/// 工作流委托（出差/休假期间代理审批）
+model sys_wf_delegate {
+  delegate_id  String   @id @default(uuid()) @db.Uuid
+  tenant_id    String   @db.Uuid
+  delegator_id String   @db.Uuid /// 委托人
+  delegatee_id String   @db.Uuid /// 被委托人
+  def_keys     Json? /// 限定流程key，null=全部
+  scope        String   @default("all") @db.VarChar(20) /// all | specific
+  start_at     DateTime @db.Timestamptz(6)
+  end_at       DateTime @db.Timestamptz(6)
+  reason       String?  @db.VarChar(512)
+  enabled      Int      @default(1) @db.SmallInt
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+  created_by   String?  @db.Uuid
+  updated_by   String?  @db.Uuid
+  is_deleted   Int      @default(0) @db.SmallInt
+
+  @@index([tenant_id, delegator_id, enabled])
+  @@index([tenant_id, delegatee_id])
+  @@index([start_at, end_at])
+  @@map("sys_wf_delegate")
+}
+
+// ==================== 任务流转日志 ====================
+/// 任务转办/加签/升级日志
+model wf_task_transfer_log {
+  log_id       String   @id @default(uuid()) @db.Uuid
+  tenant_id    String   @db.Uuid
+  task_id      String   @db.Uuid
+  instance_id  String   @db.Uuid
+  action_type  String   @db.VarChar(32) /// transfer | add_sign_before | add_sign_after | escalate
+  from_user_id String?  @db.Uuid
+  to_user_id   String?  @db.Uuid
+  operator_id  String   @db.Uuid
+  reason       String?  @db.VarChar(512)
+  metadata     Json?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([tenant_id, task_id])
+  @@index([tenant_id, instance_id])
+  @@index([created_at])
+  @@map("wf_task_transfer_log")
+}
+
+// ==================== 消息中心 ====================
+/// 统一消息中心（聚合站内信/通知/待办/系统消息）
+model sys_message {
+  message_id String    @id @default(uuid()) @db.Uuid
+  tenant_id  String    @db.Uuid
+  user_id    String    @db.Uuid
+  biz_type   String    @db.VarChar(32) /// notice | todo | workflow | system | announcement
+  biz_id     String?   @db.Uuid /// 关联业务ID
+  title      String    @db.VarChar(256)
+  content    String?   @db.Text
+  priority   Int       @default(0) @db.SmallInt
+  is_read    Int       @default(0) @db.SmallInt
+  read_at    DateTime? @db.Timestamptz(6)
+  is_top     Int       @default(0) @db.SmallInt
+  expire_at  DateTime? @db.Timestamptz(6)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @updatedAt @db.Timestamptz(6)
+  is_deleted Int       @default(0) @db.SmallInt
+
+  @@index([tenant_id, user_id, is_read, created_at(sort: Desc)])
+  @@index([tenant_id, user_id, biz_type, is_read])
+  @@index([tenant_id, biz_type, biz_id])
+  @@index([expire_at])
+  @@map("sys_message")
+}
+
+// ==================== 通知订阅偏好 ====================
+model sys_user_notice_preference {
+  preference_id String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  user_id       String   @db.Uuid
+  channel       String   @db.VarChar(32) /// in_app | email | sms | webhook
+  event_type    String   @db.VarChar(64) /// * 表示全部；具体事件类型
+  enabled       Int      @default(1) @db.SmallInt
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @updatedAt @db.Timestamptz(6)
+
+  @@unique([user_id, channel, event_type])
+  @@index([tenant_id, user_id])
+  @@map("sys_user_notice_preference")
+}
+
+// ==================== 归档策略 ====================
+model sys_archive_policy {
+  policy_id        String    @id @default(uuid()) @db.Uuid
+  tenant_id        String    @db.Uuid
+  table_name       String    @db.VarChar(128)
+  table_type       String    @default("partitioned") @db.VarChar(20)
+  display_name     String    @db.VarChar(128)
+  retention_months Int /// 保留月数
+  archive_enabled  Int       @default(1) @db.SmallInt
+  cron_expression  String    @default("0 2 * * *") @db.VarChar(64)
+  storage_enabled  Int       @default(1) @db.SmallInt /// 归档前是否上传到对象存储
+  batch_size       Int       @default(5000)
+  enabled          Int       @default(1) @db.SmallInt
+  last_run_at      DateTime? @db.Timestamptz(6)
+  last_status      String?   @db.VarChar(20)
+  last_error       String?   @db.Text
+  remark           String?   @db.VarChar(512)
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime  @updatedAt @db.Timestamptz(6)
+  created_by       String?   @db.Uuid
+  updated_by       String?   @db.Uuid
+  is_deleted       Int       @default(0) @db.SmallInt
+  time_column      String    @default("created_at") @db.VarChar(64)
+
+  @@unique([tenant_id, table_name])
+  @@index([tenant_id, enabled])
+  @@map("sys_archive_policy")
+}
+
+model sys_archive_log {
+  log_id          String    @id @default(uuid()) @db.Uuid
+  policy_id       String?   @db.Uuid
+  table_name      String    @db.VarChar(128)
+  partition_name  String?   @db.VarChar(128)
+  archive_mode    String    @db.VarChar(20)
+  retention_start DateTime? @db.Timestamptz(6)
+  retention_end   DateTime? @db.Timestamptz(6)
+  row_count       BigInt    @default(0)
+  archived_size   BigInt    @default(0)
+  archive_url     String?   @db.VarChar(512)
+  status          String    @db.VarChar(20)
+  error_msg       String?   @db.Text
+  duration_ms     Int       @default(0)
+  started_at      DateTime  @default(now()) @db.Timestamptz(6)
+  finished_at     DateTime? @db.Timestamptz(6)
+  created_by      String?   @db.Uuid
+
+  @@index([table_name, started_at(sort: Desc)])
+  @@index([status, started_at(sort: Desc)])
+  @@map("sys_archive_log")
+}
+
+// ==================== 缓存操作日志 ====================
+model sys_cache_operation_log {
+  log_id        String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  operator_id   String?  @db.Uuid
+  operator_name String?  @db.VarChar(64)
+  operation     String   @db.VarChar(32) /// clear_group | delete_key | view_stats
+  target        String   @db.VarChar(256) /// 组名或 key
+  key_count     Int      @default(0)
+  duration_ms   Int      @default(0)
+  status        String   @default("1") @db.VarChar(10)
+  error_msg     String?  @db.Text
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([tenant_id, created_at(sort: Desc)])
+  @@index([operator_id])
+  @@map("sys_cache_operation_log")
+}
+
+// ==================== 存储后端 ====================
+/// 多对象存储后端配置（支持热切换）
+model sys_storage_backend {
+  backend_id     String    @id @default(uuid()) @db.Uuid
+  tenant_id      String    @db.Uuid
+  backend_type   String    @db.VarChar(32) /// local | minio | oss | cos | s3
+  backend_name   String    @db.VarChar(128)
+  config         Json /// 各后端参数（endpoint/accessKey/...，敏感字段应用层加密）
+  is_active      Int       @default(0) @db.SmallInt /// 当前租户活跃后端
+  is_healthy     Int       @default(1) @db.SmallInt
+  priority       Int       @default(0) @db.SmallInt /// 故障切换优先级
+  last_check_at  DateTime? @db.Timestamptz(6)
+  last_check_err String?   @db.Text
+  remark         String?   @db.VarChar(512)
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime  @updatedAt @db.Timestamptz(6)
+  created_by     String?   @db.Uuid
+  updated_by     String?   @db.Uuid
+  is_deleted     Int       @default(0) @db.SmallInt
+
+  @@unique([tenant_id, backend_name])
+  @@index([tenant_id, is_active])
+  @@index([tenant_id, priority])
+  @@map("sys_storage_backend")
+}
+
+// ==================== 字段脱敏策略 ====================
+/// 字段级脱敏策略（按角色/字段配置）
+model sys_field_mask_policy {
+  policy_id  String   @id @default(uuid()) @db.Uuid
+  tenant_id  String   @db.Uuid
+  resource   String   @db.VarChar(64) /// 资源标识：sys_user, sys_tenant
+  field      String   @db.VarChar(64) /// 字段名
+  role_scope String   @db.VarChar(64) /// 应用范围：all | 具体角色编码（JSON数组）
+  mask_type  String   @db.VarChar(20) /// full | partial | hash | regex
+  mask_rule  String?  @db.VarChar(256) /// partial 时的正则 / 保留规则
+  enabled    Int      @default(1) @db.SmallInt
+  remark     String?  @db.VarChar(512)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+  created_by String?  @db.Uuid
+  updated_by String?  @db.Uuid
+  is_deleted Int      @default(0) @db.SmallInt
+
+  @@unique([tenant_id, resource, field, role_scope])
+  @@index([tenant_id, resource, enabled])
+  @@map("sys_field_mask_policy")
+}
+
+// ==================== 慢查询日志 ====================
+model sys_slow_query_log {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenant_id     String?   @db.Uuid /// 部分系统查询无租户
+  fingerprint   String    @db.VarChar(64) /// SQL 归一化后的 hash
+  query_sample  String    @db.Text /// 截断后的样本 SQL
+  query_hash    String    @db.VarChar(64)
+  calls         Int       @default(1)
+  total_time_ms Int       @default(0)
+  mean_time_ms  Int       @default(0)
+  max_time_ms   Int       @default(0)
+  p95_time_ms   Int       @default(0)
+  rows          Int       @default(0)
+  first_seen_at DateTime  @default(now()) @db.Timestamptz(6)
+  last_seen_at  DateTime  @default(now()) @db.Timestamptz(6)
+  status        String    @default("open") @db.VarChar(20) /// open | resolved | ignored
+  reviewer_id   String?   @db.Uuid
+  review_note   String?   @db.Text
+  reviewed_at   DateTime? @db.Timestamptz(6)
+
+  @@unique([fingerprint])
+  @@index([status, mean_time_ms(sort: Desc)])
+  @@index([last_seen_at(sort: Desc)])
+  @@map("sys_slow_query_log")
+}
+
+// ==================== 代码生成器模板 ====================
+model gen_template {
+  template_id     String   @id @default(uuid()) @db.Uuid
+  tenant_id       String   @db.Uuid
+  template_key    String   @db.VarChar(64) /// controller / service / vue ...
+  template_name   String   @db.VarChar(128)
+  category        String   @default("backend") @db.VarChar(32) /// backend | frontend | sql
+  current_version Int      @default(1)
+  status          String   @default("1") @db.VarChar(10)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @updatedAt @db.Timestamptz(6)
+  created_by      String?  @db.Uuid
+  updated_by      String?  @db.Uuid
+  is_deleted      Int      @default(0) @db.SmallInt
+
+  versions gen_template_version[]
+
+  @@unique([tenant_id, template_key])
+  @@index([tenant_id, category])
+  @@map("gen_template")
+}
+
+model gen_template_version {
+  version_id  String   @id @default(uuid()) @db.Uuid
+  template_id String   @db.Uuid
+  tenant_id   String   @db.Uuid
+  version     Int
+  content     String   @db.Text /// Handlebars 模板内容
+  changelog   String?  @db.VarChar(512)
+  is_current  Int      @default(0) @db.SmallInt
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  created_by  String?  @db.Uuid
+
+  template gen_template @relation(fields: [template_id], references: [template_id], onDelete: Cascade)
+
+  @@unique([template_id, version])
+  @@index([tenant_id, template_id])
+  @@map("gen_template_version")
+}
+
+// ==================== API 版本 ====================
+model sys_api_version {
+  id            String    @id @default(uuid()) @db.Uuid
+  version       String    @unique @db.VarChar(16) /// v1 / v2
+  status        String    @default("stable") @db.VarChar(20) /// stable | beta | deprecated | retired
+  deprecated_at DateTime? @db.Timestamptz(6)
+  retire_at     DateTime? @db.Timestamptz(6)
+  sunset_header String?   @db.VarChar(64)
+  changelog     String?   @db.Text
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @updatedAt @db.Timestamptz(6)
+
+  @@map("sys_api_version")
 }

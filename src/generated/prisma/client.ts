@@ -306,3 +306,93 @@ export type wf_notification = Prisma.wf_notificationModel
  * ==================== 报表预热配置 ====================
  */
 export type rp_cache_warm_config = Prisma.rp_cache_warm_configModel
+/**
+ * Model sys_user_group
+ * 用户组：跨部门、可批量授权的用户集合
+ */
+export type sys_user_group = Prisma.sys_user_groupModel
+/**
+ * Model sys_user_group_member
+ * 用户组成员
+ */
+export type sys_user_group_member = Prisma.sys_user_group_memberModel
+/**
+ * Model sys_user_group_role
+ * 用户组角色绑定
+ */
+export type sys_user_group_role = Prisma.sys_user_group_roleModel
+/**
+ * Model sys_privilege_grant
+ * 临时权限授权（可走工作流审批）
+ */
+export type sys_privilege_grant = Prisma.sys_privilege_grantModel
+/**
+ * Model wf_cc_record
+ * 工作流抄送记录（跟踪已读）
+ */
+export type wf_cc_record = Prisma.wf_cc_recordModel
+/**
+ * Model sys_wf_delegate
+ * 工作流委托（出差/休假期间代理审批）
+ */
+export type sys_wf_delegate = Prisma.sys_wf_delegateModel
+/**
+ * Model wf_task_transfer_log
+ * 任务转办/加签/升级日志
+ */
+export type wf_task_transfer_log = Prisma.wf_task_transfer_logModel
+/**
+ * Model sys_message
+ * 统一消息中心（聚合站内信/通知/待办/系统消息）
+ */
+export type sys_message = Prisma.sys_messageModel
+/**
+ * Model sys_user_notice_preference
+ * 
+ */
+export type sys_user_notice_preference = Prisma.sys_user_notice_preferenceModel
+/**
+ * Model sys_archive_policy
+ * 
+ */
+export type sys_archive_policy = Prisma.sys_archive_policyModel
+/**
+ * Model sys_archive_log
+ * 
+ */
+export type sys_archive_log = Prisma.sys_archive_logModel
+/**
+ * Model sys_cache_operation_log
+ * 
+ */
+export type sys_cache_operation_log = Prisma.sys_cache_operation_logModel
+/**
+ * Model sys_storage_backend
+ * 多对象存储后端配置（支持热切换）
+ */
+export type sys_storage_backend = Prisma.sys_storage_backendModel
+/**
+ * Model sys_field_mask_policy
+ * 字段级脱敏策略（按角色/字段配置）
+ */
+export type sys_field_mask_policy = Prisma.sys_field_mask_policyModel
+/**
+ * Model sys_slow_query_log
+ * 
+ */
+export type sys_slow_query_log = Prisma.sys_slow_query_logModel
+/**
+ * Model gen_template
+ * 
+ */
+export type gen_template = Prisma.gen_templateModel
+/**
+ * Model gen_template_version
+ * 
+ */
+export type gen_template_version = Prisma.gen_template_versionModel
+/**
+ * Model sys_api_version
+ * 
+ */
+export type sys_api_version = Prisma.sys_api_versionModel

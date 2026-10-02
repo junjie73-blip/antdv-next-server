@@ -8,6 +8,13 @@ import type { IStorage, StorageConfig, PutObjectInput } from "./types.js";
 import { env } from "@/config/env.js";
 import { AppError } from "@/middleware/http/index.js";
 import { createReadStream } from "fs";
+import { StorageBackendRepository } from "@/modules/storage-backend/repository.js";
+import {
+  getActiveBackend,
+  setActiveBackend,
+} from "@/modules/storage-backend/cache.js";
+import { decryptSensitive } from "@/modules/storage-backend/sensitive.js";
+import { SENSITIVE_CONFIG_KEYS } from "@/modules/storage-backend/constants.js";
 
 export interface UploadStreamInput {
   tenantId?: string;
@@ -18,7 +25,8 @@ export interface UploadStreamInput {
   contentLength?: number;
   storage?: IStorage;
 }
-
+const clients = new Map<string, unknown>();
+const repo = new StorageBackendRepository();
 /* ============================================================
  * 租户级存储实例缓存
  * ============================================================ */
@@ -37,15 +45,44 @@ function hashCode(cfg: StorageConfig): string {
     ssl: cfg.useSSL,
   });
 }
+export async function getStorageFor(tenantId: string): Promise<unknown> {
+  let cached = clients.get(tenantId);
+  if (cached) return cached;
 
-export function createStorage(tenantId: string, cfg: StorageConfig): IStorage {
-  const hash = hashCode(cfg);
-  const hit = cache.get(tenantId);
-  if (hit && hit.hash === hash) return hit.storage;
+  // 先读缓存
+  let active = await getActiveBackend(tenantId);
 
+  // 缓存未命中 → 查 DB
+  if (!active) {
+    const row = await repo.findActive(tenantId);
+    if (row) {
+      active = {
+        backend_id: row.backend_id,
+        backend_type: row.backend_type,
+        config: row.config,
+      };
+      await setActiveBackend(tenantId, active);
+    }
+  }
+
+  if (!active) {
+    // 无激活后端 → 用 env 默认（兼容旧逻辑）
+    return getDefaultStorage();
+  }
+
+  const config = decryptSensitive(
+    active.config as Record<string, unknown>,
+    SENSITIVE_CONFIG_KEYS,
+  );
+  const client = await buildClient(active.backend_type, config);
+  clients.set(tenantId, client);
+  return client;
+}
+
+export function buildClient(type: string, cfg: any): IStorage {
   let storage: IStorage;
 
-  switch (cfg.storage) {
+  switch (type) {
     case "local":
       storage = new LocalStorage({
         root: cfg.localPath || "uploads/files",
@@ -101,17 +138,12 @@ export function createStorage(tenantId: string, cfg: StorageConfig): IStorage {
       throw new AppError(`不支持的存储类型：${cfg.storage}`, 400001, 400);
   }
 
-  logger.info(
-    { tenantId, storage: storage.type },
-    "[storage] instance created",
-  );
-  cache.set(tenantId, { storage, hash });
+  logger.info({ type, storage: storage.type }, "[storage] instance created");
   return storage;
 }
 
 export function invalidateStorage(tenantId: string): void {
-  cache.delete(tenantId);
-  logger.debug({ tenantId }, "[storage] cache invalidated");
+  clients.delete(tenantId);
 }
 
 /**
@@ -123,7 +155,7 @@ export async function getStorageForTenant(tenantId: string): Promise<IStorage> {
   const settingsService = new SettingsService();
   const cfg = await settingsService.getUploadConfigRaw(tenantId);
 
-  return createStorage(tenantId, {
+  return buildClient(tenantId, {
     storage: cfg.storage as any,
     localPath: cfg.localPath,
     localUrl: cfg.localUrl,
@@ -209,4 +241,7 @@ export async function uploadStream(input: UploadStreamInput): Promise<void> {
     contentType: input.contentType,
     contentLength: input.contentLength,
   });
+}
+function getDefaultStorage(): unknown {
+  throw new Error("Function not implemented.");
 }

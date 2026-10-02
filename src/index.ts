@@ -57,6 +57,37 @@ async function main(): Promise<void> {
     );
   }, 5 * 60_000);
   snapshotTimer.unref();
+  process.on("uncaughtException", (err) => {
+    // Redis 超时不应导致进程退出
+    const msg = String(err?.message ?? "");
+    const isRedisTimeout =
+      msg.includes("Command timed out") ||
+      msg.includes("Connection is closed") ||
+      msg.includes("ECONNRESET");
+
+    if (isRedisTimeout) {
+      logger.error({ err }, "[process] Redis 相关异常（已忽略，进程继续）");
+      return;
+    }
+
+    // 其他异常记录并退出（避免不确定状态）
+    logger.error({ err }, "[process] uncaughtException");
+    // 给日志一点时间落盘
+    setTimeout(() => process.exit(1), 1000);
+  });
+
+  process.on("unhandledRejection", (reason) => {
+    const msg = String((reason as any)?.message ?? reason);
+    const isRedisTimeout =
+      msg.includes("Command timed out") || msg.includes("Connection is closed");
+
+    if (isRedisTimeout) {
+      logger.warn({ reason }, "[process] Redis 相关 rejection（已忽略）");
+      return;
+    }
+
+    logger.error({ reason }, "[process] unhandledRejection");
+  });
 }
 
 main().catch(async (err) => {

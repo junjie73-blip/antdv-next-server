@@ -83,7 +83,15 @@ export class WorkflowEngine {
       taskId?: string;
       nodeId?: string;
     }> = [];
-
+    const pendingCcs: Array<{
+      nodeId: string;
+      nodeName: string;
+      receivers: string[];
+      title: string;
+      content: string;
+      realtime: boolean;
+      pushMessage: boolean;
+    }> = [];
     const instance = await prisma.$transaction(async (tx) => {
       const inst = await tx.wf_instance.create({
         data: {
@@ -109,6 +117,7 @@ export class WorkflowEngine {
         instanceId: inst.instance_id,
         initiatorId: params.initiatorId,
         initiatorDeptId,
+        defKey: params.defKey,
         variables: params.variables,
         definition,
         onTaskCreated: (task, assignee) => {
@@ -118,6 +127,9 @@ export class WorkflowEngine {
             taskId: task.task_id,
             nodeId: task.node_id,
           });
+        },
+        onCcCreated: (payload) => {
+          pendingCcs.push(payload);
         },
       };
 
@@ -134,6 +146,26 @@ export class WorkflowEngine {
         instanceId: instance.instance_id,
         initiatorId: params.initiatorId,
       });
+      for (const cc of pendingCcs) {
+        await wfNotificationService
+          .notifyCc({
+            tenantId: params.tenantId,
+            instanceId: instance.instance_id,
+            nodeId: cc.nodeId,
+            nodeName: cc.nodeName,
+            receiverIds: cc.receivers,
+            title: cc.title,
+            content: cc.content,
+            realtime: cc.realtime,
+            pushMessage: cc.pushMessage,
+          })
+          .catch((err) => {
+            logger.error(
+              { err, instanceId: instance.instance_id },
+              "[wf] cc notify failed",
+            );
+          });
+      }
     });
     logger.info(
       {
@@ -160,7 +192,7 @@ export class WorkflowEngine {
       nodeId?: string;
     }> = [];
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result: any = await prisma.$transaction(async (tx) => {
       // 1. 查任务
       const task = await tx.wf_task.findFirst({
         where: {
@@ -182,7 +214,8 @@ export class WorkflowEngine {
       if (!instance) throw new AppError("流程实例不存在", 404001, 404);
       if (instance.status !== "0")
         throw new AppError("流程已结束", 400002, 400);
-
+      const addSignResult = await this.handleAddSignFlow(task, params, tx);
+      if (addSignResult) return addSignResult;
       // 4. 多签
       if (
         task.node_type === "countersignTask" ||
@@ -274,6 +307,7 @@ export class WorkflowEngine {
         initiatorDeptId: instance.initiator_dept_id,
         variables: mergedVars,
         definition,
+        defKey: instance.def_key,
         onTaskCreated: (t, assignee) => {
           pendingNotifications.push({
             eventType: "assign",
@@ -764,6 +798,166 @@ export class WorkflowEngine {
     }
 
     return ready;
+  }
+  private async handleAddSignFlow(
+    task: any,
+    params: CompleteTaskParams,
+    tx: any,
+  ): Promise<
+    | { finished: false; pendingAddSign: true }
+    | { finished: false; backToOriginal: true }
+    | { finished: false; childCompleted: true }
+    | { finished: false; chainContinue: true } // ⭐ 新增
+    | null
+  > {
+    const isAddSign = task.is_add_sign === 1;
+
+    // ⭐ 前加签完成 → 检查链根是否需要恢复
+    if (
+      isAddSign &&
+      task.add_sign_type === "before" &&
+      task.original_assignee_id
+    ) {
+      // 找到链根：add_sign_chain_root_id 指向最初的 task
+      const chainRootId = task.add_sign_chain_root_id ?? task.task_id;
+
+      // ⭐ 检查链根下是否有其他未完成的前加签子任务
+      const siblingBeforeTasks = await tx.wf_task.findMany({
+        where: {
+          add_sign_chain_root_id: chainRootId,
+          tenant_id: params.tenantId,
+          is_add_sign: 1,
+          add_sign_type: "before",
+          status: "0",
+          is_deleted: 0,
+          task_id: { not: task.task_id }, // 排除自己
+        },
+        select: { task_id: true },
+      });
+
+      if (siblingBeforeTasks.length > 0) {
+        // 还有其他前加签未完成，继续挂起链
+        return { finished: false, chainContinue: true };
+      }
+
+      // ⭐ 链根任务恢复
+      const chainRoot = await tx.wf_task.findUnique({
+        where: { task_id: chainRootId },
+        select: { original_assignee_id: true, status: true },
+      });
+
+      if (chainRoot && chainRoot.original_assignee_id) {
+        await tx.wf_task.update({
+          where: { task_id: chainRootId },
+          data: {
+            assignee_id: chainRoot.original_assignee_id,
+            original_assignee_id: null,
+            is_add_sign: 0,
+            add_sign_type: null,
+            status: "0",
+            updated_at: new Date(),
+          },
+        });
+
+        await tx.wf_history.create({
+          data: {
+            tenant_id: params.tenantId,
+            instance_id: task.instance_id,
+            node_id: task.node_id,
+            node_name: task.node_name,
+            node_type: task.node_type,
+            event_type: "add_sign_before_done",
+            operator_id: params.userId,
+            comment: "加签链完成，恢复给原审批人",
+          },
+        });
+
+        return { finished: false, backToOriginal: true };
+      }
+
+      return { finished: false, backToOriginal: true };
+    }
+
+    // ⭐ 后加签完成 → 检查链根
+    if (isAddSign && task.add_sign_type === "after") {
+      const chainRootId =
+        task.add_sign_chain_root_id ?? task.add_sign_parent_id ?? task.task_id;
+
+      // 检查同链的所有后加签子任务
+      const pendingChildren = await tx.wf_task.findMany({
+        where: {
+          add_sign_chain_root_id: chainRootId,
+          tenant_id: params.tenantId,
+          is_add_sign: 1,
+          add_sign_type: "after",
+          status: "0",
+          is_deleted: 0,
+        },
+        select: { task_id: true },
+      });
+
+      if (pendingChildren.length > 0) {
+        // 还有子任务未完成，继续挂起
+        return { finished: false, childCompleted: true };
+      }
+
+      // 检查链根任务（父任务）是否完成
+      const chainRoot = await tx.wf_task.findUnique({
+        where: { task_id: chainRootId },
+        select: { status: true },
+      });
+
+      if (chainRoot && chainRoot.status === "0") {
+        // 父任务未完成，等待
+        return { finished: false, childCompleted: true };
+      }
+
+      // 父任务已完成 → 继续推进
+      await tx.wf_history.create({
+        data: {
+          tenant_id: params.tenantId,
+          instance_id: task.instance_id,
+          node_id: task.node_id,
+          node_name: task.node_name,
+          node_type: task.node_type,
+          event_type: "add_sign_after_done",
+          operator_id: params.userId,
+          comment: "后加签链完成，推进流程",
+        },
+      });
+      return null;
+    }
+
+    // 非加签任务：检查是否有后加签子任务
+    if (!isAddSign) {
+      const children = await tx.wf_task.findMany({
+        where: {
+          add_sign_parent_id: task.task_id,
+          tenant_id: params.tenantId,
+          status: "0",
+          is_deleted: 0,
+        },
+        select: { task_id: true },
+      });
+
+      if (children.length > 0) {
+        await tx.wf_history.create({
+          data: {
+            tenant_id: params.tenantId,
+            instance_id: task.instance_id,
+            node_id: task.node_id,
+            node_name: task.node_name,
+            node_type: task.node_type,
+            event_type: "add_sign_pending",
+            operator_id: params.userId,
+            comment: `等待 ${children.length} 个后加签任务完成`,
+          },
+        });
+        return { finished: false, pendingAddSign: true };
+      }
+    }
+
+    return null;
   }
 }
 

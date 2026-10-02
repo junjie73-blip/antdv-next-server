@@ -38,6 +38,7 @@ import { DecoratorRouter } from "@/core/decorator/router.js";
 import { ControllerScanner } from "@/core/decorator/scanner.js";
 import cookieParser from "cookie-parser";
 import { traceMiddleware } from "@/platform/observability/tracing/index.js";
+import { buildQueueDashboardRouter } from "@/platform/queue/dashboard.js";
 const METRICS_ALLOW = new Set(
   (env.METRICS_WHITELIST || "127.0.0.1,::1")
     .split(",")
@@ -62,8 +63,6 @@ export function createApp(): Express {
     next();
   });
 
-  // 校验
-  app.use(csrfGuard);
   // ② CORS
   const allowedOrigins = env.FRONTEND_URL.split(",")
     .map((s) => s.trim())
@@ -166,12 +165,16 @@ export function createApp(): Express {
   app.use(authMiddleware);
   app.use(tenantResolver);
   app.use(dataScopeMiddleware());
-
+  const queueDashboard = buildQueueDashboardRouter();
+  if (queueDashboard) {
+    app.use("/api/v1/admin/queues", queueDashboard);
+  }
   // ⑪ 业务路由（装饰器扫描）
   const scanner = new ControllerScanner();
   scanner.register(...(controllers as any));
   app.use("/api/v1", new DecoratorRouter(scanner).build());
-
+  // 校验
+  app.use(csrfGuard);
   // ⑫ Sentry 错误捕获（生产）
   if (env.NODE_ENV === "production" && env.SENTRY_DSN) {
     void import("@/platform/observability/sentry.js").then(({ Sentry }) => {

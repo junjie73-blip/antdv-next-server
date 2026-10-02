@@ -9,6 +9,8 @@ import {
   extractOperationType,
 } from "@/platform/metrics/index.js";
 import { trace } from "@opentelemetry/api";
+import { getDataScope } from "@/core/index.js";
+import { slowQueryCollector } from "@/modules/monitor/slow-query/index.js";
 const SLOW_QUERY_MS = 500;
 const DB_FAIL_THRESHOLD = 10;
 
@@ -55,8 +57,25 @@ prisma.$on("query", (e) => {
   }
   const op = extractOperationType(e.query);
   dbQueryDuration.observe({ operation: op }, e.duration / 1000);
-  if (e.duration > SLOW_QUERY_MS) {
+  if (e.duration >= SLOW_QUERY_MS) {
     dbSlowQueryTotal.inc({ operation: op });
+
+    // 从 ALS 取当前请求的 tenantId（可能为 null）
+    let tenantId: string | undefined;
+    try {
+      tenantId = getDataScope().tenantId;
+    } catch {
+      // 未在请求上下文（如定时任务/启动阶段），允许为空
+      tenantId = undefined;
+    }
+
+    slowQueryCollector.record({
+      sql: e.query,
+      durationMs: e.duration,
+      tenantId: tenantId ?? null,
+    });
+
+    // 3. 原有告警逻辑保留（可降低阈值，或不发）
     void sendAlert({
       level: "warning",
       title: "slow_query",

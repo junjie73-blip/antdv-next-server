@@ -9,7 +9,17 @@ type TxClient = Parameters<
 >[0];
 
 export interface ExecutionContext extends ResolveContext {
+  onCcCreated?: (payload: {
+    nodeId: string;
+    nodeName: string;
+    receivers: string[];
+    title: string;
+    content: string;
+    realtime: boolean;
+    pushMessage: boolean;
+  }) => void;
   definition: WfDefinitionJSON;
+  defKey?: string;
   /** 任务创建回调（供事务后发通知） */
   onTaskCreated?: (task: any, assignee: string) => void;
 }
@@ -81,6 +91,9 @@ export class NodeExecutor {
       case "serviceTask":
       case "scriptTask":
         await this.handleServiceTask(node, ctx, tx, result);
+        break;
+      case "ccTask":
+        await this.handleCcTask(node, ctx, tx, result);
         break;
       default:
         throw new AppError(
@@ -186,7 +199,15 @@ export class NodeExecutor {
         due_at: this.calcDueAt(node),
       },
     });
-
+    await tx.wf_task_transfer_log.updateMany({
+      where: {
+        instance_id: ctx.instanceId!,
+        action_type: "delegate",
+        task_id: ctx.instanceId!,
+        created_at: { gte: new Date(Date.now() - 30_000) },
+      },
+      data: { task_id: task.task_id },
+    });
     await this.addActiveNode(ctx.instanceId!, node.id, tx);
     await this.recordHistory(ctx, node, "assign", tx, {
       assigneeId: primaryAssignee,
@@ -577,5 +598,86 @@ export class NodeExecutor {
     } finally {
       clearTimeout(timer);
     }
+  }
+  private static async handleCcTask(
+    node: WfNode,
+    ctx: ExecutionContext,
+    tx: TxClient,
+    result: NodeExecuteResult,
+  ): Promise<void> {
+    if (!node.assignee) {
+      throw new AppError(
+        `抄送节点 ${node.name ?? node.id} 缺少抄送人配置`,
+        400001,
+        400,
+      );
+    }
+
+    const receiverIds = await AssigneeResolver.resolve(node.assignee, ctx);
+    if (receiverIds.length === 0) {
+      logger.warn(
+        { instanceId: ctx.instanceId, nodeId: node.id },
+        "[wf] 抄送节点无有效接收人，跳过",
+      );
+      // 直接流转
+      await this.recordHistory(ctx, node, "cc", tx, { skipped: true });
+      result.completedNodes.push(node.id);
+      for (const id of this.getNextNodeIds(node.id, ctx.definition)) {
+        await this.executeRecursive(id, ctx, tx, result);
+      }
+      return;
+    }
+
+    // 批量插入抄送记录
+    await tx.wf_cc_record.createMany({
+      data: receiverIds.map((receiverId) => ({
+        tenant_id: ctx.tenantId,
+        instance_id: ctx.instanceId!,
+        node_id: node.id,
+        node_name: node.name ?? node.id,
+        receiver_id: receiverId,
+        title: ctx.variables["title"] ?? "",
+        content: node.name ? `抄送：${node.name}` : "抄送通知",
+        is_read: 0,
+      })),
+      skipDuplicates: true,
+    });
+
+    await this.recordHistory(ctx, node, "cc", tx, {
+      receiverIds,
+      count: receiverIds.length,
+    });
+
+    // ⭐ 抄送不阻塞流程，直接流转
+    result.completedNodes.push(node.id);
+    for (const id of this.getNextNodeIds(node.id, ctx.definition)) {
+      await this.executeRecursive(id, ctx, tx, result);
+    }
+
+    // 事务外通知（通过 setImmediate 或由上层统一处理）
+    for (const rid of receiverIds) {
+      ctx.onTaskCreated?.(null as any, rid);
+    }
+
+    logger.info(
+      {
+        instanceId: ctx.instanceId,
+        nodeId: node.id,
+        receiverCount: receiverIds.length,
+      },
+      "[wf] cc task done",
+    );
+  }
+  private static renderTemplate(
+    template: string,
+    ctx: ExecutionContext,
+  ): string {
+    return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => {
+      const value =
+        ctx.variables?.[key] ??
+        (key === "instanceId" ? ctx.instanceId : undefined) ??
+        (key === "initiatorId" ? ctx.initiatorId : undefined);
+      return value !== undefined && value !== null ? String(value) : "";
+    });
   }
 }

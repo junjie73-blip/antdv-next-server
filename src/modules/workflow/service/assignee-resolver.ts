@@ -10,6 +10,7 @@ export interface ResolveContext {
   initiatorId: string;
   initiatorDeptId?: string | null;
   variables: Record<string, any>;
+  defKey?: string;
 }
 
 const MAX_ASSIGNEES = 200;
@@ -54,8 +55,15 @@ export class AssigneeResolver {
       default:
         throw new AppError(`不支持的审批人类型：${config.type}`, 400001, 400);
     }
-
-    userIds = [...new Set(userIds.filter(Boolean))];
+    const { result: withDelegate, mappings } = await this.applyDelegates(
+      userIds,
+      ctx.tenantId,
+      ctx.defKey,
+    );
+    if (mappings.length > 0 && ctx.instanceId) {
+      await this.recordDelegateLogs(ctx, mappings);
+    }
+    userIds = [...new Set(withDelegate.filter(Boolean))];
 
     if (userIds.length > MAX_ASSIGNEES) {
       logger.warn(
@@ -66,6 +74,27 @@ export class AssigneeResolver {
     }
 
     return userIds;
+  }
+  private static async recordDelegateLogs(
+    ctx: ResolveContext,
+    mappings: Array<{ from: string; to: string; delegateId: string }>,
+  ): Promise<void> {
+    // 从上游 Context 拿不到 taskId，先写 wf_task_transfer_log（instance 级）
+    for (const m of mappings) {
+      await prisma.wf_task_transfer_log.create({
+        data: {
+          tenant_id: ctx.tenantId,
+          task_id: ctx.instanceId!, // ⭐ 暂用 instance_id，真正的 task_id 由 node-executor 补
+          instance_id: ctx.instanceId!,
+          action_type: "delegate",
+          from_user_id: m.from,
+          to_user_id: m.to,
+          operator_id: "system",
+          reason: `委托生效（delegate_id=${m.delegateId}）`,
+          metadata: { delegateId: m.delegateId } as any,
+        },
+      });
+    }
   }
 
   private static resolveStaticUser(value?: string): string[] {
@@ -188,5 +217,54 @@ export class AssigneeResolver {
       );
       return [];
     }
+  }
+  private static async applyDelegates(
+    userIds: string[],
+    tenantId: string,
+    defKey?: string,
+  ): Promise<{
+    result: string[];
+    mappings: Array<{ from: string; to: string; delegateId: string }>;
+  }> {
+    if (userIds.length === 0) return { result: [], mappings: [] };
+
+    const now = new Date();
+    const delegates = await prisma.sys_wf_delegate.findMany({
+      where: {
+        tenant_id: tenantId,
+        delegator_id: { in: userIds },
+        enabled: 1,
+        is_deleted: 0,
+        start_at: { lte: now },
+        end_at: { gt: now },
+      },
+      orderBy: { created_at: "desc" },
+    });
+
+    const delegateMap = new Map<
+      string,
+      { delegatee: string; delegateId: string }
+    >();
+    for (const d of delegates) {
+      if (delegateMap.has(d.delegator_id)) continue;
+      const keys = (d.def_keys as string[] | null) ?? null;
+      if (!keys || keys.length === 0 || (defKey && keys.includes(defKey))) {
+        delegateMap.set(d.delegator_id, {
+          delegatee: d.delegatee_id,
+          delegateId: d.delegate_id,
+        });
+      }
+    }
+
+    const mappings: Array<{ from: string; to: string; delegateId: string }> =
+      [];
+    const result = userIds.map((uid) => {
+      const m = delegateMap.get(uid);
+      if (!m) return uid;
+      mappings.push({ from: uid, to: m.delegatee, delegateId: m.delegateId });
+      return m.delegatee;
+    });
+
+    return { result, mappings };
   }
 }

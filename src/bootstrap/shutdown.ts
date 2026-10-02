@@ -5,6 +5,7 @@ import { wsManager } from "@/platform/ws/index.js";
 import { drainAuditQueue } from "@/platform/audit/index.js";
 import { prisma } from "@/config/database.js";
 import { redis, subRedis, blockRedis } from "@/config/redis.js";
+import { slowQueryCollector } from "@/modules/monitor/slow-query/index.js";
 
 interface ShutdownDeps {
   httpServer: HttpServer;
@@ -69,7 +70,12 @@ export async function shutdown(
     } catch (err) {
       logger.error({ err }, "drain audit failed");
     }
-
+    try {
+      await slowQueryCollector.flush();
+      slowQueryCollector.stop();
+    } catch (err) {
+      logger.warn({ err }, "flush slow-query failed");
+    }
     // 5) 断开连接
     await Promise.allSettled([
       prisma.$disconnect(),

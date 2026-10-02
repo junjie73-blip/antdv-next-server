@@ -12,7 +12,7 @@ import { Job, UnrecoverableError } from "bullmq";
 import { getFileCategory } from "./file-category.js";
 import dayjs from "dayjs";
 import { publishUploadNotify } from "@/platform/ws/upload-notify.js";
-import { createStorage } from "@/platform/storage/factory.js";
+import { buildClient } from "@/platform/storage/factory.js";
 import type { IStorage, StorageConfig } from "@/platform/storage/types.js";
 import { SettingsService } from "@/modules/system/setting/service.js";
 
@@ -67,7 +67,7 @@ export class UploadService {
         cfg.s3CustomDomain,
     };
 
-    return createStorage(tenantId, storageCfg);
+    return buildClient(tenantId, storageCfg);
   }
 
   async ensureDirs() {

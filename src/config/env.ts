@@ -142,6 +142,10 @@ const envSchema = z.object({
   OTEL_ENABLED: boolStr("true"),
   OTEL_EXPORTER_URL: z.string().url().optional(),
   OTEL_ENVIRONMENT: z.string().optional(),
+  STORAGE_HEALTH_INTERVAL_MS: z.string().default("120000"),
+  FIELD_MASK_ENABLED: boolStr("true"),
+  LOKI_URL: z.string().url().optional(),
+  ENABLE_QUEUE_DASHBOARD: z.string().default("0"),
 });
 
 const parsed = envSchema.safeParse(decryptedEnv);

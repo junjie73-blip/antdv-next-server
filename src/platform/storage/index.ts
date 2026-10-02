@@ -5,7 +5,7 @@ export { OssStorage } from "./oss.js";
 export { CosStorage } from "./cos.js";
 export { S3Storage } from "./s3.js";
 export {
-  createStorage,
+  buildClient,
   invalidateStorage,
   uploadStream,
   deleteFileByUrl,

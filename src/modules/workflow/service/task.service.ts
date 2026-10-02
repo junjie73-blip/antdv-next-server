@@ -2,8 +2,10 @@ import { prisma } from "@/config/database.js";
 import { AppError } from "@/core/errors.js";
 import { workflowEngine } from "./engine.js";
 import type { WfCompleteTaskDTO } from "../schema.js";
+import { WfTaskTransferService } from "./task-transfer.service.js";
 
 export class WfTaskService {
+  private transferService = new WfTaskTransferService();
   /**
    * 我的待办
    */
@@ -167,5 +169,29 @@ export class WfTaskService {
     }
 
     return { success, failed, errors };
+  }
+  /** 加签 */
+  async addSign(
+    taskId: string,
+    tenantId: string,
+    operatorId: string,
+    dto: { userIds: string[]; signType: "before" | "after"; comment?: string },
+  ) {
+    return this.transferService.addSign(taskId, tenantId, operatorId, dto);
+  }
+
+  /** 转办 */
+  async transfer(
+    taskId: string,
+    tenantId: string,
+    operatorId: string,
+    dto: { targetUserId: string; comment?: string },
+  ) {
+    return this.transferService.transfer(taskId, tenantId, operatorId, dto);
+  }
+
+  /** 加签/转办历史 */
+  async transferHistory(taskId: string, tenantId: string) {
+    return this.transferService.history(taskId, tenantId);
   }
 }

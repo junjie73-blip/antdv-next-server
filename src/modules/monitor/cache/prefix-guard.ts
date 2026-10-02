@@ -1,5 +1,5 @@
 import { AppError } from "@/core/errors.js";
-import { CACHE_GROUPS } from "@/config/constants.js";
+import { CACHE_GROUPS, FORBIDDEN_CLEAR_PREFIXES } from "@/config/constants.js";
 
 /** 允许操作的前缀（来自 CACHE_GROUPS） */
 const ALLOWED_PREFIXES = CACHE_GROUPS.map((g) => g.prefix);
@@ -56,4 +56,31 @@ export function assertSafeKey(key: string): void {
       throw new AppError(`key ${key} 不允许访问`, 403001, 403);
     }
   }
+}
+export function assertGroupAllowed(group: string): void {
+  const g = CACHE_GROUPS.find((x) => x.name === group);
+  if (!g) {
+    throw new AppError(`未知缓存组：${group}`, 400001, 400);
+  }
+  if (FORBIDDEN_CLEAR_PREFIXES.some((p) => g.prefix.startsWith(p))) {
+    throw new AppError(`缓存组「${group}」禁止清空`, 403001, 403);
+  }
+}
+
+export function assertKeyScannable(pattern: string): void {
+  if (pattern.length < 3) {
+    throw new AppError("pattern 至少 3 个字符", 400001, 400);
+  }
+  if (pattern === "*" || pattern.startsWith("*")) {
+    throw new AppError("禁止全库扫描", 400001, 400);
+  }
+  if (FORBIDDEN_CLEAR_PREFIXES.some((p) => pattern.startsWith(p))) {
+    throw new AppError("禁止操作敏感前缀", 403001, 403);
+  }
+}
+
+export function groupPrefix(group: string): string {
+  const g = CACHE_GROUPS.find((x) => x.name === group);
+  if (!g) throw new AppError(`未知缓存组：${group}`, 400001, 400);
+  return g.prefix;
 }

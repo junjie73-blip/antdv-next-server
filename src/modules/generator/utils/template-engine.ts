@@ -6,7 +6,7 @@ import { AppError } from "@/core/errors.js";
 
 const TEMPLATE_ROOT = path.join(import.meta.dirname, "../templates");
 const cache = new Map<string, HandlebarsTemplateDelegate>();
-
+const memCache = new Map<string, HandlebarsTemplateDelegate>();
 // ---------- Helpers ----------
 Handlebars.registerHelper("eq", (a: unknown, b: unknown) => a === b);
 Handlebars.registerHelper("ne", (a: unknown, b: unknown) => a !== b);
@@ -47,4 +47,16 @@ export function renderTemplate(
 /** 开发时热重载用 */
 export function clearTemplateCache(): void {
   cache.clear();
+}
+export function renderContent(
+  tplContent: string,
+  ctx: Record<string, unknown>,
+): string {
+  let compiled = memCache.get(tplContent);
+  if (!compiled) {
+    compiled = Handlebars.compile(tplContent, { noEscape: true });
+    if (memCache.size > 200) memCache.clear();
+    memCache.set(tplContent, compiled);
+  }
+  return compiled(ctx);
 }

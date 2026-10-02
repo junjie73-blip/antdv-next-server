@@ -20,8 +20,20 @@ export type sys_login_logModel = runtime.Types.Result.DefaultSelection<Prisma.$s
 
 export type AggregateSys_login_log = {
   _count: Sys_login_logCountAggregateOutputType | null
+  _avg: Sys_login_logAvgAggregateOutputType | null
+  _sum: Sys_login_logSumAggregateOutputType | null
   _min: Sys_login_logMinAggregateOutputType | null
   _max: Sys_login_logMaxAggregateOutputType | null
+}
+
+export type Sys_login_logAvgAggregateOutputType = {
+  is_abnormal: number | null
+  notify_status: number | null
+}
+
+export type Sys_login_logSumAggregateOutputType = {
+  is_abnormal: number | null
+  notify_status: number | null
 }
 
 export type Sys_login_logMinAggregateOutputType = {
@@ -35,6 +47,14 @@ export type Sys_login_logMinAggregateOutputType = {
   message: string | null
   created_at: Date | null
   created_by: string | null
+  is_abnormal: number | null
+  abnormal_reason: string | null
+  abnormal_type: string | null
+  country: string | null
+  province: string | null
+  city: string | null
+  isp: string | null
+  notify_status: number | null
 }
 
 export type Sys_login_logMaxAggregateOutputType = {
@@ -48,6 +68,14 @@ export type Sys_login_logMaxAggregateOutputType = {
   message: string | null
   created_at: Date | null
   created_by: string | null
+  is_abnormal: number | null
+  abnormal_reason: string | null
+  abnormal_type: string | null
+  country: string | null
+  province: string | null
+  city: string | null
+  isp: string | null
+  notify_status: number | null
 }
 
 export type Sys_login_logCountAggregateOutputType = {
@@ -61,9 +89,27 @@ export type Sys_login_logCountAggregateOutputType = {
   message: number
   created_at: number
   created_by: number
+  is_abnormal: number
+  abnormal_reason: number
+  abnormal_type: number
+  country: number
+  province: number
+  city: number
+  isp: number
+  notify_status: number
   _all: number
 }
 
+
+export type Sys_login_logAvgAggregateInputType = {
+  is_abnormal?: true
+  notify_status?: true
+}
+
+export type Sys_login_logSumAggregateInputType = {
+  is_abnormal?: true
+  notify_status?: true
+}
 
 export type Sys_login_logMinAggregateInputType = {
   log_id?: true
@@ -76,6 +122,14 @@ export type Sys_login_logMinAggregateInputType = {
   message?: true
   created_at?: true
   created_by?: true
+  is_abnormal?: true
+  abnormal_reason?: true
+  abnormal_type?: true
+  country?: true
+  province?: true
+  city?: true
+  isp?: true
+  notify_status?: true
 }
 
 export type Sys_login_logMaxAggregateInputType = {
@@ -89,6 +143,14 @@ export type Sys_login_logMaxAggregateInputType = {
   message?: true
   created_at?: true
   created_by?: true
+  is_abnormal?: true
+  abnormal_reason?: true
+  abnormal_type?: true
+  country?: true
+  province?: true
+  city?: true
+  isp?: true
+  notify_status?: true
 }
 
 export type Sys_login_logCountAggregateInputType = {
@@ -102,6 +164,14 @@ export type Sys_login_logCountAggregateInputType = {
   message?: true
   created_at?: true
   created_by?: true
+  is_abnormal?: true
+  abnormal_reason?: true
+  abnormal_type?: true
+  country?: true
+  province?: true
+  city?: true
+  isp?: true
+  notify_status?: true
   _all?: true
 }
 
@@ -143,6 +213,18 @@ export type Sys_login_logAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: Sys_login_logAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: Sys_login_logSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: Sys_login_logMinAggregateInputType
@@ -173,6 +255,8 @@ export type sys_login_logGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   _count?: Sys_login_logCountAggregateInputType | true
+  _avg?: Sys_login_logAvgAggregateInputType
+  _sum?: Sys_login_logSumAggregateInputType
   _min?: Sys_login_logMinAggregateInputType
   _max?: Sys_login_logMaxAggregateInputType
 }
@@ -188,7 +272,17 @@ export type Sys_login_logGroupByOutputType = {
   message: string | null
   created_at: Date
   created_by: string | null
+  is_abnormal: number
+  abnormal_reason: string | null
+  abnormal_type: string | null
+  country: string | null
+  province: string | null
+  city: string | null
+  isp: string | null
+  notify_status: number
   _count: Sys_login_logCountAggregateOutputType | null
+  _avg: Sys_login_logAvgAggregateOutputType | null
+  _sum: Sys_login_logSumAggregateOutputType | null
   _min: Sys_login_logMinAggregateOutputType | null
   _max: Sys_login_logMaxAggregateOutputType | null
 }
@@ -222,6 +316,14 @@ export type sys_login_logWhereInput = {
   message?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_login_log"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_login_log"> | string | null
+  is_abnormal?: Prisma.IntFilter<"sys_login_log"> | number
+  abnormal_reason?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  abnormal_type?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  country?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  province?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  city?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  isp?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  notify_status?: Prisma.IntFilter<"sys_login_log"> | number
 }
 
 export type sys_login_logOrderByWithRelationInput = {
@@ -235,6 +337,14 @@ export type sys_login_logOrderByWithRelationInput = {
   message?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_abnormal?: Prisma.SortOrder
+  abnormal_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  abnormal_type?: Prisma.SortOrderInput | Prisma.SortOrder
+  country?: Prisma.SortOrderInput | Prisma.SortOrder
+  province?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
+  isp?: Prisma.SortOrderInput | Prisma.SortOrder
+  notify_status?: Prisma.SortOrder
 }
 
 export type sys_login_logWhereUniqueInput = Prisma.AtLeast<{
@@ -251,6 +361,14 @@ export type sys_login_logWhereUniqueInput = Prisma.AtLeast<{
   message?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_login_log"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_login_log"> | string | null
+  is_abnormal?: Prisma.IntFilter<"sys_login_log"> | number
+  abnormal_reason?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  abnormal_type?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  country?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  province?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  city?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  isp?: Prisma.StringNullableFilter<"sys_login_log"> | string | null
+  notify_status?: Prisma.IntFilter<"sys_login_log"> | number
 }, "log_id">
 
 export type sys_login_logOrderByWithAggregationInput = {
@@ -264,9 +382,19 @@ export type sys_login_logOrderByWithAggregationInput = {
   message?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_abnormal?: Prisma.SortOrder
+  abnormal_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  abnormal_type?: Prisma.SortOrderInput | Prisma.SortOrder
+  country?: Prisma.SortOrderInput | Prisma.SortOrder
+  province?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
+  isp?: Prisma.SortOrderInput | Prisma.SortOrder
+  notify_status?: Prisma.SortOrder
   _count?: Prisma.sys_login_logCountOrderByAggregateInput
+  _avg?: Prisma.sys_login_logAvgOrderByAggregateInput
   _max?: Prisma.sys_login_logMaxOrderByAggregateInput
   _min?: Prisma.sys_login_logMinOrderByAggregateInput
+  _sum?: Prisma.sys_login_logSumOrderByAggregateInput
 }
 
 export type sys_login_logScalarWhereWithAggregatesInput = {
@@ -283,6 +411,14 @@ export type sys_login_logScalarWhereWithAggregatesInput = {
   message?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_login_log"> | Date | string
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_login_log"> | string | null
+  is_abnormal?: Prisma.IntWithAggregatesFilter<"sys_login_log"> | number
+  abnormal_reason?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+  abnormal_type?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+  country?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+  province?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+  city?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+  isp?: Prisma.StringNullableWithAggregatesFilter<"sys_login_log"> | string | null
+  notify_status?: Prisma.IntWithAggregatesFilter<"sys_login_log"> | number
 }
 
 export type sys_login_logCreateInput = {
@@ -296,6 +432,14 @@ export type sys_login_logCreateInput = {
   message?: string | null
   created_at?: Date | string
   created_by?: string | null
+  is_abnormal?: number
+  abnormal_reason?: string | null
+  abnormal_type?: string | null
+  country?: string | null
+  province?: string | null
+  city?: string | null
+  isp?: string | null
+  notify_status?: number
 }
 
 export type sys_login_logUncheckedCreateInput = {
@@ -309,6 +453,14 @@ export type sys_login_logUncheckedCreateInput = {
   message?: string | null
   created_at?: Date | string
   created_by?: string | null
+  is_abnormal?: number
+  abnormal_reason?: string | null
+  abnormal_type?: string | null
+  country?: string | null
+  province?: string | null
+  city?: string | null
+  isp?: string | null
+  notify_status?: number
 }
 
 export type sys_login_logUpdateInput = {
@@ -322,6 +474,14 @@ export type sys_login_logUpdateInput = {
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_abnormal?: Prisma.IntFieldUpdateOperationsInput | number
+  abnormal_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abnormal_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  province?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_status?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_login_logUncheckedUpdateInput = {
@@ -335,6 +495,14 @@ export type sys_login_logUncheckedUpdateInput = {
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_abnormal?: Prisma.IntFieldUpdateOperationsInput | number
+  abnormal_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abnormal_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  province?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_status?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_login_logCreateManyInput = {
@@ -348,6 +516,14 @@ export type sys_login_logCreateManyInput = {
   message?: string | null
   created_at?: Date | string
   created_by?: string | null
+  is_abnormal?: number
+  abnormal_reason?: string | null
+  abnormal_type?: string | null
+  country?: string | null
+  province?: string | null
+  city?: string | null
+  isp?: string | null
+  notify_status?: number
 }
 
 export type sys_login_logUpdateManyMutationInput = {
@@ -361,6 +537,14 @@ export type sys_login_logUpdateManyMutationInput = {
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_abnormal?: Prisma.IntFieldUpdateOperationsInput | number
+  abnormal_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abnormal_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  province?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_status?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_login_logUncheckedUpdateManyInput = {
@@ -374,6 +558,14 @@ export type sys_login_logUncheckedUpdateManyInput = {
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_abnormal?: Prisma.IntFieldUpdateOperationsInput | number
+  abnormal_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abnormal_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  province?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_status?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type sys_login_logCountOrderByAggregateInput = {
@@ -387,6 +579,19 @@ export type sys_login_logCountOrderByAggregateInput = {
   message?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
+  is_abnormal?: Prisma.SortOrder
+  abnormal_reason?: Prisma.SortOrder
+  abnormal_type?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  province?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  isp?: Prisma.SortOrder
+  notify_status?: Prisma.SortOrder
+}
+
+export type sys_login_logAvgOrderByAggregateInput = {
+  is_abnormal?: Prisma.SortOrder
+  notify_status?: Prisma.SortOrder
 }
 
 export type sys_login_logMaxOrderByAggregateInput = {
@@ -400,6 +605,14 @@ export type sys_login_logMaxOrderByAggregateInput = {
   message?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
+  is_abnormal?: Prisma.SortOrder
+  abnormal_reason?: Prisma.SortOrder
+  abnormal_type?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  province?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  isp?: Prisma.SortOrder
+  notify_status?: Prisma.SortOrder
 }
 
 export type sys_login_logMinOrderByAggregateInput = {
@@ -413,6 +626,19 @@ export type sys_login_logMinOrderByAggregateInput = {
   message?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
+  is_abnormal?: Prisma.SortOrder
+  abnormal_reason?: Prisma.SortOrder
+  abnormal_type?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  province?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  isp?: Prisma.SortOrder
+  notify_status?: Prisma.SortOrder
+}
+
+export type sys_login_logSumOrderByAggregateInput = {
+  is_abnormal?: Prisma.SortOrder
+  notify_status?: Prisma.SortOrder
 }
 
 
@@ -428,6 +654,14 @@ export type sys_login_logSelect<ExtArgs extends runtime.Types.Extensions.Interna
   message?: boolean
   created_at?: boolean
   created_by?: boolean
+  is_abnormal?: boolean
+  abnormal_reason?: boolean
+  abnormal_type?: boolean
+  country?: boolean
+  province?: boolean
+  city?: boolean
+  isp?: boolean
+  notify_status?: boolean
 }, ExtArgs["result"]["sys_login_log"]>
 
 export type sys_login_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -441,6 +675,14 @@ export type sys_login_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   message?: boolean
   created_at?: boolean
   created_by?: boolean
+  is_abnormal?: boolean
+  abnormal_reason?: boolean
+  abnormal_type?: boolean
+  country?: boolean
+  province?: boolean
+  city?: boolean
+  isp?: boolean
+  notify_status?: boolean
 }, ExtArgs["result"]["sys_login_log"]>
 
 export type sys_login_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -454,6 +696,14 @@ export type sys_login_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   message?: boolean
   created_at?: boolean
   created_by?: boolean
+  is_abnormal?: boolean
+  abnormal_reason?: boolean
+  abnormal_type?: boolean
+  country?: boolean
+  province?: boolean
+  city?: boolean
+  isp?: boolean
+  notify_status?: boolean
 }, ExtArgs["result"]["sys_login_log"]>
 
 export type sys_login_logSelectScalar = {
@@ -467,9 +717,17 @@ export type sys_login_logSelectScalar = {
   message?: boolean
   created_at?: boolean
   created_by?: boolean
+  is_abnormal?: boolean
+  abnormal_reason?: boolean
+  abnormal_type?: boolean
+  country?: boolean
+  province?: boolean
+  city?: boolean
+  isp?: boolean
+  notify_status?: boolean
 }
 
-export type sys_login_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "user_id" | "username" | "ip_address" | "user_agent" | "status" | "message" | "created_at" | "created_by", ExtArgs["result"]["sys_login_log"]>
+export type sys_login_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"log_id" | "tenant_id" | "user_id" | "username" | "ip_address" | "user_agent" | "status" | "message" | "created_at" | "created_by" | "is_abnormal" | "abnormal_reason" | "abnormal_type" | "country" | "province" | "city" | "isp" | "notify_status", ExtArgs["result"]["sys_login_log"]>
 
 export type $sys_login_logPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_login_log"
@@ -491,6 +749,26 @@ export type $sys_login_logPayload<ExtArgs extends runtime.Types.Extensions.Inter
      * 创建人ID
      */
     created_by: string | null
+    /**
+     * 0-正常 1-异常
+     */
+    is_abnormal: number
+    /**
+     * 异常原因描述
+     */
+    abnormal_reason: string | null
+    /**
+     * new_ip | new_device | impossible_travel | unusual_time
+     */
+    abnormal_type: string | null
+    country: string | null
+    province: string | null
+    city: string | null
+    isp: string | null
+    /**
+     * 0-未通知 1-已通知
+     */
+    notify_status: number
   }, ExtArgs["result"]["sys_login_log"]>
   composites: {}
 }
@@ -924,6 +1202,14 @@ export interface sys_login_logFieldRefs {
   readonly message: Prisma.FieldRef<"sys_login_log", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_login_log", 'DateTime'>
   readonly created_by: Prisma.FieldRef<"sys_login_log", 'String'>
+  readonly is_abnormal: Prisma.FieldRef<"sys_login_log", 'Int'>
+  readonly abnormal_reason: Prisma.FieldRef<"sys_login_log", 'String'>
+  readonly abnormal_type: Prisma.FieldRef<"sys_login_log", 'String'>
+  readonly country: Prisma.FieldRef<"sys_login_log", 'String'>
+  readonly province: Prisma.FieldRef<"sys_login_log", 'String'>
+  readonly city: Prisma.FieldRef<"sys_login_log", 'String'>
+  readonly isp: Prisma.FieldRef<"sys_login_log", 'String'>
+  readonly notify_status: Prisma.FieldRef<"sys_login_log", 'Int'>
 }
     
 

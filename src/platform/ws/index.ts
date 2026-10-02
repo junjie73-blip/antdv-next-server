@@ -1,6 +1,11 @@
+import { redis } from "@/config/redis.js";
+
 export { wsManager } from "./manager.js";
 export { initWebSocketServer } from "./server.js";
-export { publishNoticePush, startNoticeSubscriber } from "./notice-pubsub.js";
+export {
+  publishNoticePush,
+  startNoticePushSubscriber,
+} from "./notice-pubsub.js";
 export type { NoticePushAction } from "./notice-pubsub.js";
 export {
   kickUser,
@@ -31,3 +36,4 @@ export type {
   ReportNotifyPayload,
   RpNotifyEventType,
 } from "./report-notify.js";
+export { publishMessagePush, startMessagePushSubscriber } from "./message.js";

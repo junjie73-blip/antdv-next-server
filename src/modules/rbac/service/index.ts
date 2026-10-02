@@ -6,6 +6,7 @@ export {
   checkAnyPermission,
   checkUserPermissions,
   invalidateUserCache,
+  invalidateUsersCache,
 } from "./permission.service.js";
 export { assignRoleToUser, removeRoleFromUser } from "./role.service.js";
 export { isPlatformAdmin } from "./platform.service.js";

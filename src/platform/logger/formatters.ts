@@ -6,21 +6,34 @@ export const baseFormatter = {
 };
 
 export const redactPaths = [
+  // 顶层
   "password",
-  "oldPassword",
-  "newPassword",
-  "secret",
   "token",
-  "accessToken",
-  "refreshToken",
   "authorization",
   "cookie",
+  // 云存储
+  "*.accessKey",
+  "*.accessKeyId",
+  "*.accessKeySecret",
+  "*.secretKey",
+  "*.secretId",
+  "*.minioAccessKey",
+  "*.minioSecretKey",
+  "*.ossAccessKeyId",
+  "*.ossAccessKeySecret",
+  "*.s3AccessKeyId",
+  "*.s3AccessKeySecret",
+  // SMTP
+  "*.smtpPass",
+  "*.smtpUser",
+  // Webhook
+  "*.webhookSecret",
+  // 敏感个人信息
+  "*.phone",
+  "*.email",
+  "*.idCard",
+  // 嵌套
   "req.headers.authorization",
   "req.headers.cookie",
-  "err.config.headers.authorization",
-  "*.phone",
-  "*.idCard",
-  "*.id_card",
-  "*.email",
-  "*.captchaCode",
+  "res.headers['set-cookie']",
 ];

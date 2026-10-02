@@ -1,106 +1,150 @@
-import { subRedis, redis } from "@/config/redis.js";
-import { wsManager } from "./manager.js";
-import { prisma } from "@/config/database.js";
+// platform/ws/notice-pubsub.ts
+import { redis } from "@/config/redis.js";
 import { logger } from "@/platform/logger/index.js";
 
-export type NoticePushAction = "push" | "revoke";
-const NOTICE_CHANNEL = "notice:push";
+/**
+ * 通知推送频道
+ * - 单频道多动作
+ * - payload 携带 receiverIds 可选白名单
+ */
+const CHANNEL = "notice:push";
 
+/** 动作类型 */
+export type NoticePushAction = "create" | "revoke";
+
+/** 广播载荷 */
+export interface NoticePushPayload {
+  noticeId: string;
+  action: NoticePushAction;
+  /**
+   * 接收人白名单
+   * - undefined / 空数组 → 广播给所有在线用户
+   * - 非空 → 只推给这些用户
+   */
+  receiverIds?: string[];
+}
+
+/* ============================================================
+ * 发布
+ * ============================================================ */
 export async function publishNoticePush(
   noticeId: string,
-  action: NoticePushAction = "push",
+  action?: NoticePushAction,
+  receiverIds?: string[],
+): Promise<void>;
+export async function publishNoticePush(
+  payload: NoticePushPayload,
+): Promise<void>;
+export async function publishNoticePush(
+  noticeIdOrPayload: string | NoticePushPayload,
+  action: NoticePushAction = "create",
+  receiverIds?: string[],
 ): Promise<void> {
-  await redis.publish(
-    NOTICE_CHANNEL,
-    JSON.stringify({ noticeId, action, ts: Date.now() }),
-  );
-}
-
-export async function startNoticeSubscriber(): Promise<void> {
   try {
-    await subRedis.subscribe(NOTICE_CHANNEL);
+    const payload: NoticePushPayload =
+      typeof noticeIdOrPayload === "string"
+        ? {
+            noticeId: noticeIdOrPayload,
+            action,
+            ...(receiverIds && receiverIds.length > 0
+              ? { receiverIds: [...new Set(receiverIds)] }
+              : {}),
+          }
+        : {
+            ...noticeIdOrPayload,
+            ...(noticeIdOrPayload.receiverIds &&
+            noticeIdOrPayload.receiverIds.length > 0
+              ? { receiverIds: [...new Set(noticeIdOrPayload.receiverIds)] }
+              : {}),
+          };
 
-    subRedis.on("message", (channel: string, message: string) => {
-      if (channel !== NOTICE_CHANNEL) return;
-      try {
-        const { noticeId, action } = JSON.parse(message);
-        if (!noticeId) return;
-        if (action === "revoke") void handleNoticeRevoke(noticeId);
-        else void handleNoticePush(noticeId);
-      } catch (err) {
-        logger.error({ err, message }, "Failed to parse notice message");
-      }
-    });
+    if (!payload.noticeId) {
+      logger.warn({ payload }, "[notice-pubsub] missing noticeId, skip");
+      return;
+    }
 
-    subRedis.on("error", (err) =>
-      logger.error({ err }, "Redis subscriber error"),
-    );
+    await redis.publish(CHANNEL, JSON.stringify(payload));
 
-    logger.info(`Subscribed to Redis channel: ${NOTICE_CHANNEL}`);
-  } catch (err) {
-    logger.error({ err }, "Failed to subscribe to Redis channel");
-  }
-}
-
-async function handleNoticePush(noticeId: string) {
-  try {
-    const notice = await prisma.sys_notice.findUnique({
-      where: { notice_id: noticeId },
-      include: { target_users: { select: { user_id: true } } },
-    });
-
-    if (!notice || notice.status !== "1") return;
-
-    const userIds = notice.target_users.map((tu) => tu.user_id);
-    const payload = {
-      type: "notice:push",
-      data: {
-        noticeId: notice.notice_id,
-        title: notice.title,
-        content: notice.content,
-        noticeType: notice.notice_type,
-        publishTime: notice.publish_time,
+    logger.debug(
+      {
+        noticeId: payload.noticeId,
+        action: payload.action,
+        receiverCount: payload.receiverIds?.length ?? 0,
       },
-      timestamp: Date.now(),
-    };
-
-    wsManager.sendToUsers(userIds, payload);
-    logger.info({ noticeId, userIds }, "[notice] pushed");
+      "[notice-pubsub] published",
+    );
   } catch (err) {
-    logger.error({ err, noticeId }, "Failed to handle notice push");
+    logger.error(
+      {
+        err,
+        noticeId:
+          typeof noticeIdOrPayload === "string"
+            ? noticeIdOrPayload
+            : noticeIdOrPayload.noticeId,
+        action,
+      },
+      "[notice-pubsub] publish failed",
+    );
   }
 }
+
+/* ============================================================
+ * 订阅（供 platform/ws/index.ts 使用）
+ * ============================================================ */
+type NoticePushHandler = (payload: NoticePushPayload) => void;
+
+let noticeSubscribed = false;
 
 /**
- * ⭐ 撤回：不能过滤 status（撤回后 status='0'）
- * 依赖 sys_notice_user 保留原收件人做定向推送
+ * 订阅 notice:push 频道
+ * - 幂等：重复调用安全
+ * - 由 bootstrap 在启动时调用一次
+ * - 收到的消息交给 handler 分发（handler 里调用 wsManager）
  */
-async function handleNoticeRevoke(noticeId: string) {
-  try {
-    const notice = await prisma.sys_notice.findUnique({
-      where: { notice_id: noticeId },
-      include: { target_users: { select: { user_id: true } } },
-    });
-
-    if (!notice) return;
-
-    const userIds = notice.target_users.map((tu) => tu.user_id);
-    const payload = {
-      type: "notice:revoke",
-      data: { noticeId },
-      timestamp: Date.now(),
-    };
-
-    if (userIds.length > 0) {
-      wsManager.sendToUsers(userIds, payload);
-      logger.info(
-        { noticeId, count: userIds.length },
-        "[notice] revoke delivered",
-      );
-    } else {
-      logger.info({ noticeId }, "[notice] revoke broadcast (no targets)");
-    }
-  } catch (err) {
-    logger.error({ err, noticeId }, "[notice] handleNoticeRevoke failed");
+export async function startNoticePushSubscriber(
+  handler: NoticePushHandler,
+): Promise<void> {
+  if (noticeSubscribed) {
+    logger.debug("[notice-pubsub] subscriber already started, skip");
+    return;
   }
+  noticeSubscribed = true;
+
+  // ⚠️ 订阅连接必须用 subRedis
+  const { subRedis } = await import("@/config/redis.js");
+
+  void subRedis.subscribe(CHANNEL);
+
+  subRedis.on("message", (channel: string, message: string) => {
+    if (channel !== CHANNEL) return;
+
+    try {
+      const payload = JSON.parse(message) as NoticePushPayload;
+
+      if (!payload?.noticeId || !payload?.action) {
+        logger.warn({ message }, "[notice-pubsub] invalid payload");
+        return;
+      }
+
+      handler(payload);
+    } catch (err) {
+      logger.warn(
+        { err, message: message.slice(0, 200) },
+        "[notice-pubsub] parse failed",
+      );
+    }
+  });
+
+  subRedis.on("error", (err: Error) => {
+    logger.error({ err }, "[notice-pubsub] subRedis error");
+  });
+
+  logger.info({ channel: CHANNEL }, "[notice-pubsub] subscriber started");
 }
+
+/** 供测试使用：重置状态 */
+export function resetNoticePushSubscriber(): void {
+  noticeSubscribed = false;
+}
+
+export { CHANNEL as NOTICE_PUSH_CHANNEL };

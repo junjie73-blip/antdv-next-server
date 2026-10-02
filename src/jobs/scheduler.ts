@@ -3,14 +3,11 @@ import { logger } from "@/platform/logger/index.js";
 import { withLock } from "@/core/lock/index.js";
 import { withPgLock } from "./maintenance/lock.js";
 import { collectLogTableSizes } from "@/platform/metrics/index.js";
-import {
-  maintainPartitions,
-  archiveExpiredPartitions,
-  aggregateDaily,
-} from "./maintenance/index.js";
+import { maintainPartitions, aggregateDaily } from "./maintenance/index.js";
 import { CancelAccountService } from "@/modules/auth/service/cancel-account.service.js";
 import { EmailVerifyService } from "@/modules/auth/index.js";
 import { runJob } from "./registry.js";
+import { archivePolicyService } from "@/modules/archive-policy/index.js";
 
 const tasks: ScheduledTask[] = [];
 
@@ -38,7 +35,26 @@ const CRON_TASKS: CronTaskDef[] = [
     locked: true,
     handler: async () => {
       await maintainPartitions();
-      await archiveExpiredPartitions();
+    },
+  },
+  {
+    name: "archive-expired",
+    cron: "0 3 * * *",
+    locked: true,
+    handler: async () => {
+      const result = await archivePolicyService.runDuePolicies();
+      if (result.failed > 0) {
+        logger.warn({ result }, "[cron] archive has failures");
+      }
+    },
+  },
+  {
+    name: "archive-log-clean",
+    cron: "30 3 * * *",
+    locked: true,
+    handler: async () => {
+      const n = await archivePolicyService.cleanLogs();
+      if (n > 0) logger.info({ count: n }, "[cron] archive logs cleaned");
     },
   },
   {
@@ -137,6 +153,56 @@ const CRON_TASKS: CronTaskDef[] = [
     handler: async () => {
       await runJob("metricsRefreshJob");
     },
+  },
+  {
+    name: "message-cleanup",
+    cron: "30 3 * * *",
+    locked: true,
+    handler: async () => {
+      await runJob("messageCleanupJob");
+    },
+  },
+  {
+    name: "geoip-update",
+    cron: "0 5 1 * *",
+    locked: true,
+    handler: async () => {
+      await runJob("geoipUpdateJob");
+    },
+  },
+  {
+    name: "wf-cc-cleanup",
+    cron: "30 4 * * *",
+    locked: true,
+    handler: async () => runJob("wfCcCleanupJob"),
+  },
+  {
+    name: "workflow-timeout",
+    cron: "* * * * *", // 每分钟
+    locked: true,
+    handler: async () => {
+      await runJob("workflowTimeoutJob");
+    },
+  },
+  {
+    name: "slow-query-cleanup",
+    cron: "0 5 * * *", // 每天 5:00
+    locked: true,
+    handler: async () => {
+      await runJob("slowQueryCleanupJob");
+    },
+  },
+  {
+    name: "slow-query-alert",
+    cron: "0 */2 * * *", // 每 2 小时
+    handler: async () => {
+      await runJob("slowQueryAlertJob");
+    },
+  },
+  {
+    name: "storage-health",
+    cron: "*/2 * * * *",
+    handler: () => runJob("storageHealthJob"),
   },
 ];
 

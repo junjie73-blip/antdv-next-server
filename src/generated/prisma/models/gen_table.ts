@@ -28,10 +28,12 @@ export type AggregateGen_table = {
 
 export type Gen_tableAvgAggregateOutputType = {
   is_deleted: number | null
+  template_version: number | null
 }
 
 export type Gen_tableSumAggregateOutputType = {
   is_deleted: number | null
+  template_version: number | null
 }
 
 export type Gen_tableMinAggregateOutputType = {
@@ -52,6 +54,7 @@ export type Gen_tableMinAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  template_version: number | null
 }
 
 export type Gen_tableMaxAggregateOutputType = {
@@ -72,6 +75,7 @@ export type Gen_tableMaxAggregateOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number | null
+  template_version: number | null
 }
 
 export type Gen_tableCountAggregateOutputType = {
@@ -92,16 +96,19 @@ export type Gen_tableCountAggregateOutputType = {
   created_by: number
   updated_by: number
   is_deleted: number
+  template_version: number
   _all: number
 }
 
 
 export type Gen_tableAvgAggregateInputType = {
   is_deleted?: true
+  template_version?: true
 }
 
 export type Gen_tableSumAggregateInputType = {
   is_deleted?: true
+  template_version?: true
 }
 
 export type Gen_tableMinAggregateInputType = {
@@ -122,6 +129,7 @@ export type Gen_tableMinAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  template_version?: true
 }
 
 export type Gen_tableMaxAggregateInputType = {
@@ -142,6 +150,7 @@ export type Gen_tableMaxAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  template_version?: true
 }
 
 export type Gen_tableCountAggregateInputType = {
@@ -162,6 +171,7 @@ export type Gen_tableCountAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  template_version?: true
   _all?: true
 }
 
@@ -269,6 +279,7 @@ export type Gen_tableGroupByOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number
+  template_version: number
   _count: Gen_tableCountAggregateOutputType | null
   _avg: Gen_tableAvgAggregateOutputType | null
   _sum: Gen_tableSumAggregateOutputType | null
@@ -312,6 +323,7 @@ export type gen_tableWhereInput = {
   created_by?: Prisma.UuidNullableFilter<"gen_table"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"gen_table"> | string | null
   is_deleted?: Prisma.IntFilter<"gen_table"> | number
+  template_version?: Prisma.IntFilter<"gen_table"> | number
   columns?: Prisma.Gen_table_columnListRelationFilter
 }
 
@@ -333,6 +345,7 @@ export type gen_tableOrderByWithRelationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  template_version?: Prisma.SortOrder
   columns?: Prisma.gen_table_columnOrderByRelationAggregateInput
 }
 
@@ -357,6 +370,7 @@ export type gen_tableWhereUniqueInput = Prisma.AtLeast<{
   created_by?: Prisma.UuidNullableFilter<"gen_table"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"gen_table"> | string | null
   is_deleted?: Prisma.IntFilter<"gen_table"> | number
+  template_version?: Prisma.IntFilter<"gen_table"> | number
   columns?: Prisma.Gen_table_columnListRelationFilter
 }, "table_id" | "table_name">
 
@@ -378,6 +392,7 @@ export type gen_tableOrderByWithAggregationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  template_version?: Prisma.SortOrder
   _count?: Prisma.gen_tableCountOrderByAggregateInput
   _avg?: Prisma.gen_tableAvgOrderByAggregateInput
   _max?: Prisma.gen_tableMaxOrderByAggregateInput
@@ -406,6 +421,7 @@ export type gen_tableScalarWhereWithAggregatesInput = {
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"gen_table"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"gen_table"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"gen_table"> | number
+  template_version?: Prisma.IntWithAggregatesFilter<"gen_table"> | number
 }
 
 export type gen_tableCreateInput = {
@@ -426,6 +442,7 @@ export type gen_tableCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  template_version?: number
   columns?: Prisma.gen_table_columnCreateNestedManyWithoutGenTableInput
 }
 
@@ -447,6 +464,7 @@ export type gen_tableUncheckedCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  template_version?: number
   columns?: Prisma.gen_table_columnUncheckedCreateNestedManyWithoutGenTableInput
 }
 
@@ -468,6 +486,7 @@ export type gen_tableUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  template_version?: Prisma.IntFieldUpdateOperationsInput | number
   columns?: Prisma.gen_table_columnUpdateManyWithoutGenTableNestedInput
 }
 
@@ -489,6 +508,7 @@ export type gen_tableUncheckedUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  template_version?: Prisma.IntFieldUpdateOperationsInput | number
   columns?: Prisma.gen_table_columnUncheckedUpdateManyWithoutGenTableNestedInput
 }
 
@@ -510,6 +530,7 @@ export type gen_tableCreateManyInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  template_version?: number
 }
 
 export type gen_tableUpdateManyMutationInput = {
@@ -530,6 +551,7 @@ export type gen_tableUpdateManyMutationInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  template_version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type gen_tableUncheckedUpdateManyInput = {
@@ -550,6 +572,7 @@ export type gen_tableUncheckedUpdateManyInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  template_version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type gen_tableCountOrderByAggregateInput = {
@@ -570,10 +593,12 @@ export type gen_tableCountOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  template_version?: Prisma.SortOrder
 }
 
 export type gen_tableAvgOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
+  template_version?: Prisma.SortOrder
 }
 
 export type gen_tableMaxOrderByAggregateInput = {
@@ -594,6 +619,7 @@ export type gen_tableMaxOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  template_version?: Prisma.SortOrder
 }
 
 export type gen_tableMinOrderByAggregateInput = {
@@ -614,10 +640,12 @@ export type gen_tableMinOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  template_version?: Prisma.SortOrder
 }
 
 export type gen_tableSumOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
+  template_version?: Prisma.SortOrder
 }
 
 export type Gen_tableNullableScalarRelationFilter = {
@@ -659,6 +687,7 @@ export type gen_tableCreateWithoutColumnsInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  template_version?: number
 }
 
 export type gen_tableUncheckedCreateWithoutColumnsInput = {
@@ -679,6 +708,7 @@ export type gen_tableUncheckedCreateWithoutColumnsInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  template_version?: number
 }
 
 export type gen_tableCreateOrConnectWithoutColumnsInput = {
@@ -715,6 +745,7 @@ export type gen_tableUpdateWithoutColumnsInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  template_version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type gen_tableUncheckedUpdateWithoutColumnsInput = {
@@ -735,6 +766,7 @@ export type gen_tableUncheckedUpdateWithoutColumnsInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  template_version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -786,6 +818,7 @@ export type gen_tableSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  template_version?: boolean
   columns?: boolean | Prisma.gen_table$columnsArgs<ExtArgs>
   _count?: boolean | Prisma.Gen_tableCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gen_table"]>
@@ -808,6 +841,7 @@ export type gen_tableSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  template_version?: boolean
 }, ExtArgs["result"]["gen_table"]>
 
 export type gen_tableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -828,6 +862,7 @@ export type gen_tableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  template_version?: boolean
 }, ExtArgs["result"]["gen_table"]>
 
 export type gen_tableSelectScalar = {
@@ -848,9 +883,10 @@ export type gen_tableSelectScalar = {
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  template_version?: boolean
 }
 
-export type gen_tableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"table_id" | "table_name" | "table_comment" | "class_name" | "tpl_category" | "package_name" | "module_name" | "business_name" | "function_name" | "function_author" | "table_status" | "tenant_id" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["gen_table"]>
+export type gen_tableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"table_id" | "table_name" | "table_comment" | "class_name" | "tpl_category" | "package_name" | "module_name" | "business_name" | "function_name" | "function_author" | "table_status" | "tenant_id" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "template_version", ExtArgs["result"]["gen_table"]>
 export type gen_tableInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   columns?: boolean | Prisma.gen_table$columnsArgs<ExtArgs>
   _count?: boolean | Prisma.Gen_tableCountOutputTypeDefaultArgs<ExtArgs>
@@ -881,6 +917,7 @@ export type $gen_tablePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     created_by: string | null
     updated_by: string | null
     is_deleted: number
+    template_version: number
   }, ExtArgs["result"]["gen_table"]>
   composites: {}
 }
@@ -1322,6 +1359,7 @@ export interface gen_tableFieldRefs {
   readonly created_by: Prisma.FieldRef<"gen_table", 'String'>
   readonly updated_by: Prisma.FieldRef<"gen_table", 'String'>
   readonly is_deleted: Prisma.FieldRef<"gen_table", 'Int'>
+  readonly template_version: Prisma.FieldRef<"gen_table", 'Int'>
 }
     
 

@@ -37,12 +37,12 @@ export const MenuCreateSchema = z
     component: z
       .string()
       .max(256)
-      .optional()
+      .nullable()
       .openapi({ description: "前端组件路径" }),
     permission: z
       .string()
       .max(128)
-      .optional()
+      .nullable()
       .openapi({ description: "权限标识，如 system:user:create" }),
     sortOrder: z.number().int().default(0).openapi({ description: "排序值" }),
     status: z
@@ -50,9 +50,9 @@ export const MenuCreateSchema = z
       .regex(/^[01]$/, { message: "状态必须是0或1" })
       .default("1")
       .openapi({ description: "状态：0-禁用，1-启用" }),
-    microApp: MicroAppConfigSchema.nullable()
-      .optional()
-      .openapi({ description: "微应用配置，仅 menuType=2 时有意义" }),
+    microApp: MicroAppConfigSchema.nullable().openapi({
+      description: "微应用配置，仅 menuType=2 时有意义",
+    }),
     isExternal: z
       .boolean()
       .default(false)

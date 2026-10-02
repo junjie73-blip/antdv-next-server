@@ -8,6 +8,11 @@ import { runDbSlowQueryReviewTask } from "./tasks/db-slow-query-review.task.js";
 import { runAuditCleanTask } from "./tasks/audit-clean.task.js";
 import { runAuditDailyTask } from "./tasks/audit-daily.task.js";
 import { runPartitionMonitorTask } from "./tasks/partition-monitor.task.js";
+import { runMessageCleanupTask } from "./tasks/message-cleanup.task.js";
+import { runWfCcCleanupTask } from "./tasks/wf-cc-cleanup.task.js";
+import { runSlowQueryCleanupTask } from "./tasks/slow-query-cleanup.task.js";
+import { runSlowQueryAlertTask } from "./tasks/slow-query-alert.task.js";
+import { runStorageHealthTask } from "./tasks/storage-health.task.js";
 
 /** 定时任务处理器 */
 export const JOB_HANDLERS: Record<string, () => Promise<void>> = {
@@ -54,6 +59,15 @@ export const JOB_HANDLERS: Record<string, () => Promise<void>> = {
       await import("./tasks/metrics-refresh.task.js");
     await metricsRefreshTask();
   },
+  messageCleanupJob: runMessageCleanupTask,
+  wfCcCleanupJob: runWfCcCleanupTask,
+  slowQueryCleanupJob: async () => {
+    await runSlowQueryCleanupTask();
+  },
+  slowQueryAlertJob: async () => {
+    await runSlowQueryAlertTask();
+  },
+  storageHealthJob: runStorageHealthTask,
 };
 
 /**

@@ -1,6 +1,6 @@
 import { NoticeChannel, SendContext, SendResult } from "./base.js";
-
-const TIMEOUT_MS = 10_000;
+import { logger } from "@/platform/logger/index.js";
+import { sendWithRetry } from "@/platform/webhook/index.js";
 
 export const webhookChannel: NoticeChannel = {
   type: "webhook",
@@ -10,28 +10,32 @@ export const webhookChannel: NoticeChannel = {
     const errors: SendResult["errors"] = [];
     let success = 0;
 
-    for (const url of ctx.receivers) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const config = {
+      url: "",
+      secret: ctx.config?.secret as string | undefined,
+      headers: ctx.config?.headers as Record<string, string> | undefined,
+      enableIdempotency: ctx.config?.enableIdempotency === true,
+    };
 
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: ctx.title,
-            content: ctx.content,
-            noticeId: ctx.noticeId,
-          }),
-          signal: controller.signal,
+    for (const url of ctx.receivers) {
+      config.url = url;
+      const result = await sendWithRetry(config, {
+        event: ctx.noticeId ? "notice.created" : "test.send",
+        data: {
+          title: ctx.title,
+          content: ctx.content,
+          noticeId: ctx.noticeId,
+          timestamp: Date.now(),
+        },
+        idempotencyKey: ctx.noticeId ? `${ctx.noticeId}:${url}` : undefined,
+      });
+
+      if (result.success) success++;
+      else
+        errors.push({
+          receiver: url,
+          reason: `${result.error ?? "failed"} (attempts=${result.attempts}, status=${result.status ?? "-"})`,
         });
-        if (res.ok) success++;
-        else errors.push({ receiver: url, reason: `HTTP ${res.status}` });
-      } catch (e: any) {
-        errors.push({ receiver: url, reason: String(e?.message ?? e) });
-      } finally {
-        clearTimeout(timer);
-      }
     }
 
     return {

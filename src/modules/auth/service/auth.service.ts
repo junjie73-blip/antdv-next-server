@@ -155,22 +155,41 @@ export class AuthService {
         "[auth] cancel account revoked by re-login",
       );
     }
-    await Promise.all([
-      prisma.sys_user.update({
-        where: { user_id: user.user_id },
-        data: { last_login_ip: clientIp, last_login_time: new Date() },
-      }),
-      this.writeLoginLog(
-        tenant.tenant_id,
-        user.user_id,
-        username,
-        clientIp,
-        userAgent,
-        "1",
-        "登录成功",
-      ),
-    ]);
-
+    prisma.sys_user.update({
+      where: { user_id: user.user_id },
+      data: { last_login_ip: clientIp, last_login_time: new Date() },
+    });
+    const loginLogId = await this.writeLoginLog(
+      tenant.tenant_id,
+      user.user_id,
+      username,
+      clientIp,
+      userAgent,
+      "1",
+      "登录成功",
+    );
+    if (loginLogId) {
+      setImmediate(() => {
+        void (async () => {
+          try {
+            const { loginSecurityService } =
+              await import("@/modules/login-security/service/index.js");
+            await loginSecurityService.handleLoginSuccess({
+              tenantId: tenant.tenant_id,
+              userId: user.user_id,
+              username,
+              ip: clientIp,
+              userAgent,
+              deviceId: input.deviceId ?? null,
+              loginAt: new Date(),
+              logId: loginLogId,
+            });
+          } catch (err) {
+            logger.error({ err }, "[auth] login security check failed");
+          }
+        })();
+      });
+    }
     await Promise.all([
       redis.del(failKey),
       redis.del(lockKey),
@@ -547,7 +566,7 @@ export class AuthService {
     message: string,
   ) {
     try {
-      await prisma.sys_login_log.create({
+      const log = await prisma.sys_login_log.create({
         data: {
           tenant_id: tenantId,
           user_id: userId,
@@ -558,6 +577,7 @@ export class AuthService {
           message,
         },
       });
+      return log.log_id;
     } catch (err) {
       logger.error({ err }, "[auth] write login log failed");
     }
