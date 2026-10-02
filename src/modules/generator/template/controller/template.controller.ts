@@ -33,7 +33,6 @@ export default class GenTemplateController {
   private service = new GenTemplateService();
 
   @Get("/list")
-  @RequirePermission("tool:gen:template:list")
   @ApiOperation("模板列表")
   @ApiQuery(TemplateListSchema)
   async list(@Req() req: Request, @Res() res: Response) {
@@ -48,7 +47,6 @@ export default class GenTemplateController {
   }
 
   @Get("/:id")
-  @RequirePermission("tool:gen:template:list")
   @ApiOperation("模板详情（含版本列表）")
   async detail(@Req() req: Request, @Res() res: Response) {
     try {
@@ -60,7 +58,6 @@ export default class GenTemplateController {
   }
 
   @Post("/")
-  @RequirePermission("tool:gen:template:manage")
   @ApiOperation("创建模板")
   @ApiBody(TemplateCreateSchema)
   async create(@Req() req: Request, @Res() res: Response) {
@@ -75,7 +72,6 @@ export default class GenTemplateController {
   }
 
   @Put("/:id")
-  @RequirePermission("tool:gen:template:manage")
   @ApiOperation("更新模板（内容变更自动创建新版本）")
   @ApiBody(TemplateUpdateSchema)
   async update(@Req() req: Request, @Res() res: Response) {
@@ -90,7 +86,6 @@ export default class GenTemplateController {
   }
 
   @Post("/:id/rollback")
-  @RequirePermission("tool:gen:template:manage")
   @ApiOperation("回滚到指定版本")
   @ApiBody(TemplateRollbackSchema)
   async rollback(@Req() req: Request, @Res() res: Response) {
@@ -105,7 +100,6 @@ export default class GenTemplateController {
   }
 
   @Delete("/:id")
-  @RequirePermission("tool:gen:template:manage")
   @ApiOperation("删除模板")
   async remove(@Req() req: Request, @Res() res: Response) {
     try {

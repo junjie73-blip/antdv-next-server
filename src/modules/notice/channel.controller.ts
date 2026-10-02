@@ -14,6 +14,7 @@ import { prisma } from "@/config/database.js";
 import { success } from "@/shared/http/response.js";
 import { AppError } from "@/core/errors.js";
 import { z } from "zod";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 
 const CHANNEL_TYPES = ["in_app", "email", "sms", "webhook"] as const;
 
@@ -75,7 +76,7 @@ export default class NoticeChannelController {
     const rows = await prisma.sys_notice_channel.findMany({
       where: { tenant_id: tenantId, is_deleted: 0 },
     });
-    success(res, rows);
+    success(res, rows.map(keysToCamelCase));
   }
 
   @Put("/")

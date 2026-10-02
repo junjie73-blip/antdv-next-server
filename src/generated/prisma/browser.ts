@@ -349,7 +349,7 @@ export type sys_cache_operation_log = Prisma.sys_cache_operation_logModel
 export type sys_storage_backend = Prisma.sys_storage_backendModel
 /**
  * Model sys_field_mask_policy
- * 字段级脱敏策略（按角色/字段配置）
+ * 
  */
 export type sys_field_mask_policy = Prisma.sys_field_mask_policyModel
 /**
@@ -372,3 +372,43 @@ export type gen_template_version = Prisma.gen_template_versionModel
  * 
  */
 export type sys_api_version = Prisma.sys_api_versionModel
+/**
+ * Model sys_feature_flag
+ * ==================== 特性开关 ====================
+ */
+export type sys_feature_flag = Prisma.sys_feature_flagModel
+/**
+ * Model sys_feature_flag_rule
+ * ==================== 特性开关灰度规则 ====================
+ */
+export type sys_feature_flag_rule = Prisma.sys_feature_flag_ruleModel
+/**
+ * Model sys_backup_record
+ * ==================== 数据库备份记录 ====================
+ */
+export type sys_backup_record = Prisma.sys_backup_recordModel
+/**
+ * Model sys_backup_policy
+ * ==================== 备份策略配置 ====================
+ */
+export type sys_backup_policy = Prisma.sys_backup_policyModel
+/**
+ * Model sys_export_task
+ * ==================== 通用导出任务 ====================
+ */
+export type sys_export_task = Prisma.sys_export_taskModel
+/**
+ * Model sys_tenant_isolation_scan
+ * ==================== 租户隔离扫描记录 ====================
+ */
+export type sys_tenant_isolation_scan = Prisma.sys_tenant_isolation_scanModel
+/**
+ * Model sys_org_history
+ * ==================== 组织架构变更历史 ====================
+ */
+export type sys_org_history = Prisma.sys_org_historyModel
+/**
+ * Model sys_role_field_policy
+ * ==================== 字段级数据权限策略 ====================
+ */
+export type sys_role_field_policy = Prisma.sys_role_field_policyModel

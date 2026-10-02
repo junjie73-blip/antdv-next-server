@@ -20,82 +20,126 @@ export type sys_api_versionModel = runtime.Types.Result.DefaultSelection<Prisma.
 
 export type AggregateSys_api_version = {
   _count: Sys_api_versionCountAggregateOutputType | null
+  _avg: Sys_api_versionAvgAggregateOutputType | null
+  _sum: Sys_api_versionSumAggregateOutputType | null
   _min: Sys_api_versionMinAggregateOutputType | null
   _max: Sys_api_versionMaxAggregateOutputType | null
 }
 
+export type Sys_api_versionAvgAggregateOutputType = {
+  is_deleted: number | null
+}
+
+export type Sys_api_versionSumAggregateOutputType = {
+  is_deleted: number | null
+}
+
 export type Sys_api_versionMinAggregateOutputType = {
-  id: string | null
-  version: string | null
+  version_id: string | null
+  version_code: string | null
+  version_name: string | null
   status: string | null
+  release_at: Date | null
   deprecated_at: Date | null
-  retire_at: Date | null
-  sunset_header: string | null
-  changelog: string | null
+  sunset_at: Date | null
+  description: string | null
+  is_deleted: number | null
   created_at: Date | null
   updated_at: Date | null
+  created_by: string | null
+  updated_by: string | null
 }
 
 export type Sys_api_versionMaxAggregateOutputType = {
-  id: string | null
-  version: string | null
+  version_id: string | null
+  version_code: string | null
+  version_name: string | null
   status: string | null
+  release_at: Date | null
   deprecated_at: Date | null
-  retire_at: Date | null
-  sunset_header: string | null
-  changelog: string | null
+  sunset_at: Date | null
+  description: string | null
+  is_deleted: number | null
   created_at: Date | null
   updated_at: Date | null
+  created_by: string | null
+  updated_by: string | null
 }
 
 export type Sys_api_versionCountAggregateOutputType = {
-  id: number
-  version: number
+  version_id: number
+  version_code: number
+  version_name: number
   status: number
+  release_at: number
   deprecated_at: number
-  retire_at: number
-  sunset_header: number
+  sunset_at: number
+  description: number
   changelog: number
+  is_deleted: number
   created_at: number
   updated_at: number
+  created_by: number
+  updated_by: number
   _all: number
 }
 
 
+export type Sys_api_versionAvgAggregateInputType = {
+  is_deleted?: true
+}
+
+export type Sys_api_versionSumAggregateInputType = {
+  is_deleted?: true
+}
+
 export type Sys_api_versionMinAggregateInputType = {
-  id?: true
-  version?: true
+  version_id?: true
+  version_code?: true
+  version_name?: true
   status?: true
+  release_at?: true
   deprecated_at?: true
-  retire_at?: true
-  sunset_header?: true
-  changelog?: true
+  sunset_at?: true
+  description?: true
+  is_deleted?: true
   created_at?: true
   updated_at?: true
+  created_by?: true
+  updated_by?: true
 }
 
 export type Sys_api_versionMaxAggregateInputType = {
-  id?: true
-  version?: true
+  version_id?: true
+  version_code?: true
+  version_name?: true
   status?: true
+  release_at?: true
   deprecated_at?: true
-  retire_at?: true
-  sunset_header?: true
-  changelog?: true
+  sunset_at?: true
+  description?: true
+  is_deleted?: true
   created_at?: true
   updated_at?: true
+  created_by?: true
+  updated_by?: true
 }
 
 export type Sys_api_versionCountAggregateInputType = {
-  id?: true
-  version?: true
+  version_id?: true
+  version_code?: true
+  version_name?: true
   status?: true
+  release_at?: true
   deprecated_at?: true
-  retire_at?: true
-  sunset_header?: true
+  sunset_at?: true
+  description?: true
   changelog?: true
+  is_deleted?: true
   created_at?: true
   updated_at?: true
+  created_by?: true
+  updated_by?: true
   _all?: true
 }
 
@@ -137,6 +181,18 @@ export type Sys_api_versionAggregateArgs<ExtArgs extends runtime.Types.Extension
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: Sys_api_versionAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: Sys_api_versionSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: Sys_api_versionMinAggregateInputType
@@ -167,21 +223,30 @@ export type sys_api_versionGroupByArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   _count?: Sys_api_versionCountAggregateInputType | true
+  _avg?: Sys_api_versionAvgAggregateInputType
+  _sum?: Sys_api_versionSumAggregateInputType
   _min?: Sys_api_versionMinAggregateInputType
   _max?: Sys_api_versionMaxAggregateInputType
 }
 
 export type Sys_api_versionGroupByOutputType = {
-  id: string
-  version: string
+  version_id: string
+  version_code: string
+  version_name: string
   status: string
+  release_at: Date
   deprecated_at: Date | null
-  retire_at: Date | null
-  sunset_header: string | null
-  changelog: string | null
+  sunset_at: Date | null
+  description: string | null
+  changelog: runtime.JsonValue | null
+  is_deleted: number
   created_at: Date
   updated_at: Date
+  created_by: string | null
+  updated_by: string | null
   _count: Sys_api_versionCountAggregateOutputType | null
+  _avg: Sys_api_versionAvgAggregateOutputType | null
+  _sum: Sys_api_versionSumAggregateOutputType | null
   _min: Sys_api_versionMinAggregateOutputType | null
   _max: Sys_api_versionMaxAggregateOutputType | null
 }
@@ -205,265 +270,382 @@ export type sys_api_versionWhereInput = {
   AND?: Prisma.sys_api_versionWhereInput | Prisma.sys_api_versionWhereInput[]
   OR?: Prisma.sys_api_versionWhereInput[]
   NOT?: Prisma.sys_api_versionWhereInput | Prisma.sys_api_versionWhereInput[]
-  id?: Prisma.UuidFilter<"sys_api_version"> | string
-  version?: Prisma.StringFilter<"sys_api_version"> | string
+  version_id?: Prisma.UuidFilter<"sys_api_version"> | string
+  version_code?: Prisma.StringFilter<"sys_api_version"> | string
+  version_name?: Prisma.StringFilter<"sys_api_version"> | string
   status?: Prisma.StringFilter<"sys_api_version"> | string
+  release_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
   deprecated_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
-  retire_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
-  sunset_header?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
-  changelog?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
+  sunset_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
+  description?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
+  changelog?: Prisma.JsonNullableFilter<"sys_api_version">
+  is_deleted?: Prisma.IntFilter<"sys_api_version"> | number
   created_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
+  created_by?: Prisma.UuidNullableFilter<"sys_api_version"> | string | null
+  updated_by?: Prisma.UuidNullableFilter<"sys_api_version"> | string | null
 }
 
 export type sys_api_versionOrderByWithRelationInput = {
-  id?: Prisma.SortOrder
-  version?: Prisma.SortOrder
+  version_id?: Prisma.SortOrder
+  version_code?: Prisma.SortOrder
+  version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  release_at?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  retire_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  sunset_header?: Prisma.SortOrderInput | Prisma.SortOrder
+  sunset_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   changelog?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_api_versionWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
-  version?: string
+  version_id?: string
+  version_code?: string
   AND?: Prisma.sys_api_versionWhereInput | Prisma.sys_api_versionWhereInput[]
   OR?: Prisma.sys_api_versionWhereInput[]
   NOT?: Prisma.sys_api_versionWhereInput | Prisma.sys_api_versionWhereInput[]
+  version_name?: Prisma.StringFilter<"sys_api_version"> | string
   status?: Prisma.StringFilter<"sys_api_version"> | string
+  release_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
   deprecated_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
-  retire_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
-  sunset_header?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
-  changelog?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
+  sunset_at?: Prisma.DateTimeNullableFilter<"sys_api_version"> | Date | string | null
+  description?: Prisma.StringNullableFilter<"sys_api_version"> | string | null
+  changelog?: Prisma.JsonNullableFilter<"sys_api_version">
+  is_deleted?: Prisma.IntFilter<"sys_api_version"> | number
   created_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_api_version"> | Date | string
-}, "id" | "version">
+  created_by?: Prisma.UuidNullableFilter<"sys_api_version"> | string | null
+  updated_by?: Prisma.UuidNullableFilter<"sys_api_version"> | string | null
+}, "version_id" | "version_code">
 
 export type sys_api_versionOrderByWithAggregationInput = {
-  id?: Prisma.SortOrder
-  version?: Prisma.SortOrder
+  version_id?: Prisma.SortOrder
+  version_code?: Prisma.SortOrder
+  version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  release_at?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  retire_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  sunset_header?: Prisma.SortOrderInput | Prisma.SortOrder
+  sunset_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   changelog?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_api_versionCountOrderByAggregateInput
+  _avg?: Prisma.sys_api_versionAvgOrderByAggregateInput
   _max?: Prisma.sys_api_versionMaxOrderByAggregateInput
   _min?: Prisma.sys_api_versionMinOrderByAggregateInput
+  _sum?: Prisma.sys_api_versionSumOrderByAggregateInput
 }
 
 export type sys_api_versionScalarWhereWithAggregatesInput = {
   AND?: Prisma.sys_api_versionScalarWhereWithAggregatesInput | Prisma.sys_api_versionScalarWhereWithAggregatesInput[]
   OR?: Prisma.sys_api_versionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.sys_api_versionScalarWhereWithAggregatesInput | Prisma.sys_api_versionScalarWhereWithAggregatesInput[]
-  id?: Prisma.UuidWithAggregatesFilter<"sys_api_version"> | string
-  version?: Prisma.StringWithAggregatesFilter<"sys_api_version"> | string
+  version_id?: Prisma.UuidWithAggregatesFilter<"sys_api_version"> | string
+  version_code?: Prisma.StringWithAggregatesFilter<"sys_api_version"> | string
+  version_name?: Prisma.StringWithAggregatesFilter<"sys_api_version"> | string
   status?: Prisma.StringWithAggregatesFilter<"sys_api_version"> | string
+  release_at?: Prisma.DateTimeWithAggregatesFilter<"sys_api_version"> | Date | string
   deprecated_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_api_version"> | Date | string | null
-  retire_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_api_version"> | Date | string | null
-  sunset_header?: Prisma.StringNullableWithAggregatesFilter<"sys_api_version"> | string | null
-  changelog?: Prisma.StringNullableWithAggregatesFilter<"sys_api_version"> | string | null
+  sunset_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_api_version"> | Date | string | null
+  description?: Prisma.StringNullableWithAggregatesFilter<"sys_api_version"> | string | null
+  changelog?: Prisma.JsonNullableWithAggregatesFilter<"sys_api_version">
+  is_deleted?: Prisma.IntWithAggregatesFilter<"sys_api_version"> | number
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_api_version"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_api_version"> | Date | string
+  created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_api_version"> | string | null
+  updated_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_api_version"> | string | null
 }
 
 export type sys_api_versionCreateInput = {
-  id?: string
-  version: string
+  version_id?: string
+  version_code: string
+  version_name: string
   status?: string
+  release_at: Date | string
   deprecated_at?: Date | string | null
-  retire_at?: Date | string | null
-  sunset_header?: string | null
-  changelog?: string | null
+  sunset_at?: Date | string | null
+  description?: string | null
+  changelog?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_deleted?: number
   created_at?: Date | string
   updated_at?: Date | string
+  created_by?: string | null
+  updated_by?: string | null
 }
 
 export type sys_api_versionUncheckedCreateInput = {
-  id?: string
-  version: string
+  version_id?: string
+  version_code: string
+  version_name: string
   status?: string
+  release_at: Date | string
   deprecated_at?: Date | string | null
-  retire_at?: Date | string | null
-  sunset_header?: string | null
-  changelog?: string | null
+  sunset_at?: Date | string | null
+  description?: string | null
+  changelog?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_deleted?: number
   created_at?: Date | string
   updated_at?: Date | string
+  created_by?: string | null
+  updated_by?: string | null
 }
 
 export type sys_api_versionUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  version?: Prisma.StringFieldUpdateOperationsInput | string
+  version_id?: Prisma.StringFieldUpdateOperationsInput | string
+  version_code?: Prisma.StringFieldUpdateOperationsInput | string
+  version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  sunset_header?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changelog?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_api_versionUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  version?: Prisma.StringFieldUpdateOperationsInput | string
+  version_id?: Prisma.StringFieldUpdateOperationsInput | string
+  version_code?: Prisma.StringFieldUpdateOperationsInput | string
+  version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  sunset_header?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changelog?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_api_versionCreateManyInput = {
-  id?: string
-  version: string
+  version_id?: string
+  version_code: string
+  version_name: string
   status?: string
+  release_at: Date | string
   deprecated_at?: Date | string | null
-  retire_at?: Date | string | null
-  sunset_header?: string | null
-  changelog?: string | null
+  sunset_at?: Date | string | null
+  description?: string | null
+  changelog?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_deleted?: number
   created_at?: Date | string
   updated_at?: Date | string
+  created_by?: string | null
+  updated_by?: string | null
 }
 
 export type sys_api_versionUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  version?: Prisma.StringFieldUpdateOperationsInput | string
+  version_id?: Prisma.StringFieldUpdateOperationsInput | string
+  version_code?: Prisma.StringFieldUpdateOperationsInput | string
+  version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  sunset_header?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changelog?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_api_versionUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  version?: Prisma.StringFieldUpdateOperationsInput | string
+  version_id?: Prisma.StringFieldUpdateOperationsInput | string
+  version_code?: Prisma.StringFieldUpdateOperationsInput | string
+  version_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  release_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deprecated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retire_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  sunset_header?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sunset_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changelog?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_api_versionCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  version?: Prisma.SortOrder
+  version_id?: Prisma.SortOrder
+  version_code?: Prisma.SortOrder
+  version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  release_at?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrder
-  retire_at?: Prisma.SortOrder
-  sunset_header?: Prisma.SortOrder
+  sunset_at?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   changelog?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
+  updated_by?: Prisma.SortOrder
+}
+
+export type sys_api_versionAvgOrderByAggregateInput = {
+  is_deleted?: Prisma.SortOrder
 }
 
 export type sys_api_versionMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  version?: Prisma.SortOrder
+  version_id?: Prisma.SortOrder
+  version_code?: Prisma.SortOrder
+  version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  release_at?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrder
-  retire_at?: Prisma.SortOrder
-  sunset_header?: Prisma.SortOrder
-  changelog?: Prisma.SortOrder
+  sunset_at?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
+  updated_by?: Prisma.SortOrder
 }
 
 export type sys_api_versionMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  version?: Prisma.SortOrder
+  version_id?: Prisma.SortOrder
+  version_code?: Prisma.SortOrder
+  version_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  release_at?: Prisma.SortOrder
   deprecated_at?: Prisma.SortOrder
-  retire_at?: Prisma.SortOrder
-  sunset_header?: Prisma.SortOrder
-  changelog?: Prisma.SortOrder
+  sunset_at?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  is_deleted?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  created_by?: Prisma.SortOrder
+  updated_by?: Prisma.SortOrder
+}
+
+export type sys_api_versionSumOrderByAggregateInput = {
+  is_deleted?: Prisma.SortOrder
 }
 
 
 
 export type sys_api_versionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  version?: boolean
+  version_id?: boolean
+  version_code?: boolean
+  version_name?: boolean
   status?: boolean
+  release_at?: boolean
   deprecated_at?: boolean
-  retire_at?: boolean
-  sunset_header?: boolean
+  sunset_at?: boolean
+  description?: boolean
   changelog?: boolean
+  is_deleted?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
+  updated_by?: boolean
 }, ExtArgs["result"]["sys_api_version"]>
 
 export type sys_api_versionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  version?: boolean
+  version_id?: boolean
+  version_code?: boolean
+  version_name?: boolean
   status?: boolean
+  release_at?: boolean
   deprecated_at?: boolean
-  retire_at?: boolean
-  sunset_header?: boolean
+  sunset_at?: boolean
+  description?: boolean
   changelog?: boolean
+  is_deleted?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
+  updated_by?: boolean
 }, ExtArgs["result"]["sys_api_version"]>
 
 export type sys_api_versionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  version?: boolean
+  version_id?: boolean
+  version_code?: boolean
+  version_name?: boolean
   status?: boolean
+  release_at?: boolean
   deprecated_at?: boolean
-  retire_at?: boolean
-  sunset_header?: boolean
+  sunset_at?: boolean
+  description?: boolean
   changelog?: boolean
+  is_deleted?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
+  updated_by?: boolean
 }, ExtArgs["result"]["sys_api_version"]>
 
 export type sys_api_versionSelectScalar = {
-  id?: boolean
-  version?: boolean
+  version_id?: boolean
+  version_code?: boolean
+  version_name?: boolean
   status?: boolean
+  release_at?: boolean
   deprecated_at?: boolean
-  retire_at?: boolean
-  sunset_header?: boolean
+  sunset_at?: boolean
+  description?: boolean
   changelog?: boolean
+  is_deleted?: boolean
   created_at?: boolean
   updated_at?: boolean
+  created_by?: boolean
+  updated_by?: boolean
 }
 
-export type sys_api_versionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "version" | "status" | "deprecated_at" | "retire_at" | "sunset_header" | "changelog" | "created_at" | "updated_at", ExtArgs["result"]["sys_api_version"]>
+export type sys_api_versionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"version_id" | "version_code" | "version_name" | "status" | "release_at" | "deprecated_at" | "sunset_at" | "description" | "changelog" | "is_deleted" | "created_at" | "updated_at" | "created_by" | "updated_by", ExtArgs["result"]["sys_api_version"]>
 
 export type $sys_api_versionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_api_version"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    version_id: string
     /**
-     * v1 / v2
+     * "v1" / "v2"
      */
-    version: string
+    version_code: string
     /**
-     * stable | beta | deprecated | retired
+     * 展示名
+     */
+    version_name: string
+    /**
+     * active | deprecated | sunset
      */
     status: string
+    release_at: Date
+    /**
+     * 开始标记废弃
+     */
     deprecated_at: Date | null
-    retire_at: Date | null
-    sunset_header: string | null
-    changelog: string | null
+    /**
+     * 停止服务时间
+     */
+    sunset_at: Date | null
+    description: string | null
+    changelog: runtime.JsonValue | null
+    is_deleted: number
     created_at: Date
     updated_at: Date
+    created_by: string | null
+    updated_by: string | null
   }, ExtArgs["result"]["sys_api_version"]>
   composites: {}
 }
@@ -547,8 +729,8 @@ export interface sys_api_versionDelegate<ExtArgs extends runtime.Types.Extension
    * // Get first 10 Sys_api_versions
    * const sys_api_versions = await prisma.sys_api_version.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const sys_api_versionWithIdOnly = await prisma.sys_api_version.findMany({ select: { id: true } })
+   * // Only select the `version_id`
+   * const sys_api_versionWithVersion_idOnly = await prisma.sys_api_version.findMany({ select: { version_id: true } })
    * 
    */
   findMany<T extends sys_api_versionFindManyArgs>(args?: Prisma.SelectSubset<T, sys_api_versionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$sys_api_versionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -592,9 +774,9 @@ export interface sys_api_versionDelegate<ExtArgs extends runtime.Types.Extension
    *   ]
    * })
    * 
-   * // Create many Sys_api_versions and only return the `id`
-   * const sys_api_versionWithIdOnly = await prisma.sys_api_version.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many Sys_api_versions and only return the `version_id`
+   * const sys_api_versionWithVersion_idOnly = await prisma.sys_api_version.createManyAndReturn({
+   *   select: { version_id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -683,9 +865,9 @@ export interface sys_api_versionDelegate<ExtArgs extends runtime.Types.Extension
    *   ]
    * })
    * 
-   * // Update zero or more Sys_api_versions and only return the `id`
-   * const sys_api_versionWithIdOnly = await prisma.sys_api_version.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more Sys_api_versions and only return the `version_id`
+   * const sys_api_versionWithVersion_idOnly = await prisma.sys_api_version.updateManyAndReturn({
+   *   select: { version_id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -887,15 +1069,20 @@ export interface Prisma__sys_api_versionClient<T, Null = never, ExtArgs extends 
  * Fields of the sys_api_version model
  */
 export interface sys_api_versionFieldRefs {
-  readonly id: Prisma.FieldRef<"sys_api_version", 'String'>
-  readonly version: Prisma.FieldRef<"sys_api_version", 'String'>
+  readonly version_id: Prisma.FieldRef<"sys_api_version", 'String'>
+  readonly version_code: Prisma.FieldRef<"sys_api_version", 'String'>
+  readonly version_name: Prisma.FieldRef<"sys_api_version", 'String'>
   readonly status: Prisma.FieldRef<"sys_api_version", 'String'>
+  readonly release_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
   readonly deprecated_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
-  readonly retire_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
-  readonly sunset_header: Prisma.FieldRef<"sys_api_version", 'String'>
-  readonly changelog: Prisma.FieldRef<"sys_api_version", 'String'>
+  readonly sunset_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
+  readonly description: Prisma.FieldRef<"sys_api_version", 'String'>
+  readonly changelog: Prisma.FieldRef<"sys_api_version", 'Json'>
+  readonly is_deleted: Prisma.FieldRef<"sys_api_version", 'Int'>
   readonly created_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"sys_api_version", 'DateTime'>
+  readonly created_by: Prisma.FieldRef<"sys_api_version", 'String'>
+  readonly updated_by: Prisma.FieldRef<"sys_api_version", 'String'>
 }
     
 

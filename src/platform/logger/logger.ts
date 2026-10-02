@@ -10,8 +10,7 @@ export const logger = pino(
     formatters: baseFormatter,
     redact: { paths: redactPaths, remove: true, censor: "[REDACTED]" },
     base: undefined,
-    transport: buildLokiTransport(config.LOKI_URL),
-
+    ...buildLokiTransport(config.LOKI_URL),
   },
   pino.multistream([
     {

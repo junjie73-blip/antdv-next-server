@@ -3,6 +3,7 @@ import { SlowQueryRepository } from "../repository.js";
 import { fingerprintOf, extractFilterColumns } from "../normalizer.js";
 import type { SlowQueryListQuery, SlowQueryRow } from "../types.js";
 import { SLOW_QUERY_STATUS } from "../constants.js";
+import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 
 interface IndexSuggestion {
   table: string;
@@ -27,9 +28,9 @@ export class SlowQueryService {
   async detail(id: string) {
     const row = await this.repo.findById(id);
     if (!row) throw new AppError("慢查询记录不存在", 404001, 404);
-
+    const _row = keysToCamelCase(row) as any;
     const suggestion = await this.buildIndexSuggestion(row);
-    return { ...row, indexSuggestion: suggestion };
+    return { ..._row, indexSuggestion: suggestion };
   }
 
   /* ============================================================

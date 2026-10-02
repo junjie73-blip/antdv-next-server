@@ -35,7 +35,6 @@ export default class StorageBackendController {
   private health = new StorageHealthService();
 
   @Get("/list")
-  @RequirePermission("system:storage:list")
   @ApiOperation("存储后端列表")
   @ApiQuery(StorageBackendListSchema)
   async list(@Req() req: Request, @Res() res: Response) {
@@ -50,7 +49,6 @@ export default class StorageBackendController {
   }
 
   @Get("/:id")
-  @RequirePermission("system:storage:list")
   @ApiOperation("存储后端详情")
   async detail(@Req() req: Request, @Res() res: Response) {
     try {
@@ -62,7 +60,6 @@ export default class StorageBackendController {
   }
 
   @Post("/")
-  @RequirePermission("system:storage:manage")
   @ApiOperation("创建存储后端")
   @ApiBody(StorageBackendCreateSchema)
   async create(@Req() req: Request, @Res() res: Response) {
@@ -77,7 +74,6 @@ export default class StorageBackendController {
   }
 
   @Put("/:id")
-  @RequirePermission("system:storage:manage")
   @ApiOperation("更新存储后端")
   @ApiBody(StorageBackendUpdateSchema)
   async update(@Req() req: Request, @Res() res: Response) {
@@ -92,7 +88,6 @@ export default class StorageBackendController {
   }
 
   @Post("/activate")
-  @RequirePermission("system:storage:manage")
   @ApiOperation("激活存储后端（热切换）")
   @ApiBody(StorageBackendActivateSchema)
   async activate(@Req() req: Request, @Res() res: Response) {
@@ -107,7 +102,6 @@ export default class StorageBackendController {
   }
 
   @Delete("/:id")
-  @RequirePermission("system:storage:manage")
   @ApiOperation("删除存储后端")
   async remove(@Req() req: Request, @Res() res: Response) {
     try {
@@ -120,7 +114,6 @@ export default class StorageBackendController {
   }
 
   @Post("/:id/check")
-  @RequirePermission("system:storage:manage")
   @ApiOperation("手动触发健康检查")
   async check(@Req() req: Request, @Res() res: Response) {
     try {

@@ -167,7 +167,7 @@ export function createApp(): Express {
   app.use(dataScopeMiddleware());
   const queueDashboard = buildQueueDashboardRouter();
   if (queueDashboard) {
-    app.use("/api/v1/admin/queues", queueDashboard);
+    app.use("/api/v1/monitor/queue", queueDashboard);
   }
   // ⑪ 业务路由（装饰器扫描）
   const scanner = new ControllerScanner();

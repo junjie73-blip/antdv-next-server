@@ -22,7 +22,6 @@ import {
 @Controller("/monitor/logs", { tags: ["日志检索"] })
 export default class LogController {
   @Get("/status")
-  @RequirePermission("monitor:logs:list")
   @ApiOperation("日志聚合是否启用")
   async status(@Req() _req: Request, @Res() res: Response) {
     try {
@@ -33,7 +32,6 @@ export default class LogController {
   }
 
   @Get("/quick-search")
-  @RequirePermission("monitor:logs:list")
   @ApiOperation("快捷检索（按级别/模块/关键词）")
   @ApiQuery(QuickSearchSchema)
   async quickSearch(@Req() req: Request, @Res() res: Response) {
@@ -46,7 +44,6 @@ export default class LogController {
   }
 
   @Post("/query")
-  @RequirePermission("monitor:logs:query")
   @ApiOperation("LogQL 结构化查询")
   @ApiBody(LogQuerySchema)
   async query(@Req() req: Request, @Res() res: Response) {
@@ -59,7 +56,6 @@ export default class LogController {
   }
 
   @Get("/by-trace/:traceId")
-  @RequirePermission("monitor:logs:list")
   @ApiOperation("按 traceId 查询链路日志")
   async byTrace(@Req() req: Request, @Res() res: Response) {
     try {

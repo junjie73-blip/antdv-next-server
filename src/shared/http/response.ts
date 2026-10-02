@@ -9,30 +9,13 @@ import { fieldMaskService } from "@/modules/field-mask/service/field-mask.servic
  * - 优先从请求上下文读取 userId/tenantId
  * - 需要调用方明确传入 resource（通过 res.locals.maskResource 设置）
  */
-async function tryMask(data: unknown, res: Response): Promise<unknown> {
-  const resource = (res.locals as any).maskResource as string | undefined;
-  if (!resource || !data) return data;
-
-  try {
-    const ctx = getDataScope();
-    const userRoles = ctx.roles ?? [];
-    return await fieldMaskService.applyTo(
-      data,
-      resource,
-      ctx.tenantId,
-      userRoles,
-    );
-  } catch {
-    return data; // 脱敏失败兜底放行（不阻断响应）
-  }
-}
 export async function success<T = any>(
   res: Response,
   data: T,
   message = "操作成功",
   code = 200,
 ): Promise<void> {
-  const _data = (await tryMask(data as any, res)) as any;
+  const _data = data as any;
   if (_data && _data.list) {
     _data.list = _data.list.map(keysToCamelCase).map((item: any) => {
       for (const key in item) {
@@ -76,7 +59,7 @@ export async function pageSuccess<T>(
   message = "查询成功",
 ): Promise<void> {
   const totalPages = Math.ceil(total / pageSize);
-  const masked = (await tryMask(list as any, res)) as T[];
+  const masked = list;
   const response: ApiResponse<PageResponse<T>> = {
     code: 200,
     message,

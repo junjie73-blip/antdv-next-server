@@ -1,8 +1,8 @@
+// src/modules/field-mask/service/field-mask.service.ts
 import { AppError } from "@/core/errors.js";
 import { FieldMaskRepository } from "../repository.js";
-import { getPolicyMap, setPolicyMap, invalidatePolicyMap } from "../cache.js";
-import { applyMask, matchRoleScope } from "../matcher.js";
-import type { PolicyMap } from "../types.js";
+import { invalidatePolicyMap } from "../cache.js";
+import { applyMask } from "../matcher.js";
 import type {
   FieldMaskCreateDTO,
   FieldMaskUpdateDTO,
@@ -26,15 +26,17 @@ export class FieldMaskService {
   }
 
   async create(dto: FieldMaskCreateDTO, tenantId: string, userId?: string) {
-    const dup = await this.repo.findDuplicate(
-      tenantId,
-      dto.resource,
-      dto.field,
-      dto.roleScope,
-    );
-    if (dup) throw new AppError("该资源/字段/角色范围已有策略", 409001, 409);
+    // 名称唯一
+    const dupName = await this.repo.findByName(dto.name, tenantId);
+    if (dupName)
+      throw new AppError(`策略名称「${dto.name}」已存在`, 409001, 409);
 
-    const id = await this.repo.create({ ...dto, tenantId, userId });
+    // 字段路径唯一
+    const dupField = await this.repo.findByField(dto.field, tenantId);
+    if (dupField)
+      throw new AppError(`字段「${dto.field}」已有脱敏策略`, 409001, 409);
+
+    const id = await this.repo.create(dto, tenantId, userId);
     await invalidatePolicyMap(tenantId);
     return { policyId: id };
   }
@@ -45,7 +47,23 @@ export class FieldMaskService {
     tenantId: string,
     userId?: string,
   ) {
-    await this.repo.update(id, tenantId, dto, userId);
+    const existing = await this.repo.findById(id, tenantId);
+    if (!existing) throw new AppError("策略不存在", 404001, 404);
+
+    // 名称唯一（排除自己）
+    if (dto.name !== undefined && dto.name !== existing.name) {
+      const dup = await this.repo.findByName(dto.name, tenantId, id);
+      if (dup) throw new AppError(`策略名称「${dto.name}」已存在`, 409001, 409);
+    }
+
+    // 字段路径唯一（排除自己）
+    if (dto.field !== undefined && dto.field !== existing.field) {
+      const dup = await this.repo.findByField(dto.field, tenantId, id);
+      if (dup)
+        throw new AppError(`字段「${dto.field}」已有脱敏策略`, 409001, 409);
+    }
+
+    await this.repo.update(id, dto, tenantId, userId);
     await invalidatePolicyMap(tenantId);
   }
 
@@ -55,70 +73,56 @@ export class FieldMaskService {
   }
 
   /* ============================================================
-   * 加载策略 map（缓存）
+   * 脱敏执行（供 response.ts 调用）
    * ============================================================ */
-  async loadPolicyMap(tenantId: string): Promise<PolicyMap> {
-    const cached = await getPolicyMap(tenantId);
-    if (cached) return cached;
-
-    const rows = await this.repo.listEnabled(tenantId);
-    const map: PolicyMap = {};
-    for (const r of rows) {
-      map[r.resource] ??= {};
-      map[r.resource][r.field] ??= {};
-      map[r.resource][r.field][r.role_scope] = {
-        type: r.mask_type,
-        rule: r.mask_rule,
-      };
-    }
-
-    await setPolicyMap(tenantId, map);
-    return map;
-  }
-
-  /* ============================================================
-   * ⭐ 应用脱敏（供 response.ts 调用）
-   * ============================================================ */
-  async applyTo(
+  /**
+   * @param data      原始响应数据
+   * @param tenantId  租户
+   * @param policies  当前租户的启用策略列表
+   */
+  applyTo(
     data: unknown,
-    resource: string,
-    tenantId: string,
-    userRoles: string[],
-  ): Promise<unknown> {
-    if (!data) return data;
+    policies: Array<{
+      field: string;
+      mask_type: string;
+      pattern: string | null;
+      replace_char: string;
+      keep_prefix: number;
+      keep_suffix: number;
+    }>,
+  ): unknown {
+    if (!data || policies.length === 0) return data;
 
-    const map = await this.loadPolicyMap(tenantId);
-    const policies = map[resource];
-    if (!policies) return data;
-
-    const apply = (obj: unknown): unknown => {
-      if (Array.isArray(obj)) return obj.map(apply);
-      if (obj && typeof obj === "object") {
-        const out: Record<string, unknown> = {};
-        for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
-          const fieldPolicies = policies[k];
-          if (fieldPolicies) {
-            // 优先匹配最具体的角色范围：先"具体角色"，后"all"
-            let matched: { type: string; rule: string | null } | null = null;
-            for (const [scope, p] of Object.entries(fieldPolicies)) {
-              if (scope !== "all" && matchRoleScope(scope, userRoles)) {
-                matched = p;
-                break;
-              }
-            }
-            if (!matched && fieldPolicies["all"])
-              matched = fieldPolicies["all"];
-
-            if (matched) {
-              out[k] = applyMask(v, { type: matched.type, rule: matched.rule });
-              continue;
-            }
-          }
-          out[k] = apply(v);
-        }
-        return out;
+    // field 可能是 "user.phone" 这种点分路径
+    const apply = (obj: unknown, path: string[] = []): unknown => {
+      if (Array.isArray(obj)) {
+        return obj.map((item) => apply(item, path));
       }
-      return obj;
+      if (!obj || typeof obj !== "object") return obj;
+
+      const out: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(
+        obj as Record<string, unknown>,
+      )) {
+        const currentPath = [...path, key];
+        const pathStr = currentPath.join(".");
+
+        // 命中策略
+        const policy = policies.find((p) => p.field === pathStr);
+        if (policy && value != null) {
+          out[key] = applyMask(String(value), {
+            type: policy.mask_type,
+            rule: policy.pattern,
+            replaceChar: policy.replace_char,
+            keepPrefix: policy.keep_prefix,
+            keepSuffix: policy.keep_suffix,
+          });
+          continue;
+        }
+
+        out[key] = apply(value, currentPath);
+      }
+      return out;
     };
 
     return apply(data);

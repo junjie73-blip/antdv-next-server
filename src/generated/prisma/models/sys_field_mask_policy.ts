@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model sys_field_mask_policy
- * 字段级脱敏策略（按角色/字段配置）
+ * 
  */
 export type sys_field_mask_policyModel = runtime.Types.Result.DefaultSelection<Prisma.$sys_field_mask_policyPayload>
 
@@ -27,25 +27,29 @@ export type AggregateSys_field_mask_policy = {
 }
 
 export type Sys_field_mask_policyAvgAggregateOutputType = {
-  enabled: number | null
+  keep_prefix: number | null
+  keep_suffix: number | null
   is_deleted: number | null
 }
 
 export type Sys_field_mask_policySumAggregateOutputType = {
-  enabled: number | null
+  keep_prefix: number | null
+  keep_suffix: number | null
   is_deleted: number | null
 }
 
 export type Sys_field_mask_policyMinAggregateOutputType = {
   policy_id: string | null
   tenant_id: string | null
-  resource: string | null
+  name: string | null
   field: string | null
-  role_scope: string | null
   mask_type: string | null
-  mask_rule: string | null
-  enabled: number | null
-  remark: string | null
+  pattern: string | null
+  replace_char: string | null
+  keep_prefix: number | null
+  keep_suffix: number | null
+  description: string | null
+  status: string | null
   created_at: Date | null
   updated_at: Date | null
   created_by: string | null
@@ -56,13 +60,15 @@ export type Sys_field_mask_policyMinAggregateOutputType = {
 export type Sys_field_mask_policyMaxAggregateOutputType = {
   policy_id: string | null
   tenant_id: string | null
-  resource: string | null
+  name: string | null
   field: string | null
-  role_scope: string | null
   mask_type: string | null
-  mask_rule: string | null
-  enabled: number | null
-  remark: string | null
+  pattern: string | null
+  replace_char: string | null
+  keep_prefix: number | null
+  keep_suffix: number | null
+  description: string | null
+  status: string | null
   created_at: Date | null
   updated_at: Date | null
   created_by: string | null
@@ -73,13 +79,15 @@ export type Sys_field_mask_policyMaxAggregateOutputType = {
 export type Sys_field_mask_policyCountAggregateOutputType = {
   policy_id: number
   tenant_id: number
-  resource: number
+  name: number
   field: number
-  role_scope: number
   mask_type: number
-  mask_rule: number
-  enabled: number
-  remark: number
+  pattern: number
+  replace_char: number
+  keep_prefix: number
+  keep_suffix: number
+  description: number
+  status: number
   created_at: number
   updated_at: number
   created_by: number
@@ -90,25 +98,29 @@ export type Sys_field_mask_policyCountAggregateOutputType = {
 
 
 export type Sys_field_mask_policyAvgAggregateInputType = {
-  enabled?: true
+  keep_prefix?: true
+  keep_suffix?: true
   is_deleted?: true
 }
 
 export type Sys_field_mask_policySumAggregateInputType = {
-  enabled?: true
+  keep_prefix?: true
+  keep_suffix?: true
   is_deleted?: true
 }
 
 export type Sys_field_mask_policyMinAggregateInputType = {
   policy_id?: true
   tenant_id?: true
-  resource?: true
+  name?: true
   field?: true
-  role_scope?: true
   mask_type?: true
-  mask_rule?: true
-  enabled?: true
-  remark?: true
+  pattern?: true
+  replace_char?: true
+  keep_prefix?: true
+  keep_suffix?: true
+  description?: true
+  status?: true
   created_at?: true
   updated_at?: true
   created_by?: true
@@ -119,13 +131,15 @@ export type Sys_field_mask_policyMinAggregateInputType = {
 export type Sys_field_mask_policyMaxAggregateInputType = {
   policy_id?: true
   tenant_id?: true
-  resource?: true
+  name?: true
   field?: true
-  role_scope?: true
   mask_type?: true
-  mask_rule?: true
-  enabled?: true
-  remark?: true
+  pattern?: true
+  replace_char?: true
+  keep_prefix?: true
+  keep_suffix?: true
+  description?: true
+  status?: true
   created_at?: true
   updated_at?: true
   created_by?: true
@@ -136,13 +150,15 @@ export type Sys_field_mask_policyMaxAggregateInputType = {
 export type Sys_field_mask_policyCountAggregateInputType = {
   policy_id?: true
   tenant_id?: true
-  resource?: true
+  name?: true
   field?: true
-  role_scope?: true
   mask_type?: true
-  mask_rule?: true
-  enabled?: true
-  remark?: true
+  pattern?: true
+  replace_char?: true
+  keep_prefix?: true
+  keep_suffix?: true
+  description?: true
+  status?: true
   created_at?: true
   updated_at?: true
   created_by?: true
@@ -240,13 +256,15 @@ export type sys_field_mask_policyGroupByArgs<ExtArgs extends runtime.Types.Exten
 export type Sys_field_mask_policyGroupByOutputType = {
   policy_id: string
   tenant_id: string
-  resource: string
+  name: string
   field: string
-  role_scope: string
   mask_type: string
-  mask_rule: string | null
-  enabled: number
-  remark: string | null
+  pattern: string | null
+  replace_char: string
+  keep_prefix: number
+  keep_suffix: number
+  description: string | null
+  status: string
   created_at: Date
   updated_at: Date
   created_by: string | null
@@ -280,13 +298,15 @@ export type sys_field_mask_policyWhereInput = {
   NOT?: Prisma.sys_field_mask_policyWhereInput | Prisma.sys_field_mask_policyWhereInput[]
   policy_id?: Prisma.UuidFilter<"sys_field_mask_policy"> | string
   tenant_id?: Prisma.UuidFilter<"sys_field_mask_policy"> | string
-  resource?: Prisma.StringFilter<"sys_field_mask_policy"> | string
+  name?: Prisma.StringFilter<"sys_field_mask_policy"> | string
   field?: Prisma.StringFilter<"sys_field_mask_policy"> | string
-  role_scope?: Prisma.StringFilter<"sys_field_mask_policy"> | string
   mask_type?: Prisma.StringFilter<"sys_field_mask_policy"> | string
-  mask_rule?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
-  enabled?: Prisma.IntFilter<"sys_field_mask_policy"> | number
-  remark?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
+  pattern?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
+  replace_char?: Prisma.StringFilter<"sys_field_mask_policy"> | string
+  keep_prefix?: Prisma.IntFilter<"sys_field_mask_policy"> | number
+  keep_suffix?: Prisma.IntFilter<"sys_field_mask_policy"> | number
+  description?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
+  status?: Prisma.StringFilter<"sys_field_mask_policy"> | string
   created_at?: Prisma.DateTimeFilter<"sys_field_mask_policy"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_field_mask_policy"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_field_mask_policy"> | string | null
@@ -297,13 +317,15 @@ export type sys_field_mask_policyWhereInput = {
 export type sys_field_mask_policyOrderByWithRelationInput = {
   policy_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   field?: Prisma.SortOrder
-  role_scope?: Prisma.SortOrder
   mask_type?: Prisma.SortOrder
-  mask_rule?: Prisma.SortOrderInput | Prisma.SortOrder
-  enabled?: Prisma.SortOrder
-  remark?: Prisma.SortOrderInput | Prisma.SortOrder
+  pattern?: Prisma.SortOrderInput | Prisma.SortOrder
+  replace_char?: Prisma.SortOrder
+  keep_prefix?: Prisma.SortOrder
+  keep_suffix?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -313,35 +335,38 @@ export type sys_field_mask_policyOrderByWithRelationInput = {
 
 export type sys_field_mask_policyWhereUniqueInput = Prisma.AtLeast<{
   policy_id?: string
-  tenant_id_resource_field_role_scope?: Prisma.sys_field_mask_policyTenant_idResourceFieldRole_scopeCompoundUniqueInput
   AND?: Prisma.sys_field_mask_policyWhereInput | Prisma.sys_field_mask_policyWhereInput[]
   OR?: Prisma.sys_field_mask_policyWhereInput[]
   NOT?: Prisma.sys_field_mask_policyWhereInput | Prisma.sys_field_mask_policyWhereInput[]
   tenant_id?: Prisma.UuidFilter<"sys_field_mask_policy"> | string
-  resource?: Prisma.StringFilter<"sys_field_mask_policy"> | string
+  name?: Prisma.StringFilter<"sys_field_mask_policy"> | string
   field?: Prisma.StringFilter<"sys_field_mask_policy"> | string
-  role_scope?: Prisma.StringFilter<"sys_field_mask_policy"> | string
   mask_type?: Prisma.StringFilter<"sys_field_mask_policy"> | string
-  mask_rule?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
-  enabled?: Prisma.IntFilter<"sys_field_mask_policy"> | number
-  remark?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
+  pattern?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
+  replace_char?: Prisma.StringFilter<"sys_field_mask_policy"> | string
+  keep_prefix?: Prisma.IntFilter<"sys_field_mask_policy"> | number
+  keep_suffix?: Prisma.IntFilter<"sys_field_mask_policy"> | number
+  description?: Prisma.StringNullableFilter<"sys_field_mask_policy"> | string | null
+  status?: Prisma.StringFilter<"sys_field_mask_policy"> | string
   created_at?: Prisma.DateTimeFilter<"sys_field_mask_policy"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_field_mask_policy"> | Date | string
   created_by?: Prisma.UuidNullableFilter<"sys_field_mask_policy"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"sys_field_mask_policy"> | string | null
   is_deleted?: Prisma.IntFilter<"sys_field_mask_policy"> | number
-}, "policy_id" | "tenant_id_resource_field_role_scope">
+}, "policy_id">
 
 export type sys_field_mask_policyOrderByWithAggregationInput = {
   policy_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   field?: Prisma.SortOrder
-  role_scope?: Prisma.SortOrder
   mask_type?: Prisma.SortOrder
-  mask_rule?: Prisma.SortOrderInput | Prisma.SortOrder
-  enabled?: Prisma.SortOrder
-  remark?: Prisma.SortOrderInput | Prisma.SortOrder
+  pattern?: Prisma.SortOrderInput | Prisma.SortOrder
+  replace_char?: Prisma.SortOrder
+  keep_prefix?: Prisma.SortOrder
+  keep_suffix?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -360,13 +385,15 @@ export type sys_field_mask_policyScalarWhereWithAggregatesInput = {
   NOT?: Prisma.sys_field_mask_policyScalarWhereWithAggregatesInput | Prisma.sys_field_mask_policyScalarWhereWithAggregatesInput[]
   policy_id?: Prisma.UuidWithAggregatesFilter<"sys_field_mask_policy"> | string
   tenant_id?: Prisma.UuidWithAggregatesFilter<"sys_field_mask_policy"> | string
-  resource?: Prisma.StringWithAggregatesFilter<"sys_field_mask_policy"> | string
+  name?: Prisma.StringWithAggregatesFilter<"sys_field_mask_policy"> | string
   field?: Prisma.StringWithAggregatesFilter<"sys_field_mask_policy"> | string
-  role_scope?: Prisma.StringWithAggregatesFilter<"sys_field_mask_policy"> | string
   mask_type?: Prisma.StringWithAggregatesFilter<"sys_field_mask_policy"> | string
-  mask_rule?: Prisma.StringNullableWithAggregatesFilter<"sys_field_mask_policy"> | string | null
-  enabled?: Prisma.IntWithAggregatesFilter<"sys_field_mask_policy"> | number
-  remark?: Prisma.StringNullableWithAggregatesFilter<"sys_field_mask_policy"> | string | null
+  pattern?: Prisma.StringNullableWithAggregatesFilter<"sys_field_mask_policy"> | string | null
+  replace_char?: Prisma.StringWithAggregatesFilter<"sys_field_mask_policy"> | string
+  keep_prefix?: Prisma.IntWithAggregatesFilter<"sys_field_mask_policy"> | number
+  keep_suffix?: Prisma.IntWithAggregatesFilter<"sys_field_mask_policy"> | number
+  description?: Prisma.StringNullableWithAggregatesFilter<"sys_field_mask_policy"> | string | null
+  status?: Prisma.StringWithAggregatesFilter<"sys_field_mask_policy"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_field_mask_policy"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_field_mask_policy"> | Date | string
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_field_mask_policy"> | string | null
@@ -377,13 +404,15 @@ export type sys_field_mask_policyScalarWhereWithAggregatesInput = {
 export type sys_field_mask_policyCreateInput = {
   policy_id?: string
   tenant_id: string
-  resource: string
+  name: string
   field: string
-  role_scope: string
   mask_type: string
-  mask_rule?: string | null
-  enabled?: number
-  remark?: string | null
+  pattern?: string | null
+  replace_char?: string
+  keep_prefix?: number
+  keep_suffix?: number
+  description?: string | null
+  status?: string
   created_at?: Date | string
   updated_at?: Date | string
   created_by?: string | null
@@ -394,13 +423,15 @@ export type sys_field_mask_policyCreateInput = {
 export type sys_field_mask_policyUncheckedCreateInput = {
   policy_id?: string
   tenant_id: string
-  resource: string
+  name: string
   field: string
-  role_scope: string
   mask_type: string
-  mask_rule?: string | null
-  enabled?: number
-  remark?: string | null
+  pattern?: string | null
+  replace_char?: string
+  keep_prefix?: number
+  keep_suffix?: number
+  description?: string | null
+  status?: string
   created_at?: Date | string
   updated_at?: Date | string
   created_by?: string | null
@@ -411,13 +442,15 @@ export type sys_field_mask_policyUncheckedCreateInput = {
 export type sys_field_mask_policyUpdateInput = {
   policy_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
-  resource?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   field?: Prisma.StringFieldUpdateOperationsInput | string
-  role_scope?: Prisma.StringFieldUpdateOperationsInput | string
   mask_type?: Prisma.StringFieldUpdateOperationsInput | string
-  mask_rule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  enabled?: Prisma.IntFieldUpdateOperationsInput | number
-  remark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replace_char?: Prisma.StringFieldUpdateOperationsInput | string
+  keep_prefix?: Prisma.IntFieldUpdateOperationsInput | number
+  keep_suffix?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -428,13 +461,15 @@ export type sys_field_mask_policyUpdateInput = {
 export type sys_field_mask_policyUncheckedUpdateInput = {
   policy_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
-  resource?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   field?: Prisma.StringFieldUpdateOperationsInput | string
-  role_scope?: Prisma.StringFieldUpdateOperationsInput | string
   mask_type?: Prisma.StringFieldUpdateOperationsInput | string
-  mask_rule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  enabled?: Prisma.IntFieldUpdateOperationsInput | number
-  remark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replace_char?: Prisma.StringFieldUpdateOperationsInput | string
+  keep_prefix?: Prisma.IntFieldUpdateOperationsInput | number
+  keep_suffix?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -445,13 +480,15 @@ export type sys_field_mask_policyUncheckedUpdateInput = {
 export type sys_field_mask_policyCreateManyInput = {
   policy_id?: string
   tenant_id: string
-  resource: string
+  name: string
   field: string
-  role_scope: string
   mask_type: string
-  mask_rule?: string | null
-  enabled?: number
-  remark?: string | null
+  pattern?: string | null
+  replace_char?: string
+  keep_prefix?: number
+  keep_suffix?: number
+  description?: string | null
+  status?: string
   created_at?: Date | string
   updated_at?: Date | string
   created_by?: string | null
@@ -462,13 +499,15 @@ export type sys_field_mask_policyCreateManyInput = {
 export type sys_field_mask_policyUpdateManyMutationInput = {
   policy_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
-  resource?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   field?: Prisma.StringFieldUpdateOperationsInput | string
-  role_scope?: Prisma.StringFieldUpdateOperationsInput | string
   mask_type?: Prisma.StringFieldUpdateOperationsInput | string
-  mask_rule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  enabled?: Prisma.IntFieldUpdateOperationsInput | number
-  remark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replace_char?: Prisma.StringFieldUpdateOperationsInput | string
+  keep_prefix?: Prisma.IntFieldUpdateOperationsInput | number
+  keep_suffix?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -479,13 +518,15 @@ export type sys_field_mask_policyUpdateManyMutationInput = {
 export type sys_field_mask_policyUncheckedUpdateManyInput = {
   policy_id?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_id?: Prisma.StringFieldUpdateOperationsInput | string
-  resource?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   field?: Prisma.StringFieldUpdateOperationsInput | string
-  role_scope?: Prisma.StringFieldUpdateOperationsInput | string
   mask_type?: Prisma.StringFieldUpdateOperationsInput | string
-  mask_rule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  enabled?: Prisma.IntFieldUpdateOperationsInput | number
-  remark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replace_char?: Prisma.StringFieldUpdateOperationsInput | string
+  keep_prefix?: Prisma.IntFieldUpdateOperationsInput | number
+  keep_suffix?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -493,23 +534,18 @@ export type sys_field_mask_policyUncheckedUpdateManyInput = {
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type sys_field_mask_policyTenant_idResourceFieldRole_scopeCompoundUniqueInput = {
-  tenant_id: string
-  resource: string
-  field: string
-  role_scope: string
-}
-
 export type sys_field_mask_policyCountOrderByAggregateInput = {
   policy_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   field?: Prisma.SortOrder
-  role_scope?: Prisma.SortOrder
   mask_type?: Prisma.SortOrder
-  mask_rule?: Prisma.SortOrder
-  enabled?: Prisma.SortOrder
-  remark?: Prisma.SortOrder
+  pattern?: Prisma.SortOrder
+  replace_char?: Prisma.SortOrder
+  keep_prefix?: Prisma.SortOrder
+  keep_suffix?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
@@ -518,20 +554,23 @@ export type sys_field_mask_policyCountOrderByAggregateInput = {
 }
 
 export type sys_field_mask_policyAvgOrderByAggregateInput = {
-  enabled?: Prisma.SortOrder
+  keep_prefix?: Prisma.SortOrder
+  keep_suffix?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
 }
 
 export type sys_field_mask_policyMaxOrderByAggregateInput = {
   policy_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   field?: Prisma.SortOrder
-  role_scope?: Prisma.SortOrder
   mask_type?: Prisma.SortOrder
-  mask_rule?: Prisma.SortOrder
-  enabled?: Prisma.SortOrder
-  remark?: Prisma.SortOrder
+  pattern?: Prisma.SortOrder
+  replace_char?: Prisma.SortOrder
+  keep_prefix?: Prisma.SortOrder
+  keep_suffix?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
@@ -542,13 +581,15 @@ export type sys_field_mask_policyMaxOrderByAggregateInput = {
 export type sys_field_mask_policyMinOrderByAggregateInput = {
   policy_id?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   field?: Prisma.SortOrder
-  role_scope?: Prisma.SortOrder
   mask_type?: Prisma.SortOrder
-  mask_rule?: Prisma.SortOrder
-  enabled?: Prisma.SortOrder
-  remark?: Prisma.SortOrder
+  pattern?: Prisma.SortOrder
+  replace_char?: Prisma.SortOrder
+  keep_prefix?: Prisma.SortOrder
+  keep_suffix?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
@@ -557,7 +598,8 @@ export type sys_field_mask_policyMinOrderByAggregateInput = {
 }
 
 export type sys_field_mask_policySumOrderByAggregateInput = {
-  enabled?: Prisma.SortOrder
+  keep_prefix?: Prisma.SortOrder
+  keep_suffix?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
 }
 
@@ -566,13 +608,15 @@ export type sys_field_mask_policySumOrderByAggregateInput = {
 export type sys_field_mask_policySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   policy_id?: boolean
   tenant_id?: boolean
-  resource?: boolean
+  name?: boolean
   field?: boolean
-  role_scope?: boolean
   mask_type?: boolean
-  mask_rule?: boolean
-  enabled?: boolean
-  remark?: boolean
+  pattern?: boolean
+  replace_char?: boolean
+  keep_prefix?: boolean
+  keep_suffix?: boolean
+  description?: boolean
+  status?: boolean
   created_at?: boolean
   updated_at?: boolean
   created_by?: boolean
@@ -583,13 +627,15 @@ export type sys_field_mask_policySelect<ExtArgs extends runtime.Types.Extensions
 export type sys_field_mask_policySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   policy_id?: boolean
   tenant_id?: boolean
-  resource?: boolean
+  name?: boolean
   field?: boolean
-  role_scope?: boolean
   mask_type?: boolean
-  mask_rule?: boolean
-  enabled?: boolean
-  remark?: boolean
+  pattern?: boolean
+  replace_char?: boolean
+  keep_prefix?: boolean
+  keep_suffix?: boolean
+  description?: boolean
+  status?: boolean
   created_at?: boolean
   updated_at?: boolean
   created_by?: boolean
@@ -600,13 +646,15 @@ export type sys_field_mask_policySelectCreateManyAndReturn<ExtArgs extends runti
 export type sys_field_mask_policySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   policy_id?: boolean
   tenant_id?: boolean
-  resource?: boolean
+  name?: boolean
   field?: boolean
-  role_scope?: boolean
   mask_type?: boolean
-  mask_rule?: boolean
-  enabled?: boolean
-  remark?: boolean
+  pattern?: boolean
+  replace_char?: boolean
+  keep_prefix?: boolean
+  keep_suffix?: boolean
+  description?: boolean
+  status?: boolean
   created_at?: boolean
   updated_at?: boolean
   created_by?: boolean
@@ -617,13 +665,15 @@ export type sys_field_mask_policySelectUpdateManyAndReturn<ExtArgs extends runti
 export type sys_field_mask_policySelectScalar = {
   policy_id?: boolean
   tenant_id?: boolean
-  resource?: boolean
+  name?: boolean
   field?: boolean
-  role_scope?: boolean
   mask_type?: boolean
-  mask_rule?: boolean
-  enabled?: boolean
-  remark?: boolean
+  pattern?: boolean
+  replace_char?: boolean
+  keep_prefix?: boolean
+  keep_suffix?: boolean
+  description?: boolean
+  status?: boolean
   created_at?: boolean
   updated_at?: boolean
   created_by?: boolean
@@ -631,7 +681,7 @@ export type sys_field_mask_policySelectScalar = {
   is_deleted?: boolean
 }
 
-export type sys_field_mask_policyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"policy_id" | "tenant_id" | "resource" | "field" | "role_scope" | "mask_type" | "mask_rule" | "enabled" | "remark" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_field_mask_policy"]>
+export type sys_field_mask_policyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"policy_id" | "tenant_id" | "name" | "field" | "mask_type" | "pattern" | "replace_char" | "keep_prefix" | "keep_suffix" | "description" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["sys_field_mask_policy"]>
 
 export type $sys_field_mask_policyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_field_mask_policy"
@@ -642,25 +692,27 @@ export type $sys_field_mask_policyPayload<ExtArgs extends runtime.Types.Extensio
     /**
      * 资源标识：sys_user, sys_tenant
      */
-    resource: string
+    name: string
     /**
      * 字段名
      */
     field: string
     /**
-     * 应用范围：all | 具体角色编码（JSON数组）
-     */
-    role_scope: string
-    /**
-     * full | partial | hash | regex
+     * phone | email | idCard | name | custom
      */
     mask_type: string
     /**
-     * partial 时的正则 / 保留规则
+     * 仅 custom 使用，正则表达式
      */
-    mask_rule: string | null
-    enabled: number
-    remark: string | null
+    pattern: string | null
+    replace_char: string
+    keep_prefix: number
+    keep_suffix: number
+    description: string | null
+    /**
+     * 0-禁用 1-启用
+     */
+    status: string
     created_at: Date
     updated_at: Date
     created_by: string | null
@@ -1091,13 +1143,15 @@ export interface Prisma__sys_field_mask_policyClient<T, Null = never, ExtArgs ex
 export interface sys_field_mask_policyFieldRefs {
   readonly policy_id: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
   readonly tenant_id: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
-  readonly resource: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
+  readonly name: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
   readonly field: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
-  readonly role_scope: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
   readonly mask_type: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
-  readonly mask_rule: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
-  readonly enabled: Prisma.FieldRef<"sys_field_mask_policy", 'Int'>
-  readonly remark: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
+  readonly pattern: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
+  readonly replace_char: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
+  readonly keep_prefix: Prisma.FieldRef<"sys_field_mask_policy", 'Int'>
+  readonly keep_suffix: Prisma.FieldRef<"sys_field_mask_policy", 'Int'>
+  readonly description: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
+  readonly status: Prisma.FieldRef<"sys_field_mask_policy", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_field_mask_policy", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"sys_field_mask_policy", 'DateTime'>
   readonly created_by: Prisma.FieldRef<"sys_field_mask_policy", 'String'>

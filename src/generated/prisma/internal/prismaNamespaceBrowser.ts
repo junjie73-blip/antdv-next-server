@@ -121,7 +121,15 @@ export const ModelName = {
   sys_slow_query_log: 'sys_slow_query_log',
   gen_template: 'gen_template',
   gen_template_version: 'gen_template_version',
-  sys_api_version: 'sys_api_version'
+  sys_api_version: 'sys_api_version',
+  sys_feature_flag: 'sys_feature_flag',
+  sys_feature_flag_rule: 'sys_feature_flag_rule',
+  sys_backup_record: 'sys_backup_record',
+  sys_backup_policy: 'sys_backup_policy',
+  sys_export_task: 'sys_export_task',
+  sys_tenant_isolation_scan: 'sys_tenant_isolation_scan',
+  sys_org_history: 'sys_org_history',
+  sys_role_field_policy: 'sys_role_field_policy'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -931,7 +939,9 @@ export const Wf_definitionScalarFieldEnum = {
   updated_at: 'updated_at',
   created_by: 'created_by',
   updated_by: 'updated_by',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  edge_conditions: 'edge_conditions',
+  var_meta: 'var_meta'
 } as const
 
 export type Wf_definitionScalarFieldEnum = (typeof Wf_definitionScalarFieldEnum)[keyof typeof Wf_definitionScalarFieldEnum]
@@ -1442,13 +1452,15 @@ export type Sys_storage_backendScalarFieldEnum = (typeof Sys_storage_backendScal
 export const Sys_field_mask_policyScalarFieldEnum = {
   policy_id: 'policy_id',
   tenant_id: 'tenant_id',
-  resource: 'resource',
+  name: 'name',
   field: 'field',
-  role_scope: 'role_scope',
   mask_type: 'mask_type',
-  mask_rule: 'mask_rule',
-  enabled: 'enabled',
-  remark: 'remark',
+  pattern: 'pattern',
+  replace_char: 'replace_char',
+  keep_prefix: 'keep_prefix',
+  keep_suffix: 'keep_suffix',
+  description: 'description',
+  status: 'status',
   created_at: 'created_at',
   updated_at: 'updated_at',
   created_by: 'created_by',
@@ -1516,18 +1528,199 @@ export type Gen_template_versionScalarFieldEnum = (typeof Gen_template_versionSc
 
 
 export const Sys_api_versionScalarFieldEnum = {
-  id: 'id',
-  version: 'version',
+  version_id: 'version_id',
+  version_code: 'version_code',
+  version_name: 'version_name',
   status: 'status',
+  release_at: 'release_at',
   deprecated_at: 'deprecated_at',
-  retire_at: 'retire_at',
-  sunset_header: 'sunset_header',
+  sunset_at: 'sunset_at',
+  description: 'description',
   changelog: 'changelog',
+  is_deleted: 'is_deleted',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by'
+} as const
+
+export type Sys_api_versionScalarFieldEnum = (typeof Sys_api_versionScalarFieldEnum)[keyof typeof Sys_api_versionScalarFieldEnum]
+
+
+export const Sys_feature_flagScalarFieldEnum = {
+  flag_id: 'flag_id',
+  flag_key: 'flag_key',
+  flag_name: 'flag_name',
+  description: 'description',
+  default_on: 'default_on',
+  rollout_pct: 'rollout_pct',
+  status: 'status',
+  expire_at: 'expire_at',
+  tags: 'tags',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_feature_flagScalarFieldEnum = (typeof Sys_feature_flagScalarFieldEnum)[keyof typeof Sys_feature_flagScalarFieldEnum]
+
+
+export const Sys_feature_flag_ruleScalarFieldEnum = {
+  rule_id: 'rule_id',
+  flag_id: 'flag_id',
+  tenant_id: 'tenant_id',
+  rule_type: 'rule_type',
+  target: 'target',
+  enabled: 'enabled',
+  priority: 'priority',
+  remark: 'remark',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_feature_flag_ruleScalarFieldEnum = (typeof Sys_feature_flag_ruleScalarFieldEnum)[keyof typeof Sys_feature_flag_ruleScalarFieldEnum]
+
+
+export const Sys_backup_recordScalarFieldEnum = {
+  backup_id: 'backup_id',
+  trigger_type: 'trigger_type',
+  backup_type: 'backup_type',
+  status: 'status',
+  storage_key: 'storage_key',
+  file_name: 'file_name',
+  file_size: 'file_size',
+  compression: 'compression',
+  database_name: 'database_name',
+  database_size: 'database_size',
+  checksum: 'checksum',
+  duration_ms: 'duration_ms',
+  error_msg: 'error_msg',
+  retain_until: 'retain_until',
+  remark: 'remark',
+  started_at: 'started_at',
+  finished_at: 'finished_at',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type Sys_backup_recordScalarFieldEnum = (typeof Sys_backup_recordScalarFieldEnum)[keyof typeof Sys_backup_recordScalarFieldEnum]
+
+
+export const Sys_backup_policyScalarFieldEnum = {
+  policy_id: 'policy_id',
+  name: 'name',
+  cron: 'cron',
+  backup_type: 'backup_type',
+  retain_days: 'retain_days',
+  retain_count: 'retain_count',
+  enabled: 'enabled',
+  bucket: 'bucket',
+  remark: 'remark',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_backup_policyScalarFieldEnum = (typeof Sys_backup_policyScalarFieldEnum)[keyof typeof Sys_backup_policyScalarFieldEnum]
+
+
+export const Sys_export_taskScalarFieldEnum = {
+  task_id: 'task_id',
+  tenant_id: 'tenant_id',
+  user_id: 'user_id',
+  biz_type: 'biz_type',
+  export_format: 'export_format',
+  query_params: 'query_params',
+  columns: 'columns',
+  status: 'status',
+  progress: 'progress',
+  row_count: 'row_count',
+  file_url: 'file_url',
+  file_name: 'file_name',
+  file_size: 'file_size',
+  error_msg: 'error_msg',
+  job_id: 'job_id',
+  retry_count: 'retry_count',
+  max_retries: 'max_retries',
+  started_at: 'started_at',
+  completed_at: 'completed_at',
+  expires_at: 'expires_at',
+  duration_ms: 'duration_ms',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_export_taskScalarFieldEnum = (typeof Sys_export_taskScalarFieldEnum)[keyof typeof Sys_export_taskScalarFieldEnum]
+
+
+export const Sys_tenant_isolation_scanScalarFieldEnum = {
+  scan_id: 'scan_id',
+  scan_type: 'scan_type',
+  rule_code: 'rule_code',
+  severity: 'severity',
+  table_name: 'table_name',
+  column_name: 'column_name',
+  message: 'message',
+  context: 'context',
+  suggestion: 'suggestion',
+  resolved: 'resolved',
+  resolved_at: 'resolved_at',
+  resolved_by: 'resolved_by',
+  first_seen_at: 'first_seen_at',
+  last_seen_at: 'last_seen_at',
+  hit_count: 'hit_count',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
-export type Sys_api_versionScalarFieldEnum = (typeof Sys_api_versionScalarFieldEnum)[keyof typeof Sys_api_versionScalarFieldEnum]
+export type Sys_tenant_isolation_scanScalarFieldEnum = (typeof Sys_tenant_isolation_scanScalarFieldEnum)[keyof typeof Sys_tenant_isolation_scanScalarFieldEnum]
+
+
+export const Sys_org_historyScalarFieldEnum = {
+  history_id: 'history_id',
+  tenant_id: 'tenant_id',
+  entity_type: 'entity_type',
+  entity_id: 'entity_id',
+  change_type: 'change_type',
+  before_data: 'before_data',
+  after_data: 'after_data',
+  summary: 'summary',
+  source: 'source',
+  operator_id: 'operator_id',
+  operator_name: 'operator_name',
+  ip_address: 'ip_address',
+  trace_id: 'trace_id',
+  created_at: 'created_at'
+} as const
+
+export type Sys_org_historyScalarFieldEnum = (typeof Sys_org_historyScalarFieldEnum)[keyof typeof Sys_org_historyScalarFieldEnum]
+
+
+export const Sys_role_field_policyScalarFieldEnum = {
+  policy_id: 'policy_id',
+  tenant_id: 'tenant_id',
+  role_id: 'role_id',
+  resource: 'resource',
+  field: 'field',
+  access: 'access',
+  mask_type: 'mask_type',
+  mask_rule: 'mask_rule',
+  remark: 'remark',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  is_deleted: 'is_deleted'
+} as const
+
+export type Sys_role_field_policyScalarFieldEnum = (typeof Sys_role_field_policyScalarFieldEnum)[keyof typeof Sys_role_field_policyScalarFieldEnum]
 
 
 export const SortOrder = {

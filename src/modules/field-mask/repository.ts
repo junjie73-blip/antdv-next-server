@@ -1,44 +1,73 @@
+// src/modules/field-mask/repository.ts
 import { prisma } from "@/config/database.js";
 import { AppError } from "@/core/errors.js";
-import type { FieldMaskPolicyEntity } from "./types.js";
+import type {
+  FieldMaskCreateDTO,
+  FieldMaskUpdateDTO,
+  FieldMaskListDTO,
+} from "./schema.js";
 
 export class FieldMaskRepository {
+  /* ============================================================
+   * 查询
+   * ============================================================ */
   async findById(id: string, tenantId: string) {
     return prisma.sys_field_mask_policy.findFirst({
       where: { policy_id: id, tenant_id: tenantId, is_deleted: 0 },
     });
   }
 
-  /** 加载全租户策略（供缓存用） */
-  async listEnabled(tenantId: string): Promise<FieldMaskPolicyEntity[]> {
-    return prisma.sys_field_mask_policy.findMany({
-      where: { tenant_id: tenantId, is_deleted: 0, enabled: 1 },
-    }) as unknown as Promise<FieldMaskPolicyEntity[]>;
+  /** 唯一性检查：同一租户下 name 不允许重复 */
+  async findByName(name: string, tenantId: string, excludeId?: string) {
+    const where: any = {
+      tenant_id: tenantId,
+      name,
+      is_deleted: 0,
+    };
+    if (excludeId) where.policy_id = { not: excludeId };
+    return prisma.sys_field_mask_policy.findFirst({ where });
   }
 
-  async findPage(
-    tenantId: string,
-    query: {
-      pageNum?: number;
-      pageSize?: number;
-      resource?: string;
-      field?: string;
-      enabled?: number;
-    },
-  ) {
+  /** 字段路径唯一性：同一租户下同一 field 不允许重复（避免冲突） */
+  async findByField(field: string, tenantId: string, excludeId?: string) {
+    const where: any = {
+      tenant_id: tenantId,
+      field,
+      is_deleted: 0,
+    };
+    if (excludeId) where.policy_id = { not: excludeId };
+    return prisma.sys_field_mask_policy.findFirst({ where });
+  }
+
+  /** 加载全部启用的策略（用于响应脱敏） */
+  async listEnabled(tenantId: string) {
+    return prisma.sys_field_mask_policy.findMany({
+      where: { tenant_id: tenantId, is_deleted: 0, status: "1" },
+      orderBy: { created_at: "asc" },
+    });
+  }
+
+  /** 分页 */
+  async findPage(tenantId: string, query: FieldMaskListDTO) {
     const pageNum = Math.max(1, query.pageNum || 1);
     const pageSize = Math.min(100, Math.max(1, query.pageSize || 20));
     const skip = (pageNum - 1) * pageSize;
 
     const where: any = { tenant_id: tenantId, is_deleted: 0 };
-    if (query.resource) where.resource = query.resource;
-    if (query.field) where.field = query.field;
-    if (query.enabled !== undefined) where.enabled = query.enabled;
+    if (query.maskType) where.mask_type = query.maskType;
+    if (query.status) where.status = query.status;
+    if (query.keyword) {
+      where.OR = [
+        { name: { contains: query.keyword } },
+        { field: { contains: query.keyword } },
+        { description: { contains: query.keyword } },
+      ];
+    }
 
     const [list, total] = await Promise.all([
       prisma.sys_field_mask_policy.findMany({
         where,
-        orderBy: [{ resource: "asc" }, { field: "asc" }],
+        orderBy: { created_at: "desc" },
         skip,
         take: pageSize,
       }),
@@ -54,88 +83,74 @@ export class FieldMaskRepository {
     };
   }
 
-  async create(data: {
-    tenantId: string;
-    resource: string;
-    field: string;
-    roleScope: string;
-    maskType: string;
-    maskRule?: string | null;
-    enabled: number;
-    remark?: string;
-    userId?: string;
-  }): Promise<string> {
-    const r = await prisma.sys_field_mask_policy.create({
+  /* ============================================================
+   * 写入
+   * ============================================================ */
+  async create(
+    dto: FieldMaskCreateDTO,
+    tenantId: string,
+    userId?: string,
+  ): Promise<string> {
+    const record = await prisma.sys_field_mask_policy.create({
       data: {
-        tenant_id: data.tenantId,
-        resource: data.resource,
-        field: data.field,
-        role_scope: data.roleScope,
-        mask_type: data.maskType,
-        mask_rule: data.maskRule ?? null,
-        enabled: data.enabled,
-        remark: data.remark ?? null,
-        created_by: data.userId,
-        updated_by: data.userId,
+        tenant_id: tenantId,
+        name: dto.name,
+        field: dto.field,
+        mask_type: dto.maskType,
+        pattern: dto.pattern ?? null,
+        replace_char: dto.replaceChar,
+        keep_prefix: dto.keepPrefix,
+        keep_suffix: dto.keepSuffix,
+        description: dto.description ?? null,
+        status: dto.status,
+        created_by: userId ?? null,
+        updated_by: userId ?? null,
       },
     });
-    return r.policy_id;
+    return record.policy_id;
   }
 
   async update(
     id: string,
+    dto: FieldMaskUpdateDTO,
     tenantId: string,
-    data: Partial<{
-      resource: string;
-      field: string;
-      roleScope: string;
-      maskType: string;
-      maskRule: string | null;
-      enabled: number;
-      remark: string | null;
-    }>,
     userId?: string,
-  ) {
-    const updateData: any = { updated_by: userId, updated_at: new Date() };
-    if (data.resource !== undefined) updateData.resource = data.resource;
-    if (data.field !== undefined) updateData.field = data.field;
-    if (data.roleScope !== undefined) updateData.role_scope = data.roleScope;
-    if (data.maskType !== undefined) updateData.mask_type = data.maskType;
-    if (data.maskRule !== undefined) updateData.mask_rule = data.maskRule;
-    if (data.enabled !== undefined) updateData.enabled = data.enabled;
-    if (data.remark !== undefined) updateData.remark = data.remark;
-
-    const r = await prisma.sys_field_mask_policy.updateMany({
-      where: { policy_id: id, tenant_id: tenantId, is_deleted: 0 },
-      data: updateData,
-    });
-    if (r.count === 0) throw new AppError("策略不存在", 404001, 404);
-  }
-
-  async softDelete(id: string, tenantId: string, userId?: string) {
-    const r = await prisma.sys_field_mask_policy.updateMany({
-      where: { policy_id: id, tenant_id: tenantId, is_deleted: 0 },
-      data: { is_deleted: 1, updated_by: userId, updated_at: new Date() },
-    });
-    if (r.count === 0) throw new AppError("策略不存在", 404001, 404);
-  }
-
-  /** 唯一性检查 */
-  async findDuplicate(
-    tenantId: string,
-    resource: string,
-    field: string,
-    roleScope: string,
-    excludeId?: string,
-  ) {
-    const where: any = {
-      tenant_id: tenantId,
-      resource,
-      field,
-      role_scope: roleScope,
-      is_deleted: 0,
+  ): Promise<void> {
+    const data: any = {
+      updated_by: userId ?? null,
+      updated_at: new Date(),
     };
-    if (excludeId) where.policy_id = { not: excludeId };
-    return prisma.sys_field_mask_policy.findFirst({ where });
+
+    if (dto.name !== undefined) data.name = dto.name;
+    if (dto.field !== undefined) data.field = dto.field;
+    if (dto.maskType !== undefined) data.mask_type = dto.maskType;
+    if (dto.pattern !== undefined) data.pattern = dto.pattern;
+    if (dto.replaceChar !== undefined) data.replace_char = dto.replaceChar;
+    if (dto.keepPrefix !== undefined) data.keep_prefix = dto.keepPrefix;
+    if (dto.keepSuffix !== undefined) data.keep_suffix = dto.keepSuffix;
+    if (dto.description !== undefined) data.description = dto.description;
+    if (dto.status !== undefined) data.status = dto.status;
+
+    const r = await prisma.sys_field_mask_policy.updateMany({
+      where: { policy_id: id, tenant_id: tenantId, is_deleted: 0 },
+      data,
+    });
+    if (r.count === 0) throw new AppError("策略不存在", 404001, 404);
+  }
+
+  async softDelete(
+    id: string,
+    tenantId: string,
+    userId?: string,
+  ): Promise<void> {
+    const r = await prisma.sys_field_mask_policy.updateMany({
+      where: { policy_id: id, tenant_id: tenantId, is_deleted: 0 },
+      data: {
+        is_deleted: 1,
+        updated_by: userId ?? null,
+        updated_at: new Date(),
+      },
+    });
+    if (r.count === 0) throw new AppError("策略不存在", 404001, 404);
   }
 }

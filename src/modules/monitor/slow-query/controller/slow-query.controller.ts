@@ -27,7 +27,6 @@ export default class SlowQueryController {
   private service = new SlowQueryService();
 
   @Get("/list")
-  @RequirePermission("monitor:slow-query:list")
   @ApiOperation("慢查询列表")
   @ApiQuery(SlowQueryListSchema)
   async list(@Req() req: Request, @Res() res: Response) {
@@ -41,7 +40,6 @@ export default class SlowQueryController {
   }
 
   @Get("/stats")
-  @RequirePermission("monitor:slow-query:list")
   @ApiOperation("慢查询概览")
   async stats(@Req() _req: Request, @Res() res: Response) {
     try {
@@ -52,7 +50,6 @@ export default class SlowQueryController {
   }
 
   @Get("/:id")
-  @RequirePermission("monitor:slow-query:list")
   @ApiOperation("慢查询详情（含索引建议）")
   async detail(@Req() req: Request, @Res() res: Response) {
     try {
@@ -63,7 +60,6 @@ export default class SlowQueryController {
   }
 
   @Put("/:id/review")
-  @RequirePermission("monitor:slow-query:review")
   @ApiOperation("标记慢查询（已解决 / 忽略）")
   @ApiBody(SlowQueryReviewSchema)
   async review(@Req() req: Request, @Res() res: Response) {

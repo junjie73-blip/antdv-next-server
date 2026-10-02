@@ -88,6 +88,8 @@ export type Wf_definitionCountAggregateOutputType = {
   created_by: number
   updated_by: number
   is_deleted: number
+  edge_conditions: number
+  var_meta: number
   _all: number
 }
 
@@ -154,6 +156,8 @@ export type Wf_definitionCountAggregateInputType = {
   created_by?: true
   updated_by?: true
   is_deleted?: true
+  edge_conditions?: true
+  var_meta?: true
   _all?: true
 }
 
@@ -261,6 +265,8 @@ export type Wf_definitionGroupByOutputType = {
   created_by: string | null
   updated_by: string | null
   is_deleted: number
+  edge_conditions: runtime.JsonValue | null
+  var_meta: runtime.JsonValue | null
   _count: Wf_definitionCountAggregateOutputType | null
   _avg: Wf_definitionAvgAggregateOutputType | null
   _sum: Wf_definitionSumAggregateOutputType | null
@@ -304,6 +310,8 @@ export type wf_definitionWhereInput = {
   created_by?: Prisma.UuidNullableFilter<"wf_definition"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"wf_definition"> | string | null
   is_deleted?: Prisma.IntFilter<"wf_definition"> | number
+  edge_conditions?: Prisma.JsonNullableFilter<"wf_definition">
+  var_meta?: Prisma.JsonNullableFilter<"wf_definition">
   instances?: Prisma.Wf_instanceListRelationFilter
 }
 
@@ -325,6 +333,8 @@ export type wf_definitionOrderByWithRelationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  edge_conditions?: Prisma.SortOrderInput | Prisma.SortOrder
+  var_meta?: Prisma.SortOrderInput | Prisma.SortOrder
   instances?: Prisma.wf_instanceOrderByRelationAggregateInput
 }
 
@@ -350,6 +360,8 @@ export type wf_definitionWhereUniqueInput = Prisma.AtLeast<{
   created_by?: Prisma.UuidNullableFilter<"wf_definition"> | string | null
   updated_by?: Prisma.UuidNullableFilter<"wf_definition"> | string | null
   is_deleted?: Prisma.IntFilter<"wf_definition"> | number
+  edge_conditions?: Prisma.JsonNullableFilter<"wf_definition">
+  var_meta?: Prisma.JsonNullableFilter<"wf_definition">
   instances?: Prisma.Wf_instanceListRelationFilter
 }, "def_id" | "tenant_id_def_key_version">
 
@@ -371,6 +383,8 @@ export type wf_definitionOrderByWithAggregationInput = {
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_by?: Prisma.SortOrderInput | Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  edge_conditions?: Prisma.SortOrderInput | Prisma.SortOrder
+  var_meta?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.wf_definitionCountOrderByAggregateInput
   _avg?: Prisma.wf_definitionAvgOrderByAggregateInput
   _max?: Prisma.wf_definitionMaxOrderByAggregateInput
@@ -399,6 +413,8 @@ export type wf_definitionScalarWhereWithAggregatesInput = {
   created_by?: Prisma.UuidNullableWithAggregatesFilter<"wf_definition"> | string | null
   updated_by?: Prisma.UuidNullableWithAggregatesFilter<"wf_definition"> | string | null
   is_deleted?: Prisma.IntWithAggregatesFilter<"wf_definition"> | number
+  edge_conditions?: Prisma.JsonNullableWithAggregatesFilter<"wf_definition">
+  var_meta?: Prisma.JsonNullableWithAggregatesFilter<"wf_definition">
 }
 
 export type wf_definitionCreateInput = {
@@ -419,6 +435,8 @@ export type wf_definitionCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   instances?: Prisma.wf_instanceCreateNestedManyWithoutDefInput
 }
 
@@ -440,6 +458,8 @@ export type wf_definitionUncheckedCreateInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   instances?: Prisma.wf_instanceUncheckedCreateNestedManyWithoutDefInput
 }
 
@@ -461,6 +481,8 @@ export type wf_definitionUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   instances?: Prisma.wf_instanceUpdateManyWithoutDefNestedInput
 }
 
@@ -482,6 +504,8 @@ export type wf_definitionUncheckedUpdateInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   instances?: Prisma.wf_instanceUncheckedUpdateManyWithoutDefNestedInput
 }
 
@@ -503,6 +527,8 @@ export type wf_definitionCreateManyInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type wf_definitionUpdateManyMutationInput = {
@@ -523,6 +549,8 @@ export type wf_definitionUpdateManyMutationInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type wf_definitionUncheckedUpdateManyInput = {
@@ -543,6 +571,8 @@ export type wf_definitionUncheckedUpdateManyInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type wf_definitionTenant_idDef_keyVersionCompoundUniqueInput = {
@@ -569,6 +599,8 @@ export type wf_definitionCountOrderByAggregateInput = {
   created_by?: Prisma.SortOrder
   updated_by?: Prisma.SortOrder
   is_deleted?: Prisma.SortOrder
+  edge_conditions?: Prisma.SortOrder
+  var_meta?: Prisma.SortOrder
 }
 
 export type wf_definitionAvgOrderByAggregateInput = {
@@ -652,6 +684,8 @@ export type wf_definitionCreateWithoutInstancesInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type wf_definitionUncheckedCreateWithoutInstancesInput = {
@@ -672,6 +706,8 @@ export type wf_definitionUncheckedCreateWithoutInstancesInput = {
   created_by?: string | null
   updated_by?: string | null
   is_deleted?: number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type wf_definitionCreateOrConnectWithoutInstancesInput = {
@@ -708,6 +744,8 @@ export type wf_definitionUpdateWithoutInstancesInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type wf_definitionUncheckedUpdateWithoutInstancesInput = {
@@ -728,6 +766,8 @@ export type wf_definitionUncheckedUpdateWithoutInstancesInput = {
   created_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_deleted?: Prisma.IntFieldUpdateOperationsInput | number
+  edge_conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  var_meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 
@@ -779,6 +819,8 @@ export type wf_definitionSelect<ExtArgs extends runtime.Types.Extensions.Interna
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  edge_conditions?: boolean
+  var_meta?: boolean
   instances?: boolean | Prisma.wf_definition$instancesArgs<ExtArgs>
   _count?: boolean | Prisma.Wf_definitionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wf_definition"]>
@@ -801,6 +843,8 @@ export type wf_definitionSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  edge_conditions?: boolean
+  var_meta?: boolean
 }, ExtArgs["result"]["wf_definition"]>
 
 export type wf_definitionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -821,6 +865,8 @@ export type wf_definitionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  edge_conditions?: boolean
+  var_meta?: boolean
 }, ExtArgs["result"]["wf_definition"]>
 
 export type wf_definitionSelectScalar = {
@@ -841,9 +887,11 @@ export type wf_definitionSelectScalar = {
   created_by?: boolean
   updated_by?: boolean
   is_deleted?: boolean
+  edge_conditions?: boolean
+  var_meta?: boolean
 }
 
-export type wf_definitionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"def_id" | "tenant_id" | "def_key" | "def_name" | "version" | "category" | "description" | "definition" | "definition_xml" | "form_schema" | "var_schema" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted", ExtArgs["result"]["wf_definition"]>
+export type wf_definitionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"def_id" | "tenant_id" | "def_key" | "def_name" | "version" | "category" | "description" | "definition" | "definition_xml" | "form_schema" | "var_schema" | "status" | "created_at" | "updated_at" | "created_by" | "updated_by" | "is_deleted" | "edge_conditions" | "var_meta", ExtArgs["result"]["wf_definition"]>
 export type wf_definitionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   instances?: boolean | Prisma.wf_definition$instancesArgs<ExtArgs>
   _count?: boolean | Prisma.Wf_definitionCountOutputTypeDefaultArgs<ExtArgs>
@@ -900,6 +948,8 @@ export type $wf_definitionPayload<ExtArgs extends runtime.Types.Extensions.Inter
     created_by: string | null
     updated_by: string | null
     is_deleted: number
+    edge_conditions: runtime.JsonValue | null
+    var_meta: runtime.JsonValue | null
   }, ExtArgs["result"]["wf_definition"]>
   composites: {}
 }
@@ -1341,6 +1391,8 @@ export interface wf_definitionFieldRefs {
   readonly created_by: Prisma.FieldRef<"wf_definition", 'String'>
   readonly updated_by: Prisma.FieldRef<"wf_definition", 'String'>
   readonly is_deleted: Prisma.FieldRef<"wf_definition", 'Int'>
+  readonly edge_conditions: Prisma.FieldRef<"wf_definition", 'Json'>
+  readonly var_meta: Prisma.FieldRef<"wf_definition", 'Json'>
 }
     
 

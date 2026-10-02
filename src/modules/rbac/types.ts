@@ -245,4 +245,16 @@ export const SYSTEM_PERMISSIONS = [
     resource_type: "api",
     action: "manage",
   },
+  {
+    perm_code: "monitor:queue:list",
+    perm_name: "查看队列",
+    resource_type: "api",
+    action: "list",
+  },
+  {
+    perm_code: "monitor:queue:manage",
+    perm_name: "管理队列",
+    resource_type: "api",
+    action: "manage",
+  },
 ] as const;

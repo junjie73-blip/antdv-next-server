@@ -11,6 +11,7 @@ import {
   ApiQuery,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
+import { FieldMaskService } from "../service/field-mask.service.js";
 import { AppError } from "@/core/errors.js";
 import { success, pageSuccess, error } from "@/shared/http/response.js";
 import { logger } from "@/platform/logger/index.js";
@@ -20,7 +21,6 @@ import {
   FieldMaskUpdateSchema,
   FieldMaskListSchema,
 } from "../schema.js";
-import { FieldMaskService } from "../service/field-mask.service.js";
 
 interface AuthUser {
   userId: string;

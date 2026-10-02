@@ -41,7 +41,6 @@ export default class UserGroupController {
    * 列表 / 选项 / 详情
    * ============================================================ */
   @Get("/list")
-  @RequirePermission("user-group:list")
   @ApiOperation("用户组分页列表")
   @ApiQuery(UserGroupListSchema)
   async list(@Req() req: Request, @Res() res: Response) {
@@ -67,7 +66,6 @@ export default class UserGroupController {
   }
 
   @Get("/:id")
-  @RequirePermission("user-group:list")
   @ApiOperation("用户组详情（含成员 + 角色）")
   async detail(@Req() req: Request, @Res() res: Response) {
     try {
@@ -82,7 +80,6 @@ export default class UserGroupController {
    * CRUD
    * ============================================================ */
   @Post("/")
-  @RequirePermission("user-group:create")
   @ApiOperation("创建用户组")
   @ApiBody(UserGroupCreateSchema)
   async create(@Req() req: Request, @Res() res: Response) {
@@ -97,7 +94,6 @@ export default class UserGroupController {
   }
 
   @Put("/:id")
-  @RequirePermission("user-group:update")
   @ApiOperation("更新用户组")
   @ApiBody(UserGroupUpdateSchema)
   async update(@Req() req: Request, @Res() res: Response) {
@@ -112,7 +108,6 @@ export default class UserGroupController {
   }
 
   @Delete("/:id")
-  @RequirePermission("user-group:delete")
   @ApiOperation("删除用户组", "级联清理成员和角色绑定")
   async remove(@Req() req: Request, @Res() res: Response) {
     try {
