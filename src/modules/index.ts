@@ -42,6 +42,8 @@ import NoticePreferencePreferenceController from "./notice-preference/controller
 import NoticeChannelController from "./notice/channel.controller.js";
 import NoticeController from "./notice/controller.js";
 import NoticeMyNoticeController from "./notice/my-notice.controller.js";
+import OrgHistoryController from "./org-history/controllers/controller.js";
+import OrgHistorySnapshotController from "./org-history/controllers/snapshot.controller.js";
 import QueueController from "./queue/controller.js";
 import RbacPermissionController from "./rbac/controller/permission.controller.js";
 import RbacRoleController from "./rbac/controller/role.controller.js";
@@ -115,6 +117,8 @@ export const controllers = [
   NoticeChannelController,
   NoticeController,
   NoticeMyNoticeController,
+  OrgHistoryController,
+  OrgHistorySnapshotController,
   QueueController,
   RbacPermissionController,
   RbacRoleController,

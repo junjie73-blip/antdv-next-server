@@ -13,6 +13,8 @@ import { pushBusinessAudit } from "@/middleware/business/audit.js";
 import { AppError, decryptField, NotFoundError } from "@/core/index.js";
 import { logger } from "@/platform/logger/logger.js";
 import type { Request } from "express";
+import { recordOrgHistory } from "@/modules/org-history/recorder.js";
+import { maybeTriggerSnapshot } from "@/modules/org-history/snapshot-trigger.js";
 const EXPORT_COLUMNS: ExcelColumn[] = [
   { header: "用户名", key: "username", width: 16 },
   { header: "真实姓名", key: "real_name", width: 16 },
@@ -54,7 +56,15 @@ export class UserService extends BaseService<UserRepository> {
 
   async updateDepts(userId: string, deptIds: string[], tenantId: string) {
     await this.assertExists(userId, tenantId, "用户");
-    await this.repository.updateUserDepts(userId, deptIds, tenantId);
+    const result = await this.repository.updateUserDepts(
+      userId,
+      deptIds,
+      tenantId,
+    );
+    await maybeTriggerSnapshot(tenantId, result.total, {
+      trigger: "app",
+      reason: "user_dept_update",
+    });
   }
 
   async exportToExcel(where: any, tenantId: string): Promise<Buffer> {
@@ -123,6 +133,11 @@ export class UserService extends BaseService<UserRepository> {
         errors.push(`第${rowNum}行：${e.message}`);
       }
     }
+    await recordOrgHistory(rows, { source: "import" });
+    await maybeTriggerSnapshot(tenantId, rows.length, {
+      trigger: "app",
+      reason: "excel_import",
+    });
 
     return { successCount, failCount: errors.length, errors };
   }

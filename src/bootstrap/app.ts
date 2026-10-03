@@ -48,6 +48,7 @@ import {
 import { apiVersionLifecycle } from "@/platform/api-version/lifecycle.js";
 import { recordApiVersionRequest } from "@/platform/metrics/api-version.js";
 import { tenantProbeContext } from "@/middleware/http/tenant-probe-context.js";
+import { orgHistoryContextMiddleware } from "@/middleware/http/org-history-context.js";
 const METRICS_ALLOW = new Set(
   (env.METRICS_WHITELIST || "127.0.0.1,::1")
     .split(",")
@@ -180,6 +181,7 @@ export async function createApp(): Promise<Express> {
   app.use(tenantResolver);
   app.use(tenantProbeContext());
   app.use(dataScopeMiddleware());
+  app.use(orgHistoryContextMiddleware());
   // ⑪ 业务路由（装饰器扫描）
   const scanner = new ControllerScanner();
   scanner.register(...(controllers as any));

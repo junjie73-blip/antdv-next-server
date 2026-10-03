@@ -37,6 +37,7 @@ export const MenuCreateSchema = z
     component: z
       .string()
       .max(256)
+      .optional()
       .nullable()
       .openapi({ description: "前端组件路径" }),
     permission: z

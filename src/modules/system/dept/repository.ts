@@ -4,6 +4,8 @@ import { BaseQuery, PageResult } from "@/types/base-repository.js";
 import { keysToCamelCase } from "@/shared/utils/case-convert.js";
 import { AppError } from "@/middleware/http/error-handler.js";
 import { isRootParentId } from "./service.js";
+import { recordOrgHistory } from "@/modules/org-history/recorder.js";
+import { summarizeDeptUpdate } from "@/modules/org-history/summary.js";
 
 export class DeptRepository extends BaseRepository<any, any, any, any> {
   protected readonly model = prisma.sys_dept;
@@ -250,6 +252,10 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
     return { leader_id: null, leader: null };
   }
   async update(id: string, tenantId: string, data: any, userId?: string) {
+    const before = await this.model.findFirst({
+      where: { dept_id: id, tenant_id: tenantId, is_deleted: 0 },
+    });
+    if (!before) throw new AppError("部门不存在", 404, 404);
     // 若传了 leader 相关字段，先做解析
     const hasLeaderInput =
       data.leaderId !== undefined || data.leader !== undefined;
@@ -267,6 +273,31 @@ export class DeptRepository extends BaseRepository<any, any, any, any> {
     // 移除不入库的字段
     delete data.leaderId;
 
-    return super.update(id, tenantId, data, userId);
+    const updated = await super.update(id, tenantId, data, userId);
+
+    // ⭐ 记录部门更新
+    const summary = summarizeDeptUpdate(before as any, updated as any);
+    if (summary) {
+      await recordOrgHistory([
+        {
+          entityType: "dept",
+          entityId: id,
+          changeType: "update",
+          scope: "dept_tree",
+          before: {
+            dept_name: before.dept_name,
+            leader_id: before.leader_id,
+            status: before.status,
+          },
+          after: {
+            dept_name: updated.dept_name,
+            leader_id: updated.leader_id,
+            status: updated.status,
+          },
+          summary,
+        },
+      ]);
+    }
+    return updated;
   }
 }

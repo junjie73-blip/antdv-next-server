@@ -2015,35 +2015,70 @@ model sys_tenant_isolation_run {
 
 /// ==================== 组织架构变更历史 ====================
 model sys_org_history {
-  history_id    String   @id @default(uuid()) @db.Uuid
-  tenant_id     String   @db.Uuid
+  history_id             String    @id @default(uuid()) @db.Uuid
+  tenant_id              String    @db.Uuid
   /// 实体类型：dept | user | user_dept | user_role
-  entity_type   String   @db.VarChar(32)
+  entity_type            String    @db.VarChar(32)
   /// 实体 ID
-  entity_id     String   @db.Uuid
+  entity_id              String    @db.Uuid
   /// 变更类型：create | update | delete | move | transfer
-  change_type   String   @db.VarChar(16)
+  change_type            String    @db.VarChar(16)
   /// 变更前快照（JSON）
-  before_data   Json?
+  before_data            Json?
   /// 变更后快照（JSON）
-  after_data    Json?
+  after_data             Json?
   /// 变更摘要（人可读）
-  summary       String?  @db.VarChar(512)
+  summary                String?   @db.VarChar(512)
   /// 触发来源：app | trigger | import | api
-  source        String   @default("app") @db.VarChar(16)
+  source                 String    @default("app") @db.VarChar(16)
   /// 操作者
-  operator_id   String?  @db.Uuid
-  operator_name String?  @db.VarChar(64)
-  ip_address    String?  @db.VarChar(64)
+  operator_id            String?   @db.Uuid
+  operator_name          String?   @db.VarChar(64)
+  ip_address             String?   @db.VarChar(64)
   /// 关联请求追踪
-  trace_id      String?  @db.VarChar(64)
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  trace_id               String?   @db.VarChar(64)
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  scope                  String?   @db.VarChar(32)
+  related_id             String?   @db.Uuid
+  reversible             Int       @default(1) @db.SmallInt
+  reverted_at            DateTime? @db.Timestamptz(6)
+  reverted_by            String?   @db.Uuid
+  revert_reason          String?   @db.VarChar(512)
+  reverted_by_history_id String?   @db.Uuid
+  trigger_source         String    @default("cron") @db.VarChar(20)
+  trigger_reason         String?   @db.VarChar(512)
+  trigger_history_ids    Json?
+  reverts_history_id     String?   @db.Uuid
 
+  @@index([reverted_by_history_id])
+  @@index([reverts_history_id])
   @@index([tenant_id, entity_type, entity_id, created_at(sort: Desc)])
   @@index([tenant_id, created_at(sort: Desc)])
   @@index([operator_id])
   @@index([created_at])
+  @@index([tenant_id, scope, created_at(sort: Desc)])
+  @@index([tenant_id, change_type, created_at(sort: Desc)])
+  @@index([related_id])
   @@map("sys_org_history")
+}
+
+/// ==================== 组织架构快照 ====================
+model sys_org_snapshot {
+  snapshot_id   String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  snapshot_date DateTime @db.Date
+  /// 类型：dept_tree（部门树）| user_org（用户-部门映射）| full
+  snapshot_type String   @db.VarChar(20)
+  /// 快照数据（JSON）
+  data          Json
+  /// 统计
+  user_count    Int      @default(0)
+  dept_count    Int      @default(0)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([tenant_id, snapshot_date, snapshot_type])
+  @@index([tenant_id, snapshot_date(sort: Desc)])
+  @@map("sys_org_snapshot")
 }
 
 /// ==================== 字段级数据权限策略 ====================

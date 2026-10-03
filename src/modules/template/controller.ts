@@ -41,6 +41,21 @@ export default class TemplateController extends BaseController<
   protected readonly createSchema = TemplateCreateSchema;
   protected readonly updateSchema = TemplateUpdateSchema;
   protected readonly querySchema = TemplateListSchema;
+  async beforeCreate(dto: any, req: Request): Promise<any> {
+    dto = await super.beforeCreate(dto, req);
+    if (dto.editorType === "richtext" && dto.contentFormat !== "html") {
+      dto.contentFormat = "html";
+    }
+    return dto;
+  }
+
+  async beforeUpdate(id: string, dto: any, req: Request): Promise<any> {
+    dto = await super.beforeUpdate(id, dto, req);
+    if (dto.editorType === "richtext") {
+      dto.contentFormat = "html";
+    }
+    return dto;
+  }
   @Get("/list")
   @ApiOperation("消息模板列表")
   @ApiQuery(TemplateListSchema)
@@ -88,7 +103,10 @@ export default class TemplateController extends BaseController<
   async renderPreview(@Req() req: Request, @Res() res: Response) {
     try {
       const dto = RenderPreviewSchema.parse(req.body);
-      const data = await this.service.renderPreview(dto);
+      const data = await this.service.renderPreview({
+        ...dto,
+        editorType: (req.body as any).editorType,
+      });
       return success(res, data);
     } catch (err) {
       super.handleError(res, err);

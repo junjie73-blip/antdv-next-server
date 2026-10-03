@@ -11,6 +11,7 @@ import { archivePolicyService } from "@/modules/archive-policy/index.js";
 import { runTenantIsolationScan } from "@/modules/system/tenant-isolation/scheduler.js";
 import { BACKUP_JOBS } from "./tasks/backup.task.js";
 import { EXPORT_JOBS } from "./tasks/export.task.js";
+import { ORG_HISTORY_JOBS } from "./tasks/org-history.task.js";
 
 const tasks: ScheduledTask[] = [];
 
@@ -215,6 +216,7 @@ const CRON_TASKS: CronTaskDef[] = [
   },
   ...BACKUP_JOBS,
   ...EXPORT_JOBS,
+  ...ORG_HISTORY_JOBS,
 ];
 
 /* ============================================================

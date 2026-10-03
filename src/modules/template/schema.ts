@@ -19,7 +19,7 @@ const ChannelEnum = z.enum([
   "wechat_work",
   "dingtalk",
 ]);
-const ContentFormatEnum = z.enum(["markdown", "html", "text"]);
+const ContentFormatEnum = z.enum(["markdown", "html", "richtext"]);
 export const TemplateCreateSchema = z
   .object({
     templateCode: z
@@ -35,7 +35,7 @@ export const TemplateCreateSchema = z
       .openapi({ description: "模板名称" }),
     channelType: ChannelEnum.openapi({ description: "渠道类型" }),
     title: z.string().max(256).optional().openapi({ description: "模板标题" }),
-    content: z.string().min(1).max(20000).openapi({ description: "模板内容" }),
+    content: z.string().min(1).max(50000).openapi({ description: "模板内容" }),
     params: z
       .array(TemplateParamSchema)
       .default([])
@@ -49,11 +49,19 @@ export const TemplateCreateSchema = z
     contentFormat: ContentFormatEnum.default("markdown").openapi({
       description: "内容格式",
     }),
+    editorType: ContentFormatEnum.default("markdown").openapi({
+      description: "编辑器类型：markdown / richtext / html",
+    }),
   })
+  .refine((val) => {
+    if (val.editorType === "richtext" && val.contentFormat !== "html")
+      return false;
+    return true;
+  }, "富文本编辑模式必须使用 html 格式")
   .openapi("TemplateCreate");
 
 export const TemplateUpdateSchema =
-  TemplateCreateSchema.partial().openapi("TemplateUpdate");
+  TemplateCreateSchema.openapi("TemplateUpdate");
 
 export const TemplateListSchema = z
   .object({

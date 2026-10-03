@@ -36,15 +36,6 @@ export class TemplateService extends BaseService<TemplateRepository> {
   constructor(repository: TemplateRepository) {
     super(repository);
   }
-  async renderPreview(dto: RenderPreviewDTO) {
-    const renderedTitle = dto.title ? this.render(dto.title, dto.params) : "";
-    const renderedContent = this.render(dto.content, dto.params);
-    return {
-      title: renderedTitle,
-      content: renderedContent,
-      usedVars: this.extractVars(dto.content),
-    };
-  }
   private extractVars(content: string): string[] {
     const raw = content ?? "";
     if (!raw) return [];
@@ -449,5 +440,79 @@ export class TemplateService extends BaseService<TemplateRepository> {
       );
       return null;
     }
+  }
+  /**
+   * ⭐ 规范化 editorType / contentFormat 一致性
+   * - richtext 强制 contentFormat = 'html'
+   * - 未指定 editorType 时按 contentFormat 推断
+   */
+  private normalizeFormat(input: {
+    editorType?: string;
+    contentFormat?: string;
+  }): { editorType: string; contentFormat: string } {
+    let editorType = input.editorType;
+    let contentFormat = input.contentFormat;
+
+    // 推断 editorType
+    if (!editorType) {
+      editorType = contentFormat === "html" ? "html" : "markdown";
+    }
+
+    // richtext 强制 html
+    if (editorType === "richtext") {
+      contentFormat = "html";
+    }
+
+    // html 也强制 html
+    if (editorType === "html") {
+      contentFormat = "html";
+    }
+
+    // markdown
+    if (editorType === "markdown") {
+      contentFormat = contentFormat ?? "markdown";
+    }
+
+    return { editorType, contentFormat: contentFormat ?? "markdown" };
+  }
+
+  /**
+   * ⭐ 从内容中提取变量（支持富文本）
+   * - markdown/text/html：匹配 ${varName}
+   * - richtext：优先匹配 data-variable="varName"，回退 ${varName}
+   */
+  private extractVarsFromContent(
+    content: string,
+    editorType: string,
+  ): string[] {
+    const set = new Set<string>();
+
+    if (editorType === "richtext") {
+      // 富文本：优先解析 data-variable
+      const dataVarRegex = /data-variable="(\w+)"/g;
+      let m: RegExpExecArray | null;
+      while ((m = dataVarRegex.exec(content)) !== null) set.add(m[1]);
+    }
+
+    // 兜底：扫描 ${varName}（所有模式都做，作为保险）
+    const varRegex = /\$\{(\w+)\}/g;
+    let m: RegExpExecArray | null;
+    while ((m = varRegex.exec(content)) !== null) set.add(m[1]);
+
+    return [...set];
+  }
+
+  /**
+   * ⭐ 覆盖 renderPreview：更准确的 usedVars 提取
+   */
+  async renderPreview(dto: RenderPreviewDTO & { editorType?: string }) {
+    const editorType = dto.editorType ?? "markdown";
+    const renderedTitle = dto.title ? this.render(dto.title, dto.params) : "";
+    const renderedContent = this.render(dto.content, dto.params);
+    return {
+      title: renderedTitle,
+      content: renderedContent,
+      usedVars: this.extractVarsFromContent(dto.content, editorType),
+    };
   }
 }

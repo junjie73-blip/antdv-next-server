@@ -18,6 +18,14 @@ import {
 } from "@/core/index.js";
 import { env } from "@/config/env.js";
 import { logger } from "@/platform/logger/logger.js";
+import { summarizeUserUpdate } from "@/modules/org-history/summary.js";
+import {
+  OrgChangeInput,
+  recordOrgHistory,
+  recordOrgHistoryInTx,
+} from "@/modules/org-history/recorder.js";
+import { seedComplianceReports } from "@/modules/org-history/seed-compliance-reports.js";
+import { maybeTriggerSnapshot } from "@/modules/org-history/snapshot-trigger.js";
 
 const TEMPLATE_TENANT_CODE = "__TEMPLATE__";
 export class UserRepository extends BaseRepository<any, any, any, any> {
@@ -183,6 +191,28 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           },
         });
       }
+      const summary = summarizeUserUpdate(existing as any, data);
+      if (summary) {
+        await recordOrgHistoryInTx(tx, [
+          {
+            entityType: "user",
+            entityId: id,
+            changeType: "update",
+            scope: "user_profile",
+            before: {
+              real_name: existing.real_name,
+              email: existing.email,
+              phone: existing.phone,
+            },
+            after: {
+              real_name: data.real_name,
+              email: data.email,
+              phone: data.phone,
+            },
+            summary,
+          },
+        ]);
+      }
 
       // 2. 处理部门关联（若传入了 dept_ids）
       if (deptIds !== undefined) {
@@ -222,7 +252,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           });
         }
       }
-
+      await maybeTriggerSnapshot(tenantId, deptIds.length, { trigger: "app" });
       // 返回更新后的用户（包含关联信息，可选）
       return tx.sys_user.findUnique({
         where: { user_id: id },
@@ -322,6 +352,10 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
         throw new AppError("存在无效的部门ID", 400, 400);
       }
     }
+    const before = await prisma.sys_user_dept.findMany({
+      where: { user_id: userId, tenant_id: tenantId },
+      include: { dept: { select: { dept_id: true, dept_name: true } } },
+    });
     await prisma.$transaction([
       prisma.sys_user_dept.deleteMany({
         where: { user_id: userId, tenant_id: tenantId },
@@ -335,6 +369,41 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
         })),
       }),
     ]);
+    await maybeTriggerSnapshot(tenantId, deptIds.length, { trigger: "app" });
+    const beforeIds = new Set(before.map((b) => b.dept_id));
+    const afterIds = new Set(deptIds);
+    const removed = before.filter((b) => !afterIds.has(b.dept_id));
+    const added = [...afterIds].filter((id) => !beforeIds.has(id));
+
+    const changes: OrgChangeInput[] = [];
+    for (const r of removed) {
+      changes.push({
+        entityType: "user_dept",
+        entityId: userId,
+        changeType: "revoke",
+        scope: "user_dept",
+        before: { user_id: userId, dept_id: r.dept_id },
+        relatedId: r.dept_id,
+        summary: `用户移出部门「${r.dept.dept_name}」`,
+      });
+    }
+    for (const id of added) {
+      changes.push({
+        entityType: "user_dept",
+        entityId: userId,
+        changeType: "assign",
+        scope: "user_dept",
+        after: { user_id: userId, dept_id: id },
+        relatedId: id,
+        summary: `用户加入新部门`,
+      });
+    }
+    await recordOrgHistory(changes);
+    return {
+      added: added.length,
+      removed: removed.length,
+      total: added.length + removed.length,
+    };
   }
 
   async findUserDepts(userId: string, tenantId: string) {
@@ -467,7 +536,7 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
     const phoneEnc = phone
       ? { phone_enc: encryptField(phone), phone_hash: hashField(phone) }
       : {};
-    return prisma.$transaction(
+    const results = prisma.$transaction(
       async (tx) => {
         // 1) 校验用户名在该租户下唯一
         const existUser = await tx.sys_user.findFirst({
@@ -560,6 +629,14 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
           skipDuplicates: true,
         });
 
+        setImmediate(() => {
+          void seedComplianceReports({
+            tenantId,
+            createdBy: user.user_id,
+          }).catch((err) =>
+            logger.error({ err, tenantId }, "[compliance] 初始化失败"),
+          );
+        });
         return user;
       },
       {
@@ -567,6 +644,8 @@ export class UserRepository extends BaseRepository<any, any, any, any> {
         isolationLevel: "ReadCommitted",
       },
     );
+
+    return results;
   }
   async getAllChildDeptIds(
     parentDeptId: string,

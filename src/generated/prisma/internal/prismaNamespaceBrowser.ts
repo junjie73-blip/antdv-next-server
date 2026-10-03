@@ -130,6 +130,7 @@ export const ModelName = {
   sys_tenant_isolation_scan: 'sys_tenant_isolation_scan',
   sys_tenant_isolation_run: 'sys_tenant_isolation_run',
   sys_org_history: 'sys_org_history',
+  sys_org_snapshot: 'sys_org_snapshot',
   sys_role_field_policy: 'sys_role_field_policy'
 } as const
 
@@ -1731,10 +1732,35 @@ export const Sys_org_historyScalarFieldEnum = {
   operator_name: 'operator_name',
   ip_address: 'ip_address',
   trace_id: 'trace_id',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  scope: 'scope',
+  related_id: 'related_id',
+  reversible: 'reversible',
+  reverted_at: 'reverted_at',
+  reverted_by: 'reverted_by',
+  revert_reason: 'revert_reason',
+  reverted_by_history_id: 'reverted_by_history_id',
+  trigger_source: 'trigger_source',
+  trigger_reason: 'trigger_reason',
+  trigger_history_ids: 'trigger_history_ids',
+  reverts_history_id: 'reverts_history_id'
 } as const
 
 export type Sys_org_historyScalarFieldEnum = (typeof Sys_org_historyScalarFieldEnum)[keyof typeof Sys_org_historyScalarFieldEnum]
+
+
+export const Sys_org_snapshotScalarFieldEnum = {
+  snapshot_id: 'snapshot_id',
+  tenant_id: 'tenant_id',
+  snapshot_date: 'snapshot_date',
+  snapshot_type: 'snapshot_type',
+  data: 'data',
+  user_count: 'user_count',
+  dept_count: 'dept_count',
+  created_at: 'created_at'
+} as const
+
+export type Sys_org_snapshotScalarFieldEnum = (typeof Sys_org_snapshotScalarFieldEnum)[keyof typeof Sys_org_snapshotScalarFieldEnum]
 
 
 export const Sys_role_field_policyScalarFieldEnum = {

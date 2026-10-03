@@ -437,6 +437,11 @@ export type sys_tenant_isolation_run = Prisma.sys_tenant_isolation_runModel
  */
 export type sys_org_history = Prisma.sys_org_historyModel
 /**
+ * Model sys_org_snapshot
+ * ==================== 组织架构快照 ====================
+ */
+export type sys_org_snapshot = Prisma.sys_org_snapshotModel
+/**
  * Model sys_role_field_policy
  * ==================== 字段级数据权限策略 ====================
  */

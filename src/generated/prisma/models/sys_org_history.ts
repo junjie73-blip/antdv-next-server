@@ -20,8 +20,18 @@ export type sys_org_historyModel = runtime.Types.Result.DefaultSelection<Prisma.
 
 export type AggregateSys_org_history = {
   _count: Sys_org_historyCountAggregateOutputType | null
+  _avg: Sys_org_historyAvgAggregateOutputType | null
+  _sum: Sys_org_historySumAggregateOutputType | null
   _min: Sys_org_historyMinAggregateOutputType | null
   _max: Sys_org_historyMaxAggregateOutputType | null
+}
+
+export type Sys_org_historyAvgAggregateOutputType = {
+  reversible: number | null
+}
+
+export type Sys_org_historySumAggregateOutputType = {
+  reversible: number | null
 }
 
 export type Sys_org_historyMinAggregateOutputType = {
@@ -37,6 +47,16 @@ export type Sys_org_historyMinAggregateOutputType = {
   ip_address: string | null
   trace_id: string | null
   created_at: Date | null
+  scope: string | null
+  related_id: string | null
+  reversible: number | null
+  reverted_at: Date | null
+  reverted_by: string | null
+  revert_reason: string | null
+  reverted_by_history_id: string | null
+  trigger_source: string | null
+  trigger_reason: string | null
+  reverts_history_id: string | null
 }
 
 export type Sys_org_historyMaxAggregateOutputType = {
@@ -52,6 +72,16 @@ export type Sys_org_historyMaxAggregateOutputType = {
   ip_address: string | null
   trace_id: string | null
   created_at: Date | null
+  scope: string | null
+  related_id: string | null
+  reversible: number | null
+  reverted_at: Date | null
+  reverted_by: string | null
+  revert_reason: string | null
+  reverted_by_history_id: string | null
+  trigger_source: string | null
+  trigger_reason: string | null
+  reverts_history_id: string | null
 }
 
 export type Sys_org_historyCountAggregateOutputType = {
@@ -69,9 +99,28 @@ export type Sys_org_historyCountAggregateOutputType = {
   ip_address: number
   trace_id: number
   created_at: number
+  scope: number
+  related_id: number
+  reversible: number
+  reverted_at: number
+  reverted_by: number
+  revert_reason: number
+  reverted_by_history_id: number
+  trigger_source: number
+  trigger_reason: number
+  trigger_history_ids: number
+  reverts_history_id: number
   _all: number
 }
 
+
+export type Sys_org_historyAvgAggregateInputType = {
+  reversible?: true
+}
+
+export type Sys_org_historySumAggregateInputType = {
+  reversible?: true
+}
 
 export type Sys_org_historyMinAggregateInputType = {
   history_id?: true
@@ -86,6 +135,16 @@ export type Sys_org_historyMinAggregateInputType = {
   ip_address?: true
   trace_id?: true
   created_at?: true
+  scope?: true
+  related_id?: true
+  reversible?: true
+  reverted_at?: true
+  reverted_by?: true
+  revert_reason?: true
+  reverted_by_history_id?: true
+  trigger_source?: true
+  trigger_reason?: true
+  reverts_history_id?: true
 }
 
 export type Sys_org_historyMaxAggregateInputType = {
@@ -101,6 +160,16 @@ export type Sys_org_historyMaxAggregateInputType = {
   ip_address?: true
   trace_id?: true
   created_at?: true
+  scope?: true
+  related_id?: true
+  reversible?: true
+  reverted_at?: true
+  reverted_by?: true
+  revert_reason?: true
+  reverted_by_history_id?: true
+  trigger_source?: true
+  trigger_reason?: true
+  reverts_history_id?: true
 }
 
 export type Sys_org_historyCountAggregateInputType = {
@@ -118,6 +187,17 @@ export type Sys_org_historyCountAggregateInputType = {
   ip_address?: true
   trace_id?: true
   created_at?: true
+  scope?: true
+  related_id?: true
+  reversible?: true
+  reverted_at?: true
+  reverted_by?: true
+  revert_reason?: true
+  reverted_by_history_id?: true
+  trigger_source?: true
+  trigger_reason?: true
+  trigger_history_ids?: true
+  reverts_history_id?: true
   _all?: true
 }
 
@@ -159,6 +239,18 @@ export type Sys_org_historyAggregateArgs<ExtArgs extends runtime.Types.Extension
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: Sys_org_historyAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: Sys_org_historySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: Sys_org_historyMinAggregateInputType
@@ -189,6 +281,8 @@ export type sys_org_historyGroupByArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   _count?: Sys_org_historyCountAggregateInputType | true
+  _avg?: Sys_org_historyAvgAggregateInputType
+  _sum?: Sys_org_historySumAggregateInputType
   _min?: Sys_org_historyMinAggregateInputType
   _max?: Sys_org_historyMaxAggregateInputType
 }
@@ -208,7 +302,20 @@ export type Sys_org_historyGroupByOutputType = {
   ip_address: string | null
   trace_id: string | null
   created_at: Date
+  scope: string | null
+  related_id: string | null
+  reversible: number
+  reverted_at: Date | null
+  reverted_by: string | null
+  revert_reason: string | null
+  reverted_by_history_id: string | null
+  trigger_source: string
+  trigger_reason: string | null
+  trigger_history_ids: runtime.JsonValue | null
+  reverts_history_id: string | null
   _count: Sys_org_historyCountAggregateOutputType | null
+  _avg: Sys_org_historyAvgAggregateOutputType | null
+  _sum: Sys_org_historySumAggregateOutputType | null
   _min: Sys_org_historyMinAggregateOutputType | null
   _max: Sys_org_historyMaxAggregateOutputType | null
 }
@@ -246,6 +353,17 @@ export type sys_org_historyWhereInput = {
   ip_address?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
   trace_id?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_org_history"> | Date | string
+  scope?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
+  related_id?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
+  reversible?: Prisma.IntFilter<"sys_org_history"> | number
+  reverted_at?: Prisma.DateTimeNullableFilter<"sys_org_history"> | Date | string | null
+  reverted_by?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
+  revert_reason?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
+  reverted_by_history_id?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
+  trigger_source?: Prisma.StringFilter<"sys_org_history"> | string
+  trigger_reason?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
+  trigger_history_ids?: Prisma.JsonNullableFilter<"sys_org_history">
+  reverts_history_id?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
 }
 
 export type sys_org_historyOrderByWithRelationInput = {
@@ -263,6 +381,17 @@ export type sys_org_historyOrderByWithRelationInput = {
   ip_address?: Prisma.SortOrderInput | Prisma.SortOrder
   trace_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  scope?: Prisma.SortOrderInput | Prisma.SortOrder
+  related_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  reversible?: Prisma.SortOrder
+  reverted_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  reverted_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  revert_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  reverted_by_history_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  trigger_source?: Prisma.SortOrder
+  trigger_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  trigger_history_ids?: Prisma.SortOrderInput | Prisma.SortOrder
+  reverts_history_id?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type sys_org_historyWhereUniqueInput = Prisma.AtLeast<{
@@ -283,6 +412,17 @@ export type sys_org_historyWhereUniqueInput = Prisma.AtLeast<{
   ip_address?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
   trace_id?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
   created_at?: Prisma.DateTimeFilter<"sys_org_history"> | Date | string
+  scope?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
+  related_id?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
+  reversible?: Prisma.IntFilter<"sys_org_history"> | number
+  reverted_at?: Prisma.DateTimeNullableFilter<"sys_org_history"> | Date | string | null
+  reverted_by?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
+  revert_reason?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
+  reverted_by_history_id?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
+  trigger_source?: Prisma.StringFilter<"sys_org_history"> | string
+  trigger_reason?: Prisma.StringNullableFilter<"sys_org_history"> | string | null
+  trigger_history_ids?: Prisma.JsonNullableFilter<"sys_org_history">
+  reverts_history_id?: Prisma.UuidNullableFilter<"sys_org_history"> | string | null
 }, "history_id">
 
 export type sys_org_historyOrderByWithAggregationInput = {
@@ -300,9 +440,22 @@ export type sys_org_historyOrderByWithAggregationInput = {
   ip_address?: Prisma.SortOrderInput | Prisma.SortOrder
   trace_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  scope?: Prisma.SortOrderInput | Prisma.SortOrder
+  related_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  reversible?: Prisma.SortOrder
+  reverted_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  reverted_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  revert_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  reverted_by_history_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  trigger_source?: Prisma.SortOrder
+  trigger_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  trigger_history_ids?: Prisma.SortOrderInput | Prisma.SortOrder
+  reverts_history_id?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.sys_org_historyCountOrderByAggregateInput
+  _avg?: Prisma.sys_org_historyAvgOrderByAggregateInput
   _max?: Prisma.sys_org_historyMaxOrderByAggregateInput
   _min?: Prisma.sys_org_historyMinOrderByAggregateInput
+  _sum?: Prisma.sys_org_historySumOrderByAggregateInput
 }
 
 export type sys_org_historyScalarWhereWithAggregatesInput = {
@@ -323,6 +476,17 @@ export type sys_org_historyScalarWhereWithAggregatesInput = {
   ip_address?: Prisma.StringNullableWithAggregatesFilter<"sys_org_history"> | string | null
   trace_id?: Prisma.StringNullableWithAggregatesFilter<"sys_org_history"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_org_history"> | Date | string
+  scope?: Prisma.StringNullableWithAggregatesFilter<"sys_org_history"> | string | null
+  related_id?: Prisma.UuidNullableWithAggregatesFilter<"sys_org_history"> | string | null
+  reversible?: Prisma.IntWithAggregatesFilter<"sys_org_history"> | number
+  reverted_at?: Prisma.DateTimeNullableWithAggregatesFilter<"sys_org_history"> | Date | string | null
+  reverted_by?: Prisma.UuidNullableWithAggregatesFilter<"sys_org_history"> | string | null
+  revert_reason?: Prisma.StringNullableWithAggregatesFilter<"sys_org_history"> | string | null
+  reverted_by_history_id?: Prisma.UuidNullableWithAggregatesFilter<"sys_org_history"> | string | null
+  trigger_source?: Prisma.StringWithAggregatesFilter<"sys_org_history"> | string
+  trigger_reason?: Prisma.StringNullableWithAggregatesFilter<"sys_org_history"> | string | null
+  trigger_history_ids?: Prisma.JsonNullableWithAggregatesFilter<"sys_org_history">
+  reverts_history_id?: Prisma.UuidNullableWithAggregatesFilter<"sys_org_history"> | string | null
 }
 
 export type sys_org_historyCreateInput = {
@@ -340,6 +504,17 @@ export type sys_org_historyCreateInput = {
   ip_address?: string | null
   trace_id?: string | null
   created_at?: Date | string
+  scope?: string | null
+  related_id?: string | null
+  reversible?: number
+  reverted_at?: Date | string | null
+  reverted_by?: string | null
+  revert_reason?: string | null
+  reverted_by_history_id?: string | null
+  trigger_source?: string
+  trigger_reason?: string | null
+  trigger_history_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reverts_history_id?: string | null
 }
 
 export type sys_org_historyUncheckedCreateInput = {
@@ -357,6 +532,17 @@ export type sys_org_historyUncheckedCreateInput = {
   ip_address?: string | null
   trace_id?: string | null
   created_at?: Date | string
+  scope?: string | null
+  related_id?: string | null
+  reversible?: number
+  reverted_at?: Date | string | null
+  reverted_by?: string | null
+  revert_reason?: string | null
+  reverted_by_history_id?: string | null
+  trigger_source?: string
+  trigger_reason?: string | null
+  trigger_history_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reverts_history_id?: string | null
 }
 
 export type sys_org_historyUpdateInput = {
@@ -374,6 +560,17 @@ export type sys_org_historyUpdateInput = {
   ip_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   trace_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  related_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reversible?: Prisma.IntFieldUpdateOperationsInput | number
+  reverted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reverted_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revert_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reverted_by_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_source?: Prisma.StringFieldUpdateOperationsInput | string
+  trigger_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_history_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reverts_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_org_historyUncheckedUpdateInput = {
@@ -391,6 +588,17 @@ export type sys_org_historyUncheckedUpdateInput = {
   ip_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   trace_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  related_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reversible?: Prisma.IntFieldUpdateOperationsInput | number
+  reverted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reverted_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revert_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reverted_by_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_source?: Prisma.StringFieldUpdateOperationsInput | string
+  trigger_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_history_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reverts_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_org_historyCreateManyInput = {
@@ -408,6 +616,17 @@ export type sys_org_historyCreateManyInput = {
   ip_address?: string | null
   trace_id?: string | null
   created_at?: Date | string
+  scope?: string | null
+  related_id?: string | null
+  reversible?: number
+  reverted_at?: Date | string | null
+  reverted_by?: string | null
+  revert_reason?: string | null
+  reverted_by_history_id?: string | null
+  trigger_source?: string
+  trigger_reason?: string | null
+  trigger_history_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reverts_history_id?: string | null
 }
 
 export type sys_org_historyUpdateManyMutationInput = {
@@ -425,6 +644,17 @@ export type sys_org_historyUpdateManyMutationInput = {
   ip_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   trace_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  related_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reversible?: Prisma.IntFieldUpdateOperationsInput | number
+  reverted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reverted_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revert_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reverted_by_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_source?: Prisma.StringFieldUpdateOperationsInput | string
+  trigger_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_history_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reverts_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_org_historyUncheckedUpdateManyInput = {
@@ -442,6 +672,17 @@ export type sys_org_historyUncheckedUpdateManyInput = {
   ip_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   trace_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  related_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reversible?: Prisma.IntFieldUpdateOperationsInput | number
+  reverted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reverted_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revert_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reverted_by_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_source?: Prisma.StringFieldUpdateOperationsInput | string
+  trigger_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trigger_history_ids?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reverts_history_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type sys_org_historyCountOrderByAggregateInput = {
@@ -459,6 +700,21 @@ export type sys_org_historyCountOrderByAggregateInput = {
   ip_address?: Prisma.SortOrder
   trace_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
+  related_id?: Prisma.SortOrder
+  reversible?: Prisma.SortOrder
+  reverted_at?: Prisma.SortOrder
+  reverted_by?: Prisma.SortOrder
+  revert_reason?: Prisma.SortOrder
+  reverted_by_history_id?: Prisma.SortOrder
+  trigger_source?: Prisma.SortOrder
+  trigger_reason?: Prisma.SortOrder
+  trigger_history_ids?: Prisma.SortOrder
+  reverts_history_id?: Prisma.SortOrder
+}
+
+export type sys_org_historyAvgOrderByAggregateInput = {
+  reversible?: Prisma.SortOrder
 }
 
 export type sys_org_historyMaxOrderByAggregateInput = {
@@ -474,6 +730,16 @@ export type sys_org_historyMaxOrderByAggregateInput = {
   ip_address?: Prisma.SortOrder
   trace_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
+  related_id?: Prisma.SortOrder
+  reversible?: Prisma.SortOrder
+  reverted_at?: Prisma.SortOrder
+  reverted_by?: Prisma.SortOrder
+  revert_reason?: Prisma.SortOrder
+  reverted_by_history_id?: Prisma.SortOrder
+  trigger_source?: Prisma.SortOrder
+  trigger_reason?: Prisma.SortOrder
+  reverts_history_id?: Prisma.SortOrder
 }
 
 export type sys_org_historyMinOrderByAggregateInput = {
@@ -489,6 +755,20 @@ export type sys_org_historyMinOrderByAggregateInput = {
   ip_address?: Prisma.SortOrder
   trace_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
+  related_id?: Prisma.SortOrder
+  reversible?: Prisma.SortOrder
+  reverted_at?: Prisma.SortOrder
+  reverted_by?: Prisma.SortOrder
+  revert_reason?: Prisma.SortOrder
+  reverted_by_history_id?: Prisma.SortOrder
+  trigger_source?: Prisma.SortOrder
+  trigger_reason?: Prisma.SortOrder
+  reverts_history_id?: Prisma.SortOrder
+}
+
+export type sys_org_historySumOrderByAggregateInput = {
+  reversible?: Prisma.SortOrder
 }
 
 
@@ -508,6 +788,17 @@ export type sys_org_historySelect<ExtArgs extends runtime.Types.Extensions.Inter
   ip_address?: boolean
   trace_id?: boolean
   created_at?: boolean
+  scope?: boolean
+  related_id?: boolean
+  reversible?: boolean
+  reverted_at?: boolean
+  reverted_by?: boolean
+  revert_reason?: boolean
+  reverted_by_history_id?: boolean
+  trigger_source?: boolean
+  trigger_reason?: boolean
+  trigger_history_ids?: boolean
+  reverts_history_id?: boolean
 }, ExtArgs["result"]["sys_org_history"]>
 
 export type sys_org_historySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -525,6 +816,17 @@ export type sys_org_historySelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   ip_address?: boolean
   trace_id?: boolean
   created_at?: boolean
+  scope?: boolean
+  related_id?: boolean
+  reversible?: boolean
+  reverted_at?: boolean
+  reverted_by?: boolean
+  revert_reason?: boolean
+  reverted_by_history_id?: boolean
+  trigger_source?: boolean
+  trigger_reason?: boolean
+  trigger_history_ids?: boolean
+  reverts_history_id?: boolean
 }, ExtArgs["result"]["sys_org_history"]>
 
 export type sys_org_historySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -542,6 +844,17 @@ export type sys_org_historySelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   ip_address?: boolean
   trace_id?: boolean
   created_at?: boolean
+  scope?: boolean
+  related_id?: boolean
+  reversible?: boolean
+  reverted_at?: boolean
+  reverted_by?: boolean
+  revert_reason?: boolean
+  reverted_by_history_id?: boolean
+  trigger_source?: boolean
+  trigger_reason?: boolean
+  trigger_history_ids?: boolean
+  reverts_history_id?: boolean
 }, ExtArgs["result"]["sys_org_history"]>
 
 export type sys_org_historySelectScalar = {
@@ -559,9 +872,20 @@ export type sys_org_historySelectScalar = {
   ip_address?: boolean
   trace_id?: boolean
   created_at?: boolean
+  scope?: boolean
+  related_id?: boolean
+  reversible?: boolean
+  reverted_at?: boolean
+  reverted_by?: boolean
+  revert_reason?: boolean
+  reverted_by_history_id?: boolean
+  trigger_source?: boolean
+  trigger_reason?: boolean
+  trigger_history_ids?: boolean
+  reverts_history_id?: boolean
 }
 
-export type sys_org_historyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"history_id" | "tenant_id" | "entity_type" | "entity_id" | "change_type" | "before_data" | "after_data" | "summary" | "source" | "operator_id" | "operator_name" | "ip_address" | "trace_id" | "created_at", ExtArgs["result"]["sys_org_history"]>
+export type sys_org_historyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"history_id" | "tenant_id" | "entity_type" | "entity_id" | "change_type" | "before_data" | "after_data" | "summary" | "source" | "operator_id" | "operator_name" | "ip_address" | "trace_id" | "created_at" | "scope" | "related_id" | "reversible" | "reverted_at" | "reverted_by" | "revert_reason" | "reverted_by_history_id" | "trigger_source" | "trigger_reason" | "trigger_history_ids" | "reverts_history_id", ExtArgs["result"]["sys_org_history"]>
 
 export type $sys_org_historyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_org_history"
@@ -608,6 +932,17 @@ export type $sys_org_historyPayload<ExtArgs extends runtime.Types.Extensions.Int
      */
     trace_id: string | null
     created_at: Date
+    scope: string | null
+    related_id: string | null
+    reversible: number
+    reverted_at: Date | null
+    reverted_by: string | null
+    revert_reason: string | null
+    reverted_by_history_id: string | null
+    trigger_source: string
+    trigger_reason: string | null
+    trigger_history_ids: runtime.JsonValue | null
+    reverts_history_id: string | null
   }, ExtArgs["result"]["sys_org_history"]>
   composites: {}
 }
@@ -1045,6 +1380,17 @@ export interface sys_org_historyFieldRefs {
   readonly ip_address: Prisma.FieldRef<"sys_org_history", 'String'>
   readonly trace_id: Prisma.FieldRef<"sys_org_history", 'String'>
   readonly created_at: Prisma.FieldRef<"sys_org_history", 'DateTime'>
+  readonly scope: Prisma.FieldRef<"sys_org_history", 'String'>
+  readonly related_id: Prisma.FieldRef<"sys_org_history", 'String'>
+  readonly reversible: Prisma.FieldRef<"sys_org_history", 'Int'>
+  readonly reverted_at: Prisma.FieldRef<"sys_org_history", 'DateTime'>
+  readonly reverted_by: Prisma.FieldRef<"sys_org_history", 'String'>
+  readonly revert_reason: Prisma.FieldRef<"sys_org_history", 'String'>
+  readonly reverted_by_history_id: Prisma.FieldRef<"sys_org_history", 'String'>
+  readonly trigger_source: Prisma.FieldRef<"sys_org_history", 'String'>
+  readonly trigger_reason: Prisma.FieldRef<"sys_org_history", 'String'>
+  readonly trigger_history_ids: Prisma.FieldRef<"sys_org_history", 'Json'>
+  readonly reverts_history_id: Prisma.FieldRef<"sys_org_history", 'String'>
 }
     
 
