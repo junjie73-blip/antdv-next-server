@@ -1,6 +1,9 @@
 // ⚠️ 此文件由 scripts/generate-modules.ts 自动生成，请勿手动修改。
 // 重新生成: pnpm generate:modules
 // CI 校验: pnpm generate:modules:check
+//
+// 末尾的 hash 块用于感知 controller 文件内部实现的变化，
+// 每次内容变化都会触发此文件重写。
 
 import ApprovalFlowController from "./approval/controller/flow.controller.js";
 import ApprovalLogController from "./approval/controller/log.controller.js";
@@ -151,3 +154,78 @@ export const controllers = [
   WorkflowTaskTransferController,
   WorkflowTaskController,
 ] as const;
+
+// ---- controller content hashes (sha256, 16 hex chars) ----
+// ./approval/controller/flow.controller.js  1e86d40041247bef
+// ./approval/controller/log.controller.js  783b8da9d5416a31
+// ./approval/controller/request.controller.js  e9b88aab5b91afba
+// ./archive-policy/controller/archive-policy.controller.js  97bd6462259bbf33
+// ./auth/controller/device.controller.js  cd3e888b751fcaaf
+// ./auth/controller/login.controller.js  b81947f3bfc589eb
+// ./auth/controller/menu.controller.js  fc3fb023ca34a8b6
+// ./auth/controller/misc.controller.js  68ca38474ae9febf
+// ./auth/controller/profile.controller.js  85bc699f2c129943
+// ./auth/controller/register.controller.js  9d0d3de85c75cc8b
+// ./auth/controller/tenant-switch.controller.js  e9b7ff88230da710
+// ./business/dashboard/controller.js  29564addd5e69d91
+// ./business/todo-group/controller.js  29a55c202161f225
+// ./business/todo/controller.js  169af839773c430b
+// ./business/workbench/controller.js  f812483d444cb2e3
+// ./export/controller.js  120aaeae4f7aeea3
+// ./field-mask/controller/field-mask.controller.js  00ade8cb92c55873
+// ./generator/controller.js  2925f36db20e09a7
+// ./generator/template/controller/template.controller.js  51f646c610c6c09d
+// ./infrastructure/file/controller.js  31270dcd7027d884
+// ./infrastructure/job/controller.js  947dded98fa5d795
+// ./infrastructure/job/job-log.controller.js  2975de5cf97b4373
+// ./infrastructure/upload/controller.js  29169d6b28499002
+// ./login-security/controller/login-security.controller.js  16b1217d3d29802d
+// ./message/controller/my-message.controller.js  e54cc9eab1a4bf6b
+// ./monitor/audit-daily/controller.js  da7de6a3a4ef465f
+// ./monitor/audit-log/controller.js  402e13a9c493db46
+// ./monitor/cache/controller.js  5a329b24b0deb16e
+// ./monitor/cache/controller/cache.controller.js  6a3a810e778d4a62
+// ./monitor/database/controller.js  8d1c054494a2e517
+// ./monitor/login-log/controller.js  785aaea1d371352b
+// ./monitor/logs/controller.js  311e8f0df8f1dd21
+// ./monitor/online/controller.js  8b2c0527ae506c4f
+// ./monitor/qps/controller.js  fc50c63c5368b1d3
+// ./monitor/server/controller.js  cff7345a897c919f
+// ./monitor/slow-query/controller/slow-query.controller.js  a67f65f757141a74
+// ./notice-preference/controller/preference.controller.js  0d1882dc057718cd
+// ./notice/channel.controller.js  9705b273e17d68f8
+// ./notice/controller.js  d50106469158e0d9
+// ./notice/my-notice.controller.js  020d546056076ddd
+// ./org-history/controllers/controller.js  9c4c762c2789a8c9
+// ./org-history/controllers/snapshot.controller.js  a9be75b02cd409f6
+// ./queue/controller.js  53b80646e3d6c5a2
+// ./rbac/controller/permission.controller.js  aa127bf27f793543
+// ./rbac/controller/role.controller.js  df6c9f0a0bf64d2e
+// ./report/controller/dataset.controller.js  d34b8ad17e3f89da
+// ./report/controller/export-task.controller.js  e75e475b662f4aea
+// ./report/controller/report.controller.js  f9092171cde2a38e
+// ./storage-backend/controller/storage-backend.controller.js  f71ae4c35f364adf
+// ./system/backup/controller.js  ed74933b44343fac
+// ./system/dept/controller.js  7961fe2055bf1b9e
+// ./system/dict-data/controller.js  69bb7b18e71841f7
+// ./system/dict-type/controller.js  58849baaef1f8d8b
+// ./system/feature-flag/controller.js  71c34a202a18b11d
+// ./system/ip-rule/controller.js  7321076ee33dbad5
+// ./system/menu/controller.js  bb117cc8bae99c6e
+// ./system/mfa/controller.js  c5bc6f4d96bb7c77
+// ./system/permission/controller.js  7d83a9c9e7d9745e
+// ./system/role/controller.js  e6eba5e057aebff1
+// ./system/setting/controller.js  e52ad811c02dd8e4
+// ./system/tenant-isolation/controller.js  7d67162d76e95faa
+// ./system/tenant/controller.js  8093a49d74d72480
+// ./system/user/controller.js  b911ab34a5fd981e
+// ./template/controller.js  b9fb301c2d815fd0
+// ./user-group/controller/user-group.controller.js  464a7e52a08489be
+// ./workflow-center/controller/center.controller.js  78c245a91d8ae5bf
+// ./workflow/controller/cc.controller.js  d537d51890071e23
+// ./workflow/controller/definition.controller.js  0bc63fdc11ed517d
+// ./workflow/controller/delegate.controller.js  b8e60d40d90d6df6
+// ./workflow/controller/instance.controller.js  273aaa9adebb6887
+// ./workflow/controller/my-cc.controller.js  3b0b7a87bbe0278d
+// ./workflow/controller/task-transfer.controller.js  3f9d44f668ffe5d8
+// ./workflow/controller/task.controller.js  3cf5323a060b5182

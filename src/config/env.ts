@@ -40,9 +40,7 @@ const boolStr = (def: "true" | "false") =>
     .transform((v) => v === "true");
 const decryptedEnv = decryptEnv(process.env);
 const envSchema = z.object({
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.string().default("3000"),
   HOST: z.string().default("0.0.0.0"),
 
@@ -62,9 +60,7 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default("3h"),
   JWT_REFRESH_EXPIRES_IN: z.string().default("15h"),
 
-  LOG_LEVEL: z
-    .enum(["trace", "debug", "info", "warn", "error", "fatal"])
-    .default("info"),
+  LOG_LEVEL: z.enum(["trace", "debug", "info", "warn", "error", "fatal"]).default("info"),
 
   RATE_LIMIT_WINDOW_MS: z.string().default("60000"),
   RATE_LIMIT_MAX: z.string().default("100"),
@@ -149,9 +145,7 @@ const envSchema = z.object({
   REDIS_METRICS_COMMAND_LEVEL: boolStr("true"),
   API_VERSIONING_ENABLED: boolStr("false"),
   API_DEFAULT_VERSIONS: z.string().default("v1"),
-  SYSTEM_STORAGE_TYPE: z
-    .enum(["local", "minio", "oss", "cos", "s3"])
-    .optional(),
+  SYSTEM_STORAGE_TYPE: z.enum(["local", "minio", "oss", "cos", "s3"]).optional(),
   SYSTEM_STORAGE_ENDPOINT: z.string().optional(),
   SYSTEM_STORAGE_PORT: z.string().optional(),
   SYSTEM_STORAGE_USE_SSL: boolStr("false"),
@@ -163,6 +157,7 @@ const envSchema = z.object({
   SYSTEM_STORAGE_LOCAL_PATH: z.string().optional(),
   SYSTEM_STORAGE_LOCAL_URL: z.string().optional(),
   TENANT_PROBE_ENABLED: boolStr("false"),
+  UPLOAD_THROTTLE_BPS: z.string().optional().default("0"),
 });
 
 const parsed = envSchema.safeParse(decryptedEnv);

@@ -6,6 +6,7 @@ import {
   Res,
   ApiOperation,
   ApiResponse,
+  ApiBody,
 } from "@/core/decorator/index.js";
 import { Request, Response } from "express";
 import multer from "multer";
@@ -18,6 +19,8 @@ import { UploadService } from "./service.js";
 import { checkUploadIdRate } from "@/middleware/security/rate-limit.js";
 import { SettingsService } from "@/modules/system/setting/service.js";
 import { UploadConfigDTO } from "@/modules/system/setting/schema.js";
+import z from "zod";
+import { logger } from "@/platform/logger/logger.js";
 export interface NormalizedUploadCfg {
   /** 当前存储类型 */
   storage: "local" | "minio" | "oss" | "cos" | "s3";
@@ -32,9 +35,16 @@ export interface NormalizedUploadCfg {
   raw: UploadConfigDTO;
 }
 const settingsService = new SettingsService();
-export async function getUploadCfg(
-  tenantId: string,
-): Promise<NormalizedUploadCfg> {
+const CheckSchema = z.object({
+  fileHash: z
+    .string()
+    .length(32)
+    .regex(/^[a-f0-9]+$/i),
+  fileSize: z.number().int().min(1),
+  filename: z.string().min(1).max(256),
+});
+
+export async function getUploadCfg(tenantId: string): Promise<NormalizedUploadCfg> {
   const cfg = await settingsService.getUploadConfig(tenantId);
 
   return {
@@ -86,36 +96,17 @@ function extOf(filename: string): string {
   if (idx < 0) return "";
   return filename.slice(idx + 1).toLowerCase();
 }
-export const UPLOAD_ROOT =
-  process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
+export const UPLOAD_ROOT = process.env.UPLOAD_ROOT || path.join(process.cwd(), "uploads");
 const TEMP_DIR = path.join(UPLOAD_ROOT, "temp");
-const CHUNK_SIZE = 5 * 1024 * 1024;
+const CHUNK_SIZE = 20 * 1024 * 1024;
 
 for (const dir of [UPLOAD_ROOT, TEMP_DIR]) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-// ============ 分片上传存储（保留本地临时文件，合并后再上传 COS） ============
-const chunkStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadId = req.body.uploadId;
-    if (!uploadId) return cb(new Error("uploadId is required"), "");
-    if (!isUuid(uploadId)) return cb(new Error("uploadId must be uuid"), "");
-    const dir = path.join(TEMP_DIR, uploadId);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const chunkIndex = req.body.chunkIndex;
-    const idx = Number(chunkIndex);
-    if (!Number.isInteger(idx) || idx < 0 || idx > 100000)
-      return cb(new Error("chunkIndex invalid"), "");
-    cb(null, `chunk-${idx}`);
-  },
-});
 const chunkUpload = multer({
-  storage: chunkStorage,
-  limits: { fileSize: CHUNK_SIZE * 2 },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: CHUNK_SIZE, files: 1, fields: 10 },
 });
 
 // ============ 简单上传存储（内存存储，直接上传 COS） ============
@@ -138,6 +129,33 @@ const fixFileNameEncoding = (name: string): string => {
   }
   return name;
 };
+const MultipartInitSchema = z.object({
+  filename: z.string().min(1).max(256),
+  fileSize: z.number().int().min(1),
+  mimeType: z.string().max(128).optional(),
+  fileHash: z
+    .string()
+    .length(32)
+    .regex(/^[a-f0-9]+$/i),
+  totalChunks: z.number().int().min(1).max(10000),
+});
+const MultipartCompleteSchema = z.object({
+  uploadId: z.string().min(1),
+  fileKey: z.string().min(1),
+  filename: z.string().min(1),
+  fileSize: z.number().int().min(1),
+  mimeType: z.string().optional(),
+  fileHash: z.string().length(32),
+  parts: z
+    .array(
+      z.object({
+        partNumber: z.number().int().min(1),
+        etag: z.string().min(1),
+      }),
+    )
+    .min(1)
+    .max(10000),
+});
 @Controller("/upload", { tags: ["文件上传"] })
 export default class UploadController {
   private fileRepository = new FileRepository();
@@ -163,12 +181,7 @@ export default class UploadController {
       const errMsg = validateUploadFile(req.file, cfg);
       if (errMsg) return error(res, errMsg, 400, 400);
       if (req.file.size > cfg.maxSizeBytes) {
-        return error(
-          res,
-          `文件超过 ${cfg.maxSizeBytes / 1024 / 1024} MB`,
-          400,
-          400,
-        );
+        return error(res, `文件超过 ${cfg.maxSizeBytes / 1024 / 1024} MB`, 400, 400);
       }
       const ext = path.extname(req.file.originalname).slice(1).toLowerCase();
       if (cfg.allowedTypes.length > 0 && !cfg.allowedTypes.includes(ext)) {
@@ -191,42 +204,120 @@ export default class UploadController {
     });
   }
 
+  @Post("/check")
+  @ApiOperation("检查文件是否可秒传", "按 hash 查询是否已有相同文件")
+  @ApiBody(CheckSchema)
+  async checkInstant(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = (req as any).tenantId;
+      const dto = CheckSchema.parse(req.body);
+
+      const result = await this.service.checkInstantUpload({
+        tenantId,
+        hash: dto.fileHash,
+        size: dto.fileSize,
+        filename: dto.filename,
+      });
+
+      success(res, result);
+    } catch (err: any) {
+      error(res, err?.message || "检查失败", 500, 500);
+    }
+  }
   @Get("/check")
-  @ApiOperation("检查已上传分片", "根据uploadId返回已上传的分片索引数组")
+  @ApiOperation("检查已上传分片", "从对象存储列举已上传的分片")
   @ApiResponse(200, "查询成功")
   async checkChunks(@Req() req: Request, @Res() res: Response) {
     try {
       const uploadId = req.query.uploadId as string;
+      const tenantId = (req as any).tenantId;
+      const totalChunks = req.query.totalChunks ? Number(req.query.totalChunks) : undefined;
+
       if (!uploadId) return error(res, "缺少uploadId参数", 400, 400);
-      success(res, await this.service.checkChunks(uploadId));
-    } catch (err) {
-      error(res, "检查分片失败", 500, 500);
+      if (!tenantId) return error(res, "缺少租户上下文", 401, 401);
+
+      const result = await this.service.checkChunks(uploadId, tenantId, totalChunks);
+      success(res, result);
+    } catch (err: any) {
+      error(res, err?.message || "检查分片失败", 500, 500);
     }
   }
 
   @Post("/chunk")
-  @ApiOperation(
-    "上传分片",
-    "接收文件分片（先落本地临时目录，merge 时统一上传 COS）",
-  )
+  @ApiOperation("上传分片", "分片直接写入对象存储，支持多实例")
   @ApiResponse(200, "分片上传成功")
   async uploadChunk(@Req() req: Request, @Res() res: Response) {
     chunkUpload.single("file")(req, res, async (err) => {
-      if (err) return error(res, "分片上传失败：" + err.message, 400, 400);
-      if (!req.file) return error(res, "未接收到文件", 400, 400);
-      const { chunkIndex, uploadId } = req.body;
+      if (err) {
+        return error(res, `分片上传失败：${err.message}`, 400, 400);
+      }
 
+      // 2) 文件缺失
+      if (!req.file) {
+        return error(res, "未接收到文件", 400, 400);
+      }
+
+      // 3) ⭐ buffer 检查（防御性，避免 .length 报错）
+      const buffer = req.file.buffer;
+      if (!buffer || !Buffer.isBuffer(buffer) || buffer.length === 0) {
+        logger.error(
+          { file: req.file, bodyKeys: Object.keys(req.body ?? {}) },
+          "[upload] chunk buffer is empty",
+        );
+        return error(res, "分片内容为空", 400, 400);
+      }
+
+      // 4) 参数解析
+      const { chunkIndex, uploadId, totalChunks, filename } = req.body ?? {};
+
+      if (!uploadId || typeof uploadId !== "string") {
+        return error(res, "缺少 uploadId", 400, 400);
+      }
+      if (!isUuid(uploadId)) {
+        return error(res, "uploadId 格式非法", 400, 400);
+      }
+
+      const idx = Number(chunkIndex);
+      if (!Number.isInteger(idx) || idx < 0 || idx > 100000) {
+        return error(res, "chunkIndex 非法", 400, 400);
+      }
+
+      const total = Number(totalChunks);
+      if (!Number.isInteger(total) || total < 1 || total > 100000) {
+        return error(res, "totalChunks 非法", 400, 400);
+      }
+
+      // 5) 限流
       const rate = await checkUploadIdRate(uploadId, 50);
       if (!rate.ok) {
-        return error(
-          res,
-          `该上传任务请求过快（${rate.current}/${rate.limit}），请稍后重试`,
-          429,
-        );
+        return error(res, `该上传任务请求过快（${rate.current}/${rate.limit}），请稍后重试`, 429);
       }
-      if (chunkIndex === undefined)
-        return error(res, "缺少chunkIndex", 400, 400);
-      success(res, { chunkIndex }, "分片上传成功");
+
+      const tenantId = (req as any).tenantId;
+      const userId = (req as any).user?.userId;
+
+      if (!tenantId) {
+        return error(res, "缺少租户上下文", 401, 401);
+      }
+
+      // 6) 落对象存储
+      try {
+        await this.service.saveChunk({
+          uploadId,
+          index: idx,
+          totalChunks: total,
+          buffer, // ⭐ 现在有值了
+          mimeType: req.file.mimetype,
+          tenantId,
+          userId,
+          fileName: filename || req.file.originalname,
+        });
+
+        success(res, { chunkIndex: idx }, "分片上传成功");
+      } catch (e: any) {
+        logger.error({ err: e, uploadId, index: idx }, "[upload] saveChunk failed");
+        error(res, e?.message || "分片上传失败", 500, 500);
+      }
     });
   }
 
@@ -234,11 +325,19 @@ export default class UploadController {
    * 合并分片 → COS → 写入文件表
    */
   @Post("/merge")
-  @ApiOperation("合并分片", "合并后上传 COS 并写入文件表，返回文件ID和URL")
-  @ApiResponse(200, "合并成功")
+  @ApiOperation("合并分片", "合并后校验 hash 并上传，返回任务 ID")
+  @ApiResponse(200, "任务已提交")
   async mergeChunks(@Req() req: Request, @Res() res: Response) {
     try {
-      const { uploadId, filename, totalChunks, mimeType, totalSize } = req.body;
+      const {
+        uploadId,
+        filename,
+        totalChunks,
+        mimeType,
+        totalSize,
+        fileHash, // ⭐ 新增
+      } = req.body;
+
       if (!uploadId || !filename || !totalChunks || !mimeType) {
         return error(res, "缺少参数", 400, 400);
       }
@@ -246,13 +345,11 @@ export default class UploadController {
       const tenantId = (req as any).tenantId;
       const cfg = await getUploadCfg(tenantId);
 
-      // ⭐ 如果前端传了 totalSize，可以提前校验
       if (totalSize && Number(totalSize) > cfg.maxSizeBytes) {
         const mb = (cfg.maxSizeBytes / 1024 / 1024).toFixed(0);
         return error(res, `文件超过 ${mb} MB 限制`, 400, 400);
       }
 
-      // ⭐ 类型校验
       if (cfg.allowedTypes.length > 0) {
         const ext = filename.slice(filename.lastIndexOf(".") + 1).toLowerCase();
         if (!cfg.allowedTypes.includes(ext)) {
@@ -267,6 +364,8 @@ export default class UploadController {
         tenantId,
         userId: (req as any).user?.userId,
         mimeType,
+        fileHash, // ⭐ 传递
+        fileSize: totalSize ? Number(totalSize) : undefined,
       });
 
       success(res, { taskId, status }, "任务已提交");
@@ -274,6 +373,7 @@ export default class UploadController {
       error(res, err?.message || "提交失败", 500, 500);
     }
   }
+
   @Get("/merge/status")
   @ApiOperation("查询合并任务状态", "返回 status / progress / url 等")
   @ApiResponse(200, "查询成功")
@@ -281,10 +381,7 @@ export default class UploadController {
     try {
       const taskId = req.query.taskId as string;
       if (!taskId) return error(res, "缺少taskId", 400, 400);
-      const result = await this.service.getTaskStatus(
-        taskId,
-        (req as any).tenantId,
-      );
+      const result = await this.service.getTaskStatus(taskId, (req as any).tenantId);
       success(res, result);
     } catch (err: any) {
       error(res, err?.message || "查询失败", 500, 500);
@@ -315,10 +412,7 @@ export default class UploadController {
     }
   }
   @Get("/tasks")
-  @ApiOperation(
-    "查询上传任务列表",
-    "返回当前用户正在上传/合并中的任务，用于刷新页面后恢复进度",
-  )
+  @ApiOperation("查询上传任务列表", "返回当前用户正在上传/合并中的任务，用于刷新页面后恢复进度")
   @ApiResponse(200, "查询成功")
   async listTasks(@Req() req: Request, @Res() res: Response) {
     try {
@@ -345,7 +439,7 @@ export default class UploadController {
   }
 
   @Post("/tasks/cancel")
-  @ApiOperation("取消上传任务", "批量取消，同时清理本地分片")
+  @ApiOperation("取消上传任务", "批量取消并清理对象存储分片")
   async cancelTasks(@Req() req: Request, @Res() res: Response) {
     try {
       const userId = (req as any).user?.userId;
@@ -409,14 +503,75 @@ export default class UploadController {
       }
 
       // ⭐ 传 tenantId
-      const downloadUrl = await this.service.buildDownloadUrl(
-        targetUrl,
-        fileName,
-        tenantId,
-      );
+      const downloadUrl = await this.service.buildDownloadUrl(targetUrl, fileName, tenantId);
       success(res, { url: downloadUrl, fileName, expiresIn: 15 * 60 });
     } catch (err: any) {
       error(res, err?.message || "获取下载地址失败", 500, 500);
+    }
+  }
+  @Post("/multipart/init")
+  @ApiOperation("初始化 Multipart 上传", "返回 uploadId 和每个分片的预签名 URL")
+  @ApiBody(MultipartInitSchema)
+  async multipartInit(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = (req as any).tenantId;
+      const userId = (req as any).user?.userId;
+      const dto = MultipartInitSchema.parse(req.body);
+
+      const result = await this.service.initMultipartUpload({
+        ...dto,
+        tenantId,
+        userId,
+      });
+
+      success(res, result);
+    } catch (err: any) {
+      error(res, err?.message || "初始化失败", 500, 500);
+    }
+  }
+  @Post("/multipart/complete")
+  @ApiOperation("完成 Multipart 上传", "提交 ETag 列表，合并文件")
+  @ApiBody(MultipartCompleteSchema)
+  async multipartComplete(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = (req as any).tenantId;
+      const userId = (req as any).user?.userId;
+      const dto = MultipartCompleteSchema.parse(req.body);
+
+      const result = await this.service.completeMultipartUpload({
+        ...dto,
+        tenantId,
+        userId,
+      });
+
+      success(res, result, "上传成功");
+    } catch (err: any) {
+      error(res, err?.message || "完成失败", 500, 500);
+    }
+  }
+
+  @Post("/multipart/abort")
+  @ApiOperation("中止 Multipart 上传", "清理对象存储的临时分片")
+  @ApiBody(
+    z.object({
+      uploadId: z.string().min(1),
+      fileKey: z.string().min(1),
+    }),
+  )
+  async multipartAbort(@Req() req: Request, @Res() res: Response) {
+    try {
+      const tenantId = (req as any).tenantId;
+      const { uploadId, fileKey } = req.body;
+
+      await this.service.abortMultipartUpload({
+        uploadId,
+        fileKey,
+        tenantId,
+      });
+
+      success(res, null, "已中止");
+    } catch (err: any) {
+      error(res, err?.message || "中止失败", 500, 500);
     }
   }
 }

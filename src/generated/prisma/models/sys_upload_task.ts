@@ -30,12 +30,14 @@ export type Sys_upload_taskAvgAggregateOutputType = {
   total_chunks: number | null
   progress: number | null
   size: number | null
+  attempts: number | null
 }
 
 export type Sys_upload_taskSumAggregateOutputType = {
   total_chunks: number | null
   progress: number | null
   size: bigint | null
+  attempts: number | null
 }
 
 export type Sys_upload_taskMinAggregateOutputType = {
@@ -51,6 +53,7 @@ export type Sys_upload_taskMinAggregateOutputType = {
   size: bigint | null
   tenant_id: string | null
   user_id: string | null
+  attempts: number | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -68,6 +71,7 @@ export type Sys_upload_taskMaxAggregateOutputType = {
   size: bigint | null
   tenant_id: string | null
   user_id: string | null
+  attempts: number | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -85,6 +89,7 @@ export type Sys_upload_taskCountAggregateOutputType = {
   size: number
   tenant_id: number
   user_id: number
+  attempts: number
   created_at: number
   updated_at: number
   _all: number
@@ -95,12 +100,14 @@ export type Sys_upload_taskAvgAggregateInputType = {
   total_chunks?: true
   progress?: true
   size?: true
+  attempts?: true
 }
 
 export type Sys_upload_taskSumAggregateInputType = {
   total_chunks?: true
   progress?: true
   size?: true
+  attempts?: true
 }
 
 export type Sys_upload_taskMinAggregateInputType = {
@@ -116,6 +123,7 @@ export type Sys_upload_taskMinAggregateInputType = {
   size?: true
   tenant_id?: true
   user_id?: true
+  attempts?: true
   created_at?: true
   updated_at?: true
 }
@@ -133,6 +141,7 @@ export type Sys_upload_taskMaxAggregateInputType = {
   size?: true
   tenant_id?: true
   user_id?: true
+  attempts?: true
   created_at?: true
   updated_at?: true
 }
@@ -150,6 +159,7 @@ export type Sys_upload_taskCountAggregateInputType = {
   size?: true
   tenant_id?: true
   user_id?: true
+  attempts?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -254,6 +264,7 @@ export type Sys_upload_taskGroupByOutputType = {
   size: bigint | null
   tenant_id: string | null
   user_id: string | null
+  attempts: number
   created_at: Date
   updated_at: Date
   _count: Sys_upload_taskCountAggregateOutputType | null
@@ -294,6 +305,7 @@ export type sys_upload_taskWhereInput = {
   size?: Prisma.BigIntNullableFilter<"sys_upload_task"> | bigint | number | null
   tenant_id?: Prisma.StringNullableFilter<"sys_upload_task"> | string | null
   user_id?: Prisma.StringNullableFilter<"sys_upload_task"> | string | null
+  attempts?: Prisma.IntFilter<"sys_upload_task"> | number
   created_at?: Prisma.DateTimeFilter<"sys_upload_task"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_upload_task"> | Date | string
 }
@@ -311,6 +323,7 @@ export type sys_upload_taskOrderByWithRelationInput = {
   size?: Prisma.SortOrderInput | Prisma.SortOrder
   tenant_id?: Prisma.SortOrderInput | Prisma.SortOrder
   user_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -331,6 +344,7 @@ export type sys_upload_taskWhereUniqueInput = Prisma.AtLeast<{
   size?: Prisma.BigIntNullableFilter<"sys_upload_task"> | bigint | number | null
   tenant_id?: Prisma.StringNullableFilter<"sys_upload_task"> | string | null
   user_id?: Prisma.StringNullableFilter<"sys_upload_task"> | string | null
+  attempts?: Prisma.IntFilter<"sys_upload_task"> | number
   created_at?: Prisma.DateTimeFilter<"sys_upload_task"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"sys_upload_task"> | Date | string
 }, "task_id">
@@ -348,6 +362,7 @@ export type sys_upload_taskOrderByWithAggregationInput = {
   size?: Prisma.SortOrderInput | Prisma.SortOrder
   tenant_id?: Prisma.SortOrderInput | Prisma.SortOrder
   user_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.sys_upload_taskCountOrderByAggregateInput
@@ -373,6 +388,7 @@ export type sys_upload_taskScalarWhereWithAggregatesInput = {
   size?: Prisma.BigIntNullableWithAggregatesFilter<"sys_upload_task"> | bigint | number | null
   tenant_id?: Prisma.StringNullableWithAggregatesFilter<"sys_upload_task"> | string | null
   user_id?: Prisma.StringNullableWithAggregatesFilter<"sys_upload_task"> | string | null
+  attempts?: Prisma.IntWithAggregatesFilter<"sys_upload_task"> | number
   created_at?: Prisma.DateTimeWithAggregatesFilter<"sys_upload_task"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"sys_upload_task"> | Date | string
 }
@@ -390,6 +406,7 @@ export type sys_upload_taskCreateInput = {
   size?: bigint | number | null
   tenant_id?: string | null
   user_id?: string | null
+  attempts?: number
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -407,6 +424,7 @@ export type sys_upload_taskUncheckedCreateInput = {
   size?: bigint | number | null
   tenant_id?: string | null
   user_id?: string | null
+  attempts?: number
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -424,6 +442,7 @@ export type sys_upload_taskUpdateInput = {
   size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   tenant_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -441,6 +460,7 @@ export type sys_upload_taskUncheckedUpdateInput = {
   size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   tenant_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -458,6 +478,7 @@ export type sys_upload_taskCreateManyInput = {
   size?: bigint | number | null
   tenant_id?: string | null
   user_id?: string | null
+  attempts?: number
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -475,6 +496,7 @@ export type sys_upload_taskUpdateManyMutationInput = {
   size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   tenant_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -492,6 +514,7 @@ export type sys_upload_taskUncheckedUpdateManyInput = {
   size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   tenant_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -509,6 +532,7 @@ export type sys_upload_taskCountOrderByAggregateInput = {
   size?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -517,6 +541,7 @@ export type sys_upload_taskAvgOrderByAggregateInput = {
   total_chunks?: Prisma.SortOrder
   progress?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
 }
 
 export type sys_upload_taskMaxOrderByAggregateInput = {
@@ -532,6 +557,7 @@ export type sys_upload_taskMaxOrderByAggregateInput = {
   size?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -549,6 +575,7 @@ export type sys_upload_taskMinOrderByAggregateInput = {
   size?: Prisma.SortOrder
   tenant_id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -557,6 +584,7 @@ export type sys_upload_taskSumOrderByAggregateInput = {
   total_chunks?: Prisma.SortOrder
   progress?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
 }
 
 export type NullableBigIntFieldUpdateOperationsInput = {
@@ -582,6 +610,7 @@ export type sys_upload_taskSelect<ExtArgs extends runtime.Types.Extensions.Inter
   size?: boolean
   tenant_id?: boolean
   user_id?: boolean
+  attempts?: boolean
   created_at?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["sys_upload_task"]>
@@ -599,6 +628,7 @@ export type sys_upload_taskSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   size?: boolean
   tenant_id?: boolean
   user_id?: boolean
+  attempts?: boolean
   created_at?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["sys_upload_task"]>
@@ -616,6 +646,7 @@ export type sys_upload_taskSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   size?: boolean
   tenant_id?: boolean
   user_id?: boolean
+  attempts?: boolean
   created_at?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["sys_upload_task"]>
@@ -633,11 +664,12 @@ export type sys_upload_taskSelectScalar = {
   size?: boolean
   tenant_id?: boolean
   user_id?: boolean
+  attempts?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type sys_upload_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "upload_id" | "file_name" | "total_chunks" | "status" | "progress" | "error_msg" | "file_id" | "url" | "size" | "tenant_id" | "user_id" | "created_at" | "updated_at", ExtArgs["result"]["sys_upload_task"]>
+export type sys_upload_taskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"task_id" | "upload_id" | "file_name" | "total_chunks" | "status" | "progress" | "error_msg" | "file_id" | "url" | "size" | "tenant_id" | "user_id" | "attempts" | "created_at" | "updated_at", ExtArgs["result"]["sys_upload_task"]>
 
 export type $sys_upload_taskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "sys_upload_task"
@@ -655,6 +687,7 @@ export type $sys_upload_taskPayload<ExtArgs extends runtime.Types.Extensions.Int
     size: bigint | null
     tenant_id: string | null
     user_id: string | null
+    attempts: number
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["sys_upload_task"]>
@@ -1092,6 +1125,7 @@ export interface sys_upload_taskFieldRefs {
   readonly size: Prisma.FieldRef<"sys_upload_task", 'BigInt'>
   readonly tenant_id: Prisma.FieldRef<"sys_upload_task", 'String'>
   readonly user_id: Prisma.FieldRef<"sys_upload_task", 'String'>
+  readonly attempts: Prisma.FieldRef<"sys_upload_task", 'Int'>
   readonly created_at: Prisma.FieldRef<"sys_upload_task", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"sys_upload_task", 'DateTime'>
 }

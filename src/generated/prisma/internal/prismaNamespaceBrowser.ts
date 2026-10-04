@@ -131,7 +131,8 @@ export const ModelName = {
   sys_tenant_isolation_run: 'sys_tenant_isolation_run',
   sys_org_history: 'sys_org_history',
   sys_org_snapshot: 'sys_org_snapshot',
-  sys_role_field_policy: 'sys_role_field_policy'
+  sys_role_field_policy: 'sys_role_field_policy',
+  sys_file_hash: 'sys_file_hash'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -793,6 +794,7 @@ export const Sys_upload_taskScalarFieldEnum = {
   size: 'size',
   tenant_id: 'tenant_id',
   user_id: 'user_id',
+  attempts: 'attempts',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -1781,6 +1783,21 @@ export const Sys_role_field_policyScalarFieldEnum = {
 } as const
 
 export type Sys_role_field_policyScalarFieldEnum = (typeof Sys_role_field_policyScalarFieldEnum)[keyof typeof Sys_role_field_policyScalarFieldEnum]
+
+
+export const Sys_file_hashScalarFieldEnum = {
+  id: 'id',
+  tenant_id: 'tenant_id',
+  hash: 'hash',
+  file_id: 'file_id',
+  size: 'size',
+  mime_type: 'mime_type',
+  filename: 'filename',
+  created_at: 'created_at',
+  ref_count: 'ref_count'
+} as const
+
+export type Sys_file_hashScalarFieldEnum = (typeof Sys_file_hashScalarFieldEnum)[keyof typeof Sys_file_hashScalarFieldEnum]
 
 
 export const SortOrder = {

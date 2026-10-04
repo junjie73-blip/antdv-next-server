@@ -29,7 +29,7 @@ export const BackupPolicySchema = z
     retainCount: z.coerce.number().int().min(1).max(100).default(10),
     enabled: z.coerce.number().int().min(0).max(1).default(1),
     bucket: z.string().max(128).optional(),
-    remark: z.string().max(512).optional(),
+    remark: z.string().max(512).nullable().optional(),
   })
   .openapi("BackupPolicy");
 

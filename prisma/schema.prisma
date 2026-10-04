@@ -782,6 +782,7 @@ model sys_upload_task {
   size         BigInt?
   tenant_id    String?
   user_id      String?
+  attempts     Int      @default(0)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
@@ -2108,4 +2109,27 @@ model sys_role_field_policy {
   @@index([tenant_id, resource])
   @@index([role_id])
   @@map("sys_role_field_policy")
+}
+
+/// ==================== 文件 Hash 索引（秒传） ====================
+model sys_file_hash {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenant_id  String   @db.Uuid
+  /// 文件内容的 MD5（32位十六进制）
+  hash       String   @db.VarChar(32)
+  /// 关联的文件 ID
+  file_id    String   @db.Uuid
+  /// 文件大小（字节）
+  size       BigInt
+  mime_type  String?  @db.VarChar(128)
+  /// 原始文件名（用于展示）
+  filename   String   @db.VarChar(256)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  /// 引用计数（同一 hash 被多次上传）
+  ref_count  Int      @default(1)
+
+  @@unique([tenant_id, hash])
+  @@index([hash])
+  @@index([file_id])
+  @@map("sys_file_hash")
 }

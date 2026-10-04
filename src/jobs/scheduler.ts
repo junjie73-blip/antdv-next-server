@@ -12,6 +12,7 @@ import { runTenantIsolationScan } from "@/modules/system/tenant-isolation/schedu
 import { BACKUP_JOBS } from "./tasks/backup.task.js";
 import { EXPORT_JOBS } from "./tasks/export.task.js";
 import { ORG_HISTORY_JOBS } from "./tasks/org-history.task.js";
+import { cleanupStuckUploadTasks } from "./tasks/cleanup-stuck.task.js";
 
 const tasks: ScheduledTask[] = [];
 
@@ -214,6 +215,12 @@ const CRON_TASKS: CronTaskDef[] = [
     locked: true,
     handler: runTenantIsolationScan,
   },
+  {
+    name: "cleanup-stuck-upload-tasks",
+    cron: "*/5 * * * *", // 每 5 分钟
+    locked: true,
+    handler: cleanupStuckUploadTasks,
+  },
   ...BACKUP_JOBS,
   ...EXPORT_JOBS,
   ...ORG_HISTORY_JOBS,
@@ -234,25 +241,16 @@ export function startScheduler(): ScheduledTask[] {
               await def.handler();
             });
             if (done === null) {
-              logger.debug(
-                { task: def.name },
-                "[cron] skipped (another instance holds lock)",
-              );
+              logger.debug({ task: def.name }, "[cron] skipped (another instance holds lock)");
               return;
             }
           } else {
             await def.handler();
           }
 
-          logger.info(
-            { task: def.name, duration: Date.now() - start },
-            "[cron] done",
-          );
+          logger.info({ task: def.name, duration: Date.now() - start }, "[cron] done");
         } catch (err) {
-          logger.error(
-            { err, task: def.name, duration: Date.now() - start },
-            "[cron] failed",
-          );
+          logger.error({ err, task: def.name, duration: Date.now() - start }, "[cron] failed");
         }
       },
       {

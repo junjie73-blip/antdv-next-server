@@ -20,7 +20,7 @@ export async function success<T = any>(
   message = "操作成功",
   code = 200,
 ): Promise<void> {
-  const _data = data as any;
+  let _data = data as any;
   if (_data && _data.list) {
     _data.list = _data.list.map(keysToCamelCase).map((item: any) => {
       for (const key in item) {
@@ -30,6 +30,10 @@ export async function success<T = any>(
       }
       return item;
     });
+  } else if (data instanceof Array) {
+    _data = data.map(keysToCamelCase);
+  } else {
+    _data = keysToCamelCase(_data);
   }
   const response: ApiResponse<T> = {
     code,
@@ -42,12 +46,7 @@ export async function success<T = any>(
     .json(JSON.parse(JSON.stringify(response, bigintSafeReplacer)));
 }
 
-export function error(
-  res: Response,
-  message = "操作失败",
-  code = 500,
-  statusCode = 500,
-): void {
+export function error(res: Response, message = "操作失败", code = 500, statusCode = 500): void {
   const response: ApiResponse<null> = {
     code,
     message,
@@ -86,7 +85,5 @@ export async function pageSuccess<T>(
     },
     timestamp: new Date().getTime(),
   };
-  res
-    .status(200)
-    .json(JSON.parse(JSON.stringify(response, bigintSafeReplacer)));
+  res.status(200).json(JSON.parse(JSON.stringify(response, bigintSafeReplacer)));
 }

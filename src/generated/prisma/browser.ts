@@ -422,3 +422,8 @@ export type sys_org_snapshot = Prisma.sys_org_snapshotModel
  * ==================== 字段级数据权限策略 ====================
  */
 export type sys_role_field_policy = Prisma.sys_role_field_policyModel
+/**
+ * Model sys_file_hash
+ * ==================== 文件 Hash 索引（秒传） ====================
+ */
+export type sys_file_hash = Prisma.sys_file_hashModel

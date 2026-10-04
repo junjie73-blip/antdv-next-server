@@ -1,6 +1,16 @@
 import COS from "cos-nodejs-sdk-v5";
 import type { Readable } from "node:stream";
-import type { IStorage, PutObjectInput, PresignedUrlInput } from "./types.js";
+import type {
+  IStorage,
+  PutObjectInput,
+  PresignedUrlInput,
+  ObjectInfo,
+  GetObjectResult,
+  CompleteMultipartInput,
+  MultipartInitInput,
+  PresignPartInput,
+  MultipartInitResult,
+} from "./types.js";
 import { isBuffer } from "./types.js";
 
 export interface CosStorageConfig {
@@ -97,5 +107,120 @@ export class CosStorage implements IStorage {
     } catch {
       return null;
     }
+  }
+  async listObjects(input): Promise<ObjectInfo[]> {
+    return new Promise((resolve, reject) => {
+      this.client.getBucket(
+        {
+          Bucket: this.cfg.bucket,
+          Region: this.cfg.region,
+          Prefix: input.prefix,
+          MaxKeys: input.maxKeys ?? 1000,
+        },
+        (err, data) => {
+          if (err) return reject(err);
+          resolve(
+            (data.Contents ?? []).map((o) => ({
+              key: o.Key!,
+              size: Number(o.Size ?? 0),
+              lastModified: o.LastModified ? new Date(o.LastModified) : undefined,
+            })),
+          );
+        },
+      );
+    });
+  }
+
+  async getObject(key): Promise<GetObjectResult> {
+    return new Promise((resolve, reject) => {
+      this.client.getObject(
+        { Bucket: this.cfg.bucket, Region: this.cfg.region, Key: key },
+        (err, data) => (err ? reject(err) : resolve({ body: data.Body as any })),
+      );
+    });
+  }
+
+  async deleteObjects(keys): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
+      this.client.deleteMultipleObject(
+        {
+          Bucket: this.cfg.bucket,
+          Region: this.cfg.region,
+          Objects: keys.map((k) => ({ Key: k })),
+        },
+        (err) => (err ? reject(err) : resolve()),
+      );
+    });
+  }
+  async createMultipartUpload(input: MultipartInitInput): Promise<MultipartInitResult> {
+    return new Promise((resolve, reject) => {
+      this.client.multipartInit(
+        {
+          Bucket: this.cfg.bucket,
+          Region: this.cfg.region,
+          Key: input.key,
+          ...(input.contentType ? { ContentType: input.contentType } : {}),
+        },
+        (err, data) => {
+          if (err || !data?.UploadId) return reject(err ?? new Error("no UploadId"));
+          resolve({ uploadId: data.UploadId, key: input.key });
+        },
+      );
+    });
+  }
+
+  async presignUploadPart(input: PresignPartInput): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.client.getObjectUrl(
+        {
+          Bucket: this.cfg.bucket,
+          Region: this.cfg.region,
+          Key: input.key,
+          Sign: true,
+          Expires: input.expiresSec,
+          Method: "PUT",
+          Query: {
+            partNumber: String(input.partNumber),
+            uploadId: input.uploadId,
+          },
+        },
+        (err, data) => (err ? reject(err) : resolve(data.Url)),
+      );
+    });
+  }
+
+  async completeMultipartUpload(
+    input: CompleteMultipartInput,
+  ): Promise<{ url: string; key: string }> {
+    return new Promise((resolve, reject) => {
+      const sorted = [...input.parts].sort((a, b) => a.partNumber - b.partNumber);
+      this.client.multipartComplete(
+        {
+          Bucket: this.cfg.bucket,
+          Region: this.cfg.region,
+          Key: input.key,
+          UploadId: input.uploadId,
+          Parts: sorted.map((p) => ({ PartNumber: p.partNumber, ETag: p.etag })),
+        },
+        (err) => {
+          if (err) return reject(err);
+          resolve({ url: this.buildPublicUrl(input.key), key: input.key });
+        },
+      );
+    });
+  }
+
+  async abortMultipartUpload(input: { key: string; uploadId: string }): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.client.multipartAbort(
+        {
+          Bucket: this.cfg.bucket,
+          Region: this.cfg.region,
+          Key: input.key,
+          UploadId: input.uploadId,
+        },
+        (err) => (err ? reject(err) : resolve()),
+      );
+    });
   }
 }

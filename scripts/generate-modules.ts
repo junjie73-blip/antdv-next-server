@@ -2,6 +2,7 @@
 import { readdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import { join, relative, sep } from "path";
 import { fileURLToPath } from "url";
+import { createHash } from "crypto";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -62,13 +63,6 @@ function walk(dir: string, acc: string[] = []): string[] {
 // 路径 → 标识符 / import 路径
 // ─────────────────────────────────────────────
 
-/**
- * 从绝对路径派生可读标识符：
- *   modules/user/controller.ts                → UserController
- *   modules/auth/controller/login.controller.ts → AuthLoginController
- *   modules/monitor/cache/controller.ts       → MonitorCacheController
- *   modules/dict/controller/type.controller.ts → DictTypeController
- */
 function deriveIdentifier(absPath: string): string {
   const rel = relative(MODULES_DIR, absPath).split(sep).join("/");
   const parts = rel
@@ -93,12 +87,23 @@ function toImportPath(absPath: string): string {
 }
 
 // ─────────────────────────────────────────────
+// 内容 hash
+// ─────────────────────────────────────────────
+
+/** 对文件内容取 sha256，截断到 16 位，用于感知内部实现变化 */
+function hashFile(absPath: string): string {
+  return createHash("sha256").update(readFileSync(absPath)).digest("hex").slice(0, 16);
+}
+
+// ─────────────────────────────────────────────
 // 收集 + 校验
 // ─────────────────────────────────────────────
 
 interface ControllerEntry {
   identifier: string;
   importPath: string;
+  absPath: string;
+  hash: string;
 }
 
 function collectControllers(): ControllerEntry[] {
@@ -108,10 +113,11 @@ function collectControllers(): ControllerEntry[] {
     .map((absPath) => ({
       identifier: deriveIdentifier(absPath),
       importPath: toImportPath(absPath),
+      absPath,
+      hash: hashFile(absPath),
     }))
     .sort((a, b) => a.importPath.localeCompare(b.importPath));
 
-  // 重名检测：派生标识符必须唯一
   const seen = new Map<string, string>();
   for (const e of entries) {
     if (seen.has(e.identifier)) {
@@ -133,30 +139,66 @@ function collectControllers(): ControllerEntry[] {
 // ─────────────────────────────────────────────
 
 function buildContent(entries: ControllerEntry[]): string {
-  if (entries.length === 0) {
-    return `// ⚠️ 此文件由 scripts/generate-modules.ts 自动生成，请勿手动修改。
+  const header = `// ⚠️ 此文件由 scripts/generate-modules.ts 自动生成，请勿手动修改。
 // 重新生成: pnpm generate:modules
+// CI 校验: pnpm generate:modules:check
+//
+// 末尾的 hash 块用于感知 controller 文件内部实现的变化，
+// 每次内容变化都会触发此文件重写。`;
+
+  if (entries.length === 0) {
+    return `${header}
 
 export const controllers = [] as const;
+
+// ---- controller content hashes (sha256, 16 hex chars) ----
 `;
   }
 
-  const imports = entries
-    .map((e) => `import ${e.identifier} from "${e.importPath}";`)
-    .join("\n");
+  const imports = entries.map((e) => `import ${e.identifier} from "${e.importPath}";`).join("\n");
 
   const list = entries.map((e) => `  ${e.identifier},`).join("\n");
 
-  return `// ⚠️ 此文件由 scripts/generate-modules.ts 自动生成，请勿手动修改。
-// 重新生成: pnpm generate:modules
-// CI 校验: pnpm generate:modules:check
+  const hashBlock = entries.map((e) => `// ${e.importPath}  ${e.hash}`).join("\n");
+
+  return `${header}
 
 ${imports}
 
 export const controllers = [
 ${list}
 ] as const;
+
+// ---- controller content hashes (sha256, 16 hex chars) ----
+${hashBlock}
 `;
+}
+
+/** 从生成内容中提取 { importPath -> hash } */
+function extractHashes(content: string): Record<string, string> {
+  const result: Record<string, string> = {};
+  const re = /^\/\/\s+(\S+)\s+([0-9a-f]{16})$/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(content)) !== null) {
+    result[m[1]] = m[2];
+  }
+  return result;
+}
+
+function diffHashes(prev: string, next: string) {
+  const p = extractHashes(prev);
+  const n = extractHashes(next);
+  const added: string[] = [];
+  const removed: string[] = [];
+  const changed: string[] = [];
+  for (const k of Object.keys(n)) {
+    if (!(k in p)) added.push(k);
+    else if (p[k] !== n[k]) changed.push(k);
+  }
+  for (const k of Object.keys(p)) {
+    if (!(k in n)) removed.push(k);
+  }
+  return { added, removed, changed };
 }
 
 // ─────────────────────────────────────────────
@@ -177,16 +219,18 @@ function main(): void {
   }
 
   const content = buildContent(entries);
-  const prev = existsSync(OUTPUT_FILE)
-    ? readFileSync(OUTPUT_FILE, "utf-8")
-    : "";
+  const prev = existsSync(OUTPUT_FILE) ? readFileSync(OUTPUT_FILE, "utf-8") : "";
 
-  // ① CI 校验模式
+  // ① CI 校验
   if (checkMode) {
     if (prev !== content) {
       console.error(
         `[GenerateModules] ❌ ${relative(ROOT, OUTPUT_FILE)} 与磁盘上的 Controller 不一致。`,
       );
+      const { added, removed, changed } = diffHashes(prev, content);
+      if (added.length) console.error(`  + 新增: ${added.join(", ")}`);
+      if (removed.length) console.error(`  - 删除: ${removed.join(", ")}`);
+      if (changed.length) console.error(`  ~ 内容变化: ${changed.join(", ")}`);
       console.error("请运行: pnpm generate:modules");
       process.exit(1);
     }
@@ -194,27 +238,33 @@ function main(): void {
     return;
   }
 
-  // ② dry-run 模式
+  // ② dry-run
   if (dryRun) {
     console.log(content);
-    console.log(
-      `[GenerateModules] 🧪 dry-run：共 ${entries.length} 个 Controller`,
-    );
+    console.log(`[GenerateModules] 🧪 dry-run：共 ${entries.length} 个 Controller`);
+    const { added, removed, changed } = diffHashes(prev, content);
+    if (added.length) console.log(`  + 新增: ${added.join(", ")}`);
+    if (removed.length) console.log(`  - 删除: ${removed.join(", ")}`);
+    if (changed.length) console.log(`  ~ 内容变化: ${changed.join(", ")}`);
     return;
   }
 
-  // ③ 幂等：无变化不写盘
+  // ③ 幂等
   if (prev === content) {
-    console.log(
-      `[GenerateModules] ⏭  无变化（${entries.length} 个 Controller）`,
-    );
+    console.log(`[GenerateModules] ⏭  无变化（${entries.length} 个 Controller）`);
     return;
   }
 
+  // ④ 写盘
   writeFileSync(OUTPUT_FILE, content, "utf-8");
   console.log(
     `[GenerateModules] ✅ 已生成 ${relative(ROOT, OUTPUT_FILE)}，共 ${entries.length} 个 Controller`,
   );
+
+  const { added, removed, changed } = diffHashes(prev, content);
+  // if (added.length) console.log(`  + 新增: ${added.join(", ")}`);
+  // if (removed.length) console.log(`  - 删除: ${removed.join(", ")}`);
+  if (changed.length) console.log(`  ~ 内容变化: ${changed.join(", ")}`);
 }
 
 main();

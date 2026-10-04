@@ -7,7 +7,11 @@ import { FileRepository } from "@/modules/infrastructure/file/repository.js";
 import {
   MergeJobData,
   MERGE_QUEUE_NAME,
-} from "@/modules/infrastructure/upload/queue.js";
+  MERGE_LOCK_DURATION,
+  MERGE_LOCK_RENEW,
+  MERGE_MAX_STALLED,
+  MERGE_STALLED_INTERVAL,
+} from "@/platform/queue/queues.js";
 import cacheWarmWorker from "@/workers/cache-warm.worker.js";
 import reportExportWorker from "@/workers/report-export.worker.js";
 import wfNotifyWorker from "@/workers/wf-notify.worker.js";
@@ -15,93 +19,86 @@ import exportWorker from "@/workers/export.worker.js";
 
 const uploadService = new UploadService(new FileRepository());
 
-/** 所有 worker 的集合 */
 export interface WorkerBundle {
-  /** 合并 worker（上传分片） */
   merge: Worker<MergeJobData>;
-  /** 报表导出 worker */
   reportExport: Worker;
-  /** 工作流通知 worker */
   wfNotify: Worker;
-  /** 缓存预热 worker */
   cacheWarm: Worker;
   exportWorker: Worker;
-  /** 全部 worker（用于统一关闭） */
   all: Worker[];
 }
 
-/**
- * 启动所有 Worker
- * - 每个 Worker 独立连接（避免阻塞命令相互影响）
- * - 统一注册事件监听
- */
 export function startAllWorkers(): WorkerBundle {
   const merge = createMergeWorker();
 
-  const all: Worker[] = [
-    merge,
-    reportExportWorker,
-    wfNotifyWorker,
-    cacheWarmWorker,
-    exportWorker,
-  ];
+  const all: Worker[] = [merge, reportExportWorker, wfNotifyWorker, cacheWarmWorker, exportWorker];
 
-  // 统一注册事件（只注册一次）
   for (const w of all) {
     attachCommonListeners(w);
   }
 
-  logger.info(
-    {
-      workers: all.map((w) => w.name),
-      count: all.length,
-    },
-    "[worker] all started",
-  );
+  logger.info({ workers: all.map((w) => w.name), count: all.length }, "[worker] all started");
 
   return {
     merge,
     reportExport: reportExportWorker,
     wfNotify: wfNotifyWorker,
     cacheWarm: cacheWarmWorker,
-    exportWorker: exportWorker,
+    exportWorker,
     all,
   };
 }
 
 /**
- * 仅启动 merge worker（保持向后兼容）
- * @deprecated 建议用 startAllWorkers
+ * @deprecated 用 startAllWorkers
  */
 export function startMergeWorker(): Worker<MergeJobData> {
   return createMergeWorker();
 }
 
-/**
- * 创建 merge worker
- */
+/* ============================================================
+ * ⭐ merge worker（重点修复）
+ * ============================================================ */
 function createMergeWorker(): Worker<MergeJobData> {
   return new Worker<MergeJobData>(
     MERGE_QUEUE_NAME,
     async (job: Job<MergeJobData>) => {
       const { taskId, ...params } = job.data;
+
+      await job.updateProgress(0);
+
       logger.info(
-        { taskId, jobId: job.id, attempt: job.attemptsMade },
+        {
+          taskId,
+          jobId: job.id,
+          attempt: job.attemptsMade + 1,
+          maxAttempts: job.opts.attempts,
+          uploadId: params.uploadId,
+          totalChunks: params.totalChunks,
+          fileSize: params.fileSize,
+          fileName: params.fileName,
+        },
         "[worker:merge] start",
       );
+
       await uploadService.runMergeTask(taskId, params, job);
     },
     {
       connection: createBullConnection(MERGE_QUEUE_NAME),
       concurrency: 3,
       limiter: { max: 10, duration: 1000 },
+
+      lockDuration: MERGE_LOCK_DURATION,
+      lockRenewTime: MERGE_LOCK_RENEW,
+      stalledInterval: MERGE_STALLED_INTERVAL,
+      maxStalledCount: MERGE_MAX_STALLED,
     },
   );
 }
 
-/**
- * 注册通用事件监听
- */
+/* ============================================================
+ * 通用事件监听
+ * ============================================================ */
 function attachCommonListeners(worker: Worker): void {
   worker.on("completed", (job) => {
     logger.debug({ jobId: job?.id, queue: worker.name }, "[worker] completed");
@@ -124,18 +121,28 @@ function attachCommonListeners(worker: Worker): void {
     logger.error({ queue: worker.name, err }, "[worker] error");
   });
 
+  // ⭐ 扩充 stalled 日志：带 taskId / uploadId / 已尝试次数
   worker.on("stalled", (jobId) => {
-    logger.warn({ jobId, queue: worker.name }, "[worker] job stalled");
+    logger.warn(
+      {
+        jobId,
+        queue: worker.name,
+        lockDuration: (worker as any).opts?.lockDuration,
+        stalledInterval: (worker as any).opts?.stalledInterval,
+      },
+      "[worker] job stalled",
+    );
+  });
+
+  // ⭐ 新增 progress 事件（观测用，可关）
+  worker.on("progress", (job, progress) => {
+    logger.debug({ jobId: job.id, queue: worker.name, progress }, "[worker] progress");
   });
 }
 
-/**
- * Worker 进程优雅退出
- * - 等待当前任务完成（close 默认会等）
- * - 支持传入单个或数组
- * - 30 秒超时强制退出
- * - 断开 DB / Redis
- */
+/* ============================================================
+ * 优雅退出
+ * ============================================================ */
 export function installWorkerShutdown(workers: Worker | Worker[]): void {
   const list = Array.isArray(workers) ? workers : [workers];
   let shuttingDown = false;
@@ -149,7 +156,6 @@ export function installWorkerShutdown(workers: Worker | Worker[]): void {
       "[worker] shutting down...",
     );
 
-    // 30 秒强制退出保护
     const forceExit = setTimeout(() => {
       logger.error("[worker] shutdown timeout (30s), force exit");
       process.exit(1);
@@ -157,20 +163,15 @@ export function installWorkerShutdown(workers: Worker | Worker[]): void {
     forceExit.unref();
 
     try {
-      // 并行关闭所有 worker（每个 worker.close 会等当前任务完成）
       const results = await Promise.allSettled(list.map((w) => w.close()));
-
       const failed = results.filter((r) => r.status === "rejected");
       if (failed.length > 0) {
         logger.warn(
-          {
-            failed: failed.map((r) => (r as any).reason?.message),
-          },
+          { failed: failed.map((r) => (r as any).reason?.message) },
           "[worker] some workers failed to close",
         );
       }
 
-      // 断开 DB
       await prisma.$disconnect();
 
       clearTimeout(forceExit);
@@ -185,7 +186,6 @@ export function installWorkerShutdown(workers: Worker | Worker[]): void {
   process.on("SIGTERM", () => void handle("SIGTERM"));
   process.on("SIGINT", () => void handle("SIGINT"));
 
-  // 未捕获异常兜底
   process.on("uncaughtException", (err) => {
     logger.error({ err }, "[worker] uncaughtException");
     void handle("uncaughtException");

@@ -14,15 +14,11 @@ export interface UploadMergeNotifyPayload {
   filename?: string;
   errorMsg?: string;
   at?: number;
+  progress?: number;
 }
 
-export async function publishUploadNotify(
-  payload: UploadMergeNotifyPayload,
-): Promise<void> {
-  await redis.publish(
-    UPLOAD_NOTIFY_CHANNEL,
-    JSON.stringify({ ...payload, at: Date.now() }),
-  );
+export async function publishUploadNotify(payload: UploadMergeNotifyPayload): Promise<void> {
+  await redis.publish(UPLOAD_NOTIFY_CHANNEL, JSON.stringify({ ...payload, at: Date.now() }));
   logger.info(
     { userId: payload.userId, taskId: payload.taskId, status: payload.status },
     "[upload] merge notify published",
@@ -51,16 +47,11 @@ export async function startUploadNotifySubscriber(): Promise<void> {
           timestamp: Date.now(),
         });
       } catch (err) {
-        logger.error(
-          { err, message },
-          "Failed to handle upload:merge notify message",
-        );
+        logger.error({ err, message }, "Failed to handle upload:merge notify message");
       }
     });
 
-    subRedis.on("error", (err) =>
-      logger.error({ err }, "Upload merge-notify subscriber error"),
-    );
+    subRedis.on("error", (err) => logger.error({ err }, "Upload merge-notify subscriber error"));
 
     logger.info(`Subscribed to Redis channel: ${UPLOAD_NOTIFY_CHANNEL}`);
   } catch (err) {

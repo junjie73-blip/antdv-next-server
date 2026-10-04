@@ -1,7 +1,10 @@
 import { createBullConnection } from "@/config/redis.js";
-import { mergeQueue } from "@/modules/infrastructure/upload/queue.js";
 import { Queue } from "bullmq";
-
+/** ⭐ 常量集中管理 */
+export const MERGE_LOCK_DURATION = 5 * 60 * 1000; // 5 分钟
+export const MERGE_LOCK_RENEW = 30 * 1000; // 每 30s 续期
+export const MERGE_STALLED_INTERVAL = 30 * 1000; // 30s 检测一次
+export const MERGE_MAX_STALLED = 3; // 容忍 3 次
 /** 报表导出队列 */
 export const reportExportQueue = new Queue("report-export", {
   connection: createBullConnection("report-export"),
@@ -41,6 +44,31 @@ export const exportQueue = new Queue("export", {
     backoff: { type: "exponential", delay: 30_000 },
   },
 });
+
+export const MERGE_QUEUE_NAME = "upload-merge";
+
+export interface MergeJobData {
+  taskId: string;
+  uploadId: string;
+  fileName: string;
+  totalChunks: number;
+  tenantId: string;
+  userId?: string;
+  mimeType?: string;
+  fileHash?: string;
+  fileSize?: number;
+}
+
+export const mergeQueue = new Queue<MergeJobData>(MERGE_QUEUE_NAME, {
+  connection: createBullConnection(MERGE_QUEUE_NAME),
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 30_000 },
+    removeOnComplete: { age: 24 * 3600, count: 1000 },
+    removeOnFail: { age: 7 * 24 * 3600, count: 2000 },
+  },
+});
+
 export const queueList: Queue[] = [
   reportExportQueue,
   mergeQueue,

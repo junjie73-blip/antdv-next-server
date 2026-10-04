@@ -122,27 +122,12 @@ export class BackupRepository {
     retainCount: number;
     enabled: number;
     bucket?: string;
-    remark?: string;
+    remark?: string | null;
     userId?: string;
   }) {
-    if (data.policyId) {
-      return prisma.sys_backup_policy.update({
-        where: { policy_id: data.policyId },
-        data: {
-          name: data.name,
-          cron: data.cron,
-          backup_type: data.backupType,
-          retain_days: data.retainDays,
-          retain_count: data.retainCount,
-          enabled: data.enabled,
-          bucket: data.bucket,
-          remark: data.remark,
-          updated_by: data.userId,
-        },
-      });
-    }
-    return prisma.sys_backup_policy.create({
-      data: {
+    return prisma.sys_backup_policy.upsert({
+      where: { policy_id: data.policyId },
+      update: {
         name: data.name,
         cron: data.cron,
         backup_type: data.backupType,
@@ -150,7 +135,18 @@ export class BackupRepository {
         retain_count: data.retainCount,
         enabled: data.enabled,
         bucket: data.bucket,
-        remark: data.remark,
+        remark: data.remark ?? null,
+        updated_by: data.userId,
+      },
+      create: {
+        name: data.name,
+        cron: data.cron,
+        backup_type: data.backupType,
+        retain_days: data.retainDays,
+        retain_count: data.retainCount,
+        enabled: data.enabled,
+        bucket: data.bucket,
+        remark: data.remark ?? null,
         created_by: data.userId,
         updated_by: data.userId,
       },

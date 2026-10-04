@@ -13,11 +13,7 @@ import { logger } from "@/platform/logger/index.js";
 import { metricsRouter } from "@/platform/metrics/index.js";
 import { swaggerRouter } from "@/platform/swagger/index.js";
 
-import {
-  errorHandler,
-  notFoundHandler,
-  requestContext,
-} from "@/middleware/http/index.js";
+import { errorHandler, notFoundHandler, requestContext } from "@/middleware/http/index.js";
 import {
   authMiddleware,
   tenantResolver,
@@ -96,12 +92,7 @@ export async function createApp(): Promise<Express> {
           scriptSrc:
             env.NODE_ENV === "production"
               ? ["'self'", "https://cdn.jsdelivr.net"]
-              : [
-                  "'self'",
-                  "'unsafe-inline'",
-                  "'unsafe-eval'",
-                  "https://cdn.jsdelivr.net",
-                ],
+              : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"],
           workerSrc: ["'self'", "blob:", "data:"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", "data:", "blob:", "https:"],
@@ -161,14 +152,12 @@ export async function createApp(): Promise<Express> {
   const defaultVersions = getDefaultVersions(allVersions);
   // ⑨ 限流（白名单在 limiter 内部 skip）
   app.use(...globalRateLimit);
-  app.use("/api/v1/auth/login", ...authRateLimit);
-  app.use(
-    "/api/v1/upload/chunk",
-    chunkByteRateLimit(),
-    ...chunkUploadRateLimit,
-  );
+
   for (const v of defaultVersions) {
-    app.use(`/api/${v}/upload/chunk`, ...fileUploadRateLimit);
+    console.log(v, "v");
+    app.use(`/api/${v}/auth/login`, ...authRateLimit);
+    app.use(`/api/${v}/upload/chunk`, chunkByteRateLimit(), ...chunkUploadRateLimit);
+    app.use(`/api/${v}/upload/check`, ...fileUploadRateLimit);
     app.use(`/api/${v}/upload/merge`, ...fileUploadRateLimit);
     app.use(`/api/${v}/auth/login`, ...authRateLimit);
     app.use(`/api/${v}/auth/register`, ...authRateLimit);

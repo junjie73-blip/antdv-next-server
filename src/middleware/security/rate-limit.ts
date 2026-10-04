@@ -1,7 +1,4 @@
-import rateLimit, {
-  ipKeyGenerator,
-  type RateLimitRequestHandler,
-} from "express-rate-limit";
+import rateLimit, { ipKeyGenerator, type RateLimitRequestHandler } from "express-rate-limit";
 import { RedisReply, RedisStore } from "rate-limit-redis";
 import type { Request, Response, NextFunction } from "express";
 import { redis } from "@/config/redis.js";
@@ -10,11 +7,22 @@ import { error } from "@/shared/http/response.js";
 import { getClientIp } from "@/shared/utils/ip.js";
 import { logger } from "@/platform/logger/index.js";
 
-const MAX_BYTES_PER_HOUR =
-  Number(env.UPLOAD_MAX_BYTES_PER_HOUR) || 50 * 1024 * 1024 * 1024;
+const MAX_BYTES_PER_HOUR = Number(env.UPLOAD_MAX_BYTES_PER_HOUR) || 50 * 1024 * 1024 * 1024;
 const MAX_PER_SEC = Number(env.UPLOAD_ID_RATE_PER_SEC || 200);
+
 const SKIP_RATE_LIMIT =
   /^\/api\/v1\/(auth|tenant\/options|docs)|^\/(health|metrics|uploads|favicon)/;
+
+/* ⭐ Redis 操作超时兜底 */
+const REDIS_OP_TIMEOUT_MS = 200;
+
+function withRedisTimeout<T>(p: Promise<T>, fallback: T): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), REDIS_OP_TIMEOUT_MS)),
+  ]);
+}
+
 const INCR_WITH_TTL = `
   local current = redis.call('INCRBY', KEYS[1], ARGV[1])
   if redis.call('TTL', KEYS[1]) < 0 then
@@ -22,6 +30,7 @@ const INCR_WITH_TTL = `
   end
   return current
 `;
+
 export interface LimitRule {
   windowMs: number;
   max: number;
@@ -46,16 +55,8 @@ const IP_WHITELIST = new Set(
 
 const PATH_RULES: Array<{ pattern: RegExp; rule: LimitRule; name: string }> = [
   { pattern: /^\/upload\/chunk\b/, rule: RULES.chunkUpload, name: "chunk" },
-  {
-    pattern: /^\/upload\/(file|merge)\b/,
-    rule: RULES.fileUpload,
-    name: "file",
-  },
-  {
-    pattern: /^\/auth\/(login|register|sms|reset)\b/,
-    rule: RULES.auth,
-    name: "auth",
-  },
+  { pattern: /^\/upload\/(file|merge)\b/, rule: RULES.fileUpload, name: "file" },
+  { pattern: /^\/auth\/(login|register|sms|reset)\b/, rule: RULES.auth, name: "auth" },
 ];
 
 type Scope = "ip" | "user" | "both";
@@ -69,9 +70,7 @@ function resolveIdentifier(scope: Scope, req: Request): string {
 
 function createStore(prefix: string): RedisStore {
   return new RedisStore({
-    sendCommand: redis.call.bind(redis) as (
-      ...args: string[]
-    ) => Promise<RedisReply>,
+    sendCommand: redis.call.bind(redis) as (...args: string[]) => Promise<RedisReply>,
     prefix: `rate-limit:${prefix}:`,
   });
 }
@@ -83,26 +82,25 @@ function getBlockDuration(offenseCount: number, baseSec: number): number {
   return baseSec * multipliers[idx];
 }
 
-async function triggerBlock(
-  name: string,
-  identifier: string,
-  baseSec: number,
-): Promise<number> {
+async function triggerBlock(name: string, identifier: string, baseSec: number): Promise<number> {
   if (baseSec <= 0) return 0;
 
   const offenseKey = `rate-limit:offense:${name}:${identifier}`;
   const blockKey = `rate-limit:block:${name}:${identifier}`;
 
-  const offense = await redis.incr(offenseKey);
+  const offense = await withRedisTimeout(redis.incr(offenseKey), 0);
+  if (offense === 0) return 0;
+
   if (offense === 1) {
     await redis.expire(offenseKey, 24 * 3600, "NX").catch(() => {});
   }
 
   const duration = getBlockDuration(offense - 1, baseSec);
-  await redis.setex(blockKey, duration, "1");
+  await withRedisTimeout(redis.setex(blockKey, duration, "1"), "OK");
   return duration;
 }
 
+/* ⭐ blockCheck 加超时 + 降级 */
 function blockCheck(scope: Scope, name: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -111,24 +109,21 @@ function blockCheck(scope: Scope, name: string) {
       if (IP_WHITELIST.has(ip)) return next();
 
       const identifier = resolveIdentifier(scope, req);
-      const ttl = await redis.ttl(`rate-limit:block:${name}:${identifier}`);
+      const ttl = await withRedisTimeout(redis.ttl(`rate-limit:block:${name}:${identifier}`), 0);
+
       if (ttl > 0) {
         res.setHeader("Retry-After", String(ttl));
         return error(res, `请求过于频繁，请 ${ttl} 秒后重试`, 403);
       }
       next();
     } catch (e) {
-      logger.error({ err: e }, "[ratelimit] block check error");
+      logger.error({ err: e }, "[ratelimit] block check error, pass through");
       next();
     }
   };
 }
 
-function createLimiter(
-  scope: Scope,
-  rule: LimitRule,
-  name: string,
-): RateLimitRequestHandler {
+function createLimiter(scope: Scope, rule: LimitRule, name: string): RateLimitRequestHandler {
   return rateLimit({
     windowMs: rule.windowMs,
     max: rule.max,
@@ -182,29 +177,13 @@ function createProtectedLimiter(
   return [blockCheck(scope, name), createLimiter(scope, rule, name)];
 }
 
-export const globalRateLimit = createProtectedLimiter(
-  "both",
-  RULES.normal,
-  "global",
-);
-
-export const chunkUploadRateLimit = createProtectedLimiter(
-  "both",
-  RULES.chunkUpload,
-  "chunk",
-);
-
-export const fileUploadRateLimit = createProtectedLimiter(
-  "both",
-  RULES.fileUpload,
-  "file",
-);
+export const globalRateLimit = createProtectedLimiter("both", RULES.normal, "global");
+export const chunkUploadRateLimit = createProtectedLimiter("both", RULES.chunkUpload, "chunk");
+export const fileUploadRateLimit = createProtectedLimiter("both", RULES.fileUpload, "file");
 export const apiLimiter = createProtectedLimiter("both", RULES.api, "api");
 export const loginLimiter = createProtectedLimiter("both", RULES.auth, "login");
-export const authRateLimit: [
-  ReturnType<typeof blockCheck>,
-  RateLimitRequestHandler,
-] = [
+
+export const authRateLimit: [ReturnType<typeof blockCheck>, RateLimitRequestHandler] = [
   blockCheck("both", "auth"),
   rateLimit({
     windowMs: RULES.auth.windowMs,
@@ -222,10 +201,7 @@ export const authRateLimit: [
       } catch (e) {
         logger.error({ err: e }, "[ratelimit] auth block failed");
       }
-      logger.warn(
-        { identifier, path: req.path, duration },
-        "[ratelimit] auth hit",
-      );
+      logger.warn({ identifier, path: req.path, duration }, "[ratelimit] auth hit");
       res.setHeader("Retry-After", String(duration || 60));
       error(res, `尝试次数过多，请 ${duration || 60} 秒后再试`, 429);
     },
@@ -253,23 +229,23 @@ export function autoRateLimit() {
   };
 }
 
+/* ⭐ 流量限速降级 */
 export function chunkByteRateLimit() {
   return async (req: any, res: any, next: any) => {
     try {
       const userId = req.user?.userId;
-      const identifier = userId
-        ? `user:${userId}`
-        : `ip-rule:${req.ip || "unknown"}`;
+      const identifier = userId ? `user:${userId}` : `ip-rule:${req.ip || "unknown"}`;
       const key = `upload:bytes:${identifier}`;
       const contentLength = Number(req.headers["content-length"] || 0);
       if (!Number.isFinite(contentLength) || contentLength <= 0) return next();
-      const current = (await redis.eval(
-        INCR_WITH_TTL,
-        1,
-        key,
-        String(contentLength),
-        "3600",
-      )) as number;
+
+      const current = await withRedisTimeout(
+        redis.eval(INCR_WITH_TTL, 1, key, String(contentLength), "3600") as Promise<number>,
+        0,
+      );
+
+      // Redis 超时 → 放行
+      if (current === 0) return next();
 
       if (current > MAX_BYTES_PER_HOUR) {
         res.setHeader("Retry-After", "300");
@@ -289,6 +265,7 @@ export function chunkByteRateLimit() {
 
 const WINDOW_MS = 500;
 
+/* ⭐ uploadId 限速降级 */
 export async function checkUploadIdRate(
   uploadId: string,
   maxPerSec = MAX_PER_SEC,
@@ -296,11 +273,16 @@ export async function checkUploadIdRate(
   try {
     const bucket = Math.floor(Date.now() / WINDOW_MS);
     const key = `upload:rate:${uploadId}:${bucket}`;
-    const current = await redis.incr(key);
+
+    const current = await withRedisTimeout(redis.incr(key), 0);
+
+    // Redis 超时 → 放行
+    if (current === 0) {
+      return { ok: true, current: 0, limit: 0 };
+    }
+
     if (current === 1) {
-      await redis
-        .expire(key, Math.ceil((WINDOW_MS * 2) / 1000), "NX")
-        .catch(() => {});
+      await redis.expire(key, Math.ceil((WINDOW_MS * 2) / 1000), "NX").catch(() => {});
     }
     const limit = Math.ceil((maxPerSec * WINDOW_MS) / 1000);
     return { ok: current <= limit, current, limit };

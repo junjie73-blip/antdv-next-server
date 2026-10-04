@@ -3,8 +3,15 @@ import { createWriteStream } from "fs";
 import path from "path";
 import { pipeline } from "node:stream/promises";
 import { AppError } from "@/core/errors.js";
-import type { IStorage, PutObjectInput, PresignedUrlInput } from "./types.js";
+import type {
+  IStorage,
+  PutObjectInput,
+  PresignedUrlInput,
+  GetObjectResult,
+  ObjectInfo,
+} from "./types.js";
 import { isBuffer } from "./types.js";
+import { createReadStream } from "node:fs";
 
 export interface LocalStorageConfig {
   root: string;
@@ -74,5 +81,51 @@ export class LocalStorage implements IStorage {
       throw new AppError("非法的文件路径", 400001, 400);
     }
     return full;
+  }
+  async listObjects(input: { prefix: string; maxKeys?: number }): Promise<ObjectInfo[]> {
+    const basePath = this.resolvePath(input.prefix);
+    const results: ObjectInfo[] = [];
+
+    // ⭐ 提前提取，供闭包使用
+    const rootDir = this.cfg.root;
+    const maxKeys = input.maxKeys ?? 1000;
+
+    async function walk(dir: string) {
+      let entries;
+      try {
+        entries = await fs.readdir(dir, { withFileTypes: true });
+      } catch {
+        return;
+      }
+
+      for (const e of entries) {
+        const full = path.join(dir, e.name);
+        if (e.isDirectory()) {
+          await walk(full);
+        } else {
+          const stat = await fs.stat(full);
+          // ⭐ 用 rootDir 而不是 this.cfg.root
+          const key = path.relative(rootDir, full).replace(/\\/g, "/");
+          results.push({ key, size: stat.size, lastModified: stat.mtime });
+          if (results.length >= maxKeys) return;
+        }
+      }
+    }
+
+    await walk(basePath);
+    return results;
+  }
+
+  async getObject(key: string): Promise<GetObjectResult> {
+    const full = this.resolvePath(key);
+    const stat = await fs.stat(full);
+    return {
+      body: createReadStream(full),
+      size: stat.size,
+    };
+  }
+
+  async deleteObjects(keys: string[]): Promise<void> {
+    await Promise.all(keys.map((k) => this.deleteObject(k)));
   }
 }
