@@ -36,9 +36,7 @@ export class OrgHistoryDashboardService {
 
     const dates: string[] = [];
     for (let i = days - 1; i >= 0; i--) {
-      dates.push(
-        new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10),
-      );
+      dates.push(new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10));
     }
 
     const scopeList = [...scopes];
@@ -64,22 +62,24 @@ export class OrgHistoryDashboardService {
         net: bigint;
       }>
     >`
-      SELECT
-        h.related_id AS dept_id,
-        d.dept_name,
-        COUNT(*) FILTER (WHERE h.change_type = 'assign')::bigint AS in_count,
-        COUNT(*) FILTER (WHERE h.change_type = 'revoke')::bigint AS out_count,
-        (COUNT(*) FILTER (WHERE h.change_type = 'assign')
-         - COUNT(*) FILTER (WHERE h.change_type = 'revoke'))::bigint AS net
-      FROM sys_org_history h
-      LEFT JOIN sys_dept d ON d.dept_id = h.related_id
-      WHERE h.tenant_id = ${tenantId}::uuid
-        AND h.entity_type = 'user_dept'
-        AND h.related_id IS NOT NULL
-        AND h.created_at >= ${since}
-      GROUP BY h.related_id, d.dept_name
-      ORDER BY (in_count + out_count) DESC
-      LIMIT 15
+      SELECT * FROM (
+  SELECT
+    h.related_id AS dept_id,
+    d.dept_name,
+    COUNT(*) FILTER (WHERE h.change_type = 'assign')::bigint AS in_count,
+    COUNT(*) FILTER (WHERE h.change_type = 'revoke')::bigint AS out_count,
+    (COUNT(*) FILTER (WHERE h.change_type = 'assign')
+     - COUNT(*) FILTER (WHERE h.change_type = 'revoke'))::bigint AS net
+  FROM sys_org_history h
+  LEFT JOIN sys_dept d ON d.dept_id = h.related_id
+  WHERE h.tenant_id = ${tenantId}::uuid
+    AND h.entity_type = 'user_dept'
+    AND h.related_id IS NOT NULL
+    AND h.created_at >= ${since}
+  GROUP BY h.related_id, d.dept_name
+) t
+ORDER BY (t.in_count + t.out_count) DESC
+LIMIT 15
     `;
 
     return rows.map((r) => ({
@@ -211,9 +211,7 @@ export class OrgHistoryDashboardService {
     // 2) 生成日期序列
     const dates: string[] = [];
     for (let i = days - 1; i >= 0; i--) {
-      dates.push(
-        new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10),
-      );
+      dates.push(new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10));
     }
 
     // 3) 组装 matrix data
