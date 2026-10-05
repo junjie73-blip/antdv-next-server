@@ -44,6 +44,9 @@ export const RULES = {
   fileUpload: { windowMs: 60_000, max: 60, blockSec: 0 },
   auth: { windowMs: 60_000, max: 20, blockSec: 600 },
   api: { windowMs: 60_000, max: 200, blockSec: 600 },
+  // blockSec: 0 —— 只限流不封禁，AI 问答偶发连点不应误伤整段时间
+  agentChat: { windowMs: 60_000, max: 20, blockSec: 0 },
+  agentIngest: { windowMs: 60_000, max: 10, blockSec: 0 },
 } satisfies Record<string, LimitRule>;
 
 const IP_WHITELIST = new Set(
@@ -291,3 +294,11 @@ export async function checkUploadIdRate(
     return { ok: true, current: 0, limit: 0 };
   }
 }
+
+/* ⭐ Agent（AI 助手）专用限流：LLM 调用有成本，需按用户维度收敛 */
+export const agentChatRateLimit = createProtectedLimiter("both", RULES.agentChat, "agent-chat");
+export const agentIngestRateLimit = createProtectedLimiter(
+  "both",
+  RULES.agentIngest,
+  "agent-ingest",
+);

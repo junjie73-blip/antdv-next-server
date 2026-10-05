@@ -311,4 +311,10 @@ export const SYSTEM_PERMISSIONS = [
     resource_type: "system",
     action: "create",
   },
+  {
+    perm_code: "agent:knowledge:manage",
+    perm_name: "管理 AI 知识库",
+    resource_type: "api",
+    action: "manage",
+  },
 ] as const;

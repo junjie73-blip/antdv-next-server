@@ -80,6 +80,9 @@ export const CACHE_GROUPS: CacheGroup[] = [
   // ============ 工作流 ============
   { prefix: "wf:", name: "wf", remark: "工作流缓存" },
 
+  // ============ AI 助手 ============
+  { prefix: "agent:", name: "agent", remark: "AI 助手待确认工具调用" },
+
   // ============ 代码生成器 ============
   {
     prefix: "gen-template:",

@@ -6,6 +6,7 @@ import { drainAuditQueue } from "@/platform/audit/index.js";
 import { prisma } from "@/config/database.js";
 import { redis, subRedis, blockRedis } from "@/config/redis.js";
 import { slowQueryCollector } from "@/modules/monitor/slow-query/index.js";
+import { closeAgentHistoryPool } from "@/modules/agent/index.js";
 
 interface ShutdownDeps {
   httpServer: HttpServer;
@@ -82,6 +83,7 @@ export async function shutdown(
       redis.quit(),
       subRedis.quit(),
       blockRedis.quit(),
+      closeAgentHistoryPool(),
     ]);
 
     clearTimeout(forceExit);

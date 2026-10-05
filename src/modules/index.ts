@@ -5,6 +5,10 @@
 // 末尾的 hash 块用于感知 controller 文件内部实现的变化，
 // 每次内容变化都会触发此文件重写。
 
+import AgentChatController from "./agent/controller/chat.controller.js";
+import AgentCompletionController from "./agent/controller/completion.controller.js";
+import AgentConversationController from "./agent/controller/conversation.controller.js";
+import AgentIngestController from "./agent/controller/ingest.controller.js";
 import ApprovalFlowController from "./approval/controller/flow.controller.js";
 import ApprovalLogController from "./approval/controller/log.controller.js";
 import ApprovalRequestController from "./approval/controller/request.controller.js";
@@ -80,6 +84,10 @@ import WorkflowTaskTransferController from "./workflow/controller/task-transfer.
 import WorkflowTaskController from "./workflow/controller/task.controller.js";
 
 export const controllers = [
+  AgentChatController,
+  AgentCompletionController,
+  AgentConversationController,
+  AgentIngestController,
   ApprovalFlowController,
   ApprovalLogController,
   ApprovalRequestController,
@@ -156,6 +164,10 @@ export const controllers = [
 ] as const;
 
 // ---- controller content hashes (sha256, 16 hex chars) ----
+// ./agent/controller/chat.controller.js  4899c061a95efd75
+// ./agent/controller/completion.controller.js  1d2a57fb8abd658e
+// ./agent/controller/conversation.controller.js  aee614fa7e79c169
+// ./agent/controller/ingest.controller.js  cb8ff3f45e427150
 // ./approval/controller/flow.controller.js  1e86d40041247bef
 // ./approval/controller/log.controller.js  783b8da9d5416a31
 // ./approval/controller/request.controller.js  e9b88aab5b91afba

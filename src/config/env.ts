@@ -158,6 +158,24 @@ const envSchema = z.object({
   SYSTEM_STORAGE_LOCAL_URL: z.string().optional(),
   TENANT_PROBE_ENABLED: boolStr("false"),
   UPLOAD_THROTTLE_BPS: z.string().optional().default("0"),
+
+  // ============ Agent（Python 服务）集成 ============
+  AGENT_ENABLED: boolStr("true"),
+  AGENT_BASE_URL: z.string().url().default("http://localhost:8000"),
+  // 与 AGENT_DATABASE_URL 用 optional：现有 .env 没有这两个值，设必填会当场打挂开发环境。
+  // 改为运行期 fail-closed —— 真正调用 Agent 时才校验并给出明确错误。
+  AGENT_INTERNAL_SECRET: z.string().optional(),
+  AGENT_TIMEOUT_MS: z.string().default("60000"),
+  AGENT_STREAM_IDLE_TIMEOUT_MS: z.string().default("60000"),
+  AGENT_HEARTBEAT_MS: z.string().default("15000"),
+  AGENT_RETRY_MAX: z.string().default("2"),
+  AGENT_MAX_TOOL_ROUNDS: z.string().default("5"),
+  AGENT_MAX_TOOL_CALLS_PER_ROUND: z.string().default("8"),
+  AGENT_TOOL_TIMEOUT_MS: z.string().default("15000"),
+  AGENT_TOOL_CONCURRENCY: z.string().default("4"),
+  AGENT_PENDING_TTL_SECONDS: z.string().default("600"),
+  AGENT_DATABASE_URL: z.string().optional(),
+  AGENT_HISTORY_PAGE_SIZE_MAX: z.string().default("100"),
 });
 
 const parsed = envSchema.safeParse(decryptedEnv);
@@ -173,4 +191,11 @@ export const env = parsed.data;
 
 if (env.NODE_ENV === "production" && !env.SECRET_MASTER_KEY) {
   throw new Error("生产环境必须配置 SECRET_MASTER_KEY");
+}
+
+// 用 console.warn 而非 logger：env.ts 处于 L0，logger 在 L2，方向依赖不允许
+if (env.AGENT_ENABLED && !env.AGENT_INTERNAL_SECRET) {
+  console.warn(
+    "[env] AGENT_ENABLED=true 但 AGENT_INTERNAL_SECRET 未配置，Agent 接口将返回 500",
+  );
 }

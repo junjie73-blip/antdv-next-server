@@ -25,6 +25,8 @@ import {
   authRateLimit,
   csrfGuard,
   issueCsrfToken,
+  agentChatRateLimit,
+  agentIngestRateLimit,
 } from "@/middleware/security/index.js";
 import { auditMiddleware } from "@/middleware/business/index.js";
 
@@ -171,6 +173,11 @@ export async function createApp(): Promise<Express> {
   app.use(tenantProbeContext());
   app.use(dataScopeMiddleware());
   app.use(orgHistoryContextMiddleware());
+  // Agent 接口限流放在认证链之后，才能按 userId 计数（LLM 调用需成本控制）
+  for (const v of defaultVersions) {
+    app.use(`/api/${v}/agent/chat`, ...agentChatRateLimit);
+    app.use(`/api/${v}/agent/ingest`, ...agentIngestRateLimit);
+  }
   // ⑪ 业务路由（装饰器扫描）
   const scanner = new ControllerScanner();
   scanner.register(...(controllers as any));

@@ -24,6 +24,8 @@ export {
   autoRateLimit,
   chunkByteRateLimit,
   checkUploadIdRate,
+  agentChatRateLimit,
+  agentIngestRateLimit,
   RULES,
 } from "./rate-limit.js";
 export type { LimitRule } from "./rate-limit.js";
