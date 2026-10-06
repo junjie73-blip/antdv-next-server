@@ -32,18 +32,14 @@ export default class OrgHistoryController {
   @ApiOperation("变更历史列表")
   @ApiQuery(OrgHistoryListSchema)
   async list(@Req() req: Request, @Res() res: Response) {
-    try {
-      const dto = OrgHistoryListSchema.parse(req.query);
-      const data = await this.service.list({
-        tenantId: req.tenantId!,
-        ...dto,
-        startTime: dto.startTime ? new Date(dto.startTime) : undefined,
-        endTime: dto.endTime ? new Date(dto.endTime) : undefined,
-      });
-      return pageSuccess(res, data.list, data.total, dto.pageNum, dto.pageSize);
-    } catch (err) {
-      return error(res, err);
-    }
+    const dto = OrgHistoryListSchema.parse(req.query);
+    const data = await this.service.list({
+      tenantId: req.tenantId!,
+      ...dto,
+      startTime: dto.startTime ? new Date(dto.startTime) : undefined,
+      endTime: dto.endTime ? new Date(dto.endTime) : undefined,
+    });
+    return pageSuccess(res, data.list, data.total, dto.pageNum, dto.pageSize);
   }
 
   @Get("/user/:userId/timeline")
